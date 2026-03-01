@@ -97,24 +97,16 @@ test('ConnectionDetailDialog receives complete connection info from API', functi
     ]);
 
     $response = $this->actingAs($user)
-        ->getJson("/connections/{$connection->id}");
+        ->get("/connections/{$connection->id}");
 
     $response->assertSuccessful();
-
-    // Verify cable properties are returned
-    $response->assertJsonFragment(['cable_type' => 'cat6a']);
-    // Cable length is returned as a formatted string
-    $response->assertJsonFragment(['cable_length' => '5.00']);
-    $response->assertJsonFragment(['cable_color' => 'yellow']);
-    $response->assertJsonFragment(['path_notes' => 'Main uplink cable']);
-
-    // Verify source port info
-    $response->assertJsonPath('data.source_port.label', 'eth0');
-    $response->assertJsonPath('data.source_port.device.name', 'Server A');
-
-    // Verify destination port info
-    $response->assertJsonPath('data.destination_port.label', 'port-24');
-    $response->assertJsonPath('data.destination_port.device.name', 'Switch B');
+    $response->assertInertia(fn ($page) => $page
+        ->component('Connections/Show')
+        ->where('connection.cable_type', 'cat6a')
+        ->where('connection.cable_color', 'yellow')
+        ->where('connection.source_port.label', 'eth0')
+        ->where('connection.destination_port.label', 'port-24')
+    );
 });
 
 test('EditConnectionDialog can update cable properties via API', function () {

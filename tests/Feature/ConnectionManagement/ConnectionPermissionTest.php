@@ -68,13 +68,16 @@ test('viewer user can view connection details (read-only access)', function () {
 
     // Viewer should be able to GET connection details
     $response = $this->actingAs($viewer)
-        ->getJson("/connections/{$connection->id}");
+        ->get("/connections/{$connection->id}");
 
     $response->assertSuccessful();
-    $response->assertJsonFragment(['cable_type' => 'cat6a']);
-    $response->assertJsonFragment(['cable_color' => 'yellow']);
-    $response->assertJsonPath('data.source_port.label', 'eth0');
-    $response->assertJsonPath('data.destination_port.label', 'port-24');
+    $response->assertInertia(fn ($page) => $page
+        ->component('Connections/Show')
+        ->where('connection.cable_type', 'cat6a')
+        ->where('connection.cable_color', 'yellow')
+        ->where('connection.source_port.label', 'eth0')
+        ->where('connection.destination_port.label', 'port-24')
+    );
 });
 
 test('viewer user cannot update connection (PUT permission denied)', function () {
