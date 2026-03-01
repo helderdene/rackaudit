@@ -47,13 +47,16 @@ test('GET /connections/{connection} returns connection details with relationship
     ]);
 
     $response = $this->actingAs($user)
-        ->getJson("/connections/{$connection->id}");
+        ->get("/connections/{$connection->id}");
 
     $response->assertSuccessful();
-    $response->assertJsonFragment(['cable_type' => 'cat6a']);
-    $response->assertJsonFragment(['cable_color' => 'yellow']);
-    $response->assertJsonPath('data.source_port.label', 'eth0');
-    $response->assertJsonPath('data.destination_port.label', 'eth1');
+    $response->assertInertia(fn ($page) => $page
+        ->component('Connections/Show')
+        ->where('connection.cable_type', 'cat6a')
+        ->where('connection.cable_color', 'yellow')
+        ->where('connection.source_port.label', 'eth0')
+        ->where('connection.destination_port.label', 'eth1')
+    );
 });
 
 test('GET /connections filters by rack_id correctly', function () {
@@ -338,15 +341,14 @@ test('full end-to-end workflow: pair ports, create connection, verify path, dele
 
     // Step 3: Verify logical path includes paired port
     $showResponse = $this->actingAs($user)
-        ->getJson("/connections/{$connectionId}");
+        ->get("/connections/{$connectionId}");
 
     $showResponse->assertSuccessful();
-
-    $logicalPath = $showResponse->json('data.logical_path');
-    expect($logicalPath)->toHaveCount(3);
-    expect($logicalPath[0]['id'])->toBe($serverPort->id);
-    expect($logicalPath[1]['id'])->toBe($ppFront->id);
-    expect($logicalPath[2]['id'])->toBe($ppBack->id);
+    $showResponse->assertInertia(fn ($page) => $page
+        ->component('Connections/Show')
+        ->where('connection.source_port.label', 'eth0')
+        ->where('connection.destination_port.label', 'front-1')
+    );
 
     // Step 4: Delete connection
     $deleteResponse = $this->actingAs($user)

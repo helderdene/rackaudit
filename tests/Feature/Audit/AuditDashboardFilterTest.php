@@ -127,7 +127,7 @@ test('time period filter with each preset returns correct date ranges', function
 })->with([
     '30_days returns audits from last 30 days' => ['30_days', 1],
     '90_days returns audits from last 90 days' => ['90_days', 2],
-    'year returns audits from this year start' => ['year', fn () => now()->startOfYear()->diffInDays(now()) >= 400 ? 4 : 3],
+    'year returns audits from this year start' => ['year', fn () => collect([5, 45, 120, 400])->filter(fn ($days) => now()->subDays($days)->gte(now()->startOfYear()))->count()],
     'all returns all audits regardless of date' => ['all', 4],
 ]);
 

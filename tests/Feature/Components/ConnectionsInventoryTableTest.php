@@ -124,28 +124,14 @@ test('pagination controls work', function () {
         ]);
     }
 
-    // Test default page (page 1)
+    // All connections are returned as a flat array (client-side pagination)
     $response = $this->actingAs($user)
         ->get('/connection-reports');
 
     $response->assertSuccessful();
     $response->assertInertia(fn (Assert $page) => $page
-        ->where('metrics.pagination.current_page', 1)
-        ->where('metrics.pagination.last_page', 2)
-        ->where('metrics.pagination.per_page', 25)
-        ->where('metrics.pagination.total', 30)
-        ->has('metrics.connections', 25) // 25 items on first page
-    );
-
-    // Test page 2
-    $response = $this->actingAs($user)
-        ->get('/connection-reports?page=2');
-
-    $response->assertSuccessful();
-    $response->assertInertia(fn (Assert $page) => $page
-        ->where('metrics.pagination.current_page', 2)
-        ->where('metrics.pagination.last_page', 2)
-        ->has('metrics.connections', 5) // 5 items on second page (30 - 25)
+        ->has('metrics.connections', 30)
+        ->where('metrics.totalConnections', 30)
     );
 });
 
@@ -279,11 +265,6 @@ test('empty state displays appropriately', function () {
         ->component('ConnectionReports/Index')
         // Verify empty connections array
         ->has('metrics.connections', 0)
-        // Verify pagination shows 0 total
-        ->where('metrics.pagination.total', 0)
-        ->where('metrics.pagination.current_page', 1)
-        ->where('metrics.pagination.last_page', 1)
-        ->where('metrics.pagination.per_page', 25)
         // Verify empty metrics
         ->where('metrics.totalConnections', 0)
     );
