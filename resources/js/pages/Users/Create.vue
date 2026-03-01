@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import UserForm from '@/components/users/UserForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head, usePage } from '@inertiajs/vue3';
 
 interface Datacenter {
     id: number;
@@ -16,7 +16,7 @@ interface Props {
     datacenters: Datacenter[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const page = usePage();
 const currentUserId = page.props.auth.user.id;

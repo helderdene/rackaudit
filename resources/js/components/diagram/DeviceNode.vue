@@ -1,35 +1,37 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Handle, Position } from '@vue-flow/core';
-import type { FlowNodeData, PortDrillDownData } from '@/types/connections';
-import { isRackNode, isDeviceNode, getPortStatusColor, getPortStatusBadgeVariant } from '@/types/connections';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import type { FlowNodeData, PortDrillDownData } from '@/types/connections';
 import {
-    Collapsible,
-    CollapsibleContent,
-} from '@/components/ui/collapsible';
+    getPortStatusBadgeVariant,
+    getPortStatusColor,
+    isDeviceNode,
+    isRackNode,
+} from '@/types/connections';
+import { Handle, Position } from '@vue-flow/core';
 import {
-    Server,
-    Network,
-    Router,
-    HardDrive,
-    Zap,
-    Shield,
-    LayoutGrid,
-    Monitor,
+    Cable,
     ChevronDown,
     ChevronUp,
-    Cable,
+    HardDrive,
+    LayoutGrid,
     Loader2,
+    Monitor,
+    Network,
+    Router,
+    Server,
     ServerCog,
+    Shield,
+    Zap,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     /** Node data from Vue Flow containing rack or device information */
@@ -78,7 +80,8 @@ const iconComponent = computed(() => {
     if (deviceType.includes('storage')) return HardDrive;
     if (deviceType.includes('pdu')) return Zap;
     if (deviceType.includes('firewall')) return Shield;
-    if (deviceType.includes('patch panel') || deviceType.includes('patch')) return LayoutGrid;
+    if (deviceType.includes('patch panel') || deviceType.includes('patch'))
+        return LayoutGrid;
 
     return Monitor;
 });
@@ -119,7 +122,10 @@ const badgeLabel = computed(() => {
  */
 const subtitle = computed(() => {
     if (isRack.value) {
-        const data = props.data as { row_name?: string | null; room_name?: string | null };
+        const data = props.data as {
+            row_name?: string | null;
+            room_name?: string | null;
+        };
         const parts = [];
         if (data.row_name) parts.push(data.row_name);
         if (data.room_name) parts.push(data.room_name);
@@ -153,13 +159,9 @@ const containerClasses = computed(() => {
             ? 'border-primary/50 dark:border-sky-400/50'
             : '',
         // Expanded state (device nodes only)
-        props.data.expanded
-            ? 'min-w-[280px]'
-            : '',
+        props.data.expanded ? 'min-w-[280px]' : '',
         // Rack node styling
-        isRack.value
-            ? 'min-w-[180px]'
-            : '',
+        isRack.value ? 'min-w-[180px]' : '',
     ].join(' ');
 });
 
@@ -214,24 +216,21 @@ function handleConnectionClick(connectionId: number, event: Event) {
     <TooltipProvider>
         <Tooltip>
             <TooltipTrigger as-child>
-                <div
-                    :class="containerClasses"
-                    @click="handleClick"
-                >
+                <div :class="containerClasses" @click="handleClick">
                     <!-- Connection handles with dark mode support -->
                     <Handle
                         type="source"
                         :position="Position.Right"
-                        class="!bg-primary !border-primary-foreground dark:!bg-sky-400 dark:!border-slate-800"
+                        class="!border-primary-foreground !bg-primary dark:!border-slate-800 dark:!bg-sky-400"
                     />
                     <Handle
                         type="target"
                         :position="Position.Left"
-                        class="!bg-primary !border-primary-foreground dark:!bg-sky-400 dark:!border-slate-800"
+                        class="!border-primary-foreground !bg-primary dark:!border-slate-800 dark:!bg-sky-400"
                     />
 
                     <!-- Node content -->
-                    <div class="flex items-center gap-3 min-w-[120px]">
+                    <div class="flex min-w-[120px] items-center gap-3">
                         <!-- Icon with dark mode background -->
                         <div
                             :class="[
@@ -253,9 +252,9 @@ function handleConnectionClick(connectionId: number, event: Event) {
                         </div>
 
                         <!-- Node info -->
-                        <div class="flex flex-col gap-1 overflow-hidden flex-1">
+                        <div class="flex flex-1 flex-col gap-1 overflow-hidden">
                             <span
-                                class="text-sm font-medium leading-none truncate max-w-[150px] text-foreground dark:text-slate-100"
+                                class="max-w-[150px] truncate text-sm leading-none font-medium text-foreground dark:text-slate-100"
                             >
                                 {{ data.name }}
                             </span>
@@ -263,15 +262,17 @@ function handleConnectionClick(connectionId: number, event: Event) {
                                 <Badge
                                     :variant="badgeVariant"
                                     :class="[
-                                        'text-[10px] px-1.5 py-0 w-fit',
-                                        isRack ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : '',
+                                        'w-fit px-1.5 py-0 text-[10px]',
+                                        isRack
+                                            ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+                                            : '',
                                     ]"
                                 >
                                     {{ badgeLabel }}
                                 </Badge>
                                 <span
                                     v-if="subtitle"
-                                    class="text-[10px] text-muted-foreground dark:text-slate-400 truncate max-w-[140px]"
+                                    class="max-w-[140px] truncate text-[10px] text-muted-foreground dark:text-slate-400"
                                 >
                                     {{ subtitle }}
                                 </span>
@@ -283,19 +284,28 @@ function handleConnectionClick(connectionId: number, event: Event) {
                             v-if="isDevice && hasPorts"
                             variant="ghost"
                             size="sm"
-                            class="size-7 p-0 shrink-0 dark:hover:bg-slate-600/50"
+                            class="size-7 shrink-0 p-0 dark:hover:bg-slate-600/50"
                             @click="handleToggleExpand"
                         >
-                            <Loader2 v-if="isLoadingPorts" class="size-4 animate-spin" />
-                            <ChevronUp v-else-if="data.expanded" class="size-4 dark:text-slate-300" />
-                            <ChevronDown v-else class="size-4 dark:text-slate-300" />
+                            <Loader2
+                                v-if="isLoadingPorts"
+                                class="size-4 animate-spin"
+                            />
+                            <ChevronUp
+                                v-else-if="data.expanded"
+                                class="size-4 dark:text-slate-300"
+                            />
+                            <ChevronDown
+                                v-else
+                                class="size-4 dark:text-slate-300"
+                            />
                         </Button>
                     </div>
 
                     <!-- Stats row for rack nodes -->
                     <div
                         v-if="isRack"
-                        class="mt-2 pt-2 border-t border-border dark:border-slate-600 flex items-center gap-3 text-xs text-muted-foreground dark:text-slate-400"
+                        class="mt-2 flex items-center gap-3 border-t border-border pt-2 text-xs text-muted-foreground dark:border-slate-600 dark:text-slate-400"
                     >
                         <div class="flex items-center gap-1">
                             <Server class="size-3" />
@@ -308,17 +318,24 @@ function handleConnectionClick(connectionId: number, event: Event) {
                     </div>
 
                     <!-- Expanded port list with dark mode styling (device nodes only) -->
-                    <Collapsible v-if="isDevice" :open="data.expanded && !!data.ports?.length">
+                    <Collapsible
+                        v-if="isDevice"
+                        :open="data.expanded && !!data.ports?.length"
+                    >
                         <CollapsibleContent>
-                            <div class="mt-3 pt-3 border-t border-border dark:border-slate-600 space-y-1.5">
-                                <div class="text-xs font-medium text-muted-foreground dark:text-slate-400 mb-2 flex items-center gap-1.5">
+                            <div
+                                class="mt-3 space-y-1.5 border-t border-border pt-3 dark:border-slate-600"
+                            >
+                                <div
+                                    class="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground dark:text-slate-400"
+                                >
                                     <Cable class="size-3" />
                                     Ports ({{ data.ports?.length || 0 }})
                                 </div>
                                 <div
                                     v-for="port in data.ports"
                                     :key="port.id"
-                                    class="relative flex items-center gap-2 text-xs p-1.5 rounded hover:bg-muted/50 dark:hover:bg-slate-700/50 cursor-pointer"
+                                    class="relative flex cursor-pointer items-center gap-2 rounded p-1.5 text-xs hover:bg-muted/50 dark:hover:bg-slate-700/50"
                                     @click="handlePortClick(port, $event)"
                                 >
                                     <!-- Port handle for edge connections -->
@@ -327,26 +344,32 @@ function handleConnectionClick(connectionId: number, event: Event) {
                                         type="source"
                                         :id="`port-${port.id}`"
                                         :position="Position.Right"
-                                        class="!size-2 !bg-primary/70 !border-primary-foreground dark:!bg-sky-400/70 dark:!border-slate-800 !right-0"
+                                        class="!right-0 !size-2 !border-primary-foreground !bg-primary/70 dark:!border-slate-800 dark:!bg-sky-400/70"
                                     />
 
                                     <!-- Port status indicator with accessible colors -->
                                     <div
                                         :class="[
-                                            'size-2 rounded-full shrink-0',
+                                            'size-2 shrink-0 rounded-full',
                                             getPortStatusColor(port.status),
                                         ]"
                                     />
 
                                     <!-- Port label -->
-                                    <span class="font-medium truncate flex-1 text-foreground dark:text-slate-200">
+                                    <span
+                                        class="flex-1 truncate font-medium text-foreground dark:text-slate-200"
+                                    >
                                         {{ port.label }}
                                     </span>
 
                                     <!-- Port type badge -->
                                     <Badge
-                                        :variant="getPortStatusBadgeVariant(port.status)"
-                                        class="text-[9px] px-1 py-0"
+                                        :variant="
+                                            getPortStatusBadgeVariant(
+                                                port.status,
+                                            )
+                                        "
+                                        class="px-1 py-0 text-[9px]"
                                     >
                                         {{ port.status_label || port.status }}
                                     </Badge>
@@ -354,12 +377,20 @@ function handleConnectionClick(connectionId: number, event: Event) {
                                     <!-- Connection info -->
                                     <div
                                         v-if="port.connection"
-                                        class="flex items-center gap-1 text-muted-foreground dark:text-slate-400 hover:text-foreground dark:hover:text-slate-200"
-                                        @click="handleConnectionClick(port.connection.id, $event)"
+                                        class="flex items-center gap-1 text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-slate-200"
+                                        @click="
+                                            handleConnectionClick(
+                                                port.connection.id,
+                                                $event,
+                                            )
+                                        "
                                     >
                                         <Cable class="size-3" />
-                                        <span class="truncate max-w-[80px]">
-                                            {{ port.connection.remote_device?.name || 'Unknown' }}
+                                        <span class="max-w-[80px] truncate">
+                                            {{
+                                                port.connection.remote_device
+                                                    ?.name || 'Unknown'
+                                            }}
                                         </span>
                                     </div>
                                 </div>
@@ -381,31 +412,58 @@ function handleConnectionClick(connectionId: number, event: Event) {
                     </div>
                 </div>
             </TooltipTrigger>
-            <TooltipContent side="bottom" class="max-w-[250px] dark:bg-slate-800 dark:border-slate-600">
+            <TooltipContent
+                side="bottom"
+                class="max-w-[250px] dark:border-slate-600 dark:bg-slate-800"
+            >
                 <div class="space-y-2">
-                    <div class="font-medium dark:text-slate-100">{{ data.name }}</div>
-                    <div class="text-xs text-muted-foreground dark:text-slate-400 space-y-1">
+                    <div class="font-medium dark:text-slate-100">
+                        {{ data.name }}
+                    </div>
+                    <div
+                        class="space-y-1 text-xs text-muted-foreground dark:text-slate-400"
+                    >
                         <!-- Rack-specific tooltip content -->
                         <template v-if="isRack">
                             <div v-if="(data as any).row_name">
-                                <span class="font-medium dark:text-slate-300">Row:</span> {{ (data as any).row_name }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Row:</span
+                                >
+                                {{ (data as any).row_name }}
                             </div>
                             <div v-if="(data as any).room_name">
-                                <span class="font-medium dark:text-slate-300">Room:</span> {{ (data as any).room_name }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Room:</span
+                                >
+                                {{ (data as any).room_name }}
                             </div>
                             <div v-if="(data as any).datacenter_name">
-                                <span class="font-medium dark:text-slate-300">Datacenter:</span> {{ (data as any).datacenter_name }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Datacenter:</span
+                                >
+                                {{ (data as any).datacenter_name }}
                             </div>
                             <div v-if="(data as any).u_height">
-                                <span class="font-medium dark:text-slate-300">Height:</span> {{ (data as any).u_height }}U
+                                <span class="font-medium dark:text-slate-300"
+                                    >Height:</span
+                                >
+                                {{ (data as any).u_height }}U
                             </div>
                             <div>
-                                <span class="font-medium dark:text-slate-300">Devices:</span> {{ deviceCount }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Devices:</span
+                                >
+                                {{ deviceCount }}
                             </div>
                             <div>
-                                <span class="font-medium dark:text-slate-300">Connections:</span> {{ data.connection_count }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Connections:</span
+                                >
+                                {{ data.connection_count }}
                             </div>
-                            <div class="text-primary dark:text-sky-400 text-xs mt-2">
+                            <div
+                                class="mt-2 text-xs text-primary dark:text-sky-400"
+                            >
                                 Select a rack to see device connections
                             </div>
                         </template>
@@ -413,18 +471,33 @@ function handleConnectionClick(connectionId: number, event: Event) {
                         <!-- Device-specific tooltip content -->
                         <template v-else>
                             <div v-if="(data as any).asset_tag">
-                                <span class="font-medium dark:text-slate-300">Asset Tag:</span> {{ (data as any).asset_tag }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Asset Tag:</span
+                                >
+                                {{ (data as any).asset_tag }}
                             </div>
                             <div v-if="(data as any).device_type">
-                                <span class="font-medium dark:text-slate-300">Type:</span> {{ (data as any).device_type }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Type:</span
+                                >
+                                {{ (data as any).device_type }}
                             </div>
                             <div>
-                                <span class="font-medium dark:text-slate-300">Ports:</span> {{ portCount }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Ports:</span
+                                >
+                                {{ portCount }}
                             </div>
                             <div>
-                                <span class="font-medium dark:text-slate-300">Connections:</span> {{ data.connection_count }}
+                                <span class="font-medium dark:text-slate-300"
+                                    >Connections:</span
+                                >
+                                {{ data.connection_count }}
                             </div>
-                            <div v-if="!data.expanded && hasPorts" class="text-primary dark:text-sky-400 text-xs mt-2">
+                            <div
+                                v-if="!data.expanded && hasPorts"
+                                class="mt-2 text-xs text-primary dark:text-sky-400"
+                            >
                                 Click expand to view ports
                             </div>
                         </template>

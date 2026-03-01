@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { AlertTriangle, Calendar, Clock } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { Calendar, AlertTriangle, Clock } from 'lucide-vue-next';
 
 interface Props {
     dueDate: string | null;
@@ -18,19 +18,11 @@ const formattedDate = computed(() => {
     return date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
-        year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
+        year:
+            date.getFullYear() !== new Date().getFullYear()
+                ? 'numeric'
+                : undefined,
     });
-});
-
-// Get indicator classes based on due date status
-const indicatorClasses = computed(() => {
-    if (props.isOverdue) {
-        return 'text-red-600 dark:text-red-400';
-    }
-    if (props.isDueSoon) {
-        return 'text-amber-600 dark:text-amber-400';
-    }
-    return 'text-muted-foreground';
 });
 
 // Get background classes for badge style
@@ -82,7 +74,5 @@ const statusText = computed(() => {
             </span>
         </span>
     </div>
-    <div v-else class="text-sm text-muted-foreground">
-        -
-    </div>
+    <div v-else class="text-sm text-muted-foreground">-</div>
 </template>

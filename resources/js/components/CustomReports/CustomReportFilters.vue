@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Label } from '@/components/ui/label';
 import { ChevronDown, Filter, X } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 /**
  * TypeScript interfaces
@@ -13,12 +17,6 @@ import { ChevronDown, Filter, X } from 'lucide-vue-next';
 interface LocationOption {
     id: number;
     name: string;
-}
-
-interface LocationFilters {
-    datacenter_id: number | string | null;
-    room_id: number | string | null;
-    row_id: number | string | null;
 }
 
 interface Props {
@@ -33,19 +31,29 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: 'update:filters', value: Record<string, unknown>): void;
-    (e: 'locationChange', location: { type: 'datacenter' | 'room' | 'row'; id: number | null }): void;
+    (
+        e: 'locationChange',
+        location: { type: 'datacenter' | 'room' | 'row'; id: number | null },
+    ): void;
 }>();
 
 // Local filter state for cascading location filters
-const datacenterId = ref<string>(props.filters.datacenter_id ? String(props.filters.datacenter_id) : '');
-const roomId = ref<string>(props.filters.room_id ? String(props.filters.room_id) : '');
-const rowId = ref<string>(props.filters.row_id ? String(props.filters.row_id) : '');
+const datacenterId = ref<string>(
+    props.filters.datacenter_id ? String(props.filters.datacenter_id) : '',
+);
+const roomId = ref<string>(
+    props.filters.room_id ? String(props.filters.room_id) : '',
+);
+const rowId = ref<string>(
+    props.filters.row_id ? String(props.filters.row_id) : '',
+);
 
 // Mobile collapsible state
 const isOpen = ref(false);
 
 // Common select styling with ARIA-friendly focus states
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-input dark:bg-transparent dark:text-foreground';
 
 /**
  * Check if row filter should be shown (only for Capacity reports)
@@ -133,26 +141,34 @@ watch(rowId, () => {
 });
 
 // Sync with external filter changes
-watch(() => props.filters, (newFilters) => {
-    if (newFilters.datacenter_id !== undefined) {
-        const newDatacenterId = newFilters.datacenter_id ? String(newFilters.datacenter_id) : '';
-        if (datacenterId.value !== newDatacenterId) {
-            datacenterId.value = newDatacenterId;
+watch(
+    () => props.filters,
+    (newFilters) => {
+        if (newFilters.datacenter_id !== undefined) {
+            const newDatacenterId = newFilters.datacenter_id
+                ? String(newFilters.datacenter_id)
+                : '';
+            if (datacenterId.value !== newDatacenterId) {
+                datacenterId.value = newDatacenterId;
+            }
         }
-    }
-    if (newFilters.room_id !== undefined) {
-        const newRoomId = newFilters.room_id ? String(newFilters.room_id) : '';
-        if (roomId.value !== newRoomId) {
-            roomId.value = newRoomId;
+        if (newFilters.room_id !== undefined) {
+            const newRoomId = newFilters.room_id
+                ? String(newFilters.room_id)
+                : '';
+            if (roomId.value !== newRoomId) {
+                roomId.value = newRoomId;
+            }
         }
-    }
-    if (newFilters.row_id !== undefined) {
-        const newRowId = newFilters.row_id ? String(newFilters.row_id) : '';
-        if (rowId.value !== newRowId) {
-            rowId.value = newRowId;
+        if (newFilters.row_id !== undefined) {
+            const newRowId = newFilters.row_id ? String(newFilters.row_id) : '';
+            if (rowId.value !== newRowId) {
+                rowId.value = newRowId;
+            }
         }
-    }
-}, { deep: true });
+    },
+    { deep: true },
+);
 </script>
 
 <template>
@@ -205,7 +221,10 @@ watch(() => props.filters, (newFilters) => {
                                     {{ dc.name }}
                                 </option>
                             </select>
-                            <span id="datacenter-mobile-description" class="sr-only">
+                            <span
+                                id="datacenter-mobile-description"
+                                class="sr-only"
+                            >
                                 Select a datacenter to filter results
                             </span>
                         </div>
@@ -238,7 +257,9 @@ watch(() => props.filters, (newFilters) => {
 
                         <!-- Row Filter (visible when room selected, only for Capacity) -->
                         <div
-                            v-if="showRowFilter && roomId && rowOptions.length > 0"
+                            v-if="
+                                showRowFilter && roomId && rowOptions.length > 0
+                            "
                             class="space-y-2"
                         >
                             <Label for="row-mobile">Row</Label>
@@ -284,7 +305,9 @@ watch(() => props.filters, (newFilters) => {
     <div class="hidden lg:block">
         <Card>
             <CardHeader class="pb-2">
-                <CardTitle class="flex items-center justify-between text-sm font-medium">
+                <CardTitle
+                    class="flex items-center justify-between text-sm font-medium"
+                >
                     <span class="flex items-center gap-2">
                         <Filter class="size-4" aria-hidden="true" />
                         <span>Location Filters</span>
@@ -311,7 +334,11 @@ watch(() => props.filters, (newFilters) => {
                 </CardTitle>
             </CardHeader>
             <CardContent class="pt-0">
-                <div class="flex flex-row items-end gap-4" role="group" aria-label="Location filters">
+                <div
+                    class="flex flex-row items-end gap-4"
+                    role="group"
+                    aria-label="Location filters"
+                >
                     <!-- Datacenter Filter -->
                     <div class="flex-1">
                         <Label

@@ -1,41 +1,39 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Spinner } from '@/components/ui/spinner';
-import { Input } from '@/components/ui/input';
 import {
-    ArrowLeft,
-    AlertTriangle,
-    CheckCircle,
-    XCircle,
-    ClipboardCheck,
-    RefreshCw,
-    QrCode,
-    HelpCircle,
-} from 'lucide-vue-next';
-import DeviceVerificationTable from '@/components/audits/DeviceVerificationTable.vue';
-import EmptyRackVerificationSection from '@/components/audits/EmptyRackVerificationSection.vue';
-import DeviceVerificationActionDialog from '@/components/audits/DeviceVerificationActionDialog.vue';
-import BulkVerifyDevicesButton from '@/components/audits/BulkVerifyDevicesButton.vue';
-import QrScannerModal from '@/components/audits/QrScannerModal.vue';
-import DeviceSearchInput from '@/components/audits/DeviceSearchInput.vue';
-import { FeatureTour } from '@/components/help';
-import axios from 'axios';
-import {
+    bulkVerify as bulkVerifyAction,
+    discrepant as discrepantAction,
+    notFound as notFoundAction,
     index as verificationsIndex,
     stats as verificationsStats,
     verify as verifyAction,
-    notFound as notFoundAction,
-    discrepant as discrepantAction,
-    bulkVerify as bulkVerifyAction,
 } from '@/actions/App/Http/Controllers/Api/AuditDeviceVerificationController';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
+import BulkVerifyDevicesButton from '@/components/audits/BulkVerifyDevicesButton.vue';
+import DeviceSearchInput from '@/components/audits/DeviceSearchInput.vue';
+import DeviceVerificationActionDialog from '@/components/audits/DeviceVerificationActionDialog.vue';
+import DeviceVerificationTable from '@/components/audits/DeviceVerificationTable.vue';
+import QrScannerModal from '@/components/audits/QrScannerModal.vue';
+import HeadingSmall from '@/components/HeadingSmall.vue';
+import { FeatureTour } from '@/components/help';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
+import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import axios from 'axios';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    CheckCircle,
+    ClipboardCheck,
+    HelpCircle,
+    QrCode,
+    RefreshCw,
+    XCircle,
+} from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 interface ProgressStats {
     total: number;
@@ -129,7 +127,8 @@ interface Props {
 const props = defineProps<Props>();
 
 // Shared select styles with touch-friendly sizing
-const selectClass = 'flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 
 // State
 const isLoading = ref(true);
@@ -168,12 +167,14 @@ let echoChannel: any = null;
 // Available racks for filtering (derived from verifications)
 const availableRacks = computed(() => {
     const racksMap = new Map<number, RackData>();
-    verifications.value.forEach(v => {
+    verifications.value.forEach((v) => {
         if (v.rack && !racksMap.has(v.rack.id)) {
             racksMap.set(v.rack.id, v.rack);
         }
     });
-    return Array.from(racksMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return Array.from(racksMap.values()).sort((a, b) =>
+        a.name.localeCompare(b.name),
+    );
 });
 
 const breadcrumbs = computed<BreadcrumbItem[]>(() => [
@@ -193,7 +194,8 @@ const breadcrumbs = computed<BreadcrumbItem[]>(() => [
 
 // Get status badge class
 const getStatusBadgeClass = (status: string): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (status) {
         case 'pending':
             return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200`;
@@ -214,7 +216,7 @@ const verifiableSelectedCount = computed(() => {
         (v) =>
             selectedIds.value.has(v.id) &&
             v.verification_status === 'pending' &&
-            !v.is_locked
+            !v.is_locked,
     ).length;
 });
 
@@ -245,7 +247,7 @@ async function loadVerifications(): Promise<void> {
         }
 
         const response = await axios.get(
-            verificationsIndex.url(props.audit.id, { query: queryParams })
+            verificationsIndex.url(props.audit.id, { query: queryParams }),
         );
 
         verifications.value = response.data.data || [];
@@ -275,7 +277,9 @@ async function loadVerifications(): Promise<void> {
  */
 async function loadStats(): Promise<void> {
     try {
-        const response = await axios.get(verificationsStats.url(props.audit.id));
+        const response = await axios.get(
+            verificationsStats.url(props.audit.id),
+        );
         stats.value = response.data.data;
     } catch (error) {
         console.error('Error loading stats:', error);
@@ -380,13 +384,16 @@ async function handleVerificationAction(data: {
 /**
  * Handle bulk verify action
  */
-async function handleBulkVerify(): Promise<{ verified: number; skipped: number }> {
+async function handleBulkVerify(): Promise<{
+    verified: number;
+    skipped: number;
+}> {
     const selectedVerifiableIds = verifications.value
         .filter(
             (v) =>
                 selectedIds.value.has(v.id) &&
                 v.verification_status === 'pending' &&
-                !v.is_locked
+                !v.is_locked,
         )
         .map((v) => v.id);
 
@@ -428,7 +435,7 @@ function toggleSelection(id: number): void {
  */
 function toggleAllSelection(): void {
     const pendingVerifications = verifications.value.filter(
-        (v) => v.verification_status === 'pending' && !v.is_locked
+        (v) => v.verification_status === 'pending' && !v.is_locked,
     );
 
     if (pendingVerifications.every((v) => selectedIds.value.has(v.id))) {
@@ -447,7 +454,9 @@ function handleQrScan(deviceId: number): void {
     qrScannerOpen.value = false;
 
     // Check if device is in current filter results
-    const foundDevice = verifications.value.find(v => v.device?.id === deviceId);
+    const foundDevice = verifications.value.find(
+        (v) => v.device?.id === deviceId,
+    );
 
     if (foundDevice) {
         // Device in current results, scroll to it
@@ -486,7 +495,9 @@ function setupEchoChannel(): void {
         // Handle device verification completed events
         echoChannel.listen('.device.verified', (data: any) => {
             // Update the verification in the list
-            const index = verifications.value.findIndex((v) => v.id === data.verification.id);
+            const index = verifications.value.findIndex(
+                (v) => v.id === data.verification.id,
+            );
             if (index !== -1) {
                 verifications.value[index] = data.verification;
             }
@@ -496,7 +507,9 @@ function setupEchoChannel(): void {
 
         // Handle device locked events
         echoChannel.listen('.device.locked', (data: any) => {
-            const index = verifications.value.findIndex((v) => v.id === data.verification_id);
+            const index = verifications.value.findIndex(
+                (v) => v.id === data.verification_id,
+            );
             if (index !== -1) {
                 verifications.value[index].is_locked = true;
                 verifications.value[index].locked_by = data.locked_by;
@@ -506,7 +519,9 @@ function setupEchoChannel(): void {
 
         // Handle device unlocked events
         echoChannel.listen('.device.unlocked', (data: any) => {
-            const index = verifications.value.findIndex((v) => v.id === data.verification_id);
+            const index = verifications.value.findIndex(
+                (v) => v.id === data.verification_id,
+            );
             if (index !== -1) {
                 verifications.value[index].is_locked = false;
                 verifications.value[index].locked_by = null;
@@ -531,7 +546,12 @@ function cleanupEchoChannel(): void {
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-    return roomFilter.value || rackFilter.value || verificationStatusFilter.value || searchQuery.value;
+    return (
+        roomFilter.value ||
+        rackFilter.value ||
+        verificationStatusFilter.value ||
+        searchQuery.value
+    );
 });
 
 // Lifecycle hooks
@@ -551,10 +571,20 @@ onUnmounted(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:gap-6">
             <!-- Header -->
-            <div data-tour="audit-header" class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                data-tour="audit-header"
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <div class="flex items-start gap-4">
-                    <Link :href="AuditController.show.url(audit.id)" class="mt-1">
-                        <Button variant="ghost" size="icon" class="size-8 min-h-11 min-w-11 md:size-8 md:min-h-8 md:min-w-8 lg:size-8">
+                    <Link
+                        :href="AuditController.show.url(audit.id)"
+                        class="mt-1"
+                    >
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="size-8 min-h-11 min-w-11 md:size-8 md:min-h-8 md:min-w-8 lg:size-8"
+                        >
                             <ArrowLeft class="size-4" />
                         </Button>
                     </Link>
@@ -567,8 +597,12 @@ onUnmounted(() => {
                             <span :class="getStatusBadgeClass(audit.status)">
                                 {{ audit.status_label }}
                             </span>
-                            <Badge variant="outline">{{ audit.type_label }}</Badge>
-                            <Badge variant="secondary">{{ audit.scope_type_label }}</Badge>
+                            <Badge variant="outline">{{
+                                audit.type_label
+                            }}</Badge>
+                            <Badge variant="secondary">{{
+                                audit.scope_type_label
+                            }}</Badge>
                         </div>
                     </div>
                 </div>
@@ -608,48 +642,87 @@ onUnmounted(() => {
                 <CardContent>
                     <div class="flex flex-wrap gap-4 md:gap-6">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Total:</span>
-                            <Badge variant="secondary" class="text-base">{{ stats.total }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Total:</span
+                            >
+                            <Badge variant="secondary" class="text-base">{{
+                                stats.total
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <CheckCircle class="size-4 text-green-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Verified:</span>
-                            <Badge class="bg-green-600 text-base">{{ stats.verified }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Verified:</span
+                            >
+                            <Badge class="bg-green-600 text-base">{{
+                                stats.verified
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <XCircle class="size-4 text-red-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Not Found:</span>
-                            <Badge variant="destructive" class="text-base">{{ stats.not_found }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Not Found:</span
+                            >
+                            <Badge variant="destructive" class="text-base">{{
+                                stats.not_found
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <AlertTriangle class="size-4 text-yellow-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Discrepant:</span>
-                            <Badge variant="warning" class="text-base">{{ stats.discrepant }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Discrepant:</span
+                            >
+                            <Badge variant="warning" class="text-base">{{
+                                stats.discrepant
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <HelpCircle class="size-4 text-gray-500" />
-                            <span class="text-sm font-medium text-muted-foreground">Pending:</span>
-                            <Badge variant="outline" class="text-base">{{ stats.pending }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Pending:</span
+                            >
+                            <Badge variant="outline" class="text-base">{{
+                                stats.pending
+                            }}</Badge>
                         </div>
                     </div>
 
                     <!-- Progress bar - Increased height for tablet readability -->
                     <div v-if="stats.total > 0" class="mt-4">
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-muted-foreground">Completion</span>
-                            <span class="font-medium">{{ stats.progress_percentage.toFixed(1) }}%</span>
+                            <span class="text-muted-foreground"
+                                >Completion</span
+                            >
+                            <span class="font-medium"
+                                >{{
+                                    stats.progress_percentage.toFixed(1)
+                                }}%</span
+                            >
                         </div>
-                        <div class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+                        <div
+                            class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary"
+                        >
                             <div
                                 class="h-full bg-green-600 transition-all duration-300"
-                                :style="{ width: `${stats.progress_percentage}%` }"
+                                :style="{
+                                    width: `${stats.progress_percentage}%`,
+                                }"
                             />
                         </div>
                     </div>
 
                     <!-- Empty racks info -->
-                    <div v-if="stats.empty_racks_total > 0" class="mt-3 text-sm text-muted-foreground">
-                        Empty racks verified: {{ stats.empty_racks_verified }} / {{ stats.empty_racks_total }}
+                    <div
+                        v-if="stats.empty_racks_total > 0"
+                        class="mt-3 text-sm text-muted-foreground"
+                    >
+                        Empty racks verified: {{ stats.empty_racks_verified }} /
+                        {{ stats.empty_racks_total }}
                     </div>
 
                     <!-- Completion message -->
@@ -658,16 +731,26 @@ onUnmounted(() => {
                         class="mt-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400"
                     >
                         <CheckCircle class="size-4 shrink-0" />
-                        <span>All devices have been verified! The audit is now complete.</span>
+                        <span
+                            >All devices have been verified! The audit is now
+                            complete.</span
+                        >
                     </div>
                 </CardContent>
             </Card>
 
             <!-- Filter Controls - Stacked on tablet, inline on desktop -->
-            <div id="inventory-filter-controls" class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:flex-wrap lg:items-center" data-tour-target="filters">
+            <div
+                id="inventory-filter-controls"
+                class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:flex-wrap lg:items-center"
+                data-tour-target="filters"
+            >
                 <!-- Room Filter -->
                 <div v-if="rooms.length > 0" class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-muted-foreground whitespace-nowrap">Room:</span>
+                    <span
+                        class="text-sm font-medium whitespace-nowrap text-muted-foreground"
+                        >Room:</span
+                    >
                     <select
                         v-model="roomFilter"
                         :class="selectClass"
@@ -686,8 +769,15 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Rack Filter -->
-                <div v-if="availableRacks.length > 0" data-tour="rack-view" class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-muted-foreground whitespace-nowrap">Rack:</span>
+                <div
+                    v-if="availableRacks.length > 0"
+                    data-tour="rack-view"
+                    class="flex items-center gap-2"
+                >
+                    <span
+                        class="text-sm font-medium whitespace-nowrap text-muted-foreground"
+                        >Rack:</span
+                    >
                     <select
                         v-model="rackFilter"
                         :class="selectClass"
@@ -707,7 +797,10 @@ onUnmounted(() => {
 
                 <!-- Status Filter -->
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-muted-foreground whitespace-nowrap">Status:</span>
+                    <span
+                        class="text-sm font-medium whitespace-nowrap text-muted-foreground"
+                        >Status:</span
+                    >
                     <select
                         v-model="verificationStatusFilter"
                         :class="selectClass"
@@ -756,10 +849,15 @@ onUnmounted(() => {
             </div>
 
             <!-- Loading State -->
-            <div v-if="isLoading" class="flex items-center justify-center py-12">
+            <div
+                v-if="isLoading"
+                class="flex items-center justify-center py-12"
+            >
                 <div class="flex flex-col items-center gap-4">
                     <Spinner class="size-8" />
-                    <p class="text-sm text-muted-foreground">Loading devices...</p>
+                    <p class="text-sm text-muted-foreground">
+                        Loading devices...
+                    </p>
                 </div>
             </div>
 
@@ -771,9 +869,16 @@ onUnmounted(() => {
                 <AlertTriangle class="size-12 text-amber-500" />
                 <div class="text-center">
                     <h3 class="text-lg font-medium">Failed to load devices</h3>
-                    <p class="mt-1 text-sm text-muted-foreground">{{ loadError }}</p>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        {{ loadError }}
+                    </p>
                 </div>
-                <Button variant="outline" class="min-h-11 lg:min-h-9" @click="loadVerifications">Try Again</Button>
+                <Button
+                    variant="outline"
+                    class="min-h-11 lg:min-h-9"
+                    @click="loadVerifications"
+                    >Try Again</Button
+                >
             </div>
 
             <!-- Device Verification Table -->
@@ -796,9 +901,11 @@ onUnmounted(() => {
                 <ClipboardCheck class="mb-4 size-12 text-muted-foreground/50" />
                 <h3 class="text-lg font-medium">No devices found</h3>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    {{ hasActiveFilters
-                        ? 'Try adjusting your filters.'
-                        : 'No devices to verify for this audit.' }}
+                    {{
+                        hasActiveFilters
+                            ? 'Try adjusting your filters.'
+                            : 'No devices to verify for this audit.'
+                    }}
                 </p>
             </div>
 
@@ -808,14 +915,20 @@ onUnmounted(() => {
                 class="flex flex-col items-center justify-between gap-4 sm:flex-row"
             >
                 <p class="text-sm text-muted-foreground">
-                    Showing page {{ currentPage }} of {{ lastPage }} ({{ total }} devices)
+                    Showing page {{ currentPage }} of {{ lastPage }} ({{
+                        total
+                    }}
+                    devices)
                 </p>
                 <div class="flex gap-3">
                     <Button
                         variant="outline"
                         class="min-h-11 min-w-20 lg:min-h-9"
                         :disabled="currentPage <= 1"
-                        @click="currentPage--; loadVerifications()"
+                        @click="
+                            currentPage--;
+                            loadVerifications();
+                        "
                     >
                         Previous
                     </Button>
@@ -823,7 +936,10 @@ onUnmounted(() => {
                         variant="outline"
                         class="min-h-11 min-w-20 lg:min-h-9"
                         :disabled="currentPage >= lastPage"
-                        @click="currentPage++; loadVerifications()"
+                        @click="
+                            currentPage++;
+                            loadVerifications();
+                        "
                     >
                         Next
                     </Button>
@@ -840,10 +956,7 @@ onUnmounted(() => {
             />
 
             <!-- QR Scanner Modal -->
-            <QrScannerModal
-                v-model:open="qrScannerOpen"
-                @scan="handleQrScan"
-            />
+            <QrScannerModal v-model:open="qrScannerOpen" @scan="handleQrScan" />
         </div>
 
         <!-- Feature Tour for Inventory Audit Execution -->

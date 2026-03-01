@@ -6,27 +6,27 @@
  * lifecycle distribution, and asset counts.
  */
 
-import { ref, computed } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import {
     index as assetReportsIndex,
-    exportPdf,
     exportCsv,
+    exportPdf,
 } from '@/actions/App/Http/Controllers/AssetReportController';
+import {
+    AssetCountTables,
+    AssetFilters,
+    DeviceInventoryTable,
+    LifecycleDistributionChart,
+    WarrantyStatusCards,
+} from '@/components/AssetReports';
+import { ExportButtons } from '@/components/CapacityReports';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
 import { Package } from 'lucide-vue-next';
-import { ExportButtons } from '@/components/CapacityReports';
-import {
-    AssetFilters,
-    WarrantyStatusCards,
-    LifecycleDistributionChart,
-    DeviceInventoryTable,
-    AssetCountTables,
-} from '@/components/AssetReports';
+import { computed, ref } from 'vue';
 
 /**
  * Type definitions for Asset Reports props
@@ -210,7 +210,7 @@ const handlePageChange = (page: number) => {
 };
 
 // Handle sort change (currently just client-side)
-const handleSort = (column: string, direction: 'asc' | 'desc') => {
+const handleSort = (_column: string, _direction: 'asc' | 'desc') => {
     // Sorting is handled client-side in the DeviceInventoryTable component
     // Future enhancement: server-side sorting
 };
@@ -222,7 +222,9 @@ const handleSort = (column: string, direction: 'asc' | 'desc') => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header with title and export buttons -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     title="Asset Reports"
                     description="View device inventory, warranty status, lifecycle distribution, and asset counts across your datacenters."
@@ -252,7 +254,9 @@ const handleSort = (column: string, direction: 'asc' | 'desc') => {
                 <!-- Warranty Status Cards Skeleton -->
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Card v-for="i in 4" :key="i">
-                        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardHeader
+                            class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        >
                             <Skeleton class="h-4 w-20" />
                             <Skeleton class="size-8 rounded-full" />
                         </CardHeader>
@@ -303,8 +307,12 @@ const handleSort = (column: string, direction: 'asc' | 'desc') => {
             <template v-else>
                 <!-- Empty State -->
                 <div v-if="!hasDeviceData" class="py-12 text-center">
-                    <Package class="mx-auto mb-4 size-12 text-muted-foreground/50" />
-                    <h3 class="text-lg font-medium">No device data available</h3>
+                    <Package
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                    />
+                    <h3 class="text-lg font-medium">
+                        No device data available
+                    </h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         Add devices to see asset reports.
                     </p>
@@ -312,18 +320,24 @@ const handleSort = (column: string, direction: 'asc' | 'desc') => {
 
                 <template v-else>
                     <!-- Warranty Status Cards -->
-                    <WarrantyStatusCards :warranty-status="metrics.warrantyStatus" />
+                    <WarrantyStatusCards
+                        :warranty-status="metrics.warrantyStatus"
+                    />
 
                     <!-- Lifecycle Distribution and Asset Counts Row -->
                     <div class="grid gap-4 lg:grid-cols-2">
                         <!-- Lifecycle Distribution Chart -->
-                        <LifecycleDistributionChart :distribution="metrics.lifecycleDistribution" />
+                        <LifecycleDistributionChart
+                            :distribution="metrics.lifecycleDistribution"
+                        />
 
                         <!-- Asset Count Tables -->
                         <div class="flex flex-col gap-4">
                             <AssetCountTables
                                 :counts-by-type="metrics.countsByType"
-                                :counts-by-manufacturer="metrics.countsByManufacturer"
+                                :counts-by-manufacturer="
+                                    metrics.countsByManufacturer
+                                "
                             />
                         </div>
                     </div>

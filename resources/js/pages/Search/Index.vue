@@ -1,30 +1,32 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
 import { index as searchIndex } from '@/actions/App/Http/Controllers/SearchController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { debounce, cn } from '@/lib/utils';
+import { Head, router } from '@inertiajs/vue3';
 import {
     Building2,
-    Server,
-    HardDrive,
-    Plug,
     Cable,
     ChevronDown,
     ChevronRight,
     Filter,
-    X,
+    HardDrive,
+    Plug,
     Search,
     SearchX,
+    Server,
+    X,
 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -100,14 +102,6 @@ interface Props {
 
 const props = defineProps<Props>();
 
-// Breadcrumbs
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Search Results',
-        href: searchIndex.url(),
-    },
-];
-
 // Entity type configuration
 const entityTypes = [
     { key: 'datacenters' as const, label: 'Datacenters', icon: Building2 },
@@ -120,7 +114,9 @@ const entityTypes = [
 // Local filter state
 const searchQuery = ref(props.query || '');
 const activeEntityType = ref<string | null>(props.filters.type);
-const datacenterId = ref(props.filters.datacenter_id ? String(props.filters.datacenter_id) : '');
+const datacenterId = ref(
+    props.filters.datacenter_id ? String(props.filters.datacenter_id) : '',
+);
 const roomId = ref(props.filters.room_id ? String(props.filters.room_id) : '');
 const rowId = ref(props.filters.row_id ? String(props.filters.row_id) : '');
 const rackId = ref(props.filters.rack_id ? String(props.filters.rack_id) : '');
@@ -142,7 +138,8 @@ const expandedSections = ref<Record<string, boolean>>({
 const isFilterOpen = ref(false);
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
@@ -160,18 +157,21 @@ const hasActiveFilters = computed(() => {
 
 // Check if there are any results
 const hasResults = computed(() => {
-    return entityTypes.some(et => props.results[et.key]?.total > 0);
+    return entityTypes.some((et) => props.results[et.key]?.total > 0);
 });
 
 // Total results count
 const totalResults = computed(() => {
-    return entityTypes.reduce((sum, et) => sum + (props.results[et.key]?.total ?? 0), 0);
+    return entityTypes.reduce(
+        (sum, et) => sum + (props.results[et.key]?.total ?? 0),
+        0,
+    );
 });
 
 // Filter visible entity types based on active filter
 const visibleEntityTypes = computed(() => {
     if (activeEntityType.value) {
-        return entityTypes.filter(et => et.key === activeEntityType.value);
+        return entityTypes.filter((et) => et.key === activeEntityType.value);
     }
     return entityTypes;
 });
@@ -194,7 +194,9 @@ const applyFilters = () => {
     const params: Record<string, string | number | undefined> = {
         q: searchQuery.value || undefined,
         type: activeEntityType.value || undefined,
-        datacenter_id: datacenterId.value ? Number(datacenterId.value) : undefined,
+        datacenter_id: datacenterId.value
+            ? Number(datacenterId.value)
+            : undefined,
         room_id: roomId.value ? Number(roomId.value) : undefined,
         row_id: rowId.value ? Number(rowId.value) : undefined,
         rack_id: rackId.value ? Number(rackId.value) : undefined,
@@ -205,7 +207,7 @@ const applyFilters = () => {
     };
 
     // Remove undefined values
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
         if (params[key] === undefined) {
             delete params[key];
         }
@@ -216,9 +218,6 @@ const applyFilters = () => {
         preserveScroll: true,
     });
 };
-
-// Debounced filter application for text input
-const debouncedApplyFilters = debounce(applyFilters, 300);
 
 // Clear all filters
 const clearFilters = () => {
@@ -312,28 +311,20 @@ const highlightMatch = (text: string): string => {
 
     const query = searchQuery.value.trim();
     const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800/50 text-inherit px-0.5 rounded">$1</mark>');
+    return text.replace(
+        regex,
+        '<mark class="bg-yellow-200 dark:bg-yellow-800/50 text-inherit px-0.5 rounded">$1</mark>',
+    );
 };
 
 const escapeRegex = (str: string): string => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
-// Get badge variant for entity type
-const getEntityBadgeVariant = (type: string): 'default' | 'secondary' | 'outline' => {
-    switch (type) {
-        case 'datacenters':
-            return 'default';
-        case 'racks':
-        case 'devices':
-            return 'secondary';
-        default:
-            return 'outline';
-    }
-};
-
 // Get status badge variant
-const getStatusBadgeVariant = (status: string | undefined): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getStatusBadgeVariant = (
+    status: string | undefined,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     if (!status) return 'outline';
     switch (status) {
         case 'deployed':
@@ -360,24 +351,38 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
 
     <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
         <!-- Header -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <HeadingSmall
                 title="Search Results"
-                :description="query ? `Results for '${query}'` : 'Enter a search term to find datacenters, racks, devices, ports, and connections.'"
+                :description="
+                    query
+                        ? `Results for '${query}'`
+                        : 'Enter a search term to find datacenters, racks, devices, ports, and connections.'
+                "
             />
             <div v-if="totalResults > 0" class="text-sm text-muted-foreground">
-                {{ totalResults }} result{{ totalResults !== 1 ? 's' : '' }} found
+                {{ totalResults }} result{{ totalResults !== 1 ? 's' : '' }}
+                found
             </div>
         </div>
 
         <!-- Entity Type Filter Tabs -->
         <div class="flex items-center gap-4 overflow-x-auto pb-2">
-            <Tabs :default-value="activeEntityType || 'all'" @update:model-value="handleEntityTypeChange">
+            <Tabs
+                :default-value="activeEntityType || 'all'"
+                @update:model-value="handleEntityTypeChange"
+            >
                 <TabsList>
                     <TabsTrigger value="all" class="gap-2">
                         <Search class="size-4" />
                         <span class="hidden sm:inline">All</span>
-                        <Badge variant="secondary" class="ml-1 h-5 px-1.5 text-xs">{{ totalResults }}</Badge>
+                        <Badge
+                            variant="secondary"
+                            class="ml-1 h-5 px-1.5 text-xs"
+                            >{{ totalResults }}</Badge
+                        >
                     </TabsTrigger>
                     <TabsTrigger
                         v-for="entityType in entityTypes"
@@ -386,7 +391,9 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                         class="gap-2"
                     >
                         <component :is="entityType.icon" class="size-4" />
-                        <span class="hidden sm:inline">{{ entityType.label }}</span>
+                        <span class="hidden sm:inline">{{
+                            entityType.label
+                        }}</span>
                         <Badge
                             v-if="results[entityType.key]?.total > 0"
                             variant="secondary"
@@ -408,8 +415,12 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                     <Collapsible v-model:open="isFilterOpen">
                         <Card>
                             <CardHeader class="p-3">
-                                <CollapsibleTrigger class="flex w-full items-center justify-between">
-                                    <CardTitle class="flex items-center gap-2 text-base">
+                                <CollapsibleTrigger
+                                    class="flex w-full items-center justify-between"
+                                >
+                                    <CardTitle
+                                        class="flex items-center gap-2 text-base"
+                                    >
                                         <Filter class="size-4" />
                                         Filters
                                         <span
@@ -429,13 +440,17 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                 <CardContent class="space-y-4 pt-0">
                                     <!-- Hierarchical Location Filters -->
                                     <div class="space-y-2">
-                                        <Label for="datacenter-mobile">Datacenter</Label>
+                                        <Label for="datacenter-mobile"
+                                            >Datacenter</Label
+                                        >
                                         <select
                                             id="datacenter-mobile"
                                             v-model="datacenterId"
                                             :class="selectClass"
                                         >
-                                            <option value="">All Datacenters</option>
+                                            <option value="">
+                                                All Datacenters
+                                            </option>
                                             <option
                                                 v-for="dc in filterOptions.datacenters"
                                                 :key="dc.id"
@@ -446,7 +461,13 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                         </select>
                                     </div>
 
-                                    <div v-if="datacenterId && filterOptions.rooms.length > 0" class="space-y-2">
+                                    <div
+                                        v-if="
+                                            datacenterId &&
+                                            filterOptions.rooms.length > 0
+                                        "
+                                        class="space-y-2"
+                                    >
                                         <Label for="room-mobile">Room</Label>
                                         <select
                                             id="room-mobile"
@@ -464,7 +485,13 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                         </select>
                                     </div>
 
-                                    <div v-if="roomId && filterOptions.rows.length > 0" class="space-y-2">
+                                    <div
+                                        v-if="
+                                            roomId &&
+                                            filterOptions.rows.length > 0
+                                        "
+                                        class="space-y-2"
+                                    >
                                         <Label for="row-mobile">Row</Label>
                                         <select
                                             id="row-mobile"
@@ -482,7 +509,13 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                         </select>
                                     </div>
 
-                                    <div v-if="rowId && filterOptions.racks.length > 0" class="space-y-2">
+                                    <div
+                                        v-if="
+                                            rowId &&
+                                            filterOptions.racks.length > 0
+                                        "
+                                        class="space-y-2"
+                                    >
                                         <Label for="rack-mobile">Rack</Label>
                                         <select
                                             id="rack-mobile"
@@ -501,14 +534,21 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                     </div>
 
                                     <!-- Entity-Specific Filters -->
-                                    <div v-if="showDeviceFilters" class="space-y-2">
-                                        <Label for="lifecycle-status-mobile">Device Status</Label>
+                                    <div
+                                        v-if="showDeviceFilters"
+                                        class="space-y-2"
+                                    >
+                                        <Label for="lifecycle-status-mobile"
+                                            >Device Status</Label
+                                        >
                                         <select
                                             id="lifecycle-status-mobile"
                                             v-model="lifecycleStatus"
                                             :class="selectClass"
                                         >
-                                            <option value="">All Statuses</option>
+                                            <option value="">
+                                                All Statuses
+                                            </option>
                                             <option
                                                 v-for="option in filterOptions.lifecycleStatuses"
                                                 :key="option.value"
@@ -519,14 +559,21 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                         </select>
                                     </div>
 
-                                    <div v-if="showRackFilters" class="space-y-2">
-                                        <Label for="rack-status-mobile">Rack Status</Label>
+                                    <div
+                                        v-if="showRackFilters"
+                                        class="space-y-2"
+                                    >
+                                        <Label for="rack-status-mobile"
+                                            >Rack Status</Label
+                                        >
                                         <select
                                             id="rack-status-mobile"
                                             v-model="rackStatus"
                                             :class="selectClass"
                                         >
-                                            <option value="">All Statuses</option>
+                                            <option value="">
+                                                All Statuses
+                                            </option>
                                             <option
                                                 v-for="option in filterOptions.rackStatuses"
                                                 :key="option.value"
@@ -537,8 +584,13 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                         </select>
                                     </div>
 
-                                    <div v-if="showPortFilters" class="space-y-2">
-                                        <Label for="port-type-mobile">Port Type</Label>
+                                    <div
+                                        v-if="showPortFilters"
+                                        class="space-y-2"
+                                    >
+                                        <Label for="port-type-mobile"
+                                            >Port Type</Label
+                                        >
                                         <select
                                             id="port-type-mobile"
                                             v-model="portType"
@@ -555,14 +607,21 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                         </select>
                                     </div>
 
-                                    <div v-if="showPortFilters" class="space-y-2">
-                                        <Label for="port-status-mobile">Port Status</Label>
+                                    <div
+                                        v-if="showPortFilters"
+                                        class="space-y-2"
+                                    >
+                                        <Label for="port-status-mobile"
+                                            >Port Status</Label
+                                        >
                                         <select
                                             id="port-status-mobile"
                                             v-model="portStatus"
                                             :class="selectClass"
                                         >
-                                            <option value="">All Statuses</option>
+                                            <option value="">
+                                                All Statuses
+                                            </option>
                                             <option
                                                 v-for="option in filterOptions.portStatuses"
                                                 :key="option.value"
@@ -594,7 +653,9 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                 <div class="hidden lg:block">
                     <Card>
                         <CardHeader class="pb-3">
-                            <CardTitle class="flex items-center justify-between text-base">
+                            <CardTitle
+                                class="flex items-center justify-between text-base"
+                            >
                                 <span class="flex items-center gap-2">
                                     <Filter class="size-4" />
                                     Filters
@@ -612,7 +673,9 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                         <CardContent class="space-y-4">
                             <!-- Hierarchical Location Filters -->
                             <div class="space-y-2">
-                                <Label for="datacenter-desktop">Datacenter</Label>
+                                <Label for="datacenter-desktop"
+                                    >Datacenter</Label
+                                >
                                 <select
                                     id="datacenter-desktop"
                                     v-model="datacenterId"
@@ -629,7 +692,13 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                 </select>
                             </div>
 
-                            <div v-if="datacenterId && filterOptions.rooms.length > 0" class="space-y-2">
+                            <div
+                                v-if="
+                                    datacenterId &&
+                                    filterOptions.rooms.length > 0
+                                "
+                                class="space-y-2"
+                            >
                                 <Label for="room-desktop">Room</Label>
                                 <select
                                     id="room-desktop"
@@ -647,7 +716,10 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                 </select>
                             </div>
 
-                            <div v-if="roomId && filterOptions.rows.length > 0" class="space-y-2">
+                            <div
+                                v-if="roomId && filterOptions.rows.length > 0"
+                                class="space-y-2"
+                            >
                                 <Label for="row-desktop">Row</Label>
                                 <select
                                     id="row-desktop"
@@ -665,7 +737,10 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                 </select>
                             </div>
 
-                            <div v-if="rowId && filterOptions.racks.length > 0" class="space-y-2">
+                            <div
+                                v-if="rowId && filterOptions.racks.length > 0"
+                                class="space-y-2"
+                            >
                                 <Label for="rack-desktop">Rack</Label>
                                 <select
                                     id="rack-desktop"
@@ -685,7 +760,9 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
 
                             <!-- Entity-Specific Filters -->
                             <div v-if="showDeviceFilters" class="space-y-2">
-                                <Label for="lifecycle-status-desktop">Device Status</Label>
+                                <Label for="lifecycle-status-desktop"
+                                    >Device Status</Label
+                                >
                                 <select
                                     id="lifecycle-status-desktop"
                                     v-model="lifecycleStatus"
@@ -703,7 +780,9 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                             </div>
 
                             <div v-if="showRackFilters" class="space-y-2">
-                                <Label for="rack-status-desktop">Rack Status</Label>
+                                <Label for="rack-status-desktop"
+                                    >Rack Status</Label
+                                >
                                 <select
                                     id="rack-status-desktop"
                                     v-model="rackStatus"
@@ -739,7 +818,9 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                             </div>
 
                             <div v-if="showPortFilters" class="space-y-2">
-                                <Label for="port-status-desktop">Port Status</Label>
+                                <Label for="port-status-desktop"
+                                    >Port Status</Label
+                                >
                                 <select
                                     id="port-status-desktop"
                                     v-model="portStatus"
@@ -771,13 +852,19 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                     <h3 class="mb-2 text-lg font-semibold">No results found</h3>
                     <p class="mb-4 max-w-sm text-sm text-muted-foreground">
                         <template v-if="query">
-                            No matches found for "{{ query }}". Try adjusting your search or filters.
+                            No matches found for "{{ query }}". Try adjusting
+                            your search or filters.
                         </template>
                         <template v-else>
-                            Enter a search term to find datacenters, racks, devices, ports, and connections.
+                            Enter a search term to find datacenters, racks,
+                            devices, ports, and connections.
                         </template>
                     </p>
-                    <Button v-if="hasActiveFilters" variant="outline" @click="clearFilters">
+                    <Button
+                        v-if="hasActiveFilters"
+                        variant="outline"
+                        @click="clearFilters"
+                    >
                         <X class="mr-2 size-4" />
                         Clear Filters
                     </Button>
@@ -785,16 +872,24 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
 
                 <!-- Results by Entity Type -->
                 <div v-else class="space-y-4">
-                    <template v-for="entityType in visibleEntityTypes" :key="entityType.key">
+                    <template
+                        v-for="entityType in visibleEntityTypes"
+                        :key="entityType.key"
+                    >
                         <Card v-if="results[entityType.key]?.items.length > 0">
                             <!-- Section Header (Collapsible) -->
                             <CardHeader
                                 class="cursor-pointer pb-3"
                                 @click="toggleSection(entityType.key)"
                             >
-                                <CardTitle class="flex items-center justify-between">
+                                <CardTitle
+                                    class="flex items-center justify-between"
+                                >
                                     <div class="flex items-center gap-2">
-                                        <component :is="entityType.icon" class="size-5" />
+                                        <component
+                                            :is="entityType.icon"
+                                            class="size-5"
+                                        />
                                         <span>{{ entityType.label }}</span>
                                         <Badge variant="secondary">
                                             {{ results[entityType.key].total }}
@@ -802,69 +897,138 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
                                     </div>
                                     <ChevronDown
                                         class="size-4 transition-transform"
-                                        :class="{ '-rotate-90': !expandedSections[entityType.key] }"
+                                        :class="{
+                                            '-rotate-90':
+                                                !expandedSections[
+                                                    entityType.key
+                                                ],
+                                        }"
                                     />
                                 </CardTitle>
                             </CardHeader>
 
                             <!-- Section Content -->
-                            <CardContent v-if="expandedSections[entityType.key]" class="pt-0">
+                            <CardContent
+                                v-if="expandedSections[entityType.key]"
+                                class="pt-0"
+                            >
                                 <div class="divide-y">
                                     <div
-                                        v-for="item in results[entityType.key].items"
+                                        v-for="item in results[entityType.key]
+                                            .items"
                                         :key="item.id"
                                         class="group cursor-pointer py-3 transition-colors first:pt-0 last:pb-0 hover:bg-muted/50"
-                                        @click="navigateToEntity(item, entityType.key)"
+                                        @click="
+                                            navigateToEntity(
+                                                item,
+                                                entityType.key,
+                                            )
+                                        "
                                     >
-                                        <div class="flex items-start justify-between gap-4">
+                                        <div
+                                            class="flex items-start justify-between gap-4"
+                                        >
                                             <!-- Left: Name and Breadcrumb -->
                                             <div class="min-w-0 flex-1">
                                                 <!-- Entity Name with highlighted match -->
                                                 <div
                                                     class="font-medium group-hover:text-primary"
-                                                    v-html="highlightMatch(item.name)"
+                                                    v-html="
+                                                        highlightMatch(
+                                                            item.name,
+                                                        )
+                                                    "
                                                 />
 
                                                 <!-- Breadcrumb Location Context -->
-                                                <div class="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                                                    <span v-html="highlightMatch(item.breadcrumb)" />
+                                                <div
+                                                    class="mt-1 flex items-center gap-1 text-xs text-muted-foreground"
+                                                >
+                                                    <span
+                                                        v-html="
+                                                            highlightMatch(
+                                                                item.breadcrumb,
+                                                            )
+                                                        "
+                                                    />
                                                 </div>
 
                                                 <!-- Additional Metadata -->
                                                 <div
-                                                    v-if="item.matched_fields && item.matched_fields.length > 0"
+                                                    v-if="
+                                                        item.matched_fields &&
+                                                        item.matched_fields
+                                                            .length > 0
+                                                    "
                                                     class="mt-1 text-xs text-muted-foreground"
                                                 >
-                                                    Matched: {{ item.matched_fields.join(', ') }}
+                                                    Matched:
+                                                    {{
+                                                        item.matched_fields.join(
+                                                            ', ',
+                                                        )
+                                                    }}
                                                 </div>
                                             </div>
 
                                             <!-- Right: Status/Type Badges -->
-                                            <div class="flex shrink-0 items-center gap-2">
+                                            <div
+                                                class="flex shrink-0 items-center gap-2"
+                                            >
                                                 <!-- Device lifecycle status -->
                                                 <Badge
-                                                    v-if="entityType.key === 'devices' && item.lifecycle_status_label"
-                                                    :variant="getStatusBadgeVariant(item.lifecycle_status)"
+                                                    v-if="
+                                                        entityType.key ===
+                                                            'devices' &&
+                                                        item.lifecycle_status_label
+                                                    "
+                                                    :variant="
+                                                        getStatusBadgeVariant(
+                                                            item.lifecycle_status,
+                                                        )
+                                                    "
                                                 >
-                                                    {{ item.lifecycle_status_label }}
+                                                    {{
+                                                        item.lifecycle_status_label
+                                                    }}
                                                 </Badge>
 
                                                 <!-- Rack status -->
                                                 <Badge
-                                                    v-if="entityType.key === 'racks' && item.status_label"
-                                                    :variant="getStatusBadgeVariant(item.status)"
+                                                    v-if="
+                                                        entityType.key ===
+                                                            'racks' &&
+                                                        item.status_label
+                                                    "
+                                                    :variant="
+                                                        getStatusBadgeVariant(
+                                                            item.status,
+                                                        )
+                                                    "
                                                 >
                                                     {{ item.status_label }}
                                                 </Badge>
 
                                                 <!-- Port type and status -->
-                                                <template v-if="entityType.key === 'ports'">
-                                                    <Badge v-if="item.type_label" variant="outline">
+                                                <template
+                                                    v-if="
+                                                        entityType.key ===
+                                                        'ports'
+                                                    "
+                                                >
+                                                    <Badge
+                                                        v-if="item.type_label"
+                                                        variant="outline"
+                                                    >
                                                         {{ item.type_label }}
                                                     </Badge>
                                                     <Badge
                                                         v-if="item.status_label"
-                                                        :variant="getStatusBadgeVariant(item.status)"
+                                                        :variant="
+                                                            getStatusBadgeVariant(
+                                                                item.status,
+                                                            )
+                                                        "
                                                     >
                                                         {{ item.status_label }}
                                                     </Badge>
@@ -872,14 +1036,20 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
 
                                                 <!-- Connection cable color -->
                                                 <Badge
-                                                    v-if="entityType.key === 'connections' && item.cable_color"
+                                                    v-if="
+                                                        entityType.key ===
+                                                            'connections' &&
+                                                        item.cable_color
+                                                    "
                                                     variant="outline"
                                                 >
                                                     {{ item.cable_color }}
                                                 </Badge>
 
                                                 <!-- Arrow indicator -->
-                                                <ChevronRight class="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                                                <ChevronRight
+                                                    class="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -887,14 +1057,24 @@ const getStatusBadgeVariant = (status: string | undefined): 'default' | 'seconda
 
                                 <!-- Pagination Note (if more results exist) -->
                                 <div
-                                    v-if="results[entityType.key].total > results[entityType.key].items.length"
+                                    v-if="
+                                        results[entityType.key].total >
+                                        results[entityType.key].items.length
+                                    "
                                     class="mt-4 border-t pt-4 text-center text-sm text-muted-foreground"
                                 >
-                                    Showing {{ results[entityType.key].items.length }} of {{ results[entityType.key].total }} {{ entityType.label.toLowerCase() }}.
+                                    Showing
+                                    {{ results[entityType.key].items.length }}
+                                    of {{ results[entityType.key].total }}
+                                    {{ entityType.label.toLowerCase() }}.
                                     <button
                                         type="button"
                                         class="ml-1 text-primary hover:underline"
-                                        @click.stop="handleEntityTypeChange(entityType.key)"
+                                        @click.stop="
+                                            handleEntityTypeChange(
+                                                entityType.key,
+                                            )
+                                        "
                                     >
                                         View all
                                     </button>

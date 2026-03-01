@@ -1,27 +1,26 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import FindingController from '@/actions/App/Http/Controllers/FindingController';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
-import HeadingSmall from '@/components/HeadingSmall.vue';
+import FindingController from '@/actions/App/Http/Controllers/FindingController';
 import BulkActionToolbar from '@/components/BulkActionToolbar.vue';
 import DueDateIndicator from '@/components/DueDateIndicator.vue';
+import HeadingSmall from '@/components/HeadingSmall.vue';
 import RealtimeToastContainer from '@/components/notifications/RealtimeToastContainer.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { debounce } from '@/lib/utils';
 import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { debounce } from '@/lib/utils';
+import { type BreadcrumbItem } from '@/types';
 import type {
-    FindingsIndexProps,
-    FindingListData,
-    FindingSeverityValue,
-    FindingStatusValue,
     BulkOperationResponse,
+    FindingSeverityValue,
+    FindingsIndexProps,
+    FindingStatusValue,
 } from '@/types/finding';
+import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps<FindingsIndexProps>();
 
@@ -33,12 +32,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Real-time updates integration (null datacenter ID to listen to all updates)
-const {
-    pendingUpdates,
-    dismissUpdate,
-    clearUpdates,
-    onDataChange,
-} = useRealtimeUpdates(null);
+const { pendingUpdates, dismissUpdate, clearUpdates, onDataChange } =
+    useRealtimeUpdates(null);
 
 // Register handler for finding changes
 onDataChange('finding', (data) => {
@@ -80,7 +75,7 @@ const processingBulkStatus = ref(false);
 const allSelected = computed(() => {
     if (props.findings.data.length === 0) return false;
     return props.findings.data.every((finding) =>
-        selectedFindingIds.value.includes(finding.id)
+        selectedFindingIds.value.includes(finding.id),
     );
 });
 
@@ -119,10 +114,13 @@ const isSelected = (findingId: number): boolean => {
 const handleBulkAssign = async (userId: number) => {
     processingBulkAssign.value = true;
     try {
-        const response = await axios.post<BulkOperationResponse>('/findings/bulk-assign', {
-            finding_ids: selectedFindingIds.value,
-            assigned_to: userId,
-        });
+        const response = await axios.post<BulkOperationResponse>(
+            '/findings/bulk-assign',
+            {
+                finding_ids: selectedFindingIds.value,
+                assigned_to: userId,
+            },
+        );
 
         if (response.data.success) {
             selectedFindingIds.value = [];
@@ -139,10 +137,13 @@ const handleBulkAssign = async (userId: number) => {
 const handleBulkStatus = async (status: FindingStatusValue) => {
     processingBulkStatus.value = true;
     try {
-        const response = await axios.post<BulkOperationResponse>('/findings/bulk-status', {
-            finding_ids: selectedFindingIds.value,
-            status: status,
-        });
+        const response = await axios.post<BulkOperationResponse>(
+            '/findings/bulk-status',
+            {
+                finding_ids: selectedFindingIds.value,
+                status: status,
+            },
+        );
 
         if (response.data.success) {
             selectedFindingIds.value = [];
@@ -186,7 +187,7 @@ const applyFilters = () => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 };
 
@@ -194,9 +195,19 @@ watch(searchQuery, () => {
     debouncedSearch();
 });
 
-watch([statusFilter, severityFilter, categoryFilter, auditFilter, assigneeFilter, dueDateFilter], () => {
-    applyFilters();
-});
+watch(
+    [
+        statusFilter,
+        severityFilter,
+        categoryFilter,
+        auditFilter,
+        assigneeFilter,
+        dueDateFilter,
+    ],
+    () => {
+        applyFilters();
+    },
+);
 
 // Clear all filters
 const clearFilters = () => {
@@ -207,10 +218,14 @@ const clearFilters = () => {
     auditFilter.value = '';
     assigneeFilter.value = '';
     dueDateFilter.value = '';
-    router.get(FindingController.index.url(), {}, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        FindingController.index.url(),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 // Check if any filters are active
@@ -235,7 +250,8 @@ const goToPage = (url: string | null) => {
 
 // Get severity badge classes based on enum color() method output
 const getSeverityBadgeClass = (severity: FindingSeverityValue): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (severity) {
         case 'critical':
             return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
@@ -252,7 +268,8 @@ const getSeverityBadgeClass = (severity: FindingSeverityValue): string => {
 
 // Get status badge classes based on enum color() method output
 const getStatusBadgeClass = (status: FindingStatusValue): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (status) {
         case 'open':
             return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
@@ -270,7 +287,8 @@ const getStatusBadgeClass = (status: FindingStatusValue): string => {
 };
 
 // Common select styling for filters
-const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+const selectClass =
+    'flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 </script>
 
 <template>
@@ -279,7 +297,9 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header - responsive layout -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Finding Management"
                     description="Track, categorize, and resolve discrepancies discovered during datacenter audits."
@@ -287,7 +307,9 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
             </div>
 
             <!-- Filters - responsive stacking -->
-            <div class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:gap-4">
+            <div
+                class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:gap-4"
+            >
                 <div class="flex-1">
                     <Input
                         v-model="searchQuery"
@@ -407,17 +429,30 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                         <div class="flex-1">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="flex-1">
-                                    <h3 class="font-medium text-foreground">{{ finding.title }}</h3>
-                                    <p v-if="finding.audit" class="text-sm text-muted-foreground">
+                                    <h3 class="font-medium text-foreground">
+                                        {{ finding.title }}
+                                    </h3>
+                                    <p
+                                        v-if="finding.audit"
+                                        class="text-sm text-muted-foreground"
+                                    >
                                         <Link
-                                            :href="AuditController.show.url(finding.audit.id)"
+                                            :href="
+                                                AuditController.show.url(
+                                                    finding.audit.id,
+                                                )
+                                            "
                                             class="hover:underline"
                                         >
                                             {{ finding.audit.name }}
                                         </Link>
                                     </p>
                                 </div>
-                                <span :class="getSeverityBadgeClass(finding.severity)">
+                                <span
+                                    :class="
+                                        getSeverityBadgeClass(finding.severity)
+                                    "
+                                >
                                     {{ finding.severity_label }}
                                 </span>
                             </div>
@@ -427,7 +462,10 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                         <span :class="getStatusBadgeClass(finding.status)">
                             {{ finding.status_label }}
                         </span>
-                        <span v-if="finding.category" class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                        <span
+                            v-if="finding.category"
+                            class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                        >
                             {{ finding.category.name }}
                         </span>
                         <DueDateIndicator
@@ -437,9 +475,13 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                             :is-due-soon="finding.is_due_soon"
                         />
                     </div>
-                    <div class="flex items-center justify-between text-sm text-muted-foreground">
+                    <div
+                        class="flex items-center justify-between text-sm text-muted-foreground"
+                    >
                         <div class="flex items-center gap-4">
-                            <span v-if="finding.assignee">{{ finding.assignee.name }}</span>
+                            <span v-if="finding.assignee">{{
+                                finding.assignee.name
+                            }}</span>
                             <span v-else class="italic">Unassigned</span>
                         </div>
                         <Link :href="FindingController.show.url(finding.id)">
@@ -447,7 +489,10 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                         </Link>
                     </div>
                 </div>
-                <div v-if="findings.data.length === 0" class="rounded-lg border border-dashed py-12 text-center text-muted-foreground">
+                <div
+                    v-if="findings.data.length === 0"
+                    class="rounded-lg border border-dashed py-12 text-center text-muted-foreground"
+                >
                     No findings found.
                 </div>
             </div>
@@ -465,14 +510,46 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                         @update:checked="toggleSelectAll"
                                     />
                                 </th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Title</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Severity</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Status</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Due Date</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Category</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground lg:table-cell">Audit</th>
-                                <th class="hidden h-12 px-4 text-left font-medium text-muted-foreground xl:table-cell">Assignee</th>
-                                <th class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Title
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Severity
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Due Date
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Category
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground lg:table-cell"
+                                >
+                                    Audit
+                                </th>
+                                <th
+                                    class="hidden h-12 px-4 text-left font-medium text-muted-foreground xl:table-cell"
+                                >
+                                    Assignee
+                                </th>
+                                <th
+                                    class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -487,19 +564,33 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                 <td class="p-4">
                                     <Checkbox
                                         :checked="isSelected(finding.id)"
-                                        @update:checked="toggleSelection(finding.id)"
+                                        @update:checked="
+                                            toggleSelection(finding.id)
+                                        "
                                     />
                                 </td>
                                 <td class="p-4 font-medium">
-                                    <div class="max-w-xs truncate">{{ finding.title }}</div>
+                                    <div class="max-w-xs truncate">
+                                        {{ finding.title }}
+                                    </div>
                                 </td>
                                 <td class="p-4">
-                                    <span :class="getSeverityBadgeClass(finding.severity)">
+                                    <span
+                                        :class="
+                                            getSeverityBadgeClass(
+                                                finding.severity,
+                                            )
+                                        "
+                                    >
                                         {{ finding.severity_label }}
                                     </span>
                                 </td>
                                 <td class="p-4">
-                                    <span :class="getStatusBadgeClass(finding.status)">
+                                    <span
+                                        :class="
+                                            getStatusBadgeClass(finding.status)
+                                        "
+                                    >
                                         {{ finding.status_label }}
                                     </span>
                                 </td>
@@ -516,7 +607,11 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                 <td class="p-4 lg:table-cell">
                                     <Link
                                         v-if="finding.audit"
-                                        :href="AuditController.show.url(finding.audit.id)"
+                                        :href="
+                                            AuditController.show.url(
+                                                finding.audit.id,
+                                            )
+                                        "
                                         class="text-primary hover:underline"
                                     >
                                         {{ finding.audit.name }}
@@ -527,13 +622,24 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                     {{ finding.assignee?.name || '-' }}
                                 </td>
                                 <td class="p-4">
-                                    <Link :href="FindingController.show.url(finding.id)">
-                                        <Button variant="outline" size="sm">View</Button>
+                                    <Link
+                                        :href="
+                                            FindingController.show.url(
+                                                finding.id,
+                                            )
+                                        "
+                                    >
+                                        <Button variant="outline" size="sm"
+                                            >View</Button
+                                        >
                                     </Link>
                                 </td>
                             </tr>
                             <tr v-if="findings.data.length === 0">
-                                <td colspan="9" class="p-8 text-center text-muted-foreground">
+                                <td
+                                    colspan="9"
+                                    class="p-8 text-center text-muted-foreground"
+                                >
                                     No findings found.
                                 </td>
                             </tr>
@@ -543,11 +649,20 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
             </div>
 
             <!-- Pagination - responsive layout -->
-            <div v-if="findings.last_page > 1" class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div
+                v-if="findings.last_page > 1"
+                class="flex flex-col items-center justify-between gap-4 sm:flex-row"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ (findings.current_page - 1) * findings.per_page + 1 }} to
-                    {{ Math.min(findings.current_page * findings.per_page, findings.total) }} of
-                    {{ findings.total }} findings
+                    Showing
+                    {{ (findings.current_page - 1) * findings.per_page + 1 }} to
+                    {{
+                        Math.min(
+                            findings.current_page * findings.per_page,
+                            findings.total,
+                        )
+                    }}
+                    of {{ findings.total }} findings
                 </div>
                 <div class="flex flex-wrap justify-center gap-1">
                     <Button
@@ -557,8 +672,8 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                         size="sm"
                         :disabled="!link.url || link.active"
                         @click="goToPage(link.url)"
-                        v-html="link.label"
-                    />
+                        ><span v-html="link.label"
+                    /></Button>
                 </div>
             </div>
         </div>

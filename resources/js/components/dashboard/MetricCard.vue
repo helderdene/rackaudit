@@ -17,7 +17,7 @@ interface Props {
     icon?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     unit: '',
     sparklineColor: 'rgb(59, 130, 246)', // blue-500 default
     icon: undefined,
@@ -52,9 +52,13 @@ const formatValue = (value: number | string): string => {
 </script>
 
 <template>
-    <Card class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+            <CardTitle
+                class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+            >
                 {{ title }}
             </CardTitle>
         </CardHeader>
@@ -63,7 +67,9 @@ const formatValue = (value: number | string): string => {
                 <!-- Left side: metric value and trend -->
                 <div class="min-w-0 flex-1">
                     <div class="flex items-baseline gap-2">
-                        <div class="text-3xl font-bold text-foreground dark:text-foreground">
+                        <div
+                            class="text-3xl font-bold text-foreground dark:text-foreground"
+                        >
                             {{ formatValue(value) }}{{ unit }}
                         </div>
                         <div
@@ -73,7 +79,9 @@ const formatValue = (value: number | string): string => {
                             {{ trend.percentage }}
                         </div>
                     </div>
-                    <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground/80">
+                    <p
+                        class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground/80"
+                    >
                         {{ trend.change }}
                     </p>
                 </div>

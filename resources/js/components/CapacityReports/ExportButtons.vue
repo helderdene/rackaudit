@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
-import { FileText, FileSpreadsheet, Loader2 } from 'lucide-vue-next';
+import { FileSpreadsheet, FileText, Loader2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface Props {
     pdfUrl: string;

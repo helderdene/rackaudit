@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, FileBarChart } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    FileBarChart,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 import TableLoadingSkeleton from './TableLoadingSkeleton.vue';
 
 /**
@@ -53,8 +59,12 @@ const emit = defineEmits<{
  * Calculate the range of records being displayed
  */
 const displayRange = computed(() => {
-    const start = (props.pagination.current_page - 1) * props.pagination.per_page + 1;
-    const end = Math.min(props.pagination.current_page * props.pagination.per_page, props.pagination.total);
+    const start =
+        (props.pagination.current_page - 1) * props.pagination.per_page + 1;
+    const end = Math.min(
+        props.pagination.current_page * props.pagination.per_page,
+        props.pagination.total,
+    );
     return { start, end };
 });
 
@@ -77,13 +87,17 @@ const groupedData = computed((): GroupData[] => {
     const groups: Map<string, GroupData> = new Map();
 
     for (const row of props.data) {
-        const groupValue = String(row['_group'] ?? row[props.groupBy] ?? 'Unknown');
+        const groupValue = String(
+            row['_group'] ?? row[props.groupBy] ?? 'Unknown',
+        );
 
         if (!groups.has(groupValue)) {
             groups.set(groupValue, {
                 group_value: groupValue,
                 rows: [],
-                subtotals: row['_subtotals'] as Record<string, number | string> | undefined,
+                subtotals: row['_subtotals'] as
+                    | Record<string, number | string>
+                    | undefined,
             });
         }
 
@@ -169,7 +183,11 @@ function goToPage(page: number): void {
 const paginationLinks = computed(() => {
     const current = props.pagination.current_page;
     const last = props.pagination.last_page;
-    const links: Array<{ page: number | null; label: string; active: boolean }> = [];
+    const links: Array<{
+        page: number | null;
+        label: string;
+        active: boolean;
+    }> = [];
 
     // Always show first page
     if (last > 0) {
@@ -182,7 +200,11 @@ const paginationLinks = computed(() => {
     }
 
     // Show pages around current
-    for (let i = Math.max(2, current - 1); i <= Math.min(last - 1, current + 1); i++) {
+    for (
+        let i = Math.max(2, current - 1);
+        i <= Math.min(last - 1, current + 1);
+        i++
+    ) {
         if (i !== 1 && i !== last) {
             links.push({ page: i, label: String(i), active: current === i });
         }
@@ -195,23 +217,14 @@ const paginationLinks = computed(() => {
 
     // Always show last page
     if (last > 1) {
-        links.push({ page: last, label: String(last), active: current === last });
+        links.push({
+            page: last,
+            label: String(last),
+            active: current === last,
+        });
     }
 
     return links;
-});
-
-/**
- * Simplified pagination links for mobile view
- */
-const mobilePaginationLinks = computed(() => {
-    const current = props.pagination.current_page;
-    const last = props.pagination.last_page;
-
-    // On mobile, just show current page indicator
-    return [
-        { page: current, label: String(current), active: true },
-    ];
 });
 
 /**
@@ -227,23 +240,20 @@ function isFirstColumn(index: number): boolean {
         <CardHeader class="pb-3">
             <div class="flex items-center justify-between">
                 <CardTitle class="text-base">Preview Results</CardTitle>
-                <span
-                    class="text-sm text-muted-foreground"
-                    aria-live="polite"
-                >
-                    {{ pagination.total.toLocaleString() }} record{{ pagination.total !== 1 ? 's' : '' }}
+                <span class="text-sm text-muted-foreground" aria-live="polite">
+                    {{ pagination.total.toLocaleString() }} record{{
+                        pagination.total !== 1 ? 's' : ''
+                    }}
                 </span>
             </div>
         </CardHeader>
         <CardContent>
             <!-- Loading Skeleton -->
-            <div
-                v-if="loading"
-                role="status"
-                aria-label="Loading preview data"
-            >
+            <div v-if="loading" role="status" aria-label="Loading preview data">
                 <TableLoadingSkeleton :column-count="columns.length" />
-                <span class="sr-only">Loading preview data, please wait...</span>
+                <span class="sr-only"
+                    >Loading preview data, please wait...</span
+                >
             </div>
 
             <!-- Data Table -->
@@ -262,10 +272,12 @@ function isFirstColumn(index: number): boolean {
                                     v-for="(column, index) in columns"
                                     :key="column.key"
                                     :class="[
-                                        'h-11 whitespace-nowrap px-4 font-medium text-muted-foreground',
+                                        'h-11 px-4 font-medium whitespace-nowrap text-muted-foreground',
                                         getCellAlignment(column.key),
                                         // Sticky first column on mobile
-                                        isFirstColumn(index) ? 'sticky left-0 z-10 bg-muted/50 sm:static sm:z-auto' : '',
+                                        isFirstColumn(index)
+                                            ? 'sticky left-0 z-10 bg-muted/50 sm:static sm:z-auto'
+                                            : '',
                                     ]"
                                     scope="col"
                                 >
@@ -276,17 +288,32 @@ function isFirstColumn(index: number): boolean {
                         <tbody>
                             <!-- Grouped data display -->
                             <template v-if="isGrouped">
-                                <template v-for="group in groupedData" :key="group.group_value">
+                                <template
+                                    v-for="group in groupedData"
+                                    :key="group.group_value"
+                                >
                                     <!-- Group Header -->
                                     <tr class="border-b bg-muted/30">
                                         <td
                                             :colspan="columns.length"
                                             class="p-3 font-medium"
                                         >
-                                            <span class="text-primary">{{ groupBy }}</span>:
+                                            <span class="text-primary">{{
+                                                groupBy
+                                            }}</span
+                                            >:
                                             {{ group.group_value }}
-                                            <span class="ml-2 text-sm text-muted-foreground">
-                                                ({{ group.rows.length }} record{{ group.rows.length !== 1 ? 's' : '' }})
+                                            <span
+                                                class="ml-2 text-sm text-muted-foreground"
+                                            >
+                                                ({{
+                                                    group.rows.length
+                                                }}
+                                                record{{
+                                                    group.rows.length !== 1
+                                                        ? 's'
+                                                        : ''
+                                                }})
                                             </span>
                                         </td>
                                     </tr>
@@ -298,35 +325,64 @@ function isFirstColumn(index: number): boolean {
                                         class="border-b transition-colors hover:bg-muted/50"
                                     >
                                         <td
-                                            v-for="(column, colIndex) in columns"
+                                            v-for="(
+                                                column, colIndex
+                                            ) in columns"
                                             :key="column.key"
                                             :class="[
-                                                'whitespace-nowrap p-4',
+                                                'p-4 whitespace-nowrap',
                                                 getCellAlignment(column.key),
                                                 // Sticky first column on mobile
-                                                isFirstColumn(colIndex) ? 'sticky left-0 z-10 bg-background sm:static sm:z-auto' : '',
+                                                isFirstColumn(colIndex)
+                                                    ? 'sticky left-0 z-10 bg-background sm:static sm:z-auto'
+                                                    : '',
                                             ]"
                                         >
-                                            {{ formatCellValue(row[column.key], column.key) }}
+                                            {{
+                                                formatCellValue(
+                                                    row[column.key],
+                                                    column.key,
+                                                )
+                                            }}
                                         </td>
                                     </tr>
 
                                     <!-- Group Subtotals -->
-                                    <tr v-if="group.subtotals" class="border-b bg-muted/20 font-medium">
+                                    <tr
+                                        v-if="group.subtotals"
+                                        class="border-b bg-muted/20 font-medium"
+                                    >
                                         <td
-                                            v-for="(column, colIndex) in columns"
+                                            v-for="(
+                                                column, colIndex
+                                            ) in columns"
                                             :key="column.key"
                                             :class="[
-                                                'whitespace-nowrap p-4',
+                                                'p-4 whitespace-nowrap',
                                                 getCellAlignment(column.key),
-                                                isFirstColumn(colIndex) ? 'sticky left-0 z-10 bg-muted/20 sm:static sm:z-auto' : '',
+                                                isFirstColumn(colIndex)
+                                                    ? 'sticky left-0 z-10 bg-muted/20 sm:static sm:z-auto'
+                                                    : '',
                                             ]"
                                         >
                                             <template v-if="colIndex === 0">
                                                 Subtotal
                                             </template>
-                                            <template v-else-if="group.subtotals && column.key in group.subtotals">
-                                                {{ formatCellValue(group.subtotals[column.key], column.key) }}
+                                            <template
+                                                v-else-if="
+                                                    group.subtotals &&
+                                                    column.key in
+                                                        group.subtotals
+                                                "
+                                            >
+                                                {{
+                                                    formatCellValue(
+                                                        group.subtotals[
+                                                            column.key
+                                                        ],
+                                                        column.key,
+                                                    )
+                                                }}
                                             </template>
                                         </td>
                                     </tr>
@@ -344,13 +400,20 @@ function isFirstColumn(index: number): boolean {
                                         v-for="(column, colIndex) in columns"
                                         :key="column.key"
                                         :class="[
-                                            'whitespace-nowrap p-4',
+                                            'p-4 whitespace-nowrap',
                                             getCellAlignment(column.key),
                                             // Sticky first column on mobile
-                                            isFirstColumn(colIndex) ? 'sticky left-0 z-10 bg-background sm:static sm:z-auto' : '',
+                                            isFirstColumn(colIndex)
+                                                ? 'sticky left-0 z-10 bg-background sm:static sm:z-auto'
+                                                : '',
                                         ]"
                                     >
-                                        {{ formatCellValue(row[column.key], column.key) }}
+                                        {{
+                                            formatCellValue(
+                                                row[column.key],
+                                                column.key,
+                                            )
+                                        }}
                                     </td>
                                 </tr>
                             </template>
@@ -373,31 +436,49 @@ function isFirstColumn(index: number): boolean {
                             @click="goToPage(pagination.current_page - 1)"
                             aria-label="Go to previous page"
                         >
-                            <ChevronLeft class="mr-1 size-4" aria-hidden="true" />
+                            <ChevronLeft
+                                class="mr-1 size-4"
+                                aria-hidden="true"
+                            />
                             Prev
                         </Button>
 
-                        <span class="text-sm text-muted-foreground" aria-current="page">
-                            Page {{ pagination.current_page }} of {{ pagination.last_page }}
+                        <span
+                            class="text-sm text-muted-foreground"
+                            aria-current="page"
+                        >
+                            Page {{ pagination.current_page }} of
+                            {{ pagination.last_page }}
                         </span>
 
                         <Button
                             variant="outline"
                             size="sm"
-                            :disabled="pagination.current_page === pagination.last_page"
+                            :disabled="
+                                pagination.current_page === pagination.last_page
+                            "
                             @click="goToPage(pagination.current_page + 1)"
                             aria-label="Go to next page"
                         >
                             Next
-                            <ChevronRight class="ml-1 size-4" aria-hidden="true" />
+                            <ChevronRight
+                                class="ml-1 size-4"
+                                aria-hidden="true"
+                            />
                         </Button>
                     </div>
 
                     <!-- Desktop Pagination: Full layout -->
-                    <div class="hidden sm:flex sm:flex-col sm:items-center sm:justify-between sm:gap-4 md:flex-row">
-                        <p class="text-sm text-muted-foreground" aria-live="polite">
-                            Showing {{ displayRange.start.toLocaleString() }} to {{ displayRange.end.toLocaleString() }}
-                            of {{ pagination.total.toLocaleString() }} records
+                    <div
+                        class="hidden sm:flex sm:flex-col sm:items-center sm:justify-between sm:gap-4 md:flex-row"
+                    >
+                        <p
+                            class="text-sm text-muted-foreground"
+                            aria-live="polite"
+                        >
+                            Showing {{ displayRange.start.toLocaleString() }} to
+                            {{ displayRange.end.toLocaleString() }} of
+                            {{ pagination.total.toLocaleString() }} records
                         </p>
 
                         <div class="flex items-center gap-1">
@@ -410,7 +491,10 @@ function isFirstColumn(index: number): boolean {
                                 @click="goToPage(1)"
                                 aria-label="Go to first page"
                             >
-                                <ChevronsLeft class="size-4" aria-hidden="true" />
+                                <ChevronsLeft
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
                             </Button>
 
                             <!-- Previous Page -->
@@ -422,17 +506,27 @@ function isFirstColumn(index: number): boolean {
                                 @click="goToPage(pagination.current_page - 1)"
                                 aria-label="Go to previous page"
                             >
-                                <ChevronLeft class="size-4" aria-hidden="true" />
+                                <ChevronLeft
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
                             </Button>
 
                             <!-- Page Numbers -->
-                            <template v-for="link in paginationLinks" :key="link.label">
+                            <template
+                                v-for="link in paginationLinks"
+                                :key="link.label"
+                            >
                                 <Button
                                     v-if="link.page !== null"
-                                    :variant="link.active ? 'default' : 'outline'"
+                                    :variant="
+                                        link.active ? 'default' : 'outline'
+                                    "
                                     size="sm"
                                     class="size-8"
-                                    :aria-current="link.active ? 'page' : undefined"
+                                    :aria-current="
+                                        link.active ? 'page' : undefined
+                                    "
                                     :aria-label="`Go to page ${link.page}`"
                                     @click="goToPage(link.page)"
                                 >
@@ -452,11 +546,17 @@ function isFirstColumn(index: number): boolean {
                                 variant="outline"
                                 size="icon"
                                 class="size-8"
-                                :disabled="pagination.current_page === pagination.last_page"
+                                :disabled="
+                                    pagination.current_page ===
+                                    pagination.last_page
+                                "
                                 @click="goToPage(pagination.current_page + 1)"
                                 aria-label="Go to next page"
                             >
-                                <ChevronRight class="size-4" aria-hidden="true" />
+                                <ChevronRight
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
                             </Button>
 
                             <!-- Last Page -->
@@ -464,11 +564,17 @@ function isFirstColumn(index: number): boolean {
                                 variant="outline"
                                 size="icon"
                                 class="size-8"
-                                :disabled="pagination.current_page === pagination.last_page"
+                                :disabled="
+                                    pagination.current_page ===
+                                    pagination.last_page
+                                "
                                 @click="goToPage(pagination.last_page)"
                                 aria-label="Go to last page"
                             >
-                                <ChevronsRight class="size-4" aria-hidden="true" />
+                                <ChevronsRight
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
                             </Button>
                         </div>
                     </div>
@@ -478,7 +584,10 @@ function isFirstColumn(index: number): boolean {
             <!-- Empty State -->
             <template v-else>
                 <div class="py-12 text-center" role="status">
-                    <FileBarChart class="mx-auto mb-4 size-12 text-muted-foreground/50" aria-hidden="true" />
+                    <FileBarChart
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                        aria-hidden="true"
+                    />
                     <h3 class="text-lg font-medium">No data available</h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         No records match your current configuration.

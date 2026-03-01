@@ -1,5 +1,5 @@
-import '../css/app.css';
 import 'primeicons/primeicons.css';
+import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import Aura from '@primevue/themes/aura';

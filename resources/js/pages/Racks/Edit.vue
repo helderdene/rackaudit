@@ -1,20 +1,27 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
+import RackController from '@/actions/App/Http/Controllers/RackController';
 import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import RowController from '@/actions/App/Http/Controllers/RowController';
-import RackController from '@/actions/App/Http/Controllers/RackController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import RackForm from '@/components/racks/RackForm.vue';
-import DeleteRackDialog from '@/components/racks/DeleteRackDialog.vue';
 import RealtimeToastContainer from '@/components/notifications/RealtimeToastContainer.vue';
+import DeleteRackDialog from '@/components/racks/DeleteRackDialog.vue';
+import RackForm from '@/components/racks/RackForm.vue';
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/AppLayout.vue';
 import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { RealtimeUpdate } from '@/types/realtime';
-import type { DatacenterReference, RoomReference, RowReference, RackData, SelectOption, PduOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    PduOption,
+    RackData,
+    RoomReference,
+    RowReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Head, router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -43,23 +50,42 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: 'Rows',
-        href: RowController.index.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RowController.index.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: props.row.name,
-        href: RowController.show.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RowController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
     {
         title: 'Racks',
-        href: RackController.index.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RackController.index.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
     {
         title: `Edit ${props.rack.name}`,
-        href: RackController.edit.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id, rack: props.rack.id }),
+        href: RackController.edit.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+            rack: props.rack.id,
+        }),
     },
 ];
 
@@ -67,12 +93,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 const hasConflict = ref(false);
 
 // Real-time updates integration
-const {
-    pendingUpdates,
-    dismissUpdate,
-    clearUpdates,
-    onDataChange,
-} = useRealtimeUpdates(props.datacenter.id);
+const { pendingUpdates, dismissUpdate, clearUpdates, onDataChange } =
+    useRealtimeUpdates(props.datacenter.id);
 
 // Register handler for rack changes - detect if this specific rack was modified
 onDataChange('rack', (data) => {
@@ -87,7 +109,8 @@ onDataChange('rack', (data) => {
 const updatesWithConflicts = computed<RealtimeUpdate[]>(() => {
     return pendingUpdates.value.map((update) => ({
         ...update,
-        isConflict: update.entityType === 'rack' && update.entityId === props.rack.id,
+        isConflict:
+            update.entityType === 'rack' && update.entityId === props.rack.id,
     }));
 });
 
@@ -96,7 +119,11 @@ function handleDismissUpdate(id: string): void {
     dismissUpdate(id);
     // If dismissing a conflict update, reset conflict state
     const update = pendingUpdates.value.find((u) => u.id === id);
-    if (update && update.entityType === 'rack' && update.entityId === props.rack.id) {
+    if (
+        update &&
+        update.entityType === 'rack' &&
+        update.entityId === props.rack.id
+    ) {
         hasConflict.value = false;
     }
 }
@@ -148,11 +175,14 @@ function handleClearAll(): void {
                 <div
                     class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
                 >
-                    <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                    <div
+                        class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                    >
                         <p class="font-medium">Warning</p>
                         <p class="text-sm">
                             Once deleted, this rack will be permanently removed.
-                            Any PDUs assigned to this rack will be detached but not deleted.
+                            Any PDUs assigned to this rack will be detached but
+                            not deleted.
                         </p>
                     </div>
                     <DeleteRackDialog
@@ -163,9 +193,7 @@ function handleClearAll(): void {
                         :rack-name="rack.name"
                         :has-pdus="(rack.pdu_ids?.length ?? 0) > 0"
                     >
-                        <Button variant="destructive">
-                            Delete Rack
-                        </Button>
+                        <Button variant="destructive"> Delete Rack </Button>
                     </DeleteRackDialog>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Badge, type BadgeVariants } from '@/components/ui/badge';
+import { computed } from 'vue';
 
 interface Props {
     status: 'active' | 'inactive' | 'suspended';

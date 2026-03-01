@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import type { PlaceholderDevice } from '@/types/rooms';
-import { Server, HardDrive, Network, Monitor, Zap, Cable, Box, ExternalLink } from 'lucide-vue-next';
+import {
+    Box,
+    Cable,
+    ExternalLink,
+    HardDrive,
+    Monitor,
+    Network,
+    Server,
+    Zap,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     /** The device to display details for */
@@ -31,22 +40,24 @@ const emit = defineEmits<{
 /**
  * Get badge variant based on device type
  */
-const badgeVariant = computed((): 'default' | 'secondary' | 'outline' | 'success' | 'warning' => {
-    if (!props.device) return 'outline';
-    switch (props.device.type.toLowerCase()) {
-        case 'server':
-            return 'default';
-        case 'storage':
-            return 'secondary';
-        case 'switch':
-            return 'success';
-        case 'ups':
-        case 'pdu':
-            return 'warning';
-        default:
-            return 'outline';
-    }
-});
+const badgeVariant = computed(
+    (): 'default' | 'secondary' | 'outline' | 'success' | 'warning' => {
+        if (!props.device) return 'outline';
+        switch (props.device.type.toLowerCase()) {
+            case 'server':
+                return 'default';
+            case 'storage':
+                return 'secondary';
+            case 'switch':
+                return 'success';
+            case 'ups':
+            case 'pdu':
+                return 'warning';
+            default:
+                return 'outline';
+        }
+    },
+);
 
 /**
  * Get icon component based on device type
@@ -139,7 +150,9 @@ function handleViewDetails() {
                 <!-- U-Size -->
                 <div class="flex items-center justify-between">
                     <span class="text-sm text-muted-foreground">Size</span>
-                    <span class="text-sm font-medium">{{ device.u_size }}U</span>
+                    <span class="text-sm font-medium"
+                        >{{ device.u_size }}U</span
+                    >
                 </div>
 
                 <!-- Width -->
@@ -151,7 +164,9 @@ function handleViewDetails() {
                 <!-- Position (if placed) -->
                 <template v-if="device.start_u !== undefined && device.face">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-muted-foreground">Position</span>
+                        <span class="text-sm text-muted-foreground"
+                            >Position</span
+                        >
                         <span class="text-sm font-medium">
                             U{{ device.start_u }}
                             <template v-if="device.u_size > 1">
@@ -167,14 +182,19 @@ function handleViewDetails() {
                 </template>
 
                 <!-- Not placed indicator -->
-                <div v-else class="rounded-md bg-muted p-3 text-center text-sm text-muted-foreground">
+                <div
+                    v-else
+                    class="rounded-md bg-muted p-3 text-center text-sm text-muted-foreground"
+                >
                     This device has not been placed in the rack yet.
                 </div>
 
                 <!-- Device ID (for reference) -->
                 <div class="flex items-center justify-between border-t pt-4">
                     <span class="text-sm text-muted-foreground">ID</span>
-                    <code class="text-xs text-muted-foreground">{{ device.id }}</code>
+                    <code class="text-xs text-muted-foreground">{{
+                        device.id
+                    }}</code>
                 </div>
             </div>
 

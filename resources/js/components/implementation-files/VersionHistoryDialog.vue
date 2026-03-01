@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import axios from 'axios';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -11,7 +8,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Download, Eye, RotateCcw, History, GitCompare } from 'lucide-vue-next';
+import { Skeleton } from '@/components/ui/skeleton';
+import axios from 'axios';
+import { Download, Eye, GitCompare, History, RotateCcw } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 export interface VersionFile {
     id: number;
@@ -51,7 +51,11 @@ const emit = defineEmits<{
     (e: 'version-restored', newVersion: VersionFile): void;
     (e: 'close'): void;
     (e: 'open-restore-dialog', version: VersionFile): void;
-    (e: 'open-compare-dialog', leftVersion: VersionFile, rightVersion: VersionFile): void;
+    (
+        e: 'open-compare-dialog',
+        leftVersion: VersionFile,
+        rightVersion: VersionFile,
+    ): void;
 }>();
 
 const isOpen = ref(false);
@@ -68,12 +72,16 @@ const fetchVersions = async () => {
 
     try {
         const response = await axios.get<{ data: VersionFile[] }>(
-            `/datacenters/${props.datacenterId}/implementation-files/${props.fileId}/versions`
+            `/datacenters/${props.datacenterId}/implementation-files/${props.fileId}/versions`,
         );
         versions.value = response.data.data;
     } catch (err) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        error.value = axiosError.response?.data?.message || 'Failed to load version history.';
+        const axiosError = err as {
+            response?: { data?: { message?: string } };
+        };
+        error.value =
+            axiosError.response?.data?.message ||
+            'Failed to load version history.';
     } finally {
         isLoading.value = false;
     }
@@ -138,10 +146,7 @@ const formatDate = (dateString: string): string => {
  * Check if a file supports preview (PDF or images)
  */
 const supportsPreview = (mimeType: string): boolean => {
-    return (
-        mimeType === 'application/pdf' ||
-        mimeType.startsWith('image/')
-    );
+    return mimeType === 'application/pdf' || mimeType.startsWith('image/');
 };
 
 /**
@@ -256,13 +261,16 @@ defineExpose({
                         :key="version.id"
                         class="rounded-lg border p-4 transition-colors"
                         :class="{
-                            'border-primary/50 bg-primary/5': version.is_latest_version,
+                            'border-primary/50 bg-primary/5':
+                                version.is_latest_version,
                             'hover:bg-muted/50': !version.is_latest_version,
                         }"
                     >
-                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div
+                            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
                             <!-- Version info -->
-                            <div class="flex-1 min-w-0">
+                            <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
                                     <span class="font-medium">
                                         Version {{ version.version_number }}
@@ -275,13 +283,21 @@ defineExpose({
                                         Current
                                     </Badge>
                                 </div>
-                                <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                                    <span>{{ formatDate(version.created_at) }}</span>
+                                <div
+                                    class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground"
+                                >
+                                    <span>{{
+                                        formatDate(version.created_at)
+                                    }}</span>
                                     <span class="hidden sm:inline">-</span>
-                                    <span v-if="version.uploader">{{ version.uploader.name }}</span>
+                                    <span v-if="version.uploader">{{
+                                        version.uploader.name
+                                    }}</span>
                                     <span v-else>Unknown user</span>
                                     <span class="hidden sm:inline">-</span>
-                                    <span>{{ version.formatted_file_size }}</span>
+                                    <span>{{
+                                        version.formatted_file_size
+                                    }}</span>
                                 </div>
                             </div>
 
@@ -295,19 +311,26 @@ defineExpose({
                                     @click="downloadFile(version)"
                                 >
                                     <Download class="size-3.5" />
-                                    <span class="sr-only sm:not-sr-only">Download</span>
+                                    <span class="sr-only sm:not-sr-only"
+                                        >Download</span
+                                    >
                                 </Button>
 
                                 <!-- Preview button (PDF/images only) -->
                                 <Button
-                                    v-if="supportsPreview(version.mime_type) && version.preview_url"
+                                    v-if="
+                                        supportsPreview(version.mime_type) &&
+                                        version.preview_url
+                                    "
                                     variant="outline"
                                     size="sm"
                                     class="h-8 gap-1"
                                     @click="openPreview(version)"
                                 >
                                     <Eye class="size-3.5" />
-                                    <span class="sr-only sm:not-sr-only">Preview</span>
+                                    <span class="sr-only sm:not-sr-only"
+                                        >Preview</span
+                                    >
                                 </Button>
 
                                 <!-- Compare button (if there's an older version) -->
@@ -319,19 +342,25 @@ defineExpose({
                                     @click="handleCompare(version, index)"
                                 >
                                     <GitCompare class="size-3.5" />
-                                    <span class="sr-only sm:not-sr-only">Compare</span>
+                                    <span class="sr-only sm:not-sr-only"
+                                        >Compare</span
+                                    >
                                 </Button>
 
                                 <!-- Restore button (hidden for current version) -->
                                 <Button
-                                    v-if="canRestore && !version.is_latest_version"
+                                    v-if="
+                                        canRestore && !version.is_latest_version
+                                    "
                                     variant="outline"
                                     size="sm"
                                     class="h-8 gap-1"
                                     @click="handleRestore(version)"
                                 >
                                     <RotateCcw class="size-3.5" />
-                                    <span class="sr-only sm:not-sr-only">Restore</span>
+                                    <span class="sr-only sm:not-sr-only"
+                                        >Restore</span
+                                    >
                                 </Button>
                             </div>
                         </div>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import InputError from '@/components/InputError.vue';
-import { Plus, Trash2, GripVertical, Mail } from 'lucide-vue-next';
+import { GripVertical, Mail, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Member {
     email: string;
@@ -43,7 +43,11 @@ const validateEmail = (email: string): boolean => {
         inputError.value = 'Please enter a valid email address';
         return false;
     }
-    if (members.value.some(m => m.email.toLowerCase() === email.trim().toLowerCase())) {
+    if (
+        members.value.some(
+            (m) => m.email.toLowerCase() === email.trim().toLowerCase(),
+        )
+    ) {
         inputError.value = 'This email is already in the list';
         return false;
     }
@@ -121,10 +125,14 @@ const getMemberError = (index: number): string | undefined => {
                         :key="`member-${index}`"
                         class="flex items-center gap-3 px-3 py-2 transition-colors hover:bg-muted/50"
                     >
-                        <GripVertical class="h-4 w-4 shrink-0 cursor-grab text-muted-foreground" />
+                        <GripVertical
+                            class="h-4 w-4 shrink-0 cursor-grab text-muted-foreground"
+                        />
                         <Mail class="h-4 w-4 shrink-0 text-muted-foreground" />
                         <div class="min-w-0 flex-1">
-                            <span class="truncate text-sm">{{ member.email }}</span>
+                            <span class="truncate text-sm">{{
+                                member.email
+                            }}</span>
                             <InputError
                                 v-if="getMemberError(index)"
                                 :message="getMemberError(index)"
@@ -153,7 +161,8 @@ const getMemberError = (index: number): string | undefined => {
         >
             <Mail class="h-8 w-8 text-muted-foreground" />
             <p class="mt-2 text-sm text-muted-foreground">
-                No members added yet. Enter an email address above to add members.
+                No members added yet. Enter an email address above to add
+                members.
             </p>
         </div>
     </div>

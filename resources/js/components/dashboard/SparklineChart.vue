@@ -6,17 +6,17 @@
  * Renders at fixed dimensions (80px x 30px) without axes, labels, or tooltips.
  */
 
+import {
+    CategoryScale,
+    Chart as ChartJS,
+    LinearScale,
+    LineElement,
+    PointElement,
+    type ChartData,
+    type ChartOptions,
+} from 'chart.js';
 import { computed, onMounted, ref, watch } from 'vue';
 import { Line } from 'vue-chartjs';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    type ChartOptions,
-    type ChartData,
-} from 'chart.js';
 
 // Register only the Chart.js components needed for sparklines
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
@@ -104,13 +104,17 @@ watch(
     () => {
         // Chart will automatically update via computed properties
     },
-    { deep: true }
+    { deep: true },
 );
 </script>
 
 <template>
     <div class="sparkline-chart" style="width: 80px; height: 30px">
-        <Line v-if="isMounted && data.length > 0" :data="chartData" :options="chartOptions" />
+        <Line
+            v-if="isMounted && data.length > 0"
+            :data="chartData"
+            :options="chartOptions"
+        />
     </div>
 </template>
 

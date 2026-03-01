@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,14 +11,15 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import { CheckCircle, AlertTriangle, Server } from 'lucide-vue-next';
+import { AlertTriangle, CheckCircle, Server } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface Props {
     selectedCount: number;
     verifiableCount: number;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const emit = defineEmits<{
     (e: 'bulk-verify'): Promise<{ verified: number; skipped: number }>;
@@ -91,43 +91,62 @@ function handleClose(): void {
                             <Server class="size-5 text-green-600" />
                             <span>
                                 <strong>{{ verifiableCount }}</strong>
-                                {{ verifiableCount === 1 ? 'device' : 'devices' }}
+                                {{
+                                    verifiableCount === 1 ? 'device' : 'devices'
+                                }}
                                 will be marked as verified.
                             </span>
                         </div>
-                        <div v-if="selectedCount !== verifiableCount" class="mt-2 flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                        <div
+                            v-if="selectedCount !== verifiableCount"
+                            class="mt-2 flex items-center gap-2 text-amber-600 dark:text-amber-400"
+                        >
                             <AlertTriangle class="size-4" />
                             <span>
                                 {{ selectedCount - verifiableCount }}
-                                {{ selectedCount - verifiableCount === 1 ? 'device' : 'devices' }}
+                                {{
+                                    selectedCount - verifiableCount === 1
+                                        ? 'device'
+                                        : 'devices'
+                                }}
                                 will be skipped (already verified or locked).
                             </span>
                         </div>
                     </div>
                     <p class="text-sm text-muted-foreground">
-                        Only devices with "Pending" verification status that are not locked by another user can be bulk verified.
+                        Only devices with "Pending" verification status that are
+                        not locked by another user can be bulk verified.
                     </p>
                 </div>
 
                 <!-- Success result -->
-                <div
-                    v-else-if="result"
-                    class="space-y-4"
-                >
-                    <div class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400">
+                <div v-else-if="result" class="space-y-4">
+                    <div
+                        class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400"
+                    >
                         <CheckCircle class="size-6" />
                         <div>
-                            <div class="font-medium">Bulk Verification Complete</div>
+                            <div class="font-medium">
+                                Bulk Verification Complete
+                            </div>
                             <div class="text-sm">
                                 {{ result.verified }}
-                                {{ result.verified === 1 ? 'device' : 'devices' }}
+                                {{
+                                    result.verified === 1 ? 'device' : 'devices'
+                                }}
                                 verified successfully.
                             </div>
                         </div>
                     </div>
-                    <div v-if="result.skipped > 0" class="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                    <div
+                        v-if="result.skipped > 0"
+                        class="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400"
+                    >
                         <AlertTriangle class="size-4" />
-                        <span>{{ result.skipped }} devices were skipped (locked by another user).</span>
+                        <span
+                            >{{ result.skipped }} devices were skipped (locked
+                            by another user).</span
+                        >
                     </div>
                 </div>
 
@@ -147,7 +166,9 @@ function handleClose(): void {
             <DialogFooter class="gap-2">
                 <template v-if="!result && !error">
                     <DialogClose as-child>
-                        <Button variant="secondary" :disabled="isLoading">Cancel</Button>
+                        <Button variant="secondary" :disabled="isLoading"
+                            >Cancel</Button
+                        >
                     </DialogClose>
                     <Button
                         :disabled="isLoading || verifiableCount === 0"

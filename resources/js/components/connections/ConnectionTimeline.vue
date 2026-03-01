@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Button } from '@/components/ui/button';
+import ConnectionHistoryController from '@/actions/App/Http/Controllers/ConnectionHistoryController';
 import ActionBadge from '@/components/ActionBadge.vue';
 import ActivityDetailPanel from '@/components/activity/ActivityDetailPanel.vue';
-import { ChevronDown, ChevronUp, Clock, User as UserIcon, Globe } from 'lucide-vue-next';
-import ConnectionHistoryController from '@/actions/App/Http/Controllers/ConnectionHistoryController';
+import { Button } from '@/components/ui/button';
+import {
+    ChevronDown,
+    ChevronUp,
+    Clock,
+    Globe,
+    User as UserIcon,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface TimelineEntry {
     id: number;
@@ -64,7 +70,7 @@ const loadTimeline = async (page: number = 1) => {
                     Accept: 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
-            }
+            },
         );
 
         if (!response.ok) throw new Error('Failed to load timeline');
@@ -191,7 +197,7 @@ defineExpose({
     <div class="connection-timeline">
         <!-- Loading skeleton -->
         <div v-if="isLoading && entries.length === 0" class="space-y-4">
-            <div v-for="i in 3" :key="i" class="flex gap-4 animate-pulse">
+            <div v-for="i in 3" :key="i" class="flex animate-pulse gap-4">
                 <div class="flex flex-col items-center">
                     <div class="h-3 w-3 rounded-full bg-muted"></div>
                     <div class="h-full w-0.5 bg-muted"></div>
@@ -205,15 +211,19 @@ defineExpose({
         </div>
 
         <!-- Empty state -->
-        <div v-else-if="!hasEntries && !isLoading" class="text-center py-8">
+        <div v-else-if="!hasEntries && !isLoading" class="py-8 text-center">
             <Clock class="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <p class="mt-4 text-sm text-muted-foreground">No history entries found</p>
+            <p class="mt-4 text-sm text-muted-foreground">
+                No history entries found
+            </p>
         </div>
 
         <!-- Timeline entries -->
         <div v-else class="relative">
             <!-- Timeline line -->
-            <div class="absolute left-[5px] top-0 bottom-0 w-0.5 bg-border"></div>
+            <div
+                class="absolute top-0 bottom-0 left-[5px] w-0.5 bg-border"
+            ></div>
 
             <div class="space-y-0">
                 <div
@@ -237,16 +247,18 @@ defineExpose({
 
                     <!-- Entry content -->
                     <div
-                        class="flex-1 pb-6 cursor-pointer group"
+                        class="group flex-1 cursor-pointer pb-6"
                         @click="toggleEntryExpansion(entry.id)"
                     >
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                        <div
+                            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3"
+                        >
                             <!-- Action badge -->
                             <ActionBadge :action="entry.action" />
 
                             <!-- Timestamp with hover tooltip -->
                             <span
-                                class="text-sm text-muted-foreground flex items-center gap-1"
+                                class="flex items-center gap-1 text-sm text-muted-foreground"
                                 :title="formatExactDateTime(entry.created_at)"
                             >
                                 <Clock class="h-3.5 w-3.5" />
@@ -255,15 +267,25 @@ defineExpose({
 
                             <!-- Expand indicator -->
                             <component
-                                :is="isExpanded(entry.id) ? ChevronUp : ChevronDown"
-                                class="h-4 w-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+                                :is="
+                                    isExpanded(entry.id)
+                                        ? ChevronUp
+                                        : ChevronDown
+                                "
+                                class="ml-auto h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
                             />
                         </div>
 
                         <!-- User info -->
-                        <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                            <span class="flex items-center gap-1.5 text-foreground">
-                                <UserIcon class="h-3.5 w-3.5 text-muted-foreground" />
+                        <div
+                            class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm"
+                        >
+                            <span
+                                class="flex items-center gap-1.5 text-foreground"
+                            >
+                                <UserIcon
+                                    class="h-3.5 w-3.5 text-muted-foreground"
+                                />
                                 {{ formatUserDisplay(entry) }}
                             </span>
 
@@ -285,7 +307,10 @@ defineExpose({
                             leave-from-class="opacity-100 max-h-[1000px]"
                             leave-to-class="opacity-0 max-h-0"
                         >
-                            <div v-if="isExpanded(entry.id)" class="overflow-hidden">
+                            <div
+                                v-if="isExpanded(entry.id)"
+                                class="overflow-hidden"
+                            >
                                 <ActivityDetailPanel
                                     :old-values="entry.old_values"
                                     :new-values="entry.new_values"

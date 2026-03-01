@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -9,8 +8,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserPlus, ArrowRightCircle, Pause, X, ChevronDown, Loader2 } from 'lucide-vue-next';
-import type { FindingStatusValue, FilterOption } from '@/types/finding';
+import type { FilterOption, FindingStatusValue } from '@/types/finding';
+import {
+    ArrowRightCircle,
+    ChevronDown,
+    Loader2,
+    Pause,
+    UserPlus,
+    X,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     selectedCount: number;
@@ -41,9 +48,14 @@ const statusDropdownOpen = ref(false);
 const bulkStatusOptions = computed(() => {
     // Allow: Open, In Progress, Deferred for bulk operations
     // Resolved is excluded as it requires individual resolution notes
-    const allowedStatuses = ['open', 'in_progress', 'pending_review', 'deferred'];
+    const allowedStatuses = [
+        'open',
+        'in_progress',
+        'pending_review',
+        'deferred',
+    ];
     return props.statusOptions.filter((option) =>
-        allowedStatuses.includes(option.value as string)
+        allowedStatuses.includes(option.value as string),
     );
 });
 
@@ -69,7 +81,9 @@ const handleClear = () => {
 };
 
 // Check if any operation is processing
-const isProcessing = computed(() => props.processingAssign || props.processingStatus);
+const isProcessing = computed(
+    () => props.processingAssign || props.processingStatus,
+);
 </script>
 
 <template>
@@ -79,7 +93,9 @@ const isProcessing = computed(() => props.processingAssign || props.processingSt
     >
         <!-- Selection count -->
         <div class="flex items-center gap-2 text-sm font-medium">
-            <span class="flex size-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+            <span
+                class="flex size-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground"
+            >
                 {{ selectedCount }}
             </span>
             <span class="text-muted-foreground">
@@ -92,18 +108,20 @@ const isProcessing = computed(() => props.processingAssign || props.processingSt
         <!-- Assign dropdown -->
         <DropdownMenu v-model:open="assignDropdownOpen">
             <DropdownMenuTrigger as-child>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    :disabled="isProcessing"
-                >
-                    <Loader2 v-if="processingAssign" class="mr-1 size-4 animate-spin" />
+                <Button variant="outline" size="sm" :disabled="isProcessing">
+                    <Loader2
+                        v-if="processingAssign"
+                        class="mr-1 size-4 animate-spin"
+                    />
                     <UserPlus v-else class="mr-1 size-4" />
                     Assign to...
                     <ChevronDown class="ml-1 size-4" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" class="max-h-64 w-56 overflow-y-auto">
+            <DropdownMenuContent
+                align="start"
+                class="max-h-64 w-56 overflow-y-auto"
+            >
                 <DropdownMenuLabel>Select Assignee</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -113,10 +131,7 @@ const isProcessing = computed(() => props.processingAssign || props.processingSt
                 >
                     {{ option.label }}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    v-if="assigneeOptions.length === 0"
-                    disabled
-                >
+                <DropdownMenuItem v-if="assigneeOptions.length === 0" disabled>
                     No users available
                 </DropdownMenuItem>
             </DropdownMenuContent>
@@ -125,12 +140,11 @@ const isProcessing = computed(() => props.processingAssign || props.processingSt
         <!-- Status change dropdown -->
         <DropdownMenu v-model:open="statusDropdownOpen">
             <DropdownMenuTrigger as-child>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    :disabled="isProcessing"
-                >
-                    <Loader2 v-if="processingStatus" class="mr-1 size-4 animate-spin" />
+                <Button variant="outline" size="sm" :disabled="isProcessing">
+                    <Loader2
+                        v-if="processingStatus"
+                        class="mr-1 size-4 animate-spin"
+                    />
                     <ArrowRightCircle v-else class="mr-1 size-4" />
                     Change Status...
                     <ChevronDown class="ml-1 size-4" />

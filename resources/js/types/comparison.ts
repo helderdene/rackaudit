@@ -3,7 +3,7 @@
  * Used by Comparison UI components for the Expected vs Actual Comparison feature
  */
 
-import type { CableTypeValue, ConnectionPortInfo } from './connections';
+import type { CableTypeValue } from './connections';
 
 /**
  * Discrepancy type values matching backend DiscrepancyType enum

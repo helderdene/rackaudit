@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
+import {
+    csv as csvTemplate,
+    excel as excelTemplate,
+} from '@/actions/App/Http/Controllers/ConnectionTemplateController';
+import FileDropzone from '@/components/imports/FileDropzone.vue';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import {
     Dialog,
     DialogClose,
@@ -15,9 +15,19 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import FileDropzone from '@/components/imports/FileDropzone.vue';
-import { Upload, AlertCircle, CheckCircle2, Download, FileSpreadsheet, FileText } from 'lucide-vue-next';
-import { excel as excelTemplate, csv as csvTemplate } from '@/actions/App/Http/Controllers/ConnectionTemplateController';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
+import { router } from '@inertiajs/vue3';
+import {
+    AlertCircle,
+    CheckCircle2,
+    Download,
+    FileSpreadsheet,
+    FileText,
+    Upload,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     datacenterId: number;
@@ -95,40 +105,46 @@ const handleUpload = () => {
         formData.append('description', description.value.trim());
     }
 
-    router.post(`/datacenters/${props.datacenterId}/implementation-files`, formData, {
-        forceFormData: true,
-        preserveScroll: true,
-        onProgress: (progress) => {
-            if (progress.percentage) {
-                uploadProgress.value = progress.percentage;
-            }
-        },
-        onSuccess: () => {
-            uploadSuccess.value = true;
-            isUploading.value = false;
-            emit('file-uploaded');
+    router.post(
+        `/datacenters/${props.datacenterId}/implementation-files`,
+        formData,
+        {
+            forceFormData: true,
+            preserveScroll: true,
+            onProgress: (progress) => {
+                if (progress.percentage) {
+                    uploadProgress.value = progress.percentage;
+                }
+            },
+            onSuccess: () => {
+                uploadSuccess.value = true;
+                isUploading.value = false;
+                emit('file-uploaded');
 
-            // Close dialog after a brief success message
-            setTimeout(() => {
-                isOpen.value = false;
-                resetForm();
-            }, 1500);
-        },
-        onError: (errors) => {
-            isUploading.value = false;
-            uploadProgress.value = 0;
+                // Close dialog after a brief success message
+                setTimeout(() => {
+                    isOpen.value = false;
+                    resetForm();
+                }, 1500);
+            },
+            onError: (errors) => {
+                isUploading.value = false;
+                uploadProgress.value = 0;
 
-            // Extract error message
-            if (typeof errors === 'object' && errors !== null) {
-                const errorMessages = Object.values(errors);
-                uploadError.value = errorMessages.length > 0
-                    ? String(errorMessages[0])
-                    : 'An error occurred while uploading the file.';
-            } else {
-                uploadError.value = 'An error occurred while uploading the file.';
-            }
+                // Extract error message
+                if (typeof errors === 'object' && errors !== null) {
+                    const errorMessages = Object.values(errors);
+                    uploadError.value =
+                        errorMessages.length > 0
+                            ? String(errorMessages[0])
+                            : 'An error occurred while uploading the file.';
+                } else {
+                    uploadError.value =
+                        'An error occurred while uploading the file.';
+                }
+            },
         },
-    });
+    );
 };
 
 const handleDialogClose = () => {
@@ -153,7 +169,10 @@ const downloadCsvTemplate = () => {
 </script>
 
 <template>
-    <Dialog v-model:open="isOpen" @update:open="(open) => !open && handleDialogClose()">
+    <Dialog
+        v-model:open="isOpen"
+        @update:open="(open) => !open && handleDialogClose()"
+    >
         <DialogTrigger as-child>
             <slot>
                 <Button :disabled="disabled" class="gap-2">
@@ -166,23 +185,30 @@ const downloadCsvTemplate = () => {
             <DialogHeader class="space-y-2">
                 <DialogTitle>Upload Implementation File</DialogTitle>
                 <DialogDescription>
-                    Upload implementation specification documents (PDF, Excel, CSV, Word, or text files).
-                    Maximum file size is 10MB.
+                    Upload implementation specification documents (PDF, Excel,
+                    CSV, Word, or text files). Maximum file size is 10MB.
                 </DialogDescription>
             </DialogHeader>
 
             <div class="space-y-4 py-4">
                 <!-- Template Download Section -->
-                <div class="rounded-lg border border-dashed border-muted-foreground/25 bg-muted/30 p-4">
+                <div
+                    class="rounded-lg border border-dashed border-muted-foreground/25 bg-muted/30 p-4"
+                >
                     <div class="flex items-start gap-3">
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                        >
                             <Download class="size-5" />
                         </div>
                         <div class="flex-1 space-y-2">
                             <div>
-                                <h4 class="text-sm font-medium">Connection Import Templates</h4>
+                                <h4 class="text-sm font-medium">
+                                    Connection Import Templates
+                                </h4>
                                 <p class="text-xs text-muted-foreground">
-                                    Download a template to prepare your connection data for parsing.
+                                    Download a template to prepare your
+                                    connection data for parsing.
                                 </p>
                             </div>
                             <div class="flex flex-wrap gap-2">
@@ -226,7 +252,11 @@ const downloadCsvTemplate = () => {
                         <Label for="description">Description (optional)</Label>
                         <span
                             class="text-xs"
-                            :class="isDescriptionTooLong ? 'text-destructive' : 'text-muted-foreground'"
+                            :class="
+                                isDescriptionTooLong
+                                    ? 'text-destructive'
+                                    : 'text-muted-foreground'
+                            "
                         >
                             {{ descriptionCharCount }}/500
                         </span>
@@ -244,11 +274,15 @@ const downloadCsvTemplate = () => {
 
                 <!-- Upload progress -->
                 <div v-if="isUploading" class="space-y-2">
-                    <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div
+                        class="flex items-center gap-2 text-sm text-muted-foreground"
+                    >
                         <Spinner class="size-4" />
                         <span>Uploading... {{ uploadProgress }}%</span>
                     </div>
-                    <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                    <div
+                        class="h-2 w-full overflow-hidden rounded-full bg-secondary"
+                    >
                         <div
                             class="h-full bg-primary transition-all duration-300"
                             :style="{ width: `${uploadProgress}%` }"
@@ -283,7 +317,12 @@ const downloadCsvTemplate = () => {
                 </DialogClose>
 
                 <Button
-                    :disabled="!selectedFile || isUploading || isDescriptionTooLong || uploadSuccess"
+                    :disabled="
+                        !selectedFile ||
+                        isUploading ||
+                        isDescriptionTooLong ||
+                        uploadSuccess
+                    "
                     @click="handleUpload"
                 >
                     <Spinner v-if="isUploading" class="mr-2 size-4" />

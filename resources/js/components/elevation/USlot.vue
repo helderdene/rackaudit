@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
 import type { DeviceWidth } from '@/types/rooms';
+import type { HTMLAttributes } from 'vue';
 
 interface Props {
     /** The U number for this slot (1-based) */
@@ -81,21 +81,27 @@ function handleDragLeave(event: DragEvent) {
 
 <template>
     <div
-        :class="cn(
-            'relative flex h-7 items-center rounded transition-colors',
-            // Base border styles
-            isOccupied
-                ? 'border border-solid border-border bg-muted/30'
-                : 'border border-dashed border-muted-foreground/30 bg-muted/20',
-            // Drop target feedback for full slot
-            isDropTarget && isValidDrop && 'border-2 border-green-500 bg-green-50 dark:bg-green-950/30',
-            isDropTarget && !isValidDrop && 'border-2 border-red-500 bg-red-50 dark:bg-red-950/30',
-            // Hover state for empty slots
-            !isOccupied && !isDropTarget && 'hover:bg-muted/40',
-            // Drag preview indicator
-            showDragPreview && 'ring-2 ring-primary ring-offset-1',
-            props.class
-        )"
+        :class="
+            cn(
+                'relative flex h-7 items-center rounded transition-colors',
+                // Base border styles
+                isOccupied
+                    ? 'border border-solid border-border bg-muted/30'
+                    : 'border border-dashed border-muted-foreground/30 bg-muted/20',
+                // Drop target feedback for full slot
+                isDropTarget &&
+                    isValidDrop &&
+                    'border-2 border-green-500 bg-green-50 dark:bg-green-950/30',
+                isDropTarget &&
+                    !isValidDrop &&
+                    'border-2 border-red-500 bg-red-50 dark:bg-red-950/30',
+                // Hover state for empty slots
+                !isOccupied && !isDropTarget && 'hover:bg-muted/40',
+                // Drag preview indicator
+                showDragPreview && 'ring-2 ring-primary ring-offset-1',
+                props.class,
+            )
+        "
         :data-u-number="uNumber"
         @click="$emit('slotClick', uNumber)"
         @drop="handleDrop"
@@ -104,7 +110,9 @@ function handleDragLeave(event: DragEvent) {
         @dragleave="handleDragLeave"
     >
         <!-- U number label -->
-        <span class="absolute left-2 w-10 shrink-0 text-xs font-medium text-muted-foreground">
+        <span
+            class="absolute left-2 w-10 shrink-0 text-xs font-medium text-muted-foreground"
+        >
             U{{ uNumber }}
         </span>
 
@@ -112,24 +120,36 @@ function handleDragLeave(event: DragEvent) {
         <div class="ml-12 flex flex-1 items-center">
             <!-- Left half section -->
             <div
-                :class="cn(
-                    'flex h-full flex-1 items-center border-r border-dashed border-muted-foreground/20 px-1',
-                    // Left half drop target feedback
-                    isDropTarget && isLeftHalfValid && 'bg-green-100/50 dark:bg-green-900/20',
-                    isDropTarget && !isLeftHalfValid && 'bg-red-100/50 dark:bg-red-900/20'
-                )"
+                :class="
+                    cn(
+                        'flex h-full flex-1 items-center border-r border-dashed border-muted-foreground/20 px-1',
+                        // Left half drop target feedback
+                        isDropTarget &&
+                            isLeftHalfValid &&
+                            'bg-green-100/50 dark:bg-green-900/20',
+                        isDropTarget &&
+                            !isLeftHalfValid &&
+                            'bg-red-100/50 dark:bg-red-900/20',
+                    )
+                "
                 @drop.stop="$emit('drop', uNumber, 'half-left')"
             >
                 <slot name="left" />
             </div>
             <!-- Right half section -->
             <div
-                :class="cn(
-                    'flex h-full flex-1 items-center px-1',
-                    // Right half drop target feedback
-                    isDropTarget && isRightHalfValid && 'bg-green-100/50 dark:bg-green-900/20',
-                    isDropTarget && !isRightHalfValid && 'bg-red-100/50 dark:bg-red-900/20'
-                )"
+                :class="
+                    cn(
+                        'flex h-full flex-1 items-center px-1',
+                        // Right half drop target feedback
+                        isDropTarget &&
+                            isRightHalfValid &&
+                            'bg-green-100/50 dark:bg-green-900/20',
+                        isDropTarget &&
+                            !isRightHalfValid &&
+                            'bg-red-100/50 dark:bg-red-900/20',
+                    )
+                "
                 @drop.stop="$emit('drop', uNumber, 'half-right')"
             >
                 <slot name="right" />
@@ -143,11 +163,17 @@ function handleDragLeave(event: DragEvent) {
         <!-- Extends upward (toward higher U numbers) since devices occupy start_u to start_u + u_size - 1 -->
         <div
             v-if="showDragPreview && dragPreviewHeight > 1"
-            :class="cn(
-                'absolute inset-x-0 bottom-0 z-10 rounded border-2 border-dashed',
-                isValidDrop ? 'border-green-500 bg-green-500/10' : 'border-red-500 bg-red-500/10'
-            )"
-            :style="{ height: `${dragPreviewHeight * 28 + (dragPreviewHeight - 1) * 4}px` }"
+            :class="
+                cn(
+                    'absolute inset-x-0 bottom-0 z-10 rounded border-2 border-dashed',
+                    isValidDrop
+                        ? 'border-green-500 bg-green-500/10'
+                        : 'border-red-500 bg-red-500/10',
+                )
+            "
+            :style="{
+                height: `${dragPreviewHeight * 28 + (dragPreviewHeight - 1) * 4}px`,
+            }"
         />
     </div>
 </template>

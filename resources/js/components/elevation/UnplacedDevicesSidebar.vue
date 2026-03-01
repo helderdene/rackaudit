@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
-import { computed, ref } from 'vue';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { PlaceholderDevice } from '@/types/rooms';
-import { Package, Search, Server, HardDrive, Network, Monitor, Zap, Box } from 'lucide-vue-next';
+import {
+    Box,
+    HardDrive,
+    Monitor,
+    Network,
+    Package,
+    Search,
+    Server,
+    Zap,
+} from 'lucide-vue-next';
+import type { HTMLAttributes } from 'vue';
+import { computed, ref } from 'vue';
 
 interface Props {
     /** List of unplaced devices available for placement */
@@ -66,7 +75,9 @@ function getDeviceIcon(type: string) {
 /**
  * Get badge variant based on device type
  */
-function getBadgeVariant(type: string): 'default' | 'secondary' | 'outline' | 'success' | 'warning' {
+function getBadgeVariant(
+    type: string,
+): 'default' | 'secondary' | 'outline' | 'success' | 'warning' {
     switch (type) {
         case 'server':
             return 'default';
@@ -115,7 +126,9 @@ function handleDragEnd() {
         <CardContent class="flex flex-1 flex-col gap-3 overflow-hidden">
             <!-- Search input -->
             <div class="relative shrink-0">
-                <Search class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Search
+                    class="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+                />
                 <Input
                     v-model="searchQuery"
                     type="search"
@@ -137,7 +150,9 @@ function handleDragEnd() {
                         @dragend="handleDragEnd"
                     >
                         <!-- Device icon -->
-                        <div class="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted">
+                        <div
+                            class="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted"
+                        >
                             <component
                                 :is="getDeviceIcon(device.type)"
                                 class="size-4 text-muted-foreground"
@@ -163,7 +178,11 @@ function handleDragEnd() {
                                     v-if="device.width !== 'full'"
                                     class="text-xs text-muted-foreground"
                                 >
-                                    ({{ device.width === 'half-left' ? 'Left' : 'Right' }})
+                                    ({{
+                                        device.width === 'half-left'
+                                            ? 'Left'
+                                            : 'Right'
+                                    }})
                                 </span>
                             </div>
                         </div>
@@ -177,7 +196,11 @@ function handleDragEnd() {
                 >
                     <Package class="size-10 text-muted-foreground/50" />
                     <p class="mt-2 text-sm text-muted-foreground">
-                        {{ searchQuery ? 'No devices match your search' : 'All devices have been placed' }}
+                        {{
+                            searchQuery
+                                ? 'No devices match your search'
+                                : 'All devices have been placed'
+                        }}
                     </p>
                 </div>
             </div>

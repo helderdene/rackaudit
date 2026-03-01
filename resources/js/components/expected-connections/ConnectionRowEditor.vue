@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { update as updateConnection } from '@/actions/App/Http/Controllers/ExpectedConnectionController';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import axios from 'axios';
 import { Check, X } from 'lucide-vue-next';
-import DeviceSearchSelect from './DeviceSearchSelect.vue';
-import PortSearchSelect from './PortSearchSelect.vue';
+import { ref, watch } from 'vue';
 import CableTypeSelect from './CableTypeSelect.vue';
 import type { ExpectedConnectionData } from './ConnectionReviewTable.vue';
-import axios from 'axios';
-import { update as updateConnection } from '@/actions/App/Http/Controllers/ExpectedConnectionController';
+import DeviceSearchSelect from './DeviceSearchSelect.vue';
+import PortSearchSelect from './PortSearchSelect.vue';
 
 interface Props {
     connection: ExpectedConnectionData;
@@ -18,14 +18,24 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-    (e: 'save', connectionId: number, data: Partial<ExpectedConnectionData>): void;
+    (
+        e: 'save',
+        connectionId: number,
+        data: Partial<ExpectedConnectionData>,
+    ): void;
     (e: 'cancel'): void;
 }>();
 
 // Form state
-const sourceDeviceId = ref<number | null>(props.connection.source_device?.id ?? null);
-const sourcePortId = ref<number | null>(props.connection.source_port?.id ?? null);
-const destDeviceId = ref<number | null>(props.connection.dest_device?.id ?? null);
+const sourceDeviceId = ref<number | null>(
+    props.connection.source_device?.id ?? null,
+);
+const sourcePortId = ref<number | null>(
+    props.connection.source_port?.id ?? null,
+);
+const destDeviceId = ref<number | null>(
+    props.connection.dest_device?.id ?? null,
+);
 const destPortId = ref<number | null>(props.connection.dest_port?.id ?? null);
 const cableType = ref<string | null>(props.connection.cable_type ?? null);
 const cableLength = ref<number | null>(props.connection.cable_length ?? null);
@@ -77,10 +87,17 @@ async function handleSave(): Promise<void> {
 
         // Only submit if there are changes
         if (Object.keys(updateData).length > 0) {
-            await axios.put(updateConnection.url(props.connection.id), updateData);
+            await axios.put(
+                updateConnection.url(props.connection.id),
+                updateData,
+            );
         }
 
-        emit('save', props.connection.id, updateData as Partial<ExpectedConnectionData>);
+        emit(
+            'save',
+            props.connection.id,
+            updateData as Partial<ExpectedConnectionData>,
+        );
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.data?.message) {
             saveError.value = error.response.data.message;
@@ -117,7 +134,10 @@ function handleCancel(): void {
             <DeviceSearchSelect
                 v-model="sourceDeviceId"
                 placeholder="Select source device"
-                :initial-device-name="connection.source_device?.name ?? connection.match?.source_device?.original"
+                :initial-device-name="
+                    connection.source_device?.name ??
+                    connection.match?.source_device?.original
+                "
             />
         </td>
 
@@ -127,7 +147,10 @@ function handleCancel(): void {
                 v-model="sourcePortId"
                 :device-id="sourceDeviceId"
                 placeholder="Select source port"
-                :initial-port-label="connection.source_port?.label ?? connection.match?.source_port?.original"
+                :initial-port-label="
+                    connection.source_port?.label ??
+                    connection.match?.source_port?.original
+                "
             />
         </td>
 
@@ -136,7 +159,10 @@ function handleCancel(): void {
             <DeviceSearchSelect
                 v-model="destDeviceId"
                 placeholder="Select dest device"
-                :initial-device-name="connection.dest_device?.name ?? connection.match?.dest_device?.original"
+                :initial-device-name="
+                    connection.dest_device?.name ??
+                    connection.match?.dest_device?.original
+                "
             />
         </td>
 
@@ -146,7 +172,10 @@ function handleCancel(): void {
                 v-model="destPortId"
                 :device-id="destDeviceId"
                 placeholder="Select dest port"
-                :initial-port-label="connection.dest_port?.label ?? connection.match?.dest_port?.original"
+                :initial-port-label="
+                    connection.dest_port?.label ??
+                    connection.match?.dest_port?.original
+                "
             />
         </td>
 
@@ -193,7 +222,9 @@ function handleCancel(): void {
                     <X class="size-3.5" />
                 </Button>
             </div>
-            <p v-if="saveError" class="mt-1 text-xs text-red-600">{{ saveError }}</p>
+            <p v-if="saveError" class="mt-1 text-xs text-red-600">
+                {{ saveError }}
+            </p>
         </td>
     </tr>
 </template>

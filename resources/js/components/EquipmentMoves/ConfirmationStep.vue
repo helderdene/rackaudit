@@ -1,24 +1,27 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import {
-    Server,
-    MapPin,
+    downloadWorkOrder,
+    show,
+} from '@/actions/App/Http/Controllers/EquipmentMoveController';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import type { DeviceData } from '@/types/rooms';
+import { Link } from '@inertiajs/vue3';
+import {
     ArrowRight,
     CheckCircle,
-    Loader2,
-    FileText,
-    ExternalLink,
     Download,
+    ExternalLink,
+    FileText,
+    Loader2,
+    MapPin,
+    Server,
 } from 'lucide-vue-next';
-import { show, downloadWorkOrder } from '@/actions/App/Http/Controllers/EquipmentMoveController';
-import type { DeviceData } from '@/types/rooms';
+import { computed } from 'vue';
 
 interface Props {
     device: DeviceData | null;
@@ -109,18 +112,27 @@ function handleDownloadWorkOrder(): void {
     <div class="space-y-6">
         <!-- Success State -->
         <div v-if="isSuccess" class="space-y-6">
-            <div class="rounded-lg border border-green-200 bg-green-50 p-8 text-center dark:border-green-900/50 dark:bg-green-950/30">
+            <div
+                class="rounded-lg border border-green-200 bg-green-50 p-8 text-center dark:border-green-900/50 dark:bg-green-950/30"
+            >
                 <CheckCircle class="mx-auto h-16 w-16 text-green-500" />
-                <h3 class="mt-4 text-lg font-medium text-green-800 dark:text-green-400">
+                <h3
+                    class="mt-4 text-lg font-medium text-green-800 dark:text-green-400"
+                >
                     Move Request Created Successfully
                 </h3>
                 <p class="mt-2 text-sm text-green-600 dark:text-green-500">
-                    Your move request has been submitted and is pending approval.
+                    Your move request has been submitted and is pending
+                    approval.
                 </p>
             </div>
 
             <div class="flex justify-center gap-4">
-                <Button v-if="createdMoveId" variant="outline" @click="handleDownloadWorkOrder">
+                <Button
+                    v-if="createdMoveId"
+                    variant="outline"
+                    @click="handleDownloadWorkOrder"
+                >
                     <Download class="mr-2 h-4 w-4" />
                     Download Work Order PDF
                 </Button>
@@ -138,7 +150,8 @@ function handleDownloadWorkOrder(): void {
             <div>
                 <h3 class="text-lg font-medium">Confirm Move Request</h3>
                 <p class="text-sm text-muted-foreground">
-                    Review the move details below and add any notes before submitting.
+                    Review the move details below and add any notes before
+                    submitting.
                 </p>
             </div>
 
@@ -148,27 +161,47 @@ function handleDownloadWorkOrder(): void {
                     <CardTitle class="text-base">Move Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div class="flex flex-col gap-6 sm:flex-row sm:items-center">
+                    <div
+                        class="flex flex-col gap-6 sm:flex-row sm:items-center"
+                    >
                         <!-- Source -->
                         <div class="flex-1 space-y-3">
-                            <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                            <div
+                                class="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+                            >
                                 <MapPin class="h-4 w-4" />
                                 Current Location
                             </div>
                             <div class="rounded-lg border bg-muted/30 p-4">
                                 <div class="flex items-start gap-3">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded bg-muted">
-                                        <Server class="h-5 w-5 text-muted-foreground" />
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded bg-muted"
+                                    >
+                                        <Server
+                                            class="h-5 w-5 text-muted-foreground"
+                                        />
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <p class="font-medium">{{ device?.name }}</p>
-                                        <p class="mt-0.5 text-sm text-muted-foreground">
+                                        <p class="font-medium">
+                                            {{ device?.name }}
+                                        </p>
+                                        <p
+                                            class="mt-0.5 text-sm text-muted-foreground"
+                                        >
                                             {{ formatLocation(device) }}
                                         </p>
                                         <div class="mt-2 flex flex-wrap gap-2">
-                                            <Badge variant="outline">{{ device?.u_height }}U</Badge>
-                                            <Badge variant="outline">{{ device?.rack_face_label || 'Front' }}</Badge>
-                                            <Badge variant="outline">{{ device?.width_type_label || 'Full Width' }}</Badge>
+                                            <Badge variant="outline"
+                                                >{{ device?.u_height }}U</Badge
+                                            >
+                                            <Badge variant="outline">{{
+                                                device?.rack_face_label ||
+                                                'Front'
+                                            }}</Badge>
+                                            <Badge variant="outline">{{
+                                                device?.width_type_label ||
+                                                'Full Width'
+                                            }}</Badge>
                                         </div>
                                     </div>
                                 </div>
@@ -177,36 +210,66 @@ function handleDownloadWorkOrder(): void {
 
                         <!-- Arrow -->
                         <div class="flex items-center justify-center">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
+                            >
                                 <ArrowRight class="h-5 w-5 text-primary" />
                             </div>
                         </div>
 
                         <!-- Destination -->
                         <div class="flex-1 space-y-3">
-                            <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                            <div
+                                class="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+                            >
                                 <MapPin class="h-4 w-4" />
                                 Destination
                             </div>
-                            <div class="rounded-lg border border-primary/50 bg-primary/5 p-4">
+                            <div
+                                class="rounded-lg border border-primary/50 bg-primary/5 p-4"
+                            >
                                 <div class="flex items-start gap-3">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded bg-primary/10">
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded bg-primary/10"
+                                    >
                                         <Server class="h-5 w-5 text-primary" />
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <p class="font-medium">
-                                            Rack #{{ destination.destination_rack_id }}
+                                            Rack #{{
+                                                destination.destination_rack_id
+                                            }}
                                         </p>
-                                        <p class="mt-0.5 text-sm text-muted-foreground">
-                                            U{{ destination.destination_start_u }}
-                                            <template v-if="destinationEndU && destinationEndU !== destination.destination_start_u">
+                                        <p
+                                            class="mt-0.5 text-sm text-muted-foreground"
+                                        >
+                                            U{{
+                                                destination.destination_start_u
+                                            }}
+                                            <template
+                                                v-if="
+                                                    destinationEndU &&
+                                                    destinationEndU !==
+                                                        destination.destination_start_u
+                                                "
+                                            >
                                                 - U{{ destinationEndU }}
                                             </template>
                                         </p>
                                         <div class="mt-2 flex flex-wrap gap-2">
-                                            <Badge variant="outline">{{ device?.u_height }}U</Badge>
-                                            <Badge variant="outline">{{ formatRackFace(destination.destination_rack_face) }}</Badge>
-                                            <Badge variant="outline">{{ formatWidthType(destination.destination_width_type) }}</Badge>
+                                            <Badge variant="outline"
+                                                >{{ device?.u_height }}U</Badge
+                                            >
+                                            <Badge variant="outline">{{
+                                                formatRackFace(
+                                                    destination.destination_rack_face,
+                                                )
+                                            }}</Badge>
+                                            <Badge variant="outline">{{
+                                                formatWidthType(
+                                                    destination.destination_width_type,
+                                                )
+                                            }}</Badge>
                                         </div>
                                     </div>
                                 </div>
@@ -232,8 +295,8 @@ function handleDownloadWorkOrder(): void {
                     @input="handleNotesInput"
                 />
                 <p class="text-xs text-muted-foreground">
-                    Include any relevant information for the approver, such as the reason for the
-                    move or timing requirements.
+                    Include any relevant information for the approver, such as
+                    the reason for the move or timing requirements.
                 </p>
             </div>
 
@@ -241,9 +304,10 @@ function handleDownloadWorkOrder(): void {
             <Alert>
                 <FileText class="h-4 w-4" />
                 <AlertDescription>
-                    This move request will be submitted for approval. Once approved, the device will
-                    be moved to the new location and any active connections will be automatically
-                    disconnected. A work order PDF will be available for download.
+                    This move request will be submitted for approval. Once
+                    approved, the device will be moved to the new location and
+                    any active connections will be automatically disconnected. A
+                    work order PDF will be available for download.
                 </AlertDescription>
             </Alert>
 
@@ -253,8 +317,12 @@ function handleDownloadWorkOrder(): void {
                 class="flex items-center justify-center rounded-lg border border-dashed p-8"
             >
                 <div class="text-center">
-                    <Loader2 class="mx-auto h-8 w-8 animate-spin text-primary" />
-                    <p class="mt-2 text-sm text-muted-foreground">Creating move request...</p>
+                    <Loader2
+                        class="mx-auto h-8 w-8 animate-spin text-primary"
+                    />
+                    <p class="mt-2 text-sm text-muted-foreground">
+                        Creating move request...
+                    </p>
                 </div>
             </div>
         </template>

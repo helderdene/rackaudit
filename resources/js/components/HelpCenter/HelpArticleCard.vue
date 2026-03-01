@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Sparkles, Eye } from 'lucide-vue-next';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Eye, FileText, Sparkles } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 /**
  * Type definition for help article
@@ -51,7 +57,7 @@ const handleClick = () => {
 
 <template>
     <Card
-        class="hover:border-primary/50 cursor-pointer transition-all hover:shadow-md"
+        class="cursor-pointer transition-all hover:border-primary/50 hover:shadow-md"
         role="button"
         tabindex="0"
         @click="handleClick"
@@ -61,7 +67,11 @@ const handleClick = () => {
         <CardHeader class="pb-2">
             <div class="flex items-start justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-2">
-                    <Badge v-if="article.category" variant="outline" class="text-xs">
+                    <Badge
+                        v-if="article.category"
+                        variant="outline"
+                        class="text-xs"
+                    >
                         {{ article.category }}
                     </Badge>
                     <Badge
@@ -74,16 +84,21 @@ const handleClick = () => {
                     </Badge>
                 </div>
                 <div
-                    v-if="article.view_count !== undefined && article.view_count > 0"
-                    class="text-muted-foreground flex items-center gap-1 text-xs"
+                    v-if="
+                        article.view_count !== undefined &&
+                        article.view_count > 0
+                    "
+                    class="flex items-center gap-1 text-xs text-muted-foreground"
                 >
                     <Eye class="h-3 w-3" />
                     {{ article.view_count }}
                 </div>
             </div>
-            <CardTitle class="mt-2 text-base font-semibold leading-tight">
+            <CardTitle class="mt-2 text-base leading-tight font-semibold">
                 <span class="flex items-start gap-2">
-                    <FileText class="text-muted-foreground mt-0.5 h-4 w-4 shrink-0" />
+                    <FileText
+                        class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
+                    />
                     <span class="line-clamp-2">{{ article.title }}</span>
                 </span>
             </CardTitle>

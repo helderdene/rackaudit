@@ -1,22 +1,33 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Search, ArrowLeft, Play, X, BookOpen, ChevronRight } from 'lucide-vue-next';
-import { cn, debounce } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetDescription,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import MarkdownRenderer from './MarkdownRenderer.vue';
-import { useHelp, type HelpArticle, type HelpTour } from '@/composables/useHelp';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+    useHelp,
+    type HelpArticle,
+    type HelpTour,
+} from '@/composables/useHelp';
 import { useHelpInteractions } from '@/composables/useHelpInteractions';
+import { cn, debounce } from '@/lib/utils';
+import {
+    ArrowLeft,
+    BookOpen,
+    ChevronRight,
+    Play,
+    Search,
+    X,
+} from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
+import MarkdownRenderer from './MarkdownRenderer.vue';
 
 interface Props {
     /** Current context key for filtering articles */
@@ -43,7 +54,6 @@ const {
     error,
     articlesByCategory,
     categories,
-    searchQuery,
     searchResults,
     isSearching,
     fetchArticlesByContext,
@@ -168,10 +178,7 @@ watch(categories, (newCategories) => {
     <Sheet :open="isOpen" @update:open="handleOpenChange">
         <SheetContent
             side="right"
-            :class="cn(
-                'w-full sm:max-w-md md:max-w-lg',
-                'flex flex-col p-0',
-            )"
+            :class="cn('w-full sm:max-w-md md:max-w-lg', 'flex flex-col p-0')"
         >
             <SheetHeader class="border-b px-6 py-4">
                 <div class="flex items-center justify-between">
@@ -198,7 +205,7 @@ watch(categories, (newCategories) => {
                             </SheetTitle>
                             <SheetDescription
                                 v-if="!selectedArticle && contextKey"
-                                class="text-xs mt-1"
+                                class="mt-1 text-xs"
                             >
                                 Help for this page
                             </SheetDescription>
@@ -244,21 +251,21 @@ watch(categories, (newCategories) => {
             <!-- Article list view -->
             <div v-else class="flex flex-1 flex-col overflow-hidden">
                 <!-- Search input -->
-                <div class="px-6 py-3 border-b">
+                <div class="border-b px-6 py-3">
                     <div class="relative">
                         <Search
-                            class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
+                            class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
                         />
                         <Input
                             :model-value="localSearchQuery"
                             placeholder="Search help articles..."
-                            class="pl-9 pr-9"
+                            class="pr-9 pl-9"
                             @input="handleSearchInput"
                         />
                         <button
                             v-if="localSearchQuery"
                             type="button"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                             @click="clearSearch"
                         >
                             <X class="size-4" />
@@ -269,7 +276,7 @@ watch(categories, (newCategories) => {
                 <!-- Loading state -->
                 <div
                     v-if="isLoading || isSearching"
-                    class="flex-1 px-6 py-4 space-y-3"
+                    class="flex-1 space-y-3 px-6 py-4"
                 >
                     <div class="space-y-2">
                         <Skeleton class="h-10 w-full" />
@@ -281,7 +288,7 @@ watch(categories, (newCategories) => {
                 <!-- Error state -->
                 <div
                     v-else-if="error"
-                    class="flex-1 flex items-center justify-center px-6 text-center"
+                    class="flex flex-1 items-center justify-center px-6 text-center"
                 >
                     <div class="text-muted-foreground">
                         <p>{{ error }}</p>
@@ -305,23 +312,21 @@ watch(categories, (newCategories) => {
                     v-else-if="
                         sidebarArticles.length === 0 && !localSearchQuery
                     "
-                    class="flex-1 flex items-center justify-center px-6 text-center"
+                    class="flex flex-1 items-center justify-center px-6 text-center"
                 >
                     <div class="text-muted-foreground">
-                        <BookOpen class="size-12 mx-auto mb-4 opacity-40" />
+                        <BookOpen class="mx-auto mb-4 size-12 opacity-40" />
                         <p>No help articles available.</p>
                     </div>
                 </div>
 
                 <!-- No search results -->
                 <div
-                    v-else-if="
-                        localSearchQuery && searchResults.length === 0
-                    "
-                    class="flex-1 flex items-center justify-center px-6 text-center"
+                    v-else-if="localSearchQuery && searchResults.length === 0"
+                    class="flex flex-1 items-center justify-center px-6 text-center"
                 >
                     <div class="text-muted-foreground">
-                        <Search class="size-12 mx-auto mb-4 opacity-40" />
+                        <Search class="mx-auto mb-4 size-12 opacity-40" />
                         <p>No articles found for "{{ localSearchQuery }}"</p>
                     </div>
                 </div>
@@ -332,9 +337,7 @@ watch(categories, (newCategories) => {
                     class="flex-1 overflow-y-auto"
                 >
                     <div class="px-2 py-2">
-                        <p
-                            class="px-4 py-2 text-xs text-muted-foreground"
-                        >
+                        <p class="px-4 py-2 text-xs text-muted-foreground">
                             {{ searchResults.length }} result{{
                                 searchResults.length !== 1 ? 's' : ''
                             }}
@@ -343,11 +346,11 @@ watch(categories, (newCategories) => {
                             v-for="article in searchResults"
                             :key="article.id"
                             type="button"
-                            class="w-full px-4 py-3 flex items-center justify-between gap-3 rounded-md hover:bg-accent text-left transition-colors"
+                            class="flex w-full items-center justify-between gap-3 rounded-md px-4 py-3 text-left transition-colors hover:bg-accent"
                             @click="handleArticleClick(article)"
                         >
                             <div class="min-w-0">
-                                <p class="font-medium text-sm truncate">
+                                <p class="truncate text-sm font-medium">
                                     {{ article.title }}
                                 </p>
                                 <p
@@ -357,13 +360,15 @@ watch(categories, (newCategories) => {
                                     {{ article.category }}
                                 </p>
                             </div>
-                            <ChevronRight class="size-4 text-muted-foreground shrink-0" />
+                            <ChevronRight
+                                class="size-4 shrink-0 text-muted-foreground"
+                            />
                         </button>
                     </div>
                 </div>
 
                 <!-- Category tabs with articles -->
-                <div v-else class="flex-1 flex flex-col overflow-hidden">
+                <div v-else class="flex flex-1 flex-col overflow-hidden">
                     <Tabs
                         v-model="activeCategory"
                         class="flex flex-1 flex-col overflow-hidden"
@@ -386,7 +391,9 @@ watch(categories, (newCategories) => {
                         <!-- Articles list -->
                         <div class="flex-1 overflow-y-auto">
                             <TabsContent
-                                v-for="(articles, category) in articlesByCategory"
+                                v-for="(
+                                    articles, category
+                                ) in articlesByCategory"
                                 :key="category"
                                 :value="category"
                                 class="m-0"
@@ -396,18 +403,18 @@ watch(categories, (newCategories) => {
                                         v-for="article in articles"
                                         :key="article.id"
                                         type="button"
-                                        class="w-full px-4 py-3 flex items-center justify-between gap-3 rounded-md hover:bg-accent text-left transition-colors"
+                                        class="flex w-full items-center justify-between gap-3 rounded-md px-4 py-3 text-left transition-colors hover:bg-accent"
                                         @click="handleArticleClick(article)"
                                     >
                                         <div class="min-w-0">
                                             <p
-                                                class="font-medium text-sm truncate"
+                                                class="truncate text-sm font-medium"
                                             >
                                                 {{ article.title }}
                                             </p>
                                         </div>
                                         <ChevronRight
-                                            class="size-4 text-muted-foreground shrink-0"
+                                            class="size-4 shrink-0 text-muted-foreground"
                                         />
                                     </button>
                                 </div>

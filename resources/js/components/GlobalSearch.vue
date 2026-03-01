@@ -1,11 +1,22 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import { router, Link } from '@inertiajs/vue3';
-import { Search, X, Building2, Server, HardDrive, Plug, Cable, ChevronRight } from 'lucide-vue-next';
-import { debounce, cn } from '@/lib/utils';
+import {
+    quickSearch,
+    index as searchIndex,
+} from '@/actions/App/Http/Controllers/SearchController';
 import { Spinner } from '@/components/ui/spinner';
-import { quickSearch } from '@/actions/App/Http/Controllers/SearchController';
-import { index as searchIndex } from '@/actions/App/Http/Controllers/SearchController';
+import { cn, debounce } from '@/lib/utils';
+import { router } from '@inertiajs/vue3';
+import {
+    Building2,
+    Cable,
+    ChevronRight,
+    HardDrive,
+    Plug,
+    Search,
+    Server,
+    X,
+} from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 /**
  * Search result item structure from the API
@@ -51,11 +62,21 @@ interface EntityTypeConfig {
 }
 
 const entityTypes: EntityTypeConfig[] = [
-    { key: 'datacenters', label: 'Datacenters', icon: Building2, route: '/datacenters' },
+    {
+        key: 'datacenters',
+        label: 'Datacenters',
+        icon: Building2,
+        route: '/datacenters',
+    },
     { key: 'racks', label: 'Racks', icon: Server, route: '/racks' },
     { key: 'devices', label: 'Devices', icon: HardDrive, route: '/devices' },
     { key: 'ports', label: 'Ports', icon: Plug, route: '/ports' },
-    { key: 'connections', label: 'Connections', icon: Cable, route: '/connections' },
+    {
+        key: 'connections',
+        label: 'Connections',
+        icon: Cable,
+        route: '/connections',
+    },
 ];
 
 // Component state
@@ -88,13 +109,18 @@ const flatResults = computed(() => {
 // Compute total results count
 const totalResults = computed(() => {
     if (!results.value) return 0;
-    return entityTypes.reduce((sum, et) => sum + (results.value?.[et.key]?.total ?? 0), 0);
+    return entityTypes.reduce(
+        (sum, et) => sum + (results.value?.[et.key]?.total ?? 0),
+        0,
+    );
 });
 
 // Check if there are any results to display
 const hasResults = computed(() => {
     if (!results.value) return false;
-    return entityTypes.some(et => (results.value?.[et.key]?.items.length ?? 0) > 0);
+    return entityTypes.some(
+        (et) => (results.value?.[et.key]?.items.length ?? 0) > 0,
+    );
 });
 
 // Perform search API call
@@ -111,7 +137,7 @@ const performSearch = async (query: string) => {
         const response = await fetch(quickSearch.url({ query: { q: query } }), {
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             },
             credentials: 'same-origin',
@@ -176,7 +202,10 @@ const closeAndClear = () => {
 };
 
 // Navigate to result
-const navigateToResult = (item: SearchResultItem, type: keyof SearchResults) => {
+const navigateToResult = (
+    item: SearchResultItem,
+    type: keyof SearchResults,
+) => {
     let url = '';
     switch (type) {
         case 'datacenters':
@@ -230,7 +259,10 @@ const handleKeydown = (event: KeyboardEvent) => {
 
         case 'Enter':
             event.preventDefault();
-            if (selectedIndex.value >= 0 && flatResults.value[selectedIndex.value]) {
+            if (
+                selectedIndex.value >= 0 &&
+                flatResults.value[selectedIndex.value]
+            ) {
                 const { item, type } = flatResults.value[selectedIndex.value];
                 navigateToResult(item, type);
             } else if (searchQuery.value.trim()) {
@@ -257,7 +289,10 @@ const handleGlobalKeydown = (event: KeyboardEvent) => {
 // Click outside to close
 const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (!dropdownRef.value?.contains(target) && !inputRef.value?.contains(target)) {
+    if (
+        !dropdownRef.value?.contains(target) &&
+        !inputRef.value?.contains(target)
+    ) {
         isOpen.value = false;
     }
 };
@@ -267,7 +302,10 @@ const highlightMatch = (text: string, query: string): string => {
     if (!query.trim() || !text) return text;
 
     const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800/50 text-inherit px-0.5 rounded">$1</mark>');
+    return text.replace(
+        regex,
+        '<mark class="bg-yellow-200 dark:bg-yellow-800/50 text-inherit px-0.5 rounded">$1</mark>',
+    );
 };
 
 const escapeRegex = (str: string): string => {
@@ -275,10 +313,17 @@ const escapeRegex = (str: string): string => {
 };
 
 // Check if Mac platform for keyboard shortcut display
-const isMac = computed(() => typeof window !== 'undefined' && window.navigator?.platform?.includes('Mac'));
+const isMac = computed(
+    () =>
+        typeof window !== 'undefined' &&
+        window.navigator?.platform?.includes('Mac'),
+);
 
 // Get result index for keyboard navigation
-const getResultIndex = (type: keyof SearchResults, itemIndex: number): number => {
+const getResultIndex = (
+    type: keyof SearchResults,
+    itemIndex: number,
+): number => {
     let index = 0;
     for (const entityType of entityTypes) {
         if (entityType.key === type) {
@@ -313,12 +358,14 @@ onUnmounted(() => {
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search..."
-                :class="cn(
-                    'h-9 w-full rounded-md border border-input bg-transparent pl-9 pr-9 text-sm shadow-xs transition-[color,box-shadow] outline-none',
-                    'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-                    'placeholder:text-muted-foreground dark:bg-input/30',
-                    'lg:w-64'
-                )"
+                :class="
+                    cn(
+                        'h-9 w-full rounded-md border border-input bg-transparent pr-9 pl-9 text-sm shadow-xs transition-[color,box-shadow] outline-none',
+                        'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                        'placeholder:text-muted-foreground dark:bg-input/30',
+                        'lg:w-64',
+                    )
+                "
                 @focus="handleFocus"
                 @blur="handleBlur"
                 @keydown="handleKeydown"
@@ -337,10 +384,15 @@ onUnmounted(() => {
                 v-if="!searchQuery"
                 class="pointer-events-none absolute right-3 hidden items-center gap-0.5 text-xs text-muted-foreground lg:flex"
             >
-                <kbd class="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+                <kbd
+                    class="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]"
+                >
                     {{ isMac ? '⌘' : 'Ctrl' }}
                 </kbd>
-                <kbd class="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">K</kbd>
+                <kbd
+                    class="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]"
+                    >K</kbd
+                >
             </div>
         </div>
 
@@ -348,10 +400,12 @@ onUnmounted(() => {
         <div
             v-if="isOpen && (searchQuery.trim() || isLoading)"
             ref="dropdownRef"
-            :class="cn(
-                'absolute right-0 top-full z-50 mt-2 w-full min-w-[300px] max-w-[400px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg',
-                'lg:w-[400px]'
-            )"
+            :class="
+                cn(
+                    'absolute top-full right-0 z-50 mt-2 w-full max-w-[400px] min-w-[300px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg',
+                    'lg:w-[400px]',
+                )
+            "
         >
             <!-- Loading State -->
             <div
@@ -371,22 +425,26 @@ onUnmounted(() => {
             </div>
 
             <!-- Results -->
-            <div
-                v-else-if="hasResults"
-                class="max-h-[400px] overflow-y-auto"
-            >
-                <template v-for="entityType in entityTypes" :key="entityType.key">
+            <div v-else-if="hasResults" class="max-h-[400px] overflow-y-auto">
+                <template
+                    v-for="entityType in entityTypes"
+                    :key="entityType.key"
+                >
                     <div
                         v-if="results?.[entityType.key]?.items.length"
                         class="border-b border-border last:border-b-0"
                     >
                         <!-- Section Header -->
-                        <div class="flex items-center gap-2 bg-muted/50 px-3 py-2">
+                        <div
+                            class="flex items-center gap-2 bg-muted/50 px-3 py-2"
+                        >
                             <component
                                 :is="entityType.icon"
                                 class="size-4 text-muted-foreground"
                             />
-                            <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <span
+                                class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
+                            >
                                 {{ entityType.label }}
                             </span>
                             <span class="ml-auto text-xs text-muted-foreground">
@@ -397,25 +455,48 @@ onUnmounted(() => {
                         <!-- Result Items -->
                         <div class="p-1">
                             <button
-                                v-for="(item, itemIndex) in results?.[entityType.key]?.items"
+                                v-for="(item, itemIndex) in results?.[
+                                    entityType.key
+                                ]?.items"
                                 :key="item.id"
                                 type="button"
-                                :class="cn(
-                                    'w-full rounded px-3 py-2 text-left transition-colors hover:bg-accent',
-                                    getResultIndex(entityType.key, itemIndex) === selectedIndex && 'bg-accent'
-                                )"
+                                :class="
+                                    cn(
+                                        'w-full rounded px-3 py-2 text-left transition-colors hover:bg-accent',
+                                        getResultIndex(
+                                            entityType.key,
+                                            itemIndex,
+                                        ) === selectedIndex && 'bg-accent',
+                                    )
+                                "
                                 @click="navigateToResult(item, entityType.key)"
-                                @mouseenter="selectedIndex = getResultIndex(entityType.key, itemIndex)"
+                                @mouseenter="
+                                    selectedIndex = getResultIndex(
+                                        entityType.key,
+                                        itemIndex,
+                                    )
+                                "
                             >
                                 <!-- Result Name with Highlight -->
                                 <div
                                     class="text-sm font-medium"
-                                    v-html="highlightMatch(item.name, searchQuery)"
+                                    v-html="
+                                        highlightMatch(item.name, searchQuery)
+                                    "
                                 />
 
                                 <!-- Breadcrumb Context -->
-                                <div class="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                                    <span v-html="highlightMatch(item.breadcrumb, searchQuery)" />
+                                <div
+                                    class="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"
+                                >
+                                    <span
+                                        v-html="
+                                            highlightMatch(
+                                                item.breadcrumb,
+                                                searchQuery,
+                                            )
+                                        "
+                                    />
                                 </div>
                             </button>
                         </div>

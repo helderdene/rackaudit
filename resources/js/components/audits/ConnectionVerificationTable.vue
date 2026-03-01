@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Tooltip,
@@ -10,16 +9,16 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
-    CheckCircle,
-    XCircle,
+    AlertCircle,
     AlertTriangle,
-    Lock,
+    CheckCircle,
     ClipboardCheck,
+    Lock,
     Minus,
     Plus,
-    AlertCircle,
     RefreshCw,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface VerificationData {
     id: number;
@@ -94,16 +93,20 @@ const emit = defineEmits<{
 
 // Computed
 const selectableVerifications = computed(() =>
-    props.verifications.filter((v) => v.verification_status === 'pending' && !v.is_locked)
+    props.verifications.filter(
+        (v) => v.verification_status === 'pending' && !v.is_locked,
+    ),
 );
 
 const allSelected = computed(() => {
     if (selectableVerifications.value.length === 0) return false;
-    return selectableVerifications.value.every((v) => props.selectedIds.has(v.id));
+    return selectableVerifications.value.every((v) =>
+        props.selectedIds.has(v.id),
+    );
 });
 
 const someSelected = computed(
-    () => props.selectedIds.size > 0 && !allSelected.value
+    () => props.selectedIds.size > 0 && !allSelected.value,
 );
 
 /**
@@ -183,7 +186,9 @@ function getComparisonColorClass(status: string): string {
 /**
  * Get verification status badge variant
  */
-function getVerificationBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function getVerificationBadgeVariant(
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
     switch (status) {
         case 'verified':
             return 'default';
@@ -212,7 +217,10 @@ function formatDate(dateString: string | null): string {
  * Check if verification can be acted upon
  */
 function canAct(verification: VerificationData): boolean {
-    return verification.verification_status === 'pending' && !verification.is_locked;
+    return (
+        verification.verification_status === 'pending' &&
+        !verification.is_locked
+    );
 }
 </script>
 
@@ -229,21 +237,53 @@ function canAct(verification: VerificationData): boolean {
                                 @update:checked="emit('toggle-all')"
                             />
                         </th>
-                        <th class="h-10 w-16 px-3 text-left font-medium text-muted-foreground">Row</th>
-                        <th class="h-10 px-3 text-left font-medium text-muted-foreground">Source Device</th>
-                        <th class="h-10 px-3 text-left font-medium text-muted-foreground">Source Port</th>
-                        <th class="h-10 px-3 text-left font-medium text-muted-foreground">Dest Device</th>
-                        <th class="h-10 px-3 text-left font-medium text-muted-foreground">Dest Port</th>
-                        <th class="h-10 w-32 px-3 text-left font-medium text-muted-foreground">Comparison</th>
-                        <th class="h-10 w-28 px-3 text-left font-medium text-muted-foreground">Status</th>
-                        <th class="h-10 w-28 px-3 text-left font-medium text-muted-foreground">Actions</th>
+                        <th
+                            class="h-10 w-16 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Row
+                        </th>
+                        <th
+                            class="h-10 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Source Device
+                        </th>
+                        <th
+                            class="h-10 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Source Port
+                        </th>
+                        <th
+                            class="h-10 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Dest Device
+                        </th>
+                        <th
+                            class="h-10 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Dest Port
+                        </th>
+                        <th
+                            class="h-10 w-32 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Comparison
+                        </th>
+                        <th
+                            class="h-10 w-28 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Status
+                        </th>
+                        <th
+                            class="h-10 w-28 px-3 text-left font-medium text-muted-foreground"
+                        >
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
                         v-for="verification in verifications"
                         :key="verification.id"
-                        class="border-b transition-colors hover:bg-muted/50 last:border-b-0"
+                        class="border-b transition-colors last:border-b-0 hover:bg-muted/50"
                         :class="getRowClasses(verification)"
                     >
                         <!-- Checkbox -->
@@ -251,7 +291,9 @@ function canAct(verification: VerificationData): boolean {
                             <Checkbox
                                 :checked="selectedIds.has(verification.id)"
                                 :disabled="!canAct(verification)"
-                                @update:checked="emit('toggle-selection', verification.id)"
+                                @update:checked="
+                                    emit('toggle-selection', verification.id)
+                                "
                             />
                         </td>
 
@@ -263,10 +305,15 @@ function canAct(verification: VerificationData): boolean {
                         <!-- Source Device -->
                         <td class="px-3 py-3">
                             <div class="flex flex-col">
-                                <span v-if="verification.source_device?.name" class="font-medium">
+                                <span
+                                    v-if="verification.source_device?.name"
+                                    class="font-medium"
+                                >
                                     {{ verification.source_device.name }}
                                 </span>
-                                <span v-else class="text-muted-foreground">-</span>
+                                <span v-else class="text-muted-foreground"
+                                    >-</span
+                                >
                                 <span
                                     v-if="verification.source_device?.asset_tag"
                                     class="text-xs text-muted-foreground"
@@ -287,10 +334,15 @@ function canAct(verification: VerificationData): boolean {
                         <!-- Dest Device -->
                         <td class="px-3 py-3">
                             <div class="flex flex-col">
-                                <span v-if="verification.dest_device?.name" class="font-medium">
+                                <span
+                                    v-if="verification.dest_device?.name"
+                                    class="font-medium"
+                                >
                                     {{ verification.dest_device.name }}
                                 </span>
-                                <span v-else class="text-muted-foreground">-</span>
+                                <span v-else class="text-muted-foreground"
+                                    >-</span
+                                >
                                 <span
                                     v-if="verification.dest_device?.asset_tag"
                                     class="text-xs text-muted-foreground"
@@ -312,11 +364,25 @@ function canAct(verification: VerificationData): boolean {
                         <td class="px-3 py-3">
                             <div class="flex items-center gap-2">
                                 <component
-                                    :is="getComparisonIcon(verification.comparison_status)"
+                                    :is="
+                                        getComparisonIcon(
+                                            verification.comparison_status,
+                                        )
+                                    "
                                     class="size-4"
-                                    :class="getComparisonColorClass(verification.comparison_status)"
+                                    :class="
+                                        getComparisonColorClass(
+                                            verification.comparison_status,
+                                        )
+                                    "
                                 />
-                                <span :class="getComparisonColorClass(verification.comparison_status)">
+                                <span
+                                    :class="
+                                        getComparisonColorClass(
+                                            verification.comparison_status,
+                                        )
+                                    "
+                                >
                                     {{ verification.comparison_status_label }}
                                 </span>
                             </div>
@@ -325,20 +391,36 @@ function canAct(verification: VerificationData): boolean {
                         <!-- Verification Status -->
                         <td class="px-3 py-3">
                             <div class="flex flex-col gap-1">
-                                <Badge :variant="getVerificationBadgeVariant(verification.verification_status)">
+                                <Badge
+                                    :variant="
+                                        getVerificationBadgeVariant(
+                                            verification.verification_status,
+                                        )
+                                    "
+                                >
                                     {{ verification.verification_status_label }}
                                 </Badge>
                                 <!-- Show lock indicator -->
-                                <TooltipProvider v-if="verification.is_locked" :delay-duration="0">
+                                <TooltipProvider
+                                    v-if="verification.is_locked"
+                                    :delay-duration="0"
+                                >
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <span class="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+                                            <span
+                                                class="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+                                            >
                                                 <Lock class="size-3" />
                                                 Locked
                                             </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>Locked by {{ verification.locked_by?.name }}</p>
+                                            <p>
+                                                Locked by
+                                                {{
+                                                    verification.locked_by?.name
+                                                }}
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
@@ -364,28 +446,51 @@ function canAct(verification: VerificationData): boolean {
                                     Verify
                                 </Button>
                             </div>
-                            <TooltipProvider v-else-if="verification.is_locked" :delay-duration="0">
+                            <TooltipProvider
+                                v-else-if="verification.is_locked"
+                                :delay-duration="0"
+                            >
                                 <Tooltip>
                                     <TooltipTrigger as-child>
-                                        <span class="text-xs text-muted-foreground">
-                                            Locked by {{ verification.locked_by?.name }}
+                                        <span
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            Locked by
+                                            {{ verification.locked_by?.name }}
                                         </span>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>Wait for this user to finish or for the lock to expire (5 min)</p>
+                                        <p>
+                                            Wait for this user to finish or for
+                                            the lock to expire (5 min)
+                                        </p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            <TooltipProvider v-else-if="verification.verification_status !== 'pending'" :delay-duration="0">
+                            <TooltipProvider
+                                v-else-if="
+                                    verification.verification_status !==
+                                    'pending'
+                                "
+                                :delay-duration="0"
+                            >
                                 <Tooltip>
                                     <TooltipTrigger as-child>
-                                        <span class="flex items-center gap-1 text-xs text-muted-foreground">
+                                        <span
+                                            class="flex items-center gap-1 text-xs text-muted-foreground"
+                                        >
                                             <CheckCircle class="size-3" />
-                                            {{ formatDate(verification.verified_at) }}
+                                            {{
+                                                formatDate(
+                                                    verification.verified_at,
+                                                )
+                                            }}
                                         </span>
                                     </TooltipTrigger>
                                     <TooltipContent v-if="verification.notes">
-                                        <p class="max-w-xs">{{ verification.notes }}</p>
+                                        <p class="max-w-xs">
+                                            {{ verification.notes }}
+                                        </p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>

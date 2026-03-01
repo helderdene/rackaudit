@@ -1,22 +1,32 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
-import { index as customReportsIndex, configure, preview } from '@/actions/App/Http/Controllers/CustomReportBuilderController';
+import {
+    configure,
+    index as customReportsIndex,
+    preview,
+} from '@/actions/App/Http/Controllers/CustomReportBuilderController';
+import ColumnSelector from '@/components/CustomReports/ColumnSelector.vue';
+import CustomReportFilters from '@/components/CustomReports/CustomReportFilters.vue';
+import ExportButtons from '@/components/CustomReports/ExportButtons.vue';
+import GroupBySelector from '@/components/CustomReports/GroupBySelector.vue';
+import PreviewTable from '@/components/CustomReports/PreviewTable.vue';
+import ReportTypeSelector from '@/components/CustomReports/ReportTypeSelector.vue';
+import SortConfiguration from '@/components/CustomReports/SortConfiguration.vue';
+import TypeSpecificFilters from '@/components/CustomReports/TypeSpecificFilters.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { ChevronLeft, ChevronRight, Eye, FileBarChart, Settings } from 'lucide-vue-next';
-import ReportTypeSelector from '@/components/CustomReports/ReportTypeSelector.vue';
-import ColumnSelector from '@/components/CustomReports/ColumnSelector.vue';
-import CustomReportFilters from '@/components/CustomReports/CustomReportFilters.vue';
-import TypeSpecificFilters from '@/components/CustomReports/TypeSpecificFilters.vue';
-import SortConfiguration from '@/components/CustomReports/SortConfiguration.vue';
-import GroupBySelector from '@/components/CustomReports/GroupBySelector.vue';
-import PreviewTable from '@/components/CustomReports/PreviewTable.vue';
-import ExportButtons from '@/components/CustomReports/ExportButtons.vue';
+import { Head, router } from '@inertiajs/vue3';
+import {
+    ChevronLeft,
+    ChevronRight,
+    Eye,
+    FileBarChart,
+    Settings,
+} from 'lucide-vue-next';
+import { computed, nextTick, ref, watch } from 'vue';
 
 /**
  * TypeScript interfaces for Custom Report Builder props
@@ -114,7 +124,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 type BuilderStep = 'select-type' | 'configure' | 'preview';
 
 // Local state
-const currentStep = ref<BuilderStep>(props.previewData ? 'preview' : (props.selectedReportType ? 'configure' : 'select-type'));
+const currentStep = ref<BuilderStep>(
+    props.previewData
+        ? 'preview'
+        : props.selectedReportType
+          ? 'configure'
+          : 'select-type',
+);
 const selectedReportType = ref<string | null>(props.selectedReportType);
 const selectedColumns = ref<string[]>(props.selectedColumns);
 const selectedFilters = ref<Record<string, unknown>>(props.selectedFilters);
@@ -151,7 +167,7 @@ const steps = [
 ];
 
 const currentStepIndex = computed(() => {
-    return steps.findIndex(s => s.key === currentStep.value);
+    return steps.findIndex((s) => s.key === currentStep.value);
 });
 
 /**
@@ -166,7 +182,9 @@ const currentStepLabel = computed(() => {
  */
 const selectedReportTypeLabel = computed(() => {
     if (!selectedReportType.value) return '';
-    const type = props.reportTypes.find(t => t.value === selectedReportType.value);
+    const type = props.reportTypes.find(
+        (t) => t.value === selectedReportType.value,
+    );
     return type?.label || selectedReportType.value;
 });
 
@@ -199,7 +217,7 @@ const fieldsByCategory = computed(() => {
  */
 const selectedColumnsAsFields = computed(() => {
     return selectedColumns.value
-        .map(key => availableFields.value.find(f => f.key === key))
+        .map((key) => availableFields.value.find((f) => f.key === key))
         .filter((f): f is ReportField => f !== undefined);
 });
 
@@ -231,7 +249,7 @@ function focusStepContent() {
         if (stepContentRef.value) {
             // Find the first focusable element in the step content
             const focusable = stepContentRef.value.querySelector<HTMLElement>(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
             );
             if (focusable) {
                 focusable.focus();
@@ -258,7 +276,9 @@ async function handleReportTypeSelect(reportType: string) {
     isLoadingConfig.value = true;
 
     try {
-        const response = await fetch(configure.url({ query: { report_type: reportType } }));
+        const response = await fetch(
+            configure.url({ query: { report_type: reportType } }),
+        );
 
         if (!response.ok) {
             throw new Error('Failed to load report configuration');
@@ -275,7 +295,8 @@ async function handleReportTypeSelect(reportType: string) {
         announceStepChange('Configure');
         focusStepContent();
     } catch (error) {
-        configError.value = 'Failed to load report configuration. Please try again.';
+        configError.value =
+            'Failed to load report configuration. Please try again.';
         console.error('Error loading configuration:', error);
     } finally {
         isLoadingConfig.value = false;
@@ -299,7 +320,10 @@ function handleFiltersUpdate(filters: Record<string, unknown>) {
 /**
  * Handle location filter change for cascading behavior
  */
-async function handleLocationChange(location: { type: 'datacenter' | 'room' | 'row'; id: number | null }) {
+async function handleLocationChange(location: {
+    type: 'datacenter' | 'room' | 'row';
+    id: number | null;
+}) {
     // Reset child options when parent changes
     if (location.type === 'datacenter') {
         roomOptions.value = [];
@@ -308,7 +332,9 @@ async function handleLocationChange(location: { type: 'datacenter' | 'room' | 'r
         if (location.id) {
             // Fetch rooms for this datacenter
             try {
-                const response = await fetch(`/api/datacenters/${location.id}/rooms`);
+                const response = await fetch(
+                    `/api/datacenters/${location.id}/rooms`,
+                );
                 if (response.ok) {
                     roomOptions.value = await response.json();
                 }
@@ -354,26 +380,36 @@ function handlePageChange(page: number) {
     isGeneratingPreview.value = true;
 
     // Ensure sort has default if empty
-    const sortConfig = selectedSort.value.length > 0
-        ? selectedSort.value
-        : selectedColumns.value.length > 0
-            ? [{ column: selectedColumns.value[0], direction: 'desc' as const }]
-            : [];
+    const sortConfig =
+        selectedSort.value.length > 0
+            ? selectedSort.value
+            : selectedColumns.value.length > 0
+              ? [
+                    {
+                        column: selectedColumns.value[0],
+                        direction: 'desc' as const,
+                    },
+                ]
+              : [];
 
-    router.post(preview.url(), {
-        report_type: selectedReportType.value,
-        columns: selectedColumns.value,
-        filters: selectedFilters.value,
-        sort: sortConfig,
-        group_by: selectedGroupBy.value,
-        page,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-        onFinish: () => {
-            isGeneratingPreview.value = false;
+    router.post(
+        preview.url(),
+        {
+            report_type: selectedReportType.value,
+            columns: selectedColumns.value,
+            filters: selectedFilters.value,
+            sort: sortConfig,
+            group_by: selectedGroupBy.value,
+            page,
         },
-    });
+        {
+            preserveState: true,
+            preserveScroll: true,
+            onFinish: () => {
+                isGeneratingPreview.value = false;
+            },
+        },
+    );
 }
 
 /**
@@ -385,28 +421,38 @@ function generatePreview() {
     isGeneratingPreview.value = true;
 
     // Ensure sort has default if empty
-    const sortConfig = selectedSort.value.length > 0
-        ? selectedSort.value
-        : selectedColumns.value.length > 0
-            ? [{ column: selectedColumns.value[0], direction: 'desc' as const }]
-            : [];
+    const sortConfig =
+        selectedSort.value.length > 0
+            ? selectedSort.value
+            : selectedColumns.value.length > 0
+              ? [
+                    {
+                        column: selectedColumns.value[0],
+                        direction: 'desc' as const,
+                    },
+                ]
+              : [];
 
-    router.post(preview.url(), {
-        report_type: selectedReportType.value,
-        columns: selectedColumns.value,
-        filters: selectedFilters.value,
-        sort: sortConfig,
-        group_by: selectedGroupBy.value,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-        onFinish: () => {
-            isGeneratingPreview.value = false;
-            currentStep.value = 'preview';
-            announceStepChange('Preview');
-            focusStepContent();
+    router.post(
+        preview.url(),
+        {
+            report_type: selectedReportType.value,
+            columns: selectedColumns.value,
+            filters: selectedFilters.value,
+            sort: sortConfig,
+            group_by: selectedGroupBy.value,
         },
-    });
+        {
+            preserveState: true,
+            preserveScroll: true,
+            onFinish: () => {
+                isGeneratingPreview.value = false;
+                currentStep.value = 'preview';
+                announceStepChange('Preview');
+                focusStepContent();
+            },
+        },
+    );
 }
 
 /**
@@ -447,34 +493,50 @@ function startNewReport() {
     announceStepChange('Select Type');
 
     // Navigate to clean state
-    router.get(customReportsIndex.url(), {}, {
-        preserveScroll: true,
-        onFinish: () => {
-            focusStepContent();
+    router.get(
+        customReportsIndex.url(),
+        {},
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                focusStepContent();
+            },
         },
-    });
+    );
 }
 
 // Initialize configuration if we have a selected report type from props
-watch(() => props.selectedReportType, async (newType) => {
-    if (newType && !availableFields.value.length) {
-        await handleReportTypeSelect(newType);
-        // Restore selections from props
-        selectedColumns.value = props.selectedColumns;
-        selectedFilters.value = props.selectedFilters;
-        selectedSort.value = props.selectedSort;
-        selectedGroupBy.value = props.selectedGroupBy;
-    }
-}, { immediate: true });
+watch(
+    () => props.selectedReportType,
+    async (newType) => {
+        if (newType && !availableFields.value.length) {
+            await handleReportTypeSelect(newType);
+            // Restore selections from props
+            selectedColumns.value = props.selectedColumns;
+            selectedFilters.value = props.selectedFilters;
+            selectedSort.value = props.selectedSort;
+            selectedGroupBy.value = props.selectedGroupBy;
+        }
+    },
+    { immediate: true },
+);
 
 // Sync room and row options from props
-watch(() => props.roomOptions, (newRooms) => {
-    roomOptions.value = newRooms;
-}, { immediate: true });
+watch(
+    () => props.roomOptions,
+    (newRooms) => {
+        roomOptions.value = newRooms;
+    },
+    { immediate: true },
+);
 
-watch(() => props.rowOptions, (newRows) => {
-    rowOptions.value = newRows;
-}, { immediate: true });
+watch(
+    () => props.rowOptions,
+    (newRows) => {
+        rowOptions.value = newRows;
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -491,7 +553,9 @@ watch(() => props.rowOptions, (newRows) => {
             ></div>
 
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     title="Custom Report Builder"
                     description="Create customized reports by selecting data fields, filters, and output format."
@@ -522,33 +586,48 @@ watch(() => props.rowOptions, (newRows) => {
                                 class="flex items-center gap-2"
                                 :class="{
                                     'text-primary': currentStepIndex >= index,
-                                    'text-muted-foreground': currentStepIndex < index,
+                                    'text-muted-foreground':
+                                        currentStepIndex < index,
                                 }"
                             >
                                 <div
                                     class="flex size-8 items-center justify-center rounded-full border-2 text-sm font-medium transition-colors"
                                     :class="{
-                                        'border-primary bg-primary text-primary-foreground': currentStepIndex === index,
-                                        'border-primary bg-primary/10 text-primary': currentStepIndex > index,
-                                        'border-muted-foreground/30': currentStepIndex < index,
+                                        'border-primary bg-primary text-primary-foreground':
+                                            currentStepIndex === index,
+                                        'border-primary bg-primary/10 text-primary':
+                                            currentStepIndex > index,
+                                        'border-muted-foreground/30':
+                                            currentStepIndex < index,
                                     }"
-                                    :aria-current="currentStepIndex === index ? 'step' : undefined"
+                                    :aria-current="
+                                        currentStepIndex === index
+                                            ? 'step'
+                                            : undefined
+                                    "
                                 >
                                     {{ step.number }}
                                 </div>
-                                <span class="hidden text-sm font-medium sm:inline">
+                                <span
+                                    class="hidden text-sm font-medium sm:inline"
+                                >
                                     {{ step.label }}
                                     <span class="sr-only">
-                                        {{ currentStepIndex === index ? '(current step)' : currentStepIndex > index ? '(completed)' : '' }}
+                                        {{
+                                            currentStepIndex === index
+                                                ? '(current step)'
+                                                : currentStepIndex > index
+                                                  ? '(completed)'
+                                                  : ''
+                                        }}
                                     </span>
                                 </span>
                             </div>
                         </li>
-                        <li
-                            v-if="index < steps.length - 1"
-                            aria-hidden="true"
-                        >
-                            <ChevronRight class="size-4 text-muted-foreground/50" />
+                        <li v-if="index < steps.length - 1" aria-hidden="true">
+                            <ChevronRight
+                                class="size-4 text-muted-foreground/50"
+                            />
                         </li>
                     </template>
                 </ol>
@@ -571,7 +650,9 @@ watch(() => props.rowOptions, (newRows) => {
                     />
 
                     <div v-if="configError" class="text-center" role="alert">
-                        <p class="text-sm text-destructive">{{ configError }}</p>
+                        <p class="text-sm text-destructive">
+                            {{ configError }}
+                        </p>
                         <Button
                             variant="ghost"
                             size="sm"
@@ -592,12 +673,29 @@ watch(() => props.rowOptions, (newRows) => {
                                 <Skeleton class="h-5 w-40" />
                             </CardHeader>
                             <CardContent>
-                                <div class="space-y-4" role="status" aria-label="Loading configuration">
-                                    <span class="sr-only">Loading report configuration, please wait...</span>
-                                    <div v-for="i in 3" :key="i" class="space-y-2">
+                                <div
+                                    class="space-y-4"
+                                    role="status"
+                                    aria-label="Loading configuration"
+                                >
+                                    <span class="sr-only"
+                                        >Loading report configuration, please
+                                        wait...</span
+                                    >
+                                    <div
+                                        v-for="i in 3"
+                                        :key="i"
+                                        class="space-y-2"
+                                    >
                                         <Skeleton class="h-4 w-24" />
-                                        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                                            <Skeleton v-for="j in 4" :key="j" class="h-6 w-full" />
+                                        <div
+                                            class="grid grid-cols-2 gap-2 sm:grid-cols-3"
+                                        >
+                                            <Skeleton
+                                                v-for="j in 4"
+                                                :key="j"
+                                                class="h-6 w-full"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -610,8 +708,12 @@ watch(() => props.rowOptions, (newRows) => {
                         <div class="space-y-4">
                             <!-- Report Type Badge -->
                             <div class="flex items-center gap-2">
-                                <span class="text-sm text-muted-foreground">Report Type:</span>
-                                <span class="rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary">
+                                <span class="text-sm text-muted-foreground"
+                                    >Report Type:</span
+                                >
+                                <span
+                                    class="rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+                                >
                                     {{ selectedReportTypeLabel }}
                                 </span>
                             </div>
@@ -638,7 +740,10 @@ watch(() => props.rowOptions, (newRows) => {
 
                             <!-- Type-Specific Filters -->
                             <TypeSpecificFilters
-                                v-if="selectedReportType && Object.keys(availableFilters).length > 0"
+                                v-if="
+                                    selectedReportType &&
+                                    Object.keys(availableFilters).length > 0
+                                "
                                 :report-type="selectedReportType"
                                 :filter-options="availableFilters"
                                 :filters="selectedFilters"
@@ -668,18 +773,31 @@ watch(() => props.rowOptions, (newRows) => {
                                     @click="goBack"
                                     aria-label="Go back to select report type"
                                 >
-                                    <ChevronLeft class="mr-1 size-4" aria-hidden="true" />
+                                    <ChevronLeft
+                                        class="mr-1 size-4"
+                                        aria-hidden="true"
+                                    />
                                     Back
                                 </Button>
 
                                 <Button
-                                    :disabled="!canProceedToPreview || isGeneratingPreview"
+                                    :disabled="
+                                        !canProceedToPreview ||
+                                        isGeneratingPreview
+                                    "
                                     @click="generatePreview"
                                     :aria-busy="isGeneratingPreview"
                                     aria-label="Generate preview of your report"
                                 >
-                                    <Eye class="mr-1 size-4" aria-hidden="true" />
-                                    {{ isGeneratingPreview ? 'Generating...' : 'Generate Preview' }}
+                                    <Eye
+                                        class="mr-1 size-4"
+                                        aria-hidden="true"
+                                    />
+                                    {{
+                                        isGeneratingPreview
+                                            ? 'Generating...'
+                                            : 'Generate Preview'
+                                    }}
                                 </Button>
                             </div>
 
@@ -688,7 +806,8 @@ watch(() => props.rowOptions, (newRows) => {
                                 class="text-center text-sm text-muted-foreground"
                                 role="status"
                             >
-                                Select at least one column to generate a preview.
+                                Select at least one column to generate a
+                                preview.
                             </p>
                         </div>
                     </template>
@@ -698,24 +817,43 @@ watch(() => props.rowOptions, (newRows) => {
                 <template v-else-if="currentStep === 'preview'">
                     <div class="space-y-4">
                         <!-- Report Info and Export Buttons -->
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div
+                            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="text-sm text-muted-foreground">Report Type:</span>
-                                <span class="rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary">
+                                <span class="text-sm text-muted-foreground"
+                                    >Report Type:</span
+                                >
+                                <span
+                                    class="rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+                                >
                                     {{ selectedReportTypeLabel }}
                                 </span>
-                                <span class="text-sm text-muted-foreground" aria-hidden="true">|</span>
+                                <span
+                                    class="text-sm text-muted-foreground"
+                                    aria-hidden="true"
+                                    >|</span
+                                >
                                 <span class="text-sm text-muted-foreground">
-                                    {{ selectedColumns.length }} column{{ selectedColumns.length !== 1 ? 's' : '' }} selected
+                                    {{ selectedColumns.length }} column{{
+                                        selectedColumns.length !== 1 ? 's' : ''
+                                    }}
+                                    selected
                                 </span>
-                                <span v-if="selectedGroupBy" class="text-sm text-muted-foreground">
-                                    <span aria-hidden="true">|</span> Grouped by {{ selectedGroupBy }}
+                                <span
+                                    v-if="selectedGroupBy"
+                                    class="text-sm text-muted-foreground"
+                                >
+                                    <span aria-hidden="true">|</span> Grouped by
+                                    {{ selectedGroupBy }}
                                 </span>
                             </div>
 
                             <!-- Export Buttons -->
                             <ExportButtons
-                                v-if="previewData && previewData.data.length > 0"
+                                v-if="
+                                    previewData && previewData.data.length > 0
+                                "
                                 :report-config="reportConfig"
                                 :loading="isGeneratingPreview"
                             />
@@ -735,8 +873,13 @@ watch(() => props.rowOptions, (newRows) => {
                         <!-- Empty State if no preview data -->
                         <Card v-else>
                             <CardContent class="py-12 text-center">
-                                <FileBarChart class="mx-auto mb-4 size-12 text-muted-foreground/50" aria-hidden="true" />
-                                <h3 class="text-lg font-medium">No data available</h3>
+                                <FileBarChart
+                                    class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                                    aria-hidden="true"
+                                />
+                                <h3 class="text-lg font-medium">
+                                    No data available
+                                </h3>
                                 <p class="mt-1 text-sm text-muted-foreground">
                                     No records match your current configuration.
                                 </p>
@@ -750,7 +893,10 @@ watch(() => props.rowOptions, (newRows) => {
                                 @click="goBack"
                                 aria-label="Go back to edit configuration"
                             >
-                                <ChevronLeft class="mr-1 size-4" aria-hidden="true" />
+                                <ChevronLeft
+                                    class="mr-1 size-4"
+                                    aria-hidden="true"
+                                />
                                 Edit Configuration
                             </Button>
 
@@ -761,8 +907,15 @@ watch(() => props.rowOptions, (newRows) => {
                                 :aria-busy="isGeneratingPreview"
                                 aria-label="Refresh the preview"
                             >
-                                <Settings class="mr-1 size-4" aria-hidden="true" />
-                                {{ isGeneratingPreview ? 'Refreshing...' : 'Refresh Preview' }}
+                                <Settings
+                                    class="mr-1 size-4"
+                                    aria-hidden="true"
+                                />
+                                {{
+                                    isGeneratingPreview
+                                        ? 'Refreshing...'
+                                        : 'Refresh Preview'
+                                }}
                             </Button>
                         </div>
                     </div>

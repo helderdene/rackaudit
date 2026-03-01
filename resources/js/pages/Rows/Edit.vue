@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import RowController from '@/actions/App/Http/Controllers/RowController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import RowForm from '@/components/rows/RowForm.vue';
 import DeleteRowDialog from '@/components/rows/DeleteRowDialog.vue';
+import RowForm from '@/components/rows/RowForm.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DatacenterReference, RoomReference, RowData, SelectOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    RoomReference,
+    RowData,
+    SelectOption,
+} from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -36,11 +41,18 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: `Edit ${props.row.name}`,
-        href: RowController.edit.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RowController.edit.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
 ];
 </script>
@@ -75,11 +87,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div
                     class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
                 >
-                    <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                    <div
+                        class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                    >
                         <p class="font-medium">Warning</p>
                         <p class="text-sm">
                             Once deleted, this row will be permanently removed.
-                            Any PDUs assigned to this row will be reassigned to the room level.
+                            Any PDUs assigned to this row will be reassigned to
+                            the room level.
                         </p>
                     </div>
                     <DeleteRowDialog
@@ -89,9 +104,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         :row-name="row.name"
                         :has-pdus="(row.pdu_count ?? 0) > 0"
                     >
-                        <Button variant="destructive">
-                            Delete Row
-                        </Button>
+                        <Button variant="destructive"> Delete Row </Button>
                     </DeleteRowDialog>
                 </div>
             </div>

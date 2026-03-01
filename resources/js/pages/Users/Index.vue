@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
-import BulkActionsBar from '@/components/users/BulkActionsBar.vue';
-import DeleteUserDialog from '@/components/users/DeleteUserDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import BulkActionsBar from '@/components/users/BulkActionsBar.vue';
+import DeleteUserDialog from '@/components/users/DeleteUserDialog.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
 import { debounce } from '@/lib/utils';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface UserData {
     id: number;
@@ -72,17 +71,20 @@ const selectedUserIds = ref<number[]>([]);
 
 // Check if all users are selected (excluding current user)
 const selectableUsers = computed(() =>
-    props.users.data.filter(user => user.id !== currentUser.value.id)
+    props.users.data.filter((user) => user.id !== currentUser.value.id),
 );
 
-const allSelected = computed(() =>
-    selectableUsers.value.length > 0 &&
-    selectableUsers.value.every(user => selectedUserIds.value.includes(user.id))
+const allSelected = computed(
+    () =>
+        selectableUsers.value.length > 0 &&
+        selectableUsers.value.every((user) =>
+            selectedUserIds.value.includes(user.id),
+        ),
 );
 
 const toggleSelectAll = (checked: boolean) => {
     if (checked) {
-        selectedUserIds.value = selectableUsers.value.map(user => user.id);
+        selectedUserIds.value = selectableUsers.value.map((user) => user.id);
     } else {
         selectedUserIds.value = [];
     }
@@ -117,7 +119,7 @@ const applyFilters = debounce(() => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 }, 300);
 
@@ -170,7 +172,9 @@ const goToPage = (url: string | null) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="User Management"
                     description="Manage user accounts, roles, and access permissions."
@@ -194,7 +198,7 @@ const goToPage = (url: string | null) => {
                     <select
                         v-model="roleFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Roles</option>
                         <option
@@ -208,7 +212,7 @@ const goToPage = (url: string | null) => {
                     <select
                         v-model="statusFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Statuses</option>
                         <option value="active">Active</option>
@@ -230,12 +234,36 @@ const goToPage = (url: string | null) => {
                                     :disabled="selectableUsers.length === 0"
                                 />
                             </th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Email</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Role</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Status</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Last Active</th>
-                            <th class="h-12 w-[140px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Name
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Email
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Role
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Last Active
+                            </th>
+                            <th
+                                class="h-12 w-[140px] px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -247,13 +275,19 @@ const goToPage = (url: string | null) => {
                             <td class="p-4">
                                 <Checkbox
                                     :checked="isUserSelected(user.id)"
-                                    @update:checked="toggleUserSelection(user.id)"
+                                    @update:checked="
+                                        toggleUserSelection(user.id)
+                                    "
                                     :disabled="user.id === currentUser.id"
                                 />
                             </td>
                             <td class="p-4 font-medium">
                                 {{ user.name }}
-                                <span v-if="user.id === currentUser.id" class="text-xs text-muted-foreground">(you)</span>
+                                <span
+                                    v-if="user.id === currentUser.id"
+                                    class="text-xs text-muted-foreground"
+                                    >(you)</span
+                                >
                             </td>
                             <td class="p-4">{{ user.email }}</td>
                             <td class="p-4">{{ user.role }}</td>
@@ -265,8 +299,12 @@ const goToPage = (url: string | null) => {
                             </td>
                             <td class="p-4">
                                 <div class="flex items-center gap-2">
-                                    <Link :href="UserController.edit.url(user.id)">
-                                        <Button variant="outline" size="sm">Edit</Button>
+                                    <Link
+                                        :href="UserController.edit.url(user.id)"
+                                    >
+                                        <Button variant="outline" size="sm"
+                                            >Edit</Button
+                                        >
                                     </Link>
                                     <DeleteUserDialog
                                         :user-id="user.id"
@@ -277,7 +315,10 @@ const goToPage = (url: string | null) => {
                             </td>
                         </tr>
                         <tr v-if="users.data.length === 0">
-                            <td colspan="7" class="p-8 text-center text-muted-foreground">
+                            <td
+                                colspan="7"
+                                class="p-8 text-center text-muted-foreground"
+                            >
                                 No users found.
                             </td>
                         </tr>
@@ -286,11 +327,20 @@ const goToPage = (url: string | null) => {
             </div>
 
             <!-- Pagination -->
-            <div v-if="users.last_page > 1" class="flex items-center justify-between">
+            <div
+                v-if="users.last_page > 1"
+                class="flex items-center justify-between"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ (users.current_page - 1) * users.per_page + 1 }} to
-                    {{ Math.min(users.current_page * users.per_page, users.total) }} of
-                    {{ users.total }} users
+                    Showing
+                    {{ (users.current_page - 1) * users.per_page + 1 }} to
+                    {{
+                        Math.min(
+                            users.current_page * users.per_page,
+                            users.total,
+                        )
+                    }}
+                    of {{ users.total }} users
                 </div>
                 <div class="flex gap-1">
                     <Button
@@ -300,8 +350,8 @@ const goToPage = (url: string | null) => {
                         size="sm"
                         :disabled="!link.url || link.active"
                         @click="goToPage(link.url)"
-                        v-html="link.label"
-                    />
+                        ><span v-html="link.label"
+                    /></Button>
                 </div>
             </div>
 

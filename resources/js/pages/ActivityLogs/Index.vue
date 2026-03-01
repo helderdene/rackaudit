@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import ActivityLogController from '@/actions/App/Http/Controllers/ActivityLogController';
 import ActionBadge from '@/components/ActionBadge.vue';
 import ActivityDetailPanel from '@/components/activity/ActivityDetailPanel.vue';
@@ -8,8 +6,10 @@ import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
 import { debounce } from '@/lib/utils';
+import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface ActivityLogData {
     id: number;
@@ -112,7 +112,7 @@ const applyFilters = debounce(() => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 }, 300);
 
@@ -176,7 +176,9 @@ const getSummary = (log: ActivityLogData): string => {
         return `Deleted: ${keys.join(', ')}${Object.keys(log.old_values).length > 3 ? '...' : ''}`;
     } else if (log.action === 'updated' && log.old_values && log.new_values) {
         const changedKeys = Object.keys(log.new_values).filter(
-            (key) => JSON.stringify(log.old_values?.[key]) !== JSON.stringify(log.new_values?.[key])
+            (key) =>
+                JSON.stringify(log.old_values?.[key]) !==
+                JSON.stringify(log.new_values?.[key]),
         );
         if (changedKeys.length === 0) return 'No visible changes';
         return `Changed: ${changedKeys.slice(0, 3).join(', ')}${changedKeys.length > 3 ? '...' : ''}`;
@@ -206,7 +208,9 @@ const paginationInfo = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Activity Logs"
                     description="View and filter activity logs across the system."
@@ -216,7 +220,9 @@ const paginationInfo = computed(() => {
             <!-- Filters -->
             <div class="flex flex-col gap-4">
                 <!-- First row: Search and Date filters -->
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                <div
+                    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5"
+                >
                     <!-- Search Input -->
                     <div class="lg:col-span-2">
                         <Input
@@ -249,12 +255,14 @@ const paginationInfo = computed(() => {
                 </div>
 
                 <!-- Second row: Dropdown filters -->
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div
+                    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                >
                     <!-- Action Filter -->
                     <select
                         v-model="actionFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Actions</option>
                         <option
@@ -270,7 +278,7 @@ const paginationInfo = computed(() => {
                     <select
                         v-model="userFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Users</option>
                         <option
@@ -286,7 +294,7 @@ const paginationInfo = computed(() => {
                     <select
                         v-model="subjectTypeFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Entity Types</option>
                         <option
@@ -305,19 +313,48 @@ const paginationInfo = computed(() => {
                 <table class="w-full min-w-[800px] text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Timestamp</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">User</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Action</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Entity Type</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Entity ID</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Summary</th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Timestamp
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                User
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Action
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Entity Type
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Entity ID
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Summary
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-for="log in activityLogs.data" :key="log.id">
+                        <template
+                            v-for="log in activityLogs.data"
+                            :key="log.id"
+                        >
                             <tr
                                 class="cursor-pointer border-b transition-colors hover:bg-muted/50"
-                                :class="{ 'bg-muted/30': isRowExpanded(log.id) }"
+                                :class="{
+                                    'bg-muted/30': isRowExpanded(log.id),
+                                }"
                                 @click="toggleRowExpansion(log.id)"
                             >
                                 <td class="p-4 text-muted-foreground">
@@ -335,7 +372,9 @@ const paginationInfo = computed(() => {
                                 <td class="p-4 font-mono text-xs">
                                     {{ log.subject_id }}
                                 </td>
-                                <td class="max-w-[200px] truncate p-4 text-muted-foreground">
+                                <td
+                                    class="max-w-[200px] truncate p-4 text-muted-foreground"
+                                >
                                     {{ getSummary(log) }}
                                 </td>
                             </tr>
@@ -350,7 +389,10 @@ const paginationInfo = computed(() => {
                             </tr>
                         </template>
                         <tr v-if="activityLogs.data.length === 0">
-                            <td colspan="6" class="p-8 text-center text-muted-foreground">
+                            <td
+                                colspan="6"
+                                class="p-8 text-center text-muted-foreground"
+                            >
                                 No activity logs found.
                             </td>
                         </tr>
@@ -359,9 +401,14 @@ const paginationInfo = computed(() => {
             </div>
 
             <!-- Pagination -->
-            <div v-if="activityLogs.last_page > 1" class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div
+                v-if="activityLogs.last_page > 1"
+                class="flex flex-col items-center justify-between gap-4 sm:flex-row"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ paginationInfo.from }} to {{ paginationInfo.to }} of {{ paginationInfo.total }} results
+                    Showing {{ paginationInfo.from }} to
+                    {{ paginationInfo.to }} of
+                    {{ paginationInfo.total }} results
                 </div>
                 <div class="flex flex-wrap gap-1">
                     <Button
@@ -371,8 +418,8 @@ const paginationInfo = computed(() => {
                         size="sm"
                         :disabled="!link.url || link.active"
                         @click="goToPage(link.url)"
-                        v-html="link.label"
-                    />
+                        ><span v-html="link.label"
+                    /></Button>
                 </div>
             </div>
         </div>

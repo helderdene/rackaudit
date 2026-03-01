@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import {
-    Plus,
-    Trash2,
-    CheckCircle,
-    Eye,
-} from 'lucide-vue-next';
+import type {
+    ComparisonResultData,
+    ComparisonStatistics as ComparisonStatsType,
+} from '@/types/comparison';
+import { CheckCircle, Eye, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import AcknowledgeDiscrepancyDialog from './AcknowledgeDiscrepancyDialog.vue';
 import ComparisonRow from './ComparisonRow.vue';
 import ComparisonStatistics from './ComparisonStatistics.vue';
-import AcknowledgeDiscrepancyDialog from './AcknowledgeDiscrepancyDialog.vue';
-import type { ComparisonResultData, ComparisonStatistics as ComparisonStatsType } from '@/types/comparison';
 
 interface Props {
     comparisons: ComparisonResultData[];
@@ -79,7 +77,8 @@ function getAvailableActions(comparison: ComparisonResultData): {
         // "Create Connection" button for "Missing" status only
         showCreateConnection: discrepancyType === 'missing' && !isAcknowledged,
         // "Delete Connection" button for "Unexpected" status only
-        showDeleteConnection: discrepancyType === 'unexpected' && !isAcknowledged,
+        showDeleteConnection:
+            discrepancyType === 'unexpected' && !isAcknowledged,
         // "Acknowledge" button for all non-matched, non-acknowledged statuses
         showAcknowledge: discrepancyType !== 'matched' && !isAcknowledged,
         // "View Details" button for matched connections
@@ -131,26 +130,65 @@ const hasComparisons = computed(() => props.comparisons.length > 0);
         </div>
 
         <!-- Data Table -->
-        <div v-else-if="hasComparisons" class="overflow-hidden rounded-lg border">
+        <div
+            v-else-if="hasComparisons"
+            class="overflow-hidden rounded-lg border"
+        >
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
-                            <th class="h-10 w-12 px-3 text-left font-medium text-muted-foreground">#</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Source Device</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Source Port</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Dest Device</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Dest Port</th>
-                            <th class="h-10 w-24 px-3 text-left font-medium text-muted-foreground">Cable Type</th>
-                            <th class="h-10 w-28 px-3 text-left font-medium text-muted-foreground">Status</th>
-                            <th class="h-10 w-36 px-3 text-left font-medium text-muted-foreground">Actions</th>
+                            <th
+                                class="h-10 w-12 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                #
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Source Device
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Source Port
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Dest Device
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Dest Port
+                            </th>
+                            <th
+                                class="h-10 w-24 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Cable Type
+                            </th>
+                            <th
+                                class="h-10 w-28 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="h-10 w-36 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
                             v-for="(comparison, index) in comparisons"
-                            :key="comparison.expected_connection?.id ?? comparison.actual_connection?.id ?? index"
-                            class="border-b transition-colors hover:bg-muted/50 last:border-b-0"
+                            :key="
+                                comparison.expected_connection?.id ??
+                                comparison.actual_connection?.id ??
+                                index
+                            "
+                            class="border-b transition-colors last:border-b-0 hover:bg-muted/50"
                             :class="getRowClasses(comparison)"
                         >
                             <ComparisonRow
@@ -163,12 +201,17 @@ const hasComparisons = computed(() => props.comparisons.length > 0);
                                 <div class="flex gap-1">
                                     <!-- Create Connection (Missing only) -->
                                     <Button
-                                        v-if="getAvailableActions(comparison).showCreateConnection"
+                                        v-if="
+                                            getAvailableActions(comparison)
+                                                .showCreateConnection
+                                        "
                                         size="sm"
                                         variant="ghost"
                                         class="h-7 px-2 text-green-600 hover:bg-green-50 hover:text-green-700 dark:text-green-400 dark:hover:bg-green-900/20"
                                         title="Create Connection"
-                                        @click="handleCreateConnection(comparison)"
+                                        @click="
+                                            handleCreateConnection(comparison)
+                                        "
                                     >
                                         <Plus class="mr-1 size-3.5" />
                                         Create
@@ -176,12 +219,17 @@ const hasComparisons = computed(() => props.comparisons.length > 0);
 
                                     <!-- Delete Connection (Unexpected only) -->
                                     <Button
-                                        v-if="getAvailableActions(comparison).showDeleteConnection"
+                                        v-if="
+                                            getAvailableActions(comparison)
+                                                .showDeleteConnection
+                                        "
                                         size="sm"
                                         variant="ghost"
                                         class="h-7 px-2 text-destructive hover:bg-red-50 hover:text-destructive dark:hover:bg-red-900/20"
                                         title="Delete Connection"
-                                        @click="handleDeleteConnection(comparison)"
+                                        @click="
+                                            handleDeleteConnection(comparison)
+                                        "
                                     >
                                         <Trash2 class="mr-1 size-3.5" />
                                         Delete
@@ -189,7 +237,10 @@ const hasComparisons = computed(() => props.comparisons.length > 0);
 
                                     <!-- Acknowledge (All non-matched) -->
                                     <Button
-                                        v-if="getAvailableActions(comparison).showAcknowledge"
+                                        v-if="
+                                            getAvailableActions(comparison)
+                                                .showAcknowledge
+                                        "
                                         size="sm"
                                         variant="ghost"
                                         class="h-7 px-2 text-muted-foreground hover:text-foreground"
@@ -202,7 +253,10 @@ const hasComparisons = computed(() => props.comparisons.length > 0);
 
                                     <!-- View Details (Matched only) -->
                                     <Button
-                                        v-if="getAvailableActions(comparison).showViewDetails"
+                                        v-if="
+                                            getAvailableActions(comparison)
+                                                .showViewDetails
+                                        "
                                         size="sm"
                                         variant="ghost"
                                         class="h-7 px-2 text-muted-foreground hover:text-foreground"
@@ -216,10 +270,14 @@ const hasComparisons = computed(() => props.comparisons.length > 0);
                                     <!-- No actions available -->
                                     <span
                                         v-if="
-                                            !getAvailableActions(comparison).showCreateConnection &&
-                                            !getAvailableActions(comparison).showDeleteConnection &&
-                                            !getAvailableActions(comparison).showAcknowledge &&
-                                            !getAvailableActions(comparison).showViewDetails
+                                            !getAvailableActions(comparison)
+                                                .showCreateConnection &&
+                                            !getAvailableActions(comparison)
+                                                .showDeleteConnection &&
+                                            !getAvailableActions(comparison)
+                                                .showAcknowledge &&
+                                            !getAvailableActions(comparison)
+                                                .showViewDetails
                                         "
                                         class="text-xs text-muted-foreground"
                                     >

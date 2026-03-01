@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
+import RackController from '@/actions/App/Http/Controllers/RackController';
 import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import RowController from '@/actions/App/Http/Controllers/RowController';
-import RackController from '@/actions/App/Http/Controllers/RackController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import RackForm from '@/components/racks/RackForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DatacenterReference, RoomReference, RowReference, SelectOption, PduOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    PduOption,
+    RoomReference,
+    RowReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -37,19 +43,33 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: 'Rows',
-        href: RowController.index.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RowController.index.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: props.row.name,
-        href: RowController.show.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RowController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
     {
         title: 'Create Rack',
-        href: RackController.create.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RackController.create.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
 ];
 </script>

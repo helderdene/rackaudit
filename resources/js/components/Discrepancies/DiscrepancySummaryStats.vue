@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { index as discrepanciesIndex } from '@/actions/App/Http/Controllers/DiscrepancyController';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge, type BadgeVariants } from '@/components/ui/badge';
-import { AlertTriangle, AlertCircle, GitCompare, Shuffle, Settings, Building2 } from 'lucide-vue-next';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { router } from '@inertiajs/vue3';
+import {
+    AlertCircle,
+    AlertTriangle,
+    Building2,
+    GitCompare,
+    Settings,
+    Shuffle,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface SummaryData {
     total: number;
@@ -82,7 +89,7 @@ const typeCounts = computed(() => {
 const activeDatacenter = computed(() => {
     if (!props.filters.datacenter_id) return null;
     return props.summary.by_datacenter.find(
-        dc => String(dc.id) === props.filters.datacenter_id
+        (dc) => String(dc.id) === props.filters.datacenter_id,
     );
 });
 
@@ -102,12 +109,16 @@ const filterByType = (type: string) => {
 
 // Filter by datacenter
 const filterByDatacenter = (datacenterId: number) => {
-    router.get(discrepanciesIndex.url(), {
-        datacenter_id: String(datacenterId),
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        discrepanciesIndex.url(),
+        {
+            datacenter_id: String(datacenterId),
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 // Clear type filter
@@ -130,7 +141,9 @@ const clearTypeFilter = () => {
             <!-- Total Count Card -->
             <Card class="sm:col-span-2 lg:col-span-1">
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-medium text-muted-foreground">
+                    <CardTitle
+                        class="text-sm font-medium text-muted-foreground"
+                    >
                         Total Open
                     </CardTitle>
                 </CardHeader>
@@ -148,17 +161,28 @@ const clearTypeFilter = () => {
                 :key="type.key"
                 class="cursor-pointer transition-colors hover:bg-muted/50"
                 :class="{
-                    'ring-2 ring-primary': filters.discrepancy_type === type.key
+                    'ring-2 ring-primary':
+                        filters.discrepancy_type === type.key,
                 }"
-                @click="filters.discrepancy_type === type.key ? clearTypeFilter() : filterByType(type.key)"
+                @click="
+                    filters.discrepancy_type === type.key
+                        ? clearTypeFilter()
+                        : filterByType(type.key)
+                "
             >
                 <CardHeader class="pb-2">
-                    <CardTitle class="flex items-center justify-between text-sm font-medium text-muted-foreground">
+                    <CardTitle
+                        class="flex items-center justify-between text-sm font-medium text-muted-foreground"
+                    >
                         <span class="flex items-center gap-1">
                             <component :is="type.icon" class="size-4" />
                             {{ type.label }}
                         </span>
-                        <Badge v-if="type.count > 0" :variant="type.variant" class="ml-2">
+                        <Badge
+                            v-if="type.count > 0"
+                            :variant="type.variant"
+                            class="ml-2"
+                        >
                             {{ type.count }}
                         </Badge>
                     </CardTitle>
@@ -196,9 +220,17 @@ const clearTypeFilter = () => {
         </Card>
 
         <!-- Active Datacenter Filter Indicator -->
-        <div v-if="activeDatacenter" class="flex items-center gap-2 text-sm text-muted-foreground">
+        <div
+            v-if="activeDatacenter"
+            class="flex items-center gap-2 text-sm text-muted-foreground"
+        >
             <Building2 class="size-4" />
-            <span>Showing discrepancies for <strong class="text-foreground">{{ activeDatacenter.name }}</strong></span>
+            <span
+                >Showing discrepancies for
+                <strong class="text-foreground">{{
+                    activeDatacenter.name
+                }}</strong></span
+            >
         </div>
     </div>
 </template>

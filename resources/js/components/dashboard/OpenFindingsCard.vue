@@ -24,7 +24,7 @@ interface Props {
     bySeverity: SeverityBreakdown;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 /**
  * Get trend color class based on percentage value
@@ -50,7 +50,8 @@ const getTrendColorClass = (percentage: string): string => {
  */
 const getSeverityBadgeClass = (severity: FindingSeverityValue): string => {
     // Base classes with responsive sizing: larger padding and text on tablet (md breakpoint)
-    const baseClasses = 'inline-flex items-center justify-center rounded-full px-2 py-0.5 md:px-2.5 md:py-1 text-xs md:text-sm font-medium transition-colors';
+    const baseClasses =
+        'inline-flex items-center justify-center rounded-full px-2 py-0.5 md:px-2.5 md:py-1 text-xs md:text-sm font-medium transition-colors';
     switch (severity) {
         case 'critical':
             return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
@@ -70,9 +71,13 @@ const sparklineColor = 'rgb(239, 68, 68)'; // red-500
 </script>
 
 <template>
-    <Card class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+            <CardTitle
+                class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+            >
                 {{ title }}
             </CardTitle>
         </CardHeader>
@@ -81,7 +86,9 @@ const sparklineColor = 'rgb(239, 68, 68)'; // red-500
                 <!-- Left side: metric value and trend -->
                 <div class="min-w-0 flex-1">
                     <div class="flex items-baseline gap-2">
-                        <div class="text-3xl font-bold text-foreground dark:text-foreground">
+                        <div
+                            class="text-3xl font-bold text-foreground dark:text-foreground"
+                        >
                             {{ value.toLocaleString() }}
                         </div>
                         <div
@@ -91,7 +98,9 @@ const sparklineColor = 'rgb(239, 68, 68)'; // red-500
                             {{ trend.percentage }}
                         </div>
                     </div>
-                    <p class="mt-1 text-xs text-muted-foreground md:text-sm dark:text-muted-foreground/80">
+                    <p
+                        class="mt-1 text-xs text-muted-foreground md:text-sm dark:text-muted-foreground/80"
+                    >
                         {{ trend.change }}
                     </p>
                 </div>

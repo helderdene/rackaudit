@@ -23,7 +23,10 @@ import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 
 // Stub for disabled 2FA feature
 const confirm = {
-    form: () => ({ action: '/user/confirmed-two-factor-authentication', method: 'post' }),
+    form: () => ({
+        action: '/user/confirmed-two-factor-authentication',
+        method: 'post',
+    }),
 };
 
 interface Props {

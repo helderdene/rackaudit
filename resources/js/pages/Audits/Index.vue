@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
 import { debounce } from '@/lib/utils';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 
 interface AuditData {
     id: number;
@@ -97,7 +97,7 @@ const debouncedSearch = debounce(() => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 }, 300);
 
@@ -116,7 +116,7 @@ watch([statusFilter, typeFilter], () => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 });
 
@@ -125,10 +125,14 @@ const clearFilters = () => {
     searchQuery.value = '';
     statusFilter.value = '';
     typeFilter.value = '';
-    router.get(AuditController.index.url(), {}, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        AuditController.index.url(),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 // Navigate to page
@@ -140,7 +144,8 @@ const goToPage = (url: string | null) => {
 
 // Get status badge classes
 const getStatusBadgeClass = (status: string): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (status) {
         case 'pending':
             return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200`;
@@ -157,7 +162,8 @@ const getStatusBadgeClass = (status: string): string => {
 
 // Get type badge classes
 const getTypeBadgeClass = (type: string): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (type) {
         case 'connection':
             return `${baseClasses} bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200`;
@@ -169,7 +175,8 @@ const getTypeBadgeClass = (type: string): string => {
 };
 
 // Common select styling for filters
-const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+const selectClass =
+    'flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 </script>
 
 <template>
@@ -178,7 +185,9 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header - responsive layout -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Audit Management"
                     description="Create and manage datacenter audits for connection verification and inventory checks."
@@ -191,7 +200,9 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
             </div>
 
             <!-- Filters - responsive stacking -->
-            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
+            <div
+                class="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4"
+            >
                 <div class="flex-1">
                     <Input
                         v-model="searchQuery"
@@ -249,8 +260,12 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                 >
                     <div class="mb-3 flex items-start justify-between gap-2">
                         <div class="flex-1">
-                            <h3 class="font-medium text-foreground">{{ audit.name }}</h3>
-                            <p class="text-sm text-muted-foreground">{{ audit.datacenter.name }}</p>
+                            <h3 class="font-medium text-foreground">
+                                {{ audit.name }}
+                            </h3>
+                            <p class="text-sm text-muted-foreground">
+                                {{ audit.datacenter.name }}
+                            </p>
                         </div>
                         <span :class="getStatusBadgeClass(audit.status)">
                             {{ audit.status_label }}
@@ -260,21 +275,34 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                         <span :class="getTypeBadgeClass(audit.type)">
                             {{ audit.type_label }}
                         </span>
-                        <span class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                        <span
+                            class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                        >
                             {{ audit.scope_type_label }}
                         </span>
                     </div>
-                    <div class="flex items-center justify-between text-sm text-muted-foreground">
+                    <div
+                        class="flex items-center justify-between text-sm text-muted-foreground"
+                    >
                         <div class="flex items-center gap-4">
-                            <span v-if="audit.due_date">Due: {{ audit.due_date }}</span>
-                            <span>{{ audit.assignees_count }} assignee{{ audit.assignees_count !== 1 ? 's' : '' }}</span>
+                            <span v-if="audit.due_date"
+                                >Due: {{ audit.due_date }}</span
+                            >
+                            <span
+                                >{{ audit.assignees_count }} assignee{{
+                                    audit.assignees_count !== 1 ? 's' : ''
+                                }}</span
+                            >
                         </div>
                         <Link :href="AuditController.show.url(audit.id)">
                             <Button variant="outline" size="sm">View</Button>
                         </Link>
                     </div>
                 </div>
-                <div v-if="audits.data.length === 0" class="rounded-lg border border-dashed py-12 text-center text-muted-foreground">
+                <div
+                    v-if="audits.data.length === 0"
+                    class="rounded-lg border border-dashed py-12 text-center text-muted-foreground"
+                >
                     No audits found.
                 </div>
             </div>
@@ -285,14 +313,46 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Type</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Scope</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground lg:table-cell">Datacenter</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Status</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Due Date</th>
-                                <th class="hidden h-12 px-4 text-left font-medium text-muted-foreground xl:table-cell">Assignees</th>
-                                <th class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Type
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Scope
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground lg:table-cell"
+                                >
+                                    Datacenter
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Due Date
+                                </th>
+                                <th
+                                    class="hidden h-12 px-4 text-left font-medium text-muted-foreground xl:table-cell"
+                                >
+                                    Assignees
+                                </th>
+                                <th
+                                    class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -305,7 +365,9 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                     {{ audit.name }}
                                 </td>
                                 <td class="p-4">
-                                    <span :class="getTypeBadgeClass(audit.type)">
+                                    <span
+                                        :class="getTypeBadgeClass(audit.type)"
+                                    >
                                         {{ audit.type_label }}
                                     </span>
                                 </td>
@@ -316,7 +378,11 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                     {{ audit.datacenter.name }}
                                 </td>
                                 <td class="p-4">
-                                    <span :class="getStatusBadgeClass(audit.status)">
+                                    <span
+                                        :class="
+                                            getStatusBadgeClass(audit.status)
+                                        "
+                                    >
                                         {{ audit.status_label }}
                                     </span>
                                 </td>
@@ -327,13 +393,22 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                                     {{ audit.assignees_count }}
                                 </td>
                                 <td class="p-4">
-                                    <Link :href="AuditController.show.url(audit.id)">
-                                        <Button variant="outline" size="sm">View</Button>
+                                    <Link
+                                        :href="
+                                            AuditController.show.url(audit.id)
+                                        "
+                                    >
+                                        <Button variant="outline" size="sm"
+                                            >View</Button
+                                        >
                                     </Link>
                                 </td>
                             </tr>
                             <tr v-if="audits.data.length === 0">
-                                <td colspan="8" class="p-8 text-center text-muted-foreground">
+                                <td
+                                    colspan="8"
+                                    class="p-8 text-center text-muted-foreground"
+                                >
                                     No audits found.
                                 </td>
                             </tr>
@@ -343,11 +418,20 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
             </div>
 
             <!-- Pagination - responsive layout -->
-            <div v-if="audits.last_page > 1" class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div
+                v-if="audits.last_page > 1"
+                class="flex flex-col items-center justify-between gap-4 sm:flex-row"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ (audits.current_page - 1) * audits.per_page + 1 }} to
-                    {{ Math.min(audits.current_page * audits.per_page, audits.total) }} of
-                    {{ audits.total }} audits
+                    Showing
+                    {{ (audits.current_page - 1) * audits.per_page + 1 }} to
+                    {{
+                        Math.min(
+                            audits.current_page * audits.per_page,
+                            audits.total,
+                        )
+                    }}
+                    of {{ audits.total }} audits
                 </div>
                 <div class="flex flex-wrap justify-center gap-1">
                     <Button
@@ -357,8 +441,8 @@ const selectClass = 'flex h-9 rounded-md border border-input bg-transparent px-3
                         size="sm"
                         :disabled="!link.url || link.active"
                         @click="goToPage(link.url)"
-                        v-html="link.label"
-                    />
+                        ><span v-html="link.label"
+                    /></Button>
                 </div>
             </div>
         </div>

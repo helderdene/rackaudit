@@ -45,7 +45,10 @@ import AppLogo from './AppLogo.vue';
 
 const { can, hasAnyRole } = usePermissions();
 
-type NavItemWithPermissions = NavItem & { permission?: string; roles?: string[] };
+type NavItemWithPermissions = NavItem & {
+    permission?: string;
+    roles?: string[];
+};
 
 // Helper to filter items based on permissions
 const filterByPermissions = (items: NavItemWithPermissions[]): NavItem[] => {

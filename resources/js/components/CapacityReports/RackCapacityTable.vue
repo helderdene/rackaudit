@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import RackController from '@/actions/App/Http/Controllers/RackController';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronUp, ChevronDown, ChevronsUpDown, ExternalLink } from 'lucide-vue-next';
+import { Link } from '@inertiajs/vue3';
+import {
+    ChevronDown,
+    ChevronsUpDown,
+    ChevronUp,
+    ExternalLink,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface RackCapacityData {
     id: number;
@@ -108,7 +113,9 @@ const getRowClass = (rack: RackCapacityData): string => {
 };
 
 // Get status badge variant
-const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getStatusVariant = (
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'critical':
             return 'destructive';
@@ -167,7 +174,10 @@ const getRackUrl = (rack: RackCapacityData): string => {
                             >
                                 <div class="flex items-center gap-1">
                                     Rack Name
-                                    <component :is="getSortIcon('name')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('name')"
+                                        class="size-4"
+                                    />
                                 </div>
                             </th>
                             <th
@@ -176,7 +186,10 @@ const getRackUrl = (rack: RackCapacityData): string => {
                             >
                                 <div class="flex items-center gap-1">
                                     Location
-                                    <component :is="getSortIcon('location')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('location')"
+                                        class="size-4"
+                                    />
                                 </div>
                             </th>
                             <th
@@ -185,7 +198,10 @@ const getRackUrl = (rack: RackCapacityData): string => {
                             >
                                 <div class="flex items-center gap-1">
                                     U-Space Used/Total
-                                    <component :is="getSortIcon('u_space')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('u_space')"
+                                        class="size-4"
+                                    />
                                 </div>
                             </th>
                             <th
@@ -194,7 +210,10 @@ const getRackUrl = (rack: RackCapacityData): string => {
                             >
                                 <div class="flex items-center gap-1">
                                     Power Used/Capacity
-                                    <component :is="getSortIcon('power')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('power')"
+                                        class="size-4"
+                                    />
                                 </div>
                             </th>
                             <th
@@ -203,7 +222,10 @@ const getRackUrl = (rack: RackCapacityData): string => {
                             >
                                 <div class="flex items-center gap-1">
                                     Status
-                                    <component :is="getSortIcon('status')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('status')"
+                                        class="size-4"
+                                    />
                                 </div>
                             </th>
                         </tr>
@@ -212,7 +234,10 @@ const getRackUrl = (rack: RackCapacityData): string => {
                         <tr
                             v-for="rack in sortedRacks"
                             :key="rack.id"
-                            :class="['border-b transition-colors hover:bg-muted/50', getRowClass(rack)]"
+                            :class="[
+                                'border-b transition-colors hover:bg-muted/50',
+                                getRowClass(rack),
+                            ]"
                         >
                             <td class="p-4">
                                 <Link
@@ -224,17 +249,26 @@ const getRackUrl = (rack: RackCapacityData): string => {
                                 </Link>
                             </td>
                             <td class="p-4 text-muted-foreground">
-                                {{ rack.datacenter_name }} / {{ rack.room_name }} / {{ rack.row_name }}
+                                {{ rack.datacenter_name }} /
+                                {{ rack.room_name }} / {{ rack.row_name }}
                             </td>
                             <td class="p-4">
                                 <div class="flex items-center gap-2">
-                                    <span>{{ rack.used_u_space }}U / {{ rack.u_height }}U</span>
+                                    <span
+                                        >{{ rack.used_u_space }}U /
+                                        {{ rack.u_height }}U</span
+                                    >
                                     <span
                                         class="text-xs font-medium"
                                         :class="{
-                                            'text-red-600 dark:text-red-400': rack.utilization_percent >= 90,
-                                            'text-amber-600 dark:text-amber-400': rack.utilization_percent >= 80 && rack.utilization_percent < 90,
-                                            'text-green-600 dark:text-green-400': rack.utilization_percent < 80,
+                                            'text-red-600 dark:text-red-400':
+                                                rack.utilization_percent >= 90,
+                                            'text-amber-600 dark:text-amber-400':
+                                                rack.utilization_percent >=
+                                                    80 &&
+                                                rack.utilization_percent < 90,
+                                            'text-green-600 dark:text-green-400':
+                                                rack.utilization_percent < 80,
                                         }"
                                     >
                                         ({{ rack.utilization_percent }}%)
@@ -242,23 +276,52 @@ const getRackUrl = (rack: RackCapacityData): string => {
                                 </div>
                             </td>
                             <td class="p-4">
-                                <template v-if="rack.power_capacity_watts !== null">
+                                <template
+                                    v-if="rack.power_capacity_watts !== null"
+                                >
                                     <div class="flex items-center gap-2">
-                                        <span>{{ formatPower(rack.power_used_watts) }} / {{ formatPower(rack.power_capacity_watts) }}</span>
                                         <span
-                                            v-if="rack.power_utilization_percent !== null"
+                                            >{{
+                                                formatPower(
+                                                    rack.power_used_watts,
+                                                )
+                                            }}
+                                            /
+                                            {{
+                                                formatPower(
+                                                    rack.power_capacity_watts,
+                                                )
+                                            }}</span
+                                        >
+                                        <span
+                                            v-if="
+                                                rack.power_utilization_percent !==
+                                                null
+                                            "
                                             class="text-xs font-medium"
                                             :class="{
-                                                'text-red-600 dark:text-red-400': rack.power_utilization_percent >= 90,
-                                                'text-amber-600 dark:text-amber-400': rack.power_utilization_percent >= 80 && rack.power_utilization_percent < 90,
-                                                'text-green-600 dark:text-green-400': rack.power_utilization_percent < 80,
+                                                'text-red-600 dark:text-red-400':
+                                                    rack.power_utilization_percent >=
+                                                    90,
+                                                'text-amber-600 dark:text-amber-400':
+                                                    rack.power_utilization_percent >=
+                                                        80 &&
+                                                    rack.power_utilization_percent <
+                                                        90,
+                                                'text-green-600 dark:text-green-400':
+                                                    rack.power_utilization_percent <
+                                                    80,
                                             }"
                                         >
-                                            ({{ rack.power_utilization_percent }}%)
+                                            ({{
+                                                rack.power_utilization_percent
+                                            }}%)
                                         </span>
                                     </div>
                                 </template>
-                                <span v-else class="text-muted-foreground">Not configured</span>
+                                <span v-else class="text-muted-foreground"
+                                    >Not configured</span
+                                >
                             </td>
                             <td class="p-4">
                                 <Badge :variant="getStatusVariant(rack.status)">

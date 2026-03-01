@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
+import { index as roomsIndex } from '@/actions/App/Http/Controllers/RoomController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import DeleteDatacenterDialog from '@/components/datacenters/DeleteDatacenterDialog.vue';
+import DiscrepancyWidget from '@/components/datacenters/DiscrepancyWidget.vue';
 import FloorPlanDisplay from '@/components/datacenters/FloorPlanDisplay.vue';
 import ImplementationFileCard from '@/components/implementation-files/ImplementationFileCard.vue';
-import ImplementationFilesWarning from '@/components/implementation-files/ImplementationFilesWarning.vue';
-import DiscrepancyWidget from '@/components/datacenters/DiscrepancyWidget.vue';
 import { type ImplementationFile } from '@/components/implementation-files/ImplementationFileList.vue';
+import ImplementationFilesWarning from '@/components/implementation-files/ImplementationFilesWarning.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Building2, MapPin, Phone, User, Mail, DoorOpen, ChevronRight, GitCompare } from 'lucide-vue-next';
-import { index as roomsIndex } from '@/actions/App/Http/Controllers/RoomController';
+import { Head, Link } from '@inertiajs/vue3';
+import {
+    Building2,
+    ChevronRight,
+    DoorOpen,
+    GitCompare,
+    Mail,
+    MapPin,
+    Phone,
+    User,
+} from 'lucide-vue-next';
 
 interface DatacenterData {
     id: number;
@@ -81,7 +90,9 @@ const formatDate = (dateString: string): string => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     :title="datacenter.name"
                     :description="datacenter.formatted_location"
@@ -97,7 +108,10 @@ const formatDate = (dateString: string): string => {
                             Connection Audit
                         </Button>
                     </Link>
-                    <Link v-if="canEdit" :href="DatacenterController.edit.url(datacenter.id)">
+                    <Link
+                        v-if="canEdit"
+                        :href="DatacenterController.edit.url(datacenter.id)"
+                    >
                         <Button variant="outline">Edit</Button>
                     </Link>
                     <DeleteDatacenterDialog
@@ -112,7 +126,9 @@ const formatDate = (dateString: string): string => {
 
             <!-- Warning for no approved implementation files -->
             <ImplementationFilesWarning
-                :has-approved-files="datacenter.has_approved_implementation_files"
+                :has-approved-files="
+                    datacenter.has_approved_implementation_files
+                "
             />
 
             <!-- Discrepancy Widget - prominently positioned after warning -->
@@ -133,20 +149,42 @@ const formatDate = (dateString: string): string => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Name</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Name
+                            </dt>
                             <dd class="text-sm">{{ datacenter.name }}</dd>
                         </div>
                         <div v-if="datacenter.company_name" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Company</dt>
-                            <dd class="text-sm">{{ datacenter.company_name }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Company
+                            </dt>
+                            <dd class="text-sm">
+                                {{ datacenter.company_name }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Created</dt>
-                            <dd class="text-sm text-muted-foreground">{{ formatDate(datacenter.created_at) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Created
+                            </dt>
+                            <dd class="text-sm text-muted-foreground">
+                                {{ formatDate(datacenter.created_at) }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Last Updated</dt>
-                            <dd class="text-sm text-muted-foreground">{{ formatDate(datacenter.updated_at) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Last Updated
+                            </dt>
+                            <dd class="text-sm text-muted-foreground">
+                                {{ formatDate(datacenter.updated_at) }}
+                            </dd>
                         </div>
                     </CardContent>
                 </Card>
@@ -161,8 +199,14 @@ const formatDate = (dateString: string): string => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Address</dt>
-                            <dd class="text-sm whitespace-pre-line">{{ datacenter.formatted_address }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Address
+                            </dt>
+                            <dd class="text-sm whitespace-pre-line">
+                                {{ datacenter.formatted_address }}
+                            </dd>
                         </div>
                     </CardContent>
                 </Card>
@@ -177,11 +221,21 @@ const formatDate = (dateString: string): string => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Name</dt>
-                            <dd class="text-sm">{{ datacenter.primary_contact_name }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Name
+                            </dt>
+                            <dd class="text-sm">
+                                {{ datacenter.primary_contact_name }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Email</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Email
+                            </dt>
                             <dd class="text-sm">
                                 <a
                                     :href="`mailto:${datacenter.primary_contact_email}`"
@@ -193,7 +247,11 @@ const formatDate = (dateString: string): string => {
                             </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Phone</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Phone
+                            </dt>
                             <dd class="text-sm">
                                 <a
                                     :href="`tel:${datacenter.primary_contact_phone}`"
@@ -217,11 +275,24 @@ const formatDate = (dateString: string): string => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Name</dt>
-                            <dd class="text-sm">{{ datacenter.secondary_contact_name }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Name
+                            </dt>
+                            <dd class="text-sm">
+                                {{ datacenter.secondary_contact_name }}
+                            </dd>
                         </div>
-                        <div v-if="datacenter.secondary_contact_email" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Email</dt>
+                        <div
+                            v-if="datacenter.secondary_contact_email"
+                            class="grid gap-2"
+                        >
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Email
+                            </dt>
                             <dd class="text-sm">
                                 <a
                                     :href="`mailto:${datacenter.secondary_contact_email}`"
@@ -232,8 +303,15 @@ const formatDate = (dateString: string): string => {
                                 </a>
                             </dd>
                         </div>
-                        <div v-if="datacenter.secondary_contact_phone" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Phone</dt>
+                        <div
+                            v-if="datacenter.secondary_contact_phone"
+                            class="grid gap-2"
+                        >
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Phone
+                            </dt>
                             <dd class="text-sm">
                                 <a
                                     :href="`tel:${datacenter.secondary_contact_phone}`"
@@ -264,7 +342,8 @@ const formatDate = (dateString: string): string => {
                 </CardHeader>
                 <CardContent>
                     <p class="text-sm text-muted-foreground">
-                        View and manage rooms, rows, and PDUs within this datacenter.
+                        View and manage rooms, rows, and PDUs within this
+                        datacenter.
                     </p>
                 </CardContent>
             </Card>

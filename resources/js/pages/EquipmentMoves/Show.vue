@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { index as movesIndex, approve, reject, cancel, downloadWorkOrder } from '@/actions/App/Http/Controllers/EquipmentMoveController';
+import {
+    approve,
+    cancel,
+    downloadWorkOrder,
+    index as movesIndex,
+    reject,
+} from '@/actions/App/Http/Controllers/EquipmentMoveController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
     Dialog,
     DialogContent,
@@ -18,25 +19,29 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import {
+    AlertTriangle,
     ArrowLeft,
     ArrowRight,
-    Server,
-    MapPin,
-    User,
-    Calendar,
-    FileText,
     Cable,
+    Calendar,
     CheckCircle,
-    XCircle,
     Clock,
-    AlertTriangle,
-    Loader2,
     Download,
+    FileText,
+    Loader2,
+    MapPin,
+    Server,
+    User,
+    XCircle,
 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface ConnectionSnapshot {
     id: number | null;
@@ -139,7 +144,14 @@ const actionError = ref<string | null>(null);
  */
 function getStatusVariant(
     status: string,
-): 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info' {
+):
+    | 'default'
+    | 'secondary'
+    | 'destructive'
+    | 'outline'
+    | 'success'
+    | 'warning'
+    | 'info' {
     switch (status) {
         case 'pending_approval':
             return 'warning';
@@ -197,8 +209,11 @@ async function handleApprove(): Promise<void> {
         router.reload({ preserveScroll: true });
         isApproveDialogOpen.value = false;
     } catch (err: unknown) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        actionError.value = axiosError.response?.data?.message || 'Failed to approve move.';
+        const axiosError = err as {
+            response?: { data?: { message?: string } };
+        };
+        actionError.value =
+            axiosError.response?.data?.message || 'Failed to approve move.';
     } finally {
         isProcessing.value = false;
     }
@@ -223,8 +238,11 @@ async function handleReject(): Promise<void> {
         router.reload({ preserveScroll: true });
         isRejectDialogOpen.value = false;
     } catch (err: unknown) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        actionError.value = axiosError.response?.data?.message || 'Failed to reject move.';
+        const axiosError = err as {
+            response?: { data?: { message?: string } };
+        };
+        actionError.value =
+            axiosError.response?.data?.message || 'Failed to reject move.';
     } finally {
         isProcessing.value = false;
     }
@@ -242,8 +260,11 @@ async function handleCancel(): Promise<void> {
         router.reload({ preserveScroll: true });
         isCancelDialogOpen.value = false;
     } catch (err: unknown) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        actionError.value = axiosError.response?.data?.message || 'Failed to cancel move.';
+        const axiosError = err as {
+            response?: { data?: { message?: string } };
+        };
+        actionError.value =
+            axiosError.response?.data?.message || 'Failed to cancel move.';
     } finally {
         isProcessing.value = false;
     }
@@ -273,7 +294,12 @@ function openCancelDialog(): void {
  * Timeline events
  */
 const timelineEvents = computed(() => {
-    const events: { label: string; timestamp: string | null; icon: typeof Clock; status: 'completed' | 'current' | 'pending' }[] = [];
+    const events: {
+        label: string;
+        timestamp: string | null;
+        icon: typeof Clock;
+        status: 'completed' | 'current' | 'pending';
+    }[] = [];
 
     events.push({
         label: 'Requested',
@@ -312,7 +338,9 @@ const timelineEvents = computed(() => {
     if (props.move.is_cancelled) {
         events.push({
             label: 'Cancelled',
-            timestamp: props.move.approved_at_formatted || props.move.requested_at_formatted,
+            timestamp:
+                props.move.approved_at_formatted ||
+                props.move.requested_at_formatted,
             icon: XCircle,
             status: 'completed',
         });
@@ -328,7 +356,9 @@ const timelineEvents = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div class="flex items-center gap-4">
                     <Link :href="movesIndex.url()">
                         <Button variant="ghost" size="sm">
@@ -344,12 +374,22 @@ const timelineEvents = computed(() => {
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Button variant="outline" size="sm" @click="handleDownloadWorkOrder">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        @click="handleDownloadWorkOrder"
+                    >
                         <Download class="mr-2 h-4 w-4" />
                         Work Order PDF
                     </Button>
-                    <Badge :variant="getStatusVariant(move.status)" class="text-sm">
-                        <component :is="getStatusIcon(move.status)" class="mr-1 h-4 w-4" />
+                    <Badge
+                        :variant="getStatusVariant(move.status)"
+                        class="text-sm"
+                    >
+                        <component
+                            :is="getStatusIcon(move.status)"
+                            class="mr-1 h-4 w-4"
+                        />
                         {{ move.status_label }}
                     </Badge>
                 </div>
@@ -367,45 +407,99 @@ const timelineEvents = computed(() => {
                             <div class="flex flex-col gap-6 sm:flex-row">
                                 <!-- Source -->
                                 <div class="flex-1 space-y-3">
-                                    <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                    <div
+                                        class="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+                                    >
                                         <MapPin class="h-4 w-4" />
                                         Source Location
                                     </div>
-                                    <div class="rounded-lg border bg-muted/30 p-4">
-                                        <p class="font-medium">{{ move.source_rack?.name || 'Unknown' }}</p>
-                                        <p class="mt-1 text-sm text-muted-foreground">
-                                            {{ move.source_rack?.location_path || '-' }}
+                                    <div
+                                        class="rounded-lg border bg-muted/30 p-4"
+                                    >
+                                        <p class="font-medium">
+                                            {{
+                                                move.source_rack?.name ||
+                                                'Unknown'
+                                            }}
+                                        </p>
+                                        <p
+                                            class="mt-1 text-sm text-muted-foreground"
+                                        >
+                                            {{
+                                                move.source_rack
+                                                    ?.location_path || '-'
+                                            }}
                                         </p>
                                         <div class="mt-3 flex flex-wrap gap-2">
-                                            <Badge variant="outline">U{{ move.source_start_u }}</Badge>
-                                            <Badge variant="outline">{{ move.source_rack_face_label || 'Front' }}</Badge>
-                                            <Badge variant="outline">{{ move.source_width_type_label || 'Full' }}</Badge>
+                                            <Badge variant="outline"
+                                                >U{{
+                                                    move.source_start_u
+                                                }}</Badge
+                                            >
+                                            <Badge variant="outline">{{
+                                                move.source_rack_face_label ||
+                                                'Front'
+                                            }}</Badge>
+                                            <Badge variant="outline">{{
+                                                move.source_width_type_label ||
+                                                'Full'
+                                            }}</Badge>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Arrow -->
-                                <div class="hidden items-center justify-center sm:flex">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                                        <ArrowRight class="h-5 w-5 text-muted-foreground" />
+                                <div
+                                    class="hidden items-center justify-center sm:flex"
+                                >
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-muted"
+                                    >
+                                        <ArrowRight
+                                            class="h-5 w-5 text-muted-foreground"
+                                        />
                                     </div>
                                 </div>
 
                                 <!-- Destination -->
                                 <div class="flex-1 space-y-3">
-                                    <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                    <div
+                                        class="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+                                    >
                                         <MapPin class="h-4 w-4" />
                                         Destination
                                     </div>
-                                    <div class="rounded-lg border border-primary/50 bg-primary/5 p-4">
-                                        <p class="font-medium">{{ move.destination_rack?.name || 'Unknown' }}</p>
-                                        <p class="mt-1 text-sm text-muted-foreground">
-                                            {{ move.destination_rack?.location_path || '-' }}
+                                    <div
+                                        class="rounded-lg border border-primary/50 bg-primary/5 p-4"
+                                    >
+                                        <p class="font-medium">
+                                            {{
+                                                move.destination_rack?.name ||
+                                                'Unknown'
+                                            }}
+                                        </p>
+                                        <p
+                                            class="mt-1 text-sm text-muted-foreground"
+                                        >
+                                            {{
+                                                move.destination_rack
+                                                    ?.location_path || '-'
+                                            }}
                                         </p>
                                         <div class="mt-3 flex flex-wrap gap-2">
-                                            <Badge variant="outline">U{{ move.destination_start_u }}</Badge>
-                                            <Badge variant="outline">{{ move.destination_rack_face_label || 'Front' }}</Badge>
-                                            <Badge variant="outline">{{ move.destination_width_type_label || 'Full' }}</Badge>
+                                            <Badge variant="outline"
+                                                >U{{
+                                                    move.destination_start_u
+                                                }}</Badge
+                                            >
+                                            <Badge variant="outline">{{
+                                                move.destination_rack_face_label ||
+                                                'Front'
+                                            }}</Badge>
+                                            <Badge variant="outline">{{
+                                                move.destination_width_type_label ||
+                                                'Full'
+                                            }}</Badge>
                                         </div>
                                     </div>
                                 </div>
@@ -424,31 +518,51 @@ const timelineEvents = computed(() => {
                         <CardContent>
                             <div class="grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <p class="text-sm text-muted-foreground">Name</p>
-                                    <p class="font-medium">{{ move.device.name }}</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        Name
+                                    </p>
+                                    <p class="font-medium">
+                                        {{ move.device.name }}
+                                    </p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-muted-foreground">Asset Tag</p>
-                                    <p class="font-mono">{{ move.device.asset_tag }}</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        Asset Tag
+                                    </p>
+                                    <p class="font-mono">
+                                        {{ move.device.asset_tag }}
+                                    </p>
                                 </div>
                                 <div v-if="move.device.serial_number">
-                                    <p class="text-sm text-muted-foreground">Serial Number</p>
-                                    <p class="font-mono">{{ move.device.serial_number }}</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        Serial Number
+                                    </p>
+                                    <p class="font-mono">
+                                        {{ move.device.serial_number }}
+                                    </p>
                                 </div>
                                 <div v-if="move.device.device_type">
-                                    <p class="text-sm text-muted-foreground">Device Type</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        Device Type
+                                    </p>
                                     <p>{{ move.device.device_type.name }}</p>
                                 </div>
                                 <div v-if="move.device.manufacturer">
-                                    <p class="text-sm text-muted-foreground">Manufacturer</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        Manufacturer
+                                    </p>
                                     <p>{{ move.device.manufacturer }}</p>
                                 </div>
                                 <div v-if="move.device.model">
-                                    <p class="text-sm text-muted-foreground">Model</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        Model
+                                    </p>
                                     <p>{{ move.device.model }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-muted-foreground">U Height</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        U Height
+                                    </p>
                                     <p>{{ move.device.u_height }}U</p>
                                 </div>
                             </div>
@@ -456,35 +570,62 @@ const timelineEvents = computed(() => {
                     </Card>
 
                     <!-- Connections Snapshot Card -->
-                    <Card v-if="move.connections_snapshot && move.connections_snapshot.length > 0">
+                    <Card
+                        v-if="
+                            move.connections_snapshot &&
+                            move.connections_snapshot.length > 0
+                        "
+                    >
                         <CardHeader>
                             <CardTitle class="flex items-center gap-2">
                                 <Cable class="h-5 w-5" />
                                 Connections
-                                <Badge variant="secondary">{{ move.connections_snapshot.length }}</Badge>
+                                <Badge variant="secondary">{{
+                                    move.connections_snapshot.length
+                                }}</Badge>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p class="mb-4 text-sm text-muted-foreground">
-                                These connections {{ move.is_executed ? 'were' : 'will be' }} disconnected during the move.
+                                These connections
+                                {{ move.is_executed ? 'were' : 'will be' }}
+                                disconnected during the move.
                             </p>
                             <div class="divide-y rounded-lg border">
                                 <div
-                                    v-for="(conn, index) in move.connections_snapshot"
+                                    v-for="(
+                                        conn, index
+                                    ) in move.connections_snapshot"
                                     :key="index"
                                     class="flex items-center gap-4 p-3"
                                 >
                                     <div class="flex-1">
-                                        <p class="text-sm font-medium">{{ conn.source_port_label }}</p>
-                                        <p class="text-xs text-muted-foreground">{{ move.device?.name }}</p>
+                                        <p class="text-sm font-medium">
+                                            {{ conn.source_port_label }}
+                                        </p>
+                                        <p
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            {{ move.device?.name }}
+                                        </p>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <Badge variant="outline">{{ conn.cable_type || 'Unknown' }}</Badge>
-                                        <ArrowRight class="h-4 w-4 text-muted-foreground" />
+                                        <Badge variant="outline">{{
+                                            conn.cable_type || 'Unknown'
+                                        }}</Badge>
+                                        <ArrowRight
+                                            class="h-4 w-4 text-muted-foreground"
+                                        />
                                     </div>
                                     <div class="flex-1 text-right">
-                                        <p class="text-sm font-medium">{{ conn.destination_port_label }}</p>
-                                        <p class="text-xs text-muted-foreground">{{ conn.destination_device_name }}</p>
+                                        <p class="text-sm font-medium">
+                                            {{ conn.destination_port_label }}
+                                        </p>
+                                        <p
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            {{ conn.destination_device_name }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -501,14 +642,22 @@ const timelineEvents = computed(() => {
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div v-if="move.operator_notes">
-                                <p class="mb-1 text-sm font-medium">Operator Notes</p>
-                                <p class="whitespace-pre-wrap rounded-lg bg-muted/50 p-3 text-sm">
+                                <p class="mb-1 text-sm font-medium">
+                                    Operator Notes
+                                </p>
+                                <p
+                                    class="rounded-lg bg-muted/50 p-3 text-sm whitespace-pre-wrap"
+                                >
                                     {{ move.operator_notes }}
                                 </p>
                             </div>
                             <div v-if="move.approval_notes">
-                                <p class="mb-1 text-sm font-medium">Approval Notes</p>
-                                <p class="whitespace-pre-wrap rounded-lg bg-muted/50 p-3 text-sm">
+                                <p class="mb-1 text-sm font-medium">
+                                    Approval Notes
+                                </p>
+                                <p
+                                    class="rounded-lg bg-muted/50 p-3 text-sm whitespace-pre-wrap"
+                                >
                                     {{ move.approval_notes }}
                                 </p>
                             </div>
@@ -519,7 +668,13 @@ const timelineEvents = computed(() => {
                 <!-- Sidebar -->
                 <div class="space-y-6">
                     <!-- Actions Card -->
-                    <Card v-if="move.can_approve || move.can_reject || move.can_cancel">
+                    <Card
+                        v-if="
+                            move.can_approve ||
+                            move.can_reject ||
+                            move.can_cancel
+                        "
+                    >
                         <CardHeader>
                             <CardTitle>Actions</CardTitle>
                         </CardHeader>
@@ -570,20 +725,32 @@ const timelineEvents = computed(() => {
                                 >
                                     <div
                                         class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
-                                        :class="event.status === 'completed' ? 'bg-primary text-primary-foreground' : 'bg-muted'"
+                                        :class="
+                                            event.status === 'completed'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-muted'
+                                        "
                                     >
-                                        <component :is="event.icon" class="h-4 w-4" />
+                                        <component
+                                            :is="event.icon"
+                                            class="h-4 w-4"
+                                        />
                                     </div>
                                     <div class="flex-1 pt-1">
-                                        <p class="text-sm font-medium">{{ event.label }}</p>
-                                        <p v-if="event.timestamp" class="text-xs text-muted-foreground">
+                                        <p class="text-sm font-medium">
+                                            {{ event.label }}
+                                        </p>
+                                        <p
+                                            v-if="event.timestamp"
+                                            class="text-xs text-muted-foreground"
+                                        >
                                             {{ event.timestamp }}
                                         </p>
                                     </div>
                                     <!-- Connector line -->
                                     <div
                                         v-if="index < timelineEvents.length - 1"
-                                        class="absolute left-4 top-8 h-full w-px -translate-x-1/2 bg-border"
+                                        class="absolute top-8 left-4 h-full w-px -translate-x-1/2 bg-border"
                                     />
                                 </div>
                             </div>
@@ -596,24 +763,44 @@ const timelineEvents = computed(() => {
                             <CardTitle>Request Info</CardTitle>
                         </CardHeader>
                         <CardContent class="space-y-4">
-                            <div v-if="move.requester" class="flex items-center gap-3">
-                                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                                    <User class="h-4 w-4" />
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium">Requested by</p>
-                                    <p class="text-sm text-muted-foreground">{{ move.requester.name }}</p>
-                                </div>
-                            </div>
-                            <div v-if="move.approver" class="flex items-center gap-3">
-                                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                            <div
+                                v-if="move.requester"
+                                class="flex items-center gap-3"
+                            >
+                                <div
+                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-muted"
+                                >
                                     <User class="h-4 w-4" />
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium">
-                                        {{ move.is_rejected ? 'Rejected by' : 'Approved by' }}
+                                        Requested by
                                     </p>
-                                    <p class="text-sm text-muted-foreground">{{ move.approver.name }}</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        {{ move.requester.name }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                v-if="move.approver"
+                                class="flex items-center gap-3"
+                            >
+                                <div
+                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-muted"
+                                >
+                                    <User class="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">
+                                        {{
+                                            move.is_rejected
+                                                ? 'Rejected by'
+                                                : 'Approved by'
+                                        }}
+                                    </p>
+                                    <p class="text-sm text-muted-foreground">
+                                        {{ move.approver.name }}
+                                    </p>
                                 </div>
                             </div>
                         </CardContent>
@@ -628,8 +815,9 @@ const timelineEvents = computed(() => {
                 <DialogHeader>
                     <DialogTitle>Approve & Execute Move</DialogTitle>
                     <DialogDescription>
-                        This will approve the move request and immediately execute it. The device
-                        will be moved to the destination location.
+                        This will approve the move request and immediately
+                        execute it. The device will be moved to the destination
+                        location.
                     </DialogDescription>
                 </DialogHeader>
                 <div class="space-y-4">
@@ -648,12 +836,21 @@ const timelineEvents = computed(() => {
                     </Alert>
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" :disabled="isProcessing" @click="isApproveDialogOpen = false">
+                    <Button
+                        variant="outline"
+                        :disabled="isProcessing"
+                        @click="isApproveDialogOpen = false"
+                    >
                         Cancel
                     </Button>
                     <Button :disabled="isProcessing" @click="handleApprove">
-                        <Loader2 v-if="isProcessing" class="mr-2 h-4 w-4 animate-spin" />
-                        {{ isProcessing ? 'Processing...' : 'Approve & Execute' }}
+                        <Loader2
+                            v-if="isProcessing"
+                            class="mr-2 h-4 w-4 animate-spin"
+                        />
+                        {{
+                            isProcessing ? 'Processing...' : 'Approve & Execute'
+                        }}
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -684,11 +881,22 @@ const timelineEvents = computed(() => {
                     </Alert>
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" :disabled="isProcessing" @click="isRejectDialogOpen = false">
+                    <Button
+                        variant="outline"
+                        :disabled="isProcessing"
+                        @click="isRejectDialogOpen = false"
+                    >
                         Cancel
                     </Button>
-                    <Button variant="destructive" :disabled="isProcessing || !approvalNotes.trim()" @click="handleReject">
-                        <Loader2 v-if="isProcessing" class="mr-2 h-4 w-4 animate-spin" />
+                    <Button
+                        variant="destructive"
+                        :disabled="isProcessing || !approvalNotes.trim()"
+                        @click="handleReject"
+                    >
+                        <Loader2
+                            v-if="isProcessing"
+                            class="mr-2 h-4 w-4 animate-spin"
+                        />
                         {{ isProcessing ? 'Processing...' : 'Reject' }}
                     </Button>
                 </DialogFooter>
@@ -701,7 +909,8 @@ const timelineEvents = computed(() => {
                 <DialogHeader>
                     <DialogTitle>Cancel Move Request</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to cancel this move request? This action cannot be undone.
+                        Are you sure you want to cancel this move request? This
+                        action cannot be undone.
                     </DialogDescription>
                 </DialogHeader>
                 <Alert v-if="actionError" variant="destructive">
@@ -709,11 +918,22 @@ const timelineEvents = computed(() => {
                     <AlertDescription>{{ actionError }}</AlertDescription>
                 </Alert>
                 <DialogFooter>
-                    <Button variant="outline" :disabled="isProcessing" @click="isCancelDialogOpen = false">
+                    <Button
+                        variant="outline"
+                        :disabled="isProcessing"
+                        @click="isCancelDialogOpen = false"
+                    >
                         Keep Request
                     </Button>
-                    <Button variant="destructive" :disabled="isProcessing" @click="handleCancel">
-                        <Loader2 v-if="isProcessing" class="mr-2 h-4 w-4 animate-spin" />
+                    <Button
+                        variant="destructive"
+                        :disabled="isProcessing"
+                        @click="handleCancel"
+                    >
+                        <Loader2
+                            v-if="isProcessing"
+                            class="mr-2 h-4 w-4 animate-spin"
+                        />
                         {{ isProcessing ? 'Processing...' : 'Cancel Request' }}
                     </Button>
                 </DialogFooter>

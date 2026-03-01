@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import RowController from '@/actions/App/Http/Controllers/RowController';
@@ -7,7 +6,12 @@ import HeadingSmall from '@/components/HeadingSmall.vue';
 import RowForm from '@/components/rows/RowForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DatacenterReference, RoomReference, SelectOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    RoomReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -34,11 +38,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: 'Create Row',
-        href: RowController.create.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RowController.create.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
 ];
 </script>

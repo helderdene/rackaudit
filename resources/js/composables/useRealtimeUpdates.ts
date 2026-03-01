@@ -1,6 +1,6 @@
-import { onUnmounted, ref, shallowRef } from 'vue';
 import type Echo from 'laravel-echo';
 import type { Channel } from 'laravel-echo';
+import { onUnmounted, ref, shallowRef } from 'vue';
 
 /**
  * Entity types that can receive real-time updates.
@@ -75,10 +75,22 @@ export function useRealtimeUpdates(datacenterId: number | null) {
      * These match the broadcastAs() values from Laravel events.
      */
     const eventNames: Record<EntityType, string[]> = {
-        connection: ['.connection.changed', '.connection.created', '.connection.deleted'],
-        device: ['.device.changed', '.device.placed', '.device.moved', '.device.removed'],
+        connection: [
+            '.connection.changed',
+            '.connection.created',
+            '.connection.deleted',
+        ],
+        device: [
+            '.device.changed',
+            '.device.placed',
+            '.device.moved',
+            '.device.removed',
+        ],
         rack: ['.rack.changed', '.rack.created', '.rack.deleted'],
-        implementation_file: ['.implementation_file.approved', '.implementation_file.rejected'],
+        implementation_file: [
+            '.implementation_file.approved',
+            '.implementation_file.rejected',
+        ],
         finding: ['.finding.resolved', '.finding.assigned', '.finding.changed'],
         audit: ['.audit.status_changed'],
     };
@@ -103,7 +115,9 @@ export function useRealtimeUpdates(datacenterId: number | null) {
 
         const echo = getEcho();
         if (!echo) {
-            console.warn('Laravel Echo is not available. Real-time updates will not work.');
+            console.warn(
+                'Laravel Echo is not available. Real-time updates will not work.',
+            );
             return;
         }
 
@@ -128,7 +142,11 @@ export function useRealtimeUpdates(datacenterId: number | null) {
     /**
      * Handle incoming broadcast events.
      */
-    function handleEvent(entityType: EntityType, eventName: string, data: unknown): void {
+    function handleEvent(
+        entityType: EntityType,
+        eventName: string,
+        data: unknown,
+    ): void {
         const eventData = data as Record<string, unknown>;
 
         // Extract action from event name (e.g., '.connection.changed' -> 'changed')
@@ -140,8 +158,12 @@ export function useRealtimeUpdates(datacenterId: number | null) {
             entityType,
             entityId: (eventData.entityId ?? eventData.id ?? 0) as number,
             action,
-            user: (eventData.user ?? { id: 0, name: 'Unknown' }) as { id: number; name: string },
-            timestamp: (eventData.timestamp ?? new Date().toISOString()) as string,
+            user: (eventData.user ?? { id: 0, name: 'Unknown' }) as {
+                id: number;
+                name: string;
+            },
+            timestamp: (eventData.timestamp ??
+                new Date().toISOString()) as string,
             message: eventData.message as string | undefined,
         };
 
@@ -168,7 +190,10 @@ export function useRealtimeUpdates(datacenterId: number | null) {
      * @param entityType - The type of entity to listen for (connection, device, rack, etc.)
      * @param callback - Function to call when an event is received
      */
-    function onDataChange(entityType: EntityType, callback: DataChangeCallback): void {
+    function onDataChange(
+        entityType: EntityType,
+        callback: DataChangeCallback,
+    ): void {
         handlers.push({ entityType, callback });
     }
 
@@ -184,7 +209,9 @@ export function useRealtimeUpdates(datacenterId: number | null) {
      * Remove a specific pending update by ID.
      */
     function dismissUpdate(updateId: string): void {
-        pendingUpdates.value = pendingUpdates.value.filter((u) => u.id !== updateId);
+        pendingUpdates.value = pendingUpdates.value.filter(
+            (u) => u.id !== updateId,
+        );
         if (pendingUpdates.value.length === 0) {
             hasUpdates.value = false;
         }

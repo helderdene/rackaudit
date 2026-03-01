@@ -1,26 +1,29 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
-import { index as helpIndex, show as helpShow } from '@/actions/App/Http/Controllers/HelpCenterController';
 import { store as storeInteraction } from '@/actions/App/Http/Controllers/Api/Help/UserHelpInteractionController';
-import AppLayout from '@/layouts/AppLayout.vue';
+import {
+    index as helpIndex,
+    show as helpShow,
+} from '@/actions/App/Http/Controllers/HelpCenterController';
 import MarkdownRenderer from '@/components/help/MarkdownRenderer.vue';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     BookOpen,
-    Eye,
-    ThumbsUp,
-    ThumbsDown,
-    Clock,
-    Sparkles,
     ChevronRight,
+    Clock,
+    Eye,
     FileText,
     Hash,
+    Sparkles,
+    ThumbsDown,
+    ThumbsUp,
 } from 'lucide-vue-next';
-import { type BreadcrumbItem } from '@/types';
+import { computed, onMounted, ref } from 'vue';
 
 /**
  * Type definitions for Help article detail props
@@ -161,13 +164,30 @@ const scrollToSection = (slug: string) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col rounded-xl">
             <!-- Hero Header -->
-            <div class="relative overflow-hidden border-b border-border/50 bg-gradient-to-br from-muted/30 via-background to-muted/20">
+            <div
+                class="relative overflow-hidden border-b border-border/50 bg-gradient-to-br from-muted/30 via-background to-muted/20"
+            >
                 <!-- Decorative background pattern -->
-                <div class="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]">
-                    <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+                <div
+                    class="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
+                >
+                    <svg
+                        class="h-full w-full"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
                         <defs>
-                            <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-                                <path d="M0 32V0h32" fill="none" stroke="currentColor" stroke-width="1"/>
+                            <pattern
+                                id="grid"
+                                width="32"
+                                height="32"
+                                patternUnits="userSpaceOnUse"
+                            >
+                                <path
+                                    d="M0 32V0h32"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                />
                             </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill="url(#grid)" />
@@ -187,7 +207,7 @@ const scrollToSection = (slug: string) => {
                     </Button>
 
                     <!-- Article Meta -->
-                    <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <div class="mb-4 flex flex-wrap items-center gap-2">
                         <Badge
                             v-if="article.category"
                             variant="secondary"
@@ -197,7 +217,7 @@ const scrollToSection = (slug: string) => {
                         </Badge>
                         <Badge
                             v-if="article.is_new"
-                            class="gap-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                            class="gap-1 border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                         >
                             <Sparkles class="size-3" />
                             New
@@ -205,19 +225,24 @@ const scrollToSection = (slug: string) => {
                     </div>
 
                     <!-- Title -->
-                    <h1 class="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                    <h1
+                        class="text-3xl font-bold tracking-tight text-foreground md:text-4xl"
+                    >
                         {{ article.title }}
                     </h1>
 
                     <!-- Stats -->
-                    <div class="mt-4 flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
+                    <div
+                        class="mt-4 flex flex-wrap items-center gap-5 text-sm text-muted-foreground"
+                    >
                         <span class="flex items-center gap-1.5">
                             <Clock class="size-4 opacity-70" />
                             Updated {{ formatDate(article.updated_at) }}
                         </span>
                         <span class="flex items-center gap-1.5">
                             <Eye class="size-4 opacity-70" />
-                            {{ article.view_count }} {{ article.view_count === 1 ? 'view' : 'views' }}
+                            {{ article.view_count }}
+                            {{ article.view_count === 1 ? 'view' : 'views' }}
                         </span>
                     </div>
                 </div>
@@ -229,20 +254,31 @@ const scrollToSection = (slug: string) => {
                     <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
                         <!-- Article Content (3/4 width on desktop) -->
                         <div class="lg:col-span-3">
-                            <div class="rounded-xl border border-border/50 bg-card shadow-sm">
+                            <div
+                                class="rounded-xl border border-border/50 bg-card shadow-sm"
+                            >
                                 <div class="p-6 md:p-8">
-                                    <MarkdownRenderer :content="article.content" />
+                                    <MarkdownRenderer
+                                        :content="article.content"
+                                    />
                                 </div>
 
                                 <Separator />
 
                                 <!-- Feedback Section -->
                                 <div class="p-6 md:p-8">
-                                    <div class="flex flex-col items-center justify-center rounded-lg bg-muted/30 p-6 text-center">
-                                        <p class="mb-4 text-sm font-medium text-foreground">
+                                    <div
+                                        class="flex flex-col items-center justify-center rounded-lg bg-muted/30 p-6 text-center"
+                                    >
+                                        <p
+                                            class="mb-4 text-sm font-medium text-foreground"
+                                        >
                                             Was this article helpful?
                                         </p>
-                                        <div v-if="!feedbackGiven" class="flex gap-3">
+                                        <div
+                                            v-if="!feedbackGiven"
+                                            class="flex gap-3"
+                                        >
                                             <Button
                                                 variant="outline"
                                                 size="sm"
@@ -262,9 +298,14 @@ const scrollToSection = (slug: string) => {
                                                 No
                                             </Button>
                                         </div>
-                                        <div v-else class="flex items-center gap-2 text-sm">
+                                        <div
+                                            v-else
+                                            class="flex items-center gap-2 text-sm"
+                                        >
                                             <span
-                                                v-if="feedbackGiven === 'helpful'"
+                                                v-if="
+                                                    feedbackGiven === 'helpful'
+                                                "
                                                 class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400"
                                             >
                                                 <ThumbsUp class="size-4" />
@@ -274,7 +315,8 @@ const scrollToSection = (slug: string) => {
                                                 v-else
                                                 class="text-muted-foreground"
                                             >
-                                                Thanks for your feedback. We'll work on improving this.
+                                                Thanks for your feedback. We'll
+                                                work on improving this.
                                             </span>
                                         </div>
                                     </div>
@@ -289,7 +331,9 @@ const scrollToSection = (slug: string) => {
                                 v-if="tableOfContents.length > 0"
                                 class="rounded-xl border border-border/50 bg-card p-5 shadow-sm"
                             >
-                                <h3 class="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground">
+                                <h3
+                                    class="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground"
+                                >
                                     <Hash class="size-4 text-primary/70" />
                                     On this page
                                 </h3>
@@ -311,7 +355,9 @@ const scrollToSection = (slug: string) => {
                                 v-if="relatedArticles.length > 0"
                                 class="rounded-xl border border-border/50 bg-card p-5 shadow-sm"
                             >
-                                <h3 class="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground">
+                                <h3
+                                    class="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground"
+                                >
                                     <BookOpen class="size-4 text-primary/70" />
                                     Related Articles
                                 </h3>
@@ -322,30 +368,42 @@ const scrollToSection = (slug: string) => {
                                         class="group flex w-full items-start gap-3 rounded-lg p-3 text-left transition-all hover:bg-muted"
                                         @click="navigateToArticle(related)"
                                     >
-                                        <FileText class="mt-0.5 size-4 shrink-0 text-muted-foreground/70 transition-colors group-hover:text-primary" />
+                                        <FileText
+                                            class="mt-0.5 size-4 shrink-0 text-muted-foreground/70 transition-colors group-hover:text-primary"
+                                        />
                                         <div class="min-w-0 flex-1">
-                                            <span class="text-sm font-medium text-foreground line-clamp-2">
+                                            <span
+                                                class="line-clamp-2 text-sm font-medium text-foreground"
+                                            >
                                                 {{ related.title }}
                                             </span>
                                             <p
                                                 v-if="related.excerpt"
-                                                class="mt-1 text-xs text-muted-foreground line-clamp-2"
+                                                class="mt-1 line-clamp-2 text-xs text-muted-foreground"
                                             >
                                                 {{ related.excerpt }}
                                             </p>
                                         </div>
-                                        <ChevronRight class="mt-0.5 size-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
+                                        <ChevronRight
+                                            class="mt-0.5 size-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-muted-foreground"
+                                        />
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Browse All Card -->
-                            <div class="rounded-xl border border-border/50 bg-gradient-to-br from-muted/50 to-muted/20 p-5 shadow-sm">
+                            <div
+                                class="rounded-xl border border-border/50 bg-gradient-to-br from-muted/50 to-muted/20 p-5 shadow-sm"
+                            >
                                 <div class="text-center">
-                                    <div class="mx-auto mb-3 flex size-10 items-center justify-center rounded-full bg-primary/10">
+                                    <div
+                                        class="mx-auto mb-3 flex size-10 items-center justify-center rounded-full bg-primary/10"
+                                    >
                                         <BookOpen class="size-5 text-primary" />
                                     </div>
-                                    <p class="mb-4 text-sm text-muted-foreground">
+                                    <p
+                                        class="mb-4 text-sm text-muted-foreground"
+                                    >
                                         Looking for something else?
                                     </p>
                                     <Button

@@ -6,22 +6,22 @@
  * over time as a line chart with two lines.
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, onMounted, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface ResolutionTimeTrendItem {
@@ -73,34 +73,23 @@ const lineColors = {
  * Check if there is valid data to display
  */
 const hasData = computed(() => {
-    return props.data.length > 0 && props.data.some(item =>
-        item.avg_resolution_time !== null || item.avg_first_response !== null
+    return (
+        props.data.length > 0 &&
+        props.data.some(
+            (item) =>
+                item.avg_resolution_time !== null ||
+                item.avg_first_response !== null,
+        )
     );
 });
-
-/**
- * Convert minutes to appropriate time unit for display
- */
-const convertMinutesToUnit = (minutes: number | null): { value: number | null; unit: string } => {
-    if (minutes === null) return { value: null, unit: 'hours' };
-
-    const hours = minutes / 60;
-
-    if (hours >= 24) {
-        return { value: hours / 24, unit: 'days' };
-    }
-
-    return { value: hours, unit: 'hours' };
-};
 
 /**
  * Determine the best unit to use based on data values
  */
 const timeUnit = computed(() => {
-    const allMinutes = props.data.flatMap(item => [
-        item.avg_resolution_time,
-        item.avg_first_response,
-    ]).filter((v): v is number => v !== null);
+    const allMinutes = props.data
+        .flatMap((item) => [item.avg_resolution_time, item.avg_first_response])
+        .filter((v): v is number => v !== null);
 
     if (allMinutes.length === 0) return 'hours';
 
@@ -129,14 +118,16 @@ const convertToUnit = (minutes: number | null): number | null => {
  * Prepare chart data
  */
 const chartData = computed<ChartData<'line', (number | null)[], string>>(() => {
-    const labels = props.data.map(item => item.period);
+    const labels = props.data.map((item) => item.period);
 
     return {
         labels,
         datasets: [
             {
                 label: 'Avg Resolution Time',
-                data: props.data.map(item => convertToUnit(item.avg_resolution_time)),
+                data: props.data.map((item) =>
+                    convertToUnit(item.avg_resolution_time),
+                ),
                 borderColor: lineColors.resolution.border,
                 backgroundColor: lineColors.resolution.background,
                 fill: false,
@@ -150,7 +141,9 @@ const chartData = computed<ChartData<'line', (number | null)[], string>>(() => {
             },
             {
                 label: 'Avg First Response',
-                data: props.data.map(item => convertToUnit(item.avg_first_response)),
+                data: props.data.map((item) =>
+                    convertToUnit(item.avg_first_response),
+                ),
                 borderColor: lineColors.firstResponse.border,
                 backgroundColor: lineColors.firstResponse.background,
                 fill: false,
@@ -200,7 +193,8 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
                 },
                 label: (context) => {
                     const value = context.raw as number | null;
-                    if (value === null) return `${context.dataset.label}: No data`;
+                    if (value === null)
+                        return `${context.dataset.label}: No data`;
                     return `${context.dataset.label}: ${value.toFixed(1)} ${timeUnit.value}`;
                 },
             },
@@ -228,7 +222,7 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
                 font: {
                     size: 11,
                 },
-                callback: function(value) {
+                callback: function (value) {
                     return value + ' ' + timeUnit.value.charAt(0);
                 },
             },
@@ -248,20 +242,23 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
  */
 const averages = computed(() => {
     const resolutionTimes = props.data
-        .map(item => item.avg_resolution_time)
+        .map((item) => item.avg_resolution_time)
         .filter((v): v is number => v !== null);
 
     const firstResponses = props.data
-        .map(item => item.avg_first_response)
+        .map((item) => item.avg_first_response)
         .filter((v): v is number => v !== null);
 
-    const avgResolution = resolutionTimes.length > 0
-        ? resolutionTimes.reduce((a, b) => a + b, 0) / resolutionTimes.length
-        : null;
+    const avgResolution =
+        resolutionTimes.length > 0
+            ? resolutionTimes.reduce((a, b) => a + b, 0) /
+              resolutionTimes.length
+            : null;
 
-    const avgFirstResponse = firstResponses.length > 0
-        ? firstResponses.reduce((a, b) => a + b, 0) / firstResponses.length
-        : null;
+    const avgFirstResponse =
+        firstResponses.length > 0
+            ? firstResponses.reduce((a, b) => a + b, 0) / firstResponses.length
+            : null;
 
     return {
         resolution: convertToUnit(avgResolution),
@@ -279,14 +276,23 @@ const formatTime = (value: number | null): string => {
 </script>
 
 <template>
-    <Card class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     {{ title }}
                 </CardTitle>
-                <div v-if="hasData && averages.resolution !== null" class="text-right">
-                    <span class="text-lg font-bold text-foreground dark:text-foreground">
+                <div
+                    v-if="hasData && averages.resolution !== null"
+                    class="text-right"
+                >
+                    <span
+                        class="text-lg font-bold text-foreground dark:text-foreground"
+                    >
                         {{ formatTime(averages.resolution) }}
                     </span>
                     <span class="ml-1 text-sm text-muted-foreground">avg</span>
@@ -318,12 +324,19 @@ const formatTime = (value: number | null): string => {
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No resolution time data available</p>
-                <p class="mt-1 text-xs text-muted-foreground/70">Data will appear once findings are resolved</p>
+                <p class="text-sm text-muted-foreground">
+                    No resolution time data available
+                </p>
+                <p class="mt-1 text-xs text-muted-foreground/70">
+                    Data will appear once findings are resolved
+                </p>
             </div>
 
             <!-- Summary stats -->
-            <div v-if="hasData" class="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+            <div
+                v-if="hasData"
+                class="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground"
+            >
                 <span>{{ data.length }} time periods</span>
                 <div class="flex gap-4">
                     <span class="text-blue-600 dark:text-blue-400">

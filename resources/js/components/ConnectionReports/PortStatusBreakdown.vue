@@ -6,9 +6,9 @@
  * with small bar/pill visualizations and percentages.
  */
 
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, Circle, Lock, XCircle } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface PortUtilizationByStatus {
     status: string;
@@ -25,12 +25,15 @@ interface Props {
 const props = defineProps<Props>();
 
 // Status configuration with icons and colors
-const statusConfig: Record<string, {
-    icon: typeof Circle;
-    colorClass: string;
-    bgClass: string;
-    barClass: string;
-}> = {
+const statusConfig: Record<
+    string,
+    {
+        icon: typeof Circle;
+        colorClass: string;
+        bgClass: string;
+        barClass: string;
+    }
+> = {
     available: {
         icon: Circle,
         colorClass: 'text-gray-500 dark:text-gray-400',
@@ -59,12 +62,14 @@ const statusConfig: Record<string, {
 
 // Get config for status, with fallback
 const getStatusConfig = (status: string) => {
-    return statusConfig[status.toLowerCase()] ?? {
-        icon: Circle,
-        colorClass: 'text-gray-500 dark:text-gray-400',
-        bgClass: 'bg-gray-50 dark:bg-gray-900/20',
-        barClass: 'bg-gray-400 dark:bg-gray-500',
-    };
+    return (
+        statusConfig[status.toLowerCase()] ?? {
+            icon: Circle,
+            colorClass: 'text-gray-500 dark:text-gray-400',
+            bgClass: 'bg-gray-50 dark:bg-gray-900/20',
+            barClass: 'bg-gray-400 dark:bg-gray-500',
+        }
+    );
 };
 
 // Prepare status items with config
@@ -73,8 +78,10 @@ const statusItems = computed(() => {
     const statusOrder = ['available', 'connected', 'reserved', 'disabled'];
 
     return statusOrder
-        .map(status => {
-            const item = props.byStatus.find(s => s.status.toLowerCase() === status);
+        .map((status) => {
+            const item = props.byStatus.find(
+                (s) => s.status.toLowerCase() === status,
+            );
             if (!item) return null;
             return {
                 ...item,
@@ -91,7 +98,7 @@ const hasData = computed(() => {
 
 // Calculate max count for bar scaling
 const maxCount = computed(() => {
-    return Math.max(...statusItems.value.map(item => item.count), 1);
+    return Math.max(...statusItems.value.map((item) => item.count), 1);
 });
 
 // Get bar width as percentage
@@ -128,21 +135,30 @@ const getBarWidth = (count: number): string => {
                                 :class="['size-3.5', item.config.colorClass]"
                             />
                         </div>
-                        <span class="text-sm font-medium">{{ item.label }}</span>
+                        <span class="text-sm font-medium">{{
+                            item.label
+                        }}</span>
                     </div>
 
                     <!-- Progress Bar -->
                     <div class="flex flex-1 items-center gap-3">
-                        <div class="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                        <div
+                            class="relative h-2 flex-1 overflow-hidden rounded-full bg-muted"
+                        >
                             <div
-                                :class="['h-full rounded-full transition-all duration-300', item.config.barClass]"
+                                :class="[
+                                    'h-full rounded-full transition-all duration-300',
+                                    item.config.barClass,
+                                ]"
                                 :style="{ width: getBarWidth(item.count) }"
                             />
                         </div>
                     </div>
 
                     <!-- Count and Percentage -->
-                    <div class="flex w-24 shrink-0 items-center justify-end gap-2 text-right">
+                    <div
+                        class="flex w-24 shrink-0 items-center justify-end gap-2 text-right"
+                    >
                         <span class="font-medium">{{ item.count }}</span>
                         <span class="w-12 text-xs text-muted-foreground">
                             ({{ item.percentage.toFixed(1) }}%)
@@ -157,7 +173,9 @@ const getBarWidth = (count: number): string => {
                 class="flex h-32 flex-col items-center justify-center rounded-lg border border-dashed border-muted-foreground/30"
             >
                 <Circle class="mb-2 size-10 text-muted-foreground/50" />
-                <p class="text-sm text-muted-foreground">No port data available</p>
+                <p class="text-sm text-muted-foreground">
+                    No port data available
+                </p>
             </div>
         </CardContent>
     </Card>

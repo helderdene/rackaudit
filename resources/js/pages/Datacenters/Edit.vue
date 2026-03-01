@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import DatacenterForm from '@/components/datacenters/DatacenterForm.vue';
@@ -7,6 +6,7 @@ import DeleteDatacenterDialog from '@/components/datacenters/DeleteDatacenterDia
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
 
 interface DatacenterData {
     id: number;
@@ -57,10 +57,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             />
 
             <div class="max-w-2xl">
-                <DatacenterForm
-                    mode="edit"
-                    :datacenter="datacenter"
-                />
+                <DatacenterForm mode="edit" :datacenter="datacenter" />
             </div>
 
             <!-- Delete Datacenter Section -->
@@ -72,11 +69,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div
                     class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
                 >
-                    <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                    <div
+                        class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                    >
                         <p class="font-medium">Warning</p>
                         <p class="text-sm">
-                            Once deleted, this datacenter and all associated data will be permanently removed.
-                            This action cannot be undone.
+                            Once deleted, this datacenter and all associated
+                            data will be permanently removed. This action cannot
+                            be undone.
                         </p>
                     </div>
                     <DeleteDatacenterDialog

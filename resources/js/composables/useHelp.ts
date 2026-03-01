@@ -1,10 +1,10 @@
-import { ref, computed, readonly, type Ref, type ComputedRef } from 'vue';
 import {
     index as fetchArticles,
     search as searchArticles,
     show as showArticle,
 } from '@/actions/App/Http/Controllers/Api/Help/HelpArticleController';
 import { forContext as fetchTourForContext } from '@/actions/App/Http/Controllers/Api/Help/HelpTourController';
+import { computed, readonly, ref } from 'vue';
 
 /**
  * Help article structure from API
@@ -94,7 +94,9 @@ export function useHelp() {
     /**
      * Get list of categories
      */
-    const categories = computed(() => Object.keys(articlesByCategory.value).sort());
+    const categories = computed(() =>
+        Object.keys(articlesByCategory.value).sort(),
+    );
 
     /**
      * Open the help sidebar for a specific context
@@ -219,9 +221,7 @@ export function useHelp() {
     /**
      * Fetch a single article by slug
      */
-    async function fetchArticle(
-        slug: string,
-    ): Promise<HelpArticle | null> {
+    async function fetchArticle(slug: string): Promise<HelpArticle | null> {
         // Check cache first
         if (singleArticleCache.has(slug)) {
             const cached = singleArticleCache.get(slug);

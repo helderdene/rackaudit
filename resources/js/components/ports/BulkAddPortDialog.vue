@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,11 +14,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type {
-    PortTypeOption,
-    PortSubtypeOption,
     PortDirectionOption,
+    PortSubtypeOption,
+    PortTypeOption,
     PortTypeValue,
 } from '@/types/ports';
+import { Form } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     deviceId: number;
@@ -42,7 +42,9 @@ const filteredSubtypeOptions = computed(() => {
     if (!selectedType.value) {
         return [];
     }
-    return props.subtypeOptions.filter(opt => opt.type === selectedType.value);
+    return props.subtypeOptions.filter(
+        (opt) => opt.type === selectedType.value,
+    );
 });
 
 // Filter directions based on selected type
@@ -50,7 +52,9 @@ const filteredDirectionOptions = computed(() => {
     if (!selectedType.value) {
         return [];
     }
-    return props.directionOptions.filter(opt => opt.types.includes(selectedType.value as PortTypeValue));
+    return props.directionOptions.filter((opt) =>
+        opt.types.includes(selectedType.value as PortTypeValue),
+    );
 });
 
 // Generate preview of labels
@@ -125,7 +129,8 @@ watch(isOpen, (newVal) => {
             <DialogHeader>
                 <DialogTitle>Bulk Add Ports</DialogTitle>
                 <DialogDescription>
-                    Create multiple ports at once using a naming pattern. All ports will have the same type and settings.
+                    Create multiple ports at once using a naming pattern. All
+                    ports will have the same type and settings.
                 </DialogDescription>
             </DialogHeader>
 
@@ -138,7 +143,9 @@ watch(isOpen, (newVal) => {
             >
                 <!-- Prefix -->
                 <div class="grid gap-2">
-                    <Label for="bulk-port-prefix">Label Prefix <span class="text-red-500">*</span></Label>
+                    <Label for="bulk-port-prefix"
+                        >Label Prefix <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="bulk-port-prefix"
                         name="prefix"
@@ -153,7 +160,10 @@ watch(isOpen, (newVal) => {
                 <!-- Number Range -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="grid gap-2">
-                        <Label for="bulk-port-start">Start Number <span class="text-red-500">*</span></Label>
+                        <Label for="bulk-port-start"
+                            >Start Number
+                            <span class="text-red-500">*</span></Label
+                        >
                         <Input
                             id="bulk-port-start"
                             name="start_number"
@@ -165,7 +175,10 @@ watch(isOpen, (newVal) => {
                         <InputError :message="errors.start_number" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="bulk-port-end">End Number <span class="text-red-500">*</span></Label>
+                        <Label for="bulk-port-end"
+                            >End Number
+                            <span class="text-red-500">*</span></Label
+                        >
                         <Input
                             id="bulk-port-end"
                             name="end_number"
@@ -179,20 +192,27 @@ watch(isOpen, (newVal) => {
                 </div>
 
                 <!-- Preview -->
-                <div v-if="labelPreview" class="rounded-md border bg-muted/50 p-3">
-                    <p class="text-xs font-medium text-muted-foreground">Preview:</p>
+                <div
+                    v-if="labelPreview"
+                    class="rounded-md border bg-muted/50 p-3"
+                >
+                    <p class="text-xs font-medium text-muted-foreground">
+                        Preview:
+                    </p>
                     <p class="mt-1 font-mono text-sm">{{ labelPreview }}</p>
                 </div>
 
                 <!-- Type -->
                 <div class="grid gap-2">
-                    <Label for="bulk-port-type">Type <span class="text-red-500">*</span></Label>
+                    <Label for="bulk-port-type"
+                        >Type <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="bulk-port-type"
                         name="type"
                         v-model="selectedType"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="" disabled>Select type</option>
                         <option
@@ -208,15 +228,23 @@ watch(isOpen, (newVal) => {
 
                 <!-- Subtype (filtered by type) -->
                 <div class="grid gap-2">
-                    <Label for="bulk-port-subtype">Subtype <span class="text-red-500">*</span></Label>
+                    <Label for="bulk-port-subtype"
+                        >Subtype <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="bulk-port-subtype"
                         name="subtype"
                         required
                         :disabled="!selectedType"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <option value="" disabled>{{ selectedType ? 'Select subtype' : 'Select type first' }}</option>
+                        <option value="" disabled>
+                            {{
+                                selectedType
+                                    ? 'Select subtype'
+                                    : 'Select type first'
+                            }}
+                        </option>
                         <option
                             v-for="option in filteredSubtypeOptions"
                             :key="option.value"
@@ -235,9 +263,15 @@ watch(isOpen, (newVal) => {
                         id="bulk-port-direction"
                         name="direction"
                         :disabled="!selectedType"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <option value="">{{ selectedType ? 'Default direction' : 'Select type first' }}</option>
+                        <option value="">
+                            {{
+                                selectedType
+                                    ? 'Default direction'
+                                    : 'Select type first'
+                            }}
+                        </option>
                         <option
                             v-for="option in filteredDirectionOptions"
                             :key="option.value"
@@ -251,7 +285,11 @@ watch(isOpen, (newVal) => {
 
                 <DialogFooter class="gap-2 pt-4">
                     <DialogClose as-child>
-                        <Button type="button" variant="secondary" :disabled="processing">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            :disabled="processing"
+                        >
                             Cancel
                         </Button>
                     </DialogClose>

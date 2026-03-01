@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import DashboardController from '@/actions/App/Http/Controllers/DashboardController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import {
@@ -19,9 +17,11 @@ import {
     TimePeriodFilter,
 } from '@/components/dashboard';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { debounce } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import type { SeverityMetrics } from '@/types/dashboard';
-import { debounce } from '@/lib/utils';
+import { Head, router } from '@inertiajs/vue3';
+import { onMounted, ref, watch } from 'vue';
 
 /**
  * Type definitions for Dashboard props
@@ -125,7 +125,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Local filter state
-const datacenterFilter = ref<string>(props.filters.datacenter_id?.toString() || '');
+const datacenterFilter = ref<string>(
+    props.filters.datacenter_id?.toString() || '',
+);
 const timePeriodFilter = ref<string>('7_days');
 
 // Track loading state for filter changes
@@ -156,7 +158,7 @@ const applyFilters = () => {
                 // Reload chart data with new filters
                 loadChartData();
             },
-        }
+        },
     );
 };
 
@@ -171,7 +173,9 @@ const loadChartData = async () => {
             params.datacenter_id = datacenterFilter.value;
         }
 
-        const response = await fetch(DashboardController.chartData.url({ query: params }));
+        const response = await fetch(
+            DashboardController.chartData.url({ query: params }),
+        );
         if (response.ok) {
             chartData.value = await response.json();
         }
@@ -209,7 +213,9 @@ const selectClass =
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header - responsive layout: stacks on mobile, inline on larger screens -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Dashboard"
                     description="Overview of key infrastructure metrics"
@@ -217,8 +223,12 @@ const selectClass =
             </div>
 
             <!-- Filters - stacks on mobile, inline on larger screens with adequate tablet spacing -->
-            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-                <div class="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:gap-4">
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
+            >
+                <div
+                    class="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:gap-4"
+                >
                     <select
                         v-model="datacenterFilter"
                         :class="selectClass"
@@ -315,7 +325,9 @@ const selectClass =
                     />
 
                     <!-- Severity Distribution Chart -->
-                    <DashboardSeverityChart :severity-metrics="chartData.severityDistribution" />
+                    <DashboardSeverityChart
+                        :severity-metrics="chartData.severityDistribution"
+                    />
 
                     <!-- Audit Completion Trend Chart -->
                     <DashboardCompletionChart

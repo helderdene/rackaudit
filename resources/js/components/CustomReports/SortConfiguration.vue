@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { ArrowDownUp, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-vue-next';
+import { ArrowDown, ArrowDownUp, ArrowUp, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 /**
  * TypeScript interfaces
@@ -34,7 +33,8 @@ const emit = defineEmits<{
 const MAX_SORT_COLUMNS = 3;
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
 
 // Local sort configuration state
 const localSortConfig = ref<SortItem[]>([...props.sortConfig]);
@@ -43,22 +43,27 @@ const localSortConfig = ref<SortItem[]>([...props.sortConfig]);
  * Check if we can add more sort columns
  */
 const canAddSort = computed(() => {
-    return localSortConfig.value.length < MAX_SORT_COLUMNS && availableColumnsForSort.value.length > 0;
+    return (
+        localSortConfig.value.length < MAX_SORT_COLUMNS &&
+        availableColumnsForSort.value.length > 0
+    );
 });
 
 /**
  * Get columns available for sorting (not already selected)
  */
 const availableColumnsForSort = computed(() => {
-    const selectedColumns = localSortConfig.value.map(s => s.column);
-    return props.availableColumns.filter(col => !selectedColumns.includes(col.key));
+    const selectedColumns = localSortConfig.value.map((s) => s.column);
+    return props.availableColumns.filter(
+        (col) => !selectedColumns.includes(col.key),
+    );
 });
 
 /**
  * Get display name for a column key
  */
 function getColumnDisplayName(columnKey: string): string {
-    const column = props.availableColumns.find(c => c.key === columnKey);
+    const column = props.availableColumns.find((c) => c.key === columnKey);
     return column?.display_name || columnKey;
 }
 
@@ -111,25 +116,35 @@ function emitSortConfig() {
 }
 
 // Sync with external changes
-watch(() => props.sortConfig, (newConfig) => {
-    localSortConfig.value = [...newConfig];
-}, { deep: true });
+watch(
+    () => props.sortConfig,
+    (newConfig) => {
+        localSortConfig.value = [...newConfig];
+    },
+    { deep: true },
+);
 
 // Reset sort config when available columns change significantly
-watch(() => props.availableColumns, (newColumns) => {
-    // Remove any sort items that reference columns no longer available
-    const availableKeys = newColumns.map(c => c.key);
-    localSortConfig.value = localSortConfig.value.filter(
-        item => availableKeys.includes(item.column)
-    );
-    emitSortConfig();
-}, { deep: true });
+watch(
+    () => props.availableColumns,
+    (newColumns) => {
+        // Remove any sort items that reference columns no longer available
+        const availableKeys = newColumns.map((c) => c.key);
+        localSortConfig.value = localSortConfig.value.filter((item) =>
+            availableKeys.includes(item.column),
+        );
+        emitSortConfig();
+    },
+    { deep: true },
+);
 </script>
 
 <template>
     <Card>
         <CardHeader class="pb-2">
-            <CardTitle class="flex items-center justify-between text-sm font-medium">
+            <CardTitle
+                class="flex items-center justify-between text-sm font-medium"
+            >
                 <span class="flex items-center gap-2">
                     <ArrowDownUp class="size-4" />
                     Sort Configuration
@@ -152,7 +167,8 @@ watch(() => props.availableColumns, (newColumns) => {
                     No sort columns configured. Click "Add Sort" to add sorting.
                 </p>
                 <p class="mt-1 text-xs text-muted-foreground">
-                    Results will be sorted by the first selected column (descending) by default.
+                    Results will be sorted by the first selected column
+                    (descending) by default.
                 </p>
             </div>
 
@@ -163,7 +179,9 @@ watch(() => props.availableColumns, (newColumns) => {
                     class="flex items-center gap-3 rounded-md border bg-muted/30 p-3"
                 >
                     <!-- Priority indicator -->
-                    <div class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    <div
+                        class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary"
+                    >
                         {{ index + 1 }}
                     </div>
 
@@ -176,7 +194,13 @@ watch(() => props.availableColumns, (newColumns) => {
                             :id="`sort-column-${index}`"
                             :value="sortItem.column"
                             :class="selectClass"
-                            @change="(e) => updateColumn(index, (e.target as HTMLSelectElement).value)"
+                            @change="
+                                (e) =>
+                                    updateColumn(
+                                        index,
+                                        (e.target as HTMLSelectElement).value,
+                                    )
+                            "
                         >
                             <!-- Current selection -->
                             <option :value="sortItem.column">
@@ -208,12 +232,13 @@ watch(() => props.availableColumns, (newColumns) => {
                                 v-if="sortItem.direction === 'asc'"
                                 class="size-3.5"
                             />
-                            <ArrowDown
-                                v-else
-                                class="size-3.5"
-                            />
+                            <ArrowDown v-else class="size-3.5" />
                             <span class="text-xs">
-                                {{ sortItem.direction === 'asc' ? 'Asc' : 'Desc' }}
+                                {{
+                                    sortItem.direction === 'asc'
+                                        ? 'Asc'
+                                        : 'Desc'
+                                }}
                             </span>
                         </Button>
                     </div>
@@ -242,7 +267,10 @@ watch(() => props.availableColumns, (newColumns) => {
                         @click="addSortColumn"
                     >
                         <Plus class="mr-1 size-3" />
-                        Add another sort column ({{ MAX_SORT_COLUMNS - localSortConfig.length }} remaining)
+                        Add another sort column ({{
+                            MAX_SORT_COLUMNS - localSortConfig.length
+                        }}
+                        remaining)
                     </Button>
                 </div>
 

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { create, show, destroy, toggle } from '@/actions/App/Http/Controllers/ReportScheduleController';
+import {
+    create,
+    destroy,
+    show,
+    toggle,
+} from '@/actions/App/Http/Controllers/ReportScheduleController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import ScheduleStatusBadge from '@/components/ReportSchedules/ScheduleStatusBadge.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import {
     Dialog,
     DialogContent,
@@ -15,6 +17,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 import {
     Tooltip,
     TooltipContent,
@@ -23,7 +26,9 @@ import {
 } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Plus, Calendar, Eye, Trash2, FileText, Clock } from 'lucide-vue-next';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Calendar, Clock, Eye, FileText, Plus, Trash2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface DistributionListInfo {
     id: number;
@@ -55,7 +60,7 @@ interface Props {
     canCreate: boolean;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -157,20 +162,26 @@ const cancelDelete = () => {
 const handleToggle = (schedule: ScheduleData, newValue: boolean) => {
     togglingScheduleId.value = schedule.id;
 
-    router.patch(toggle.url(schedule.id), {
-        is_enabled: newValue,
-    }, {
-        preserveScroll: true,
-        onFinish: () => {
-            togglingScheduleId.value = null;
+    router.patch(
+        toggle.url(schedule.id),
+        {
+            is_enabled: newValue,
         },
-    });
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                togglingScheduleId.value = null;
+            },
+        },
+    );
 };
 
 /**
  * Get format badge variant
  */
-const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' => {
+const getFormatVariant = (
+    format: string,
+): 'default' | 'secondary' | 'outline' => {
     return format === 'pdf' ? 'default' : 'secondary';
 };
 </script>
@@ -181,7 +192,9 @@ const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' =
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Scheduled Reports"
                     description="Manage automated report generation and email delivery."
@@ -199,12 +212,15 @@ const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' =
                 v-if="schedules.length === 0"
                 class="flex flex-col items-center justify-center rounded-lg border border-dashed py-16"
             >
-                <div class="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+                <div
+                    class="flex h-14 w-14 items-center justify-center rounded-full bg-muted"
+                >
                     <Calendar class="h-6 w-6 text-muted-foreground" />
                 </div>
                 <h3 class="mt-4 text-sm font-medium">No scheduled reports</h3>
                 <p class="mt-1 text-center text-sm text-muted-foreground">
-                    Create a schedule to automatically generate and send reports.
+                    Create a schedule to automatically generate and send
+                    reports.
                 </p>
                 <Link v-if="canCreate" :href="create.url()" class="mt-4">
                     <Button variant="outline" size="sm">
@@ -220,14 +236,46 @@ const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' =
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Report Type</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Schedule</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Format</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Status</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Next Run</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Enabled</th>
-                                <th class="h-12 w-[120px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Report Type
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Schedule
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Format
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Next Run
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Enabled
+                                </th>
+                                <th
+                                    class="h-12 w-[120px] px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -245,9 +293,17 @@ const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' =
                                         >
                                             {{ schedule.name }}
                                         </Link>
-                                        <span class="text-xs text-muted-foreground">
-                                            {{ schedule.distribution_list.name }}
-                                            ({{ schedule.distribution_list.members_count }} recipients)
+                                        <span
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            {{
+                                                schedule.distribution_list.name
+                                            }}
+                                            ({{
+                                                schedule.distribution_list
+                                                    .members_count
+                                            }}
+                                            recipients)
                                         </span>
                                     </div>
                                 </td>
@@ -261,55 +317,96 @@ const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' =
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger as-child>
-                                                <span class="cursor-help text-muted-foreground">
-                                                    {{ schedule.frequency_label }}
+                                                <span
+                                                    class="cursor-help text-muted-foreground"
+                                                >
+                                                    {{
+                                                        schedule.frequency_label
+                                                    }}
                                                 </span>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>{{ schedule.schedule_display }}</p>
+                                                <p>
+                                                    {{
+                                                        schedule.schedule_display
+                                                    }}
+                                                </p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
                                 </td>
                                 <td class="p-4">
-                                    <Badge :variant="getFormatVariant(schedule.format)">
+                                    <Badge
+                                        :variant="
+                                            getFormatVariant(schedule.format)
+                                        "
+                                    >
                                         {{ schedule.format_label }}
                                     </Badge>
                                 </td>
                                 <td class="p-4">
                                     <ScheduleStatusBadge
                                         :is-enabled="schedule.is_enabled"
-                                        :last-run-status="schedule.last_run_status"
-                                        :consecutive-failures="schedule.consecutive_failures"
+                                        :last-run-status="
+                                            schedule.last_run_status
+                                        "
+                                        :consecutive-failures="
+                                            schedule.consecutive_failures
+                                        "
                                     />
                                 </td>
                                 <td class="p-4">
-                                    <TooltipProvider v-if="schedule.next_run_at">
+                                    <TooltipProvider
+                                        v-if="schedule.next_run_at"
+                                    >
                                         <Tooltip>
                                             <TooltipTrigger as-child>
-                                                <span class="flex items-center gap-1 text-muted-foreground">
+                                                <span
+                                                    class="flex items-center gap-1 text-muted-foreground"
+                                                >
                                                     <Clock class="h-3 w-3" />
-                                                    {{ formatRelativeDate(schedule.next_run_at) }}
+                                                    {{
+                                                        formatRelativeDate(
+                                                            schedule.next_run_at,
+                                                        )
+                                                    }}
                                                 </span>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>{{ formatDate(schedule.next_run_at) }}</p>
+                                                <p>
+                                                    {{
+                                                        formatDate(
+                                                            schedule.next_run_at,
+                                                        )
+                                                    }}
+                                                </p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
-                                    <span v-else class="text-muted-foreground">-</span>
+                                    <span v-else class="text-muted-foreground"
+                                        >-</span
+                                    >
                                 </td>
                                 <td class="p-4">
                                     <Switch
                                         :checked="schedule.is_enabled"
-                                        :disabled="togglingScheduleId === schedule.id"
-                                        @update:checked="(value) => handleToggle(schedule, value)"
+                                        :disabled="
+                                            togglingScheduleId === schedule.id
+                                        "
+                                        @update:checked="
+                                            (value) =>
+                                                handleToggle(schedule, value)
+                                        "
                                     />
                                 </td>
                                 <td class="p-4">
                                     <div class="flex items-center gap-2">
                                         <Link :href="show.url(schedule.id)">
-                                            <Button variant="ghost" size="icon-sm" title="View details">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon-sm"
+                                                title="View details"
+                                            >
                                                 <Eye class="h-4 w-4" />
                                             </Button>
                                         </Link>
@@ -337,15 +434,25 @@ const getFormatVariant = (format: string): 'default' | 'secondary' | 'outline' =
                 <DialogHeader>
                     <DialogTitle>Delete Schedule</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to delete "{{ scheduleToDelete?.name }}"? This action cannot be undone.
-                        Future scheduled runs will be cancelled.
+                        Are you sure you want to delete "{{
+                            scheduleToDelete?.name
+                        }}"? This action cannot be undone. Future scheduled runs
+                        will be cancelled.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="outline" @click="cancelDelete" :disabled="isDeleting">
+                    <Button
+                        variant="outline"
+                        @click="cancelDelete"
+                        :disabled="isDeleting"
+                    >
                         Cancel
                     </Button>
-                    <Button variant="destructive" @click="handleDelete" :disabled="isDeleting">
+                    <Button
+                        variant="destructive"
+                        @click="handleDelete"
+                        :disabled="isDeleting"
+                    >
                         {{ isDeleting ? 'Deleting...' : 'Delete' }}
                     </Button>
                 </DialogFooter>

@@ -6,22 +6,22 @@
  * Displays completed audits over time as a line chart.
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, onMounted, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface Props {
@@ -151,14 +151,20 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
     >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     Audit Completions
                 </CardTitle>
                 <div class="text-right">
-                    <span class="text-lg font-bold text-green-600 dark:text-green-400">
+                    <span
+                        class="text-lg font-bold text-green-600 dark:text-green-400"
+                    >
                         {{ total }}
                     </span>
-                    <span class="ml-1 text-xs text-muted-foreground">total</span>
+                    <span class="ml-1 text-xs text-muted-foreground"
+                        >total</span
+                    >
                 </div>
             </div>
         </CardHeader>
@@ -187,7 +193,9 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No completed audits in selected period</p>
+                <p class="text-sm text-muted-foreground">
+                    No completed audits in selected period
+                </p>
             </div>
         </CardContent>
     </Card>

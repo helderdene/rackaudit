@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,7 +9,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { RotateCcw, AlertCircle } from 'lucide-vue-next';
+import axios from 'axios';
+import { AlertCircle, RotateCcw } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import type { VersionFile } from './VersionHistoryDialog.vue';
 
 interface Props {
@@ -43,8 +43,11 @@ const handleRestore = async () => {
     error.value = null;
 
     try {
-        const response = await axios.post<{ data: VersionFile; message: string }>(
-            `/datacenters/${props.datacenterId}/implementation-files/${props.fileId}/restore`
+        const response = await axios.post<{
+            data: VersionFile;
+            message: string;
+        }>(
+            `/datacenters/${props.datacenterId}/implementation-files/${props.fileId}/restore`,
         );
 
         // Emit the version-restored event with the new version data
@@ -54,14 +57,19 @@ const handleRestore = async () => {
         emit('update:isOpen', false);
         emit('close');
     } catch (err) {
-        const axiosError = err as { response?: { status?: number; data?: { message?: string } } };
+        const axiosError = err as {
+            response?: { status?: number; data?: { message?: string } };
+        };
 
         if (axiosError.response?.status === 403) {
-            error.value = 'You do not have permission to restore file versions.';
+            error.value =
+                'You do not have permission to restore file versions.';
         } else if (axiosError.response?.status === 404) {
             error.value = 'The file version could not be found.';
         } else {
-            error.value = axiosError.response?.data?.message || 'Failed to restore version. Please try again.';
+            error.value =
+                axiosError.response?.data?.message ||
+                'Failed to restore version. Please try again.';
         }
     } finally {
         isRestoring.value = false;
@@ -110,11 +118,15 @@ const dialogOpen = computed({
             <div
                 class="rounded-lg border border-blue-100 bg-blue-50 p-4 dark:border-blue-200/10 dark:bg-blue-700/10"
             >
-                <div class="relative space-y-0.5 text-blue-600 dark:text-blue-100">
+                <div
+                    class="relative space-y-0.5 text-blue-600 dark:text-blue-100"
+                >
                     <p class="font-medium">What happens when you restore</p>
                     <p class="text-sm">
-                        A new version will be created from the content of version {{ versionNumber }}.
-                        This will become the latest version, and all previous versions will remain available in the history.
+                        A new version will be created from the content of
+                        version {{ versionNumber }}. This will become the latest
+                        version, and all previous versions will remain available
+                        in the history.
                     </p>
                 </div>
             </div>
@@ -124,7 +136,9 @@ const dialogOpen = computed({
                 v-if="error"
                 class="rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
             >
-                <div class="flex items-start gap-2 text-red-600 dark:text-red-100">
+                <div
+                    class="flex items-start gap-2 text-red-600 dark:text-red-100"
+                >
                     <AlertCircle class="mt-0.5 size-4 shrink-0" />
                     <p class="text-sm">{{ error }}</p>
                 </div>
@@ -141,10 +155,7 @@ const dialogOpen = computed({
                     </Button>
                 </DialogClose>
 
-                <Button
-                    :disabled="isRestoring"
-                    @click="handleRestore"
-                >
+                <Button :disabled="isRestoring" @click="handleRestore">
                     <RotateCcw
                         v-if="isRestoring"
                         class="mr-2 size-4 animate-spin"

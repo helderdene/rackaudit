@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -10,8 +9,16 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Send, CheckCircle, Pause, RotateCcw, Loader2 } from 'lucide-vue-next';
 import type { FindingStatusValue } from '@/types/finding';
+import {
+    CheckCircle,
+    Loader2,
+    Pause,
+    Play,
+    RotateCcw,
+    Send,
+} from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface QuickAction {
     action: string;
@@ -32,7 +39,7 @@ interface Emits {
     (e: 'transition', targetStatus: FindingStatusValue, notes?: string): void;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     processing: false,
 });
 const emit = defineEmits<Emits>();
@@ -62,7 +69,9 @@ const getActionIcon = (action: string) => {
 };
 
 // Get button variant based on action variant string
-const getButtonVariant = (variant: string): 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link' => {
+const getButtonVariant = (
+    variant: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link' => {
     switch (variant) {
         case 'primary':
             return 'default';
@@ -145,12 +154,19 @@ const handleNotesInput = () => {
             @click="handleActionClick(action)"
         >
             <Loader2 v-if="processing" class="mr-1 size-4 animate-spin" />
-            <component v-else :is="getActionIcon(action.action)" class="mr-1 size-4" />
+            <component
+                v-else
+                :is="getActionIcon(action.action)"
+                class="mr-1 size-4"
+            />
             {{ action.label }}
         </Button>
 
         <!-- No actions available message -->
-        <p v-if="quickActions.length === 0" class="text-sm text-muted-foreground">
+        <p
+            v-if="quickActions.length === 0"
+            class="text-sm text-muted-foreground"
+        >
             No quick actions available for current status.
         </p>
 
@@ -160,13 +176,16 @@ const handleNotesInput = () => {
                 <DialogHeader>
                     <DialogTitle>Resolution Notes Required</DialogTitle>
                     <DialogDescription>
-                        Please provide resolution notes to complete this finding.
+                        Please provide resolution notes to complete this
+                        finding.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div class="space-y-4 py-4">
                     <div class="space-y-2">
-                        <label class="text-sm font-medium">Resolution Notes</label>
+                        <label class="text-sm font-medium"
+                            >Resolution Notes</label
+                        >
                         <Textarea
                             v-model="resolutionNotes"
                             placeholder="Describe how this finding was resolved..."
@@ -181,7 +200,13 @@ const handleNotesInput = () => {
                             <span v-else class="text-muted-foreground">
                                 Minimum 10 characters required
                             </span>
-                            <span :class="resolutionNotes.length < 10 ? 'text-muted-foreground' : 'text-green-600'">
+                            <span
+                                :class="
+                                    resolutionNotes.length < 10
+                                        ? 'text-muted-foreground'
+                                        : 'text-green-600'
+                                "
+                            >
                                 {{ resolutionNotes.length }} characters
                             </span>
                         </div>
@@ -197,7 +222,10 @@ const handleNotesInput = () => {
                         class="bg-green-600 hover:bg-green-700"
                         @click="handleConfirmWithNotes"
                     >
-                        <Loader2 v-if="processing" class="mr-1 size-4 animate-spin" />
+                        <Loader2
+                            v-if="processing"
+                            class="mr-1 size-4 animate-spin"
+                        />
                         <CheckCircle v-else class="mr-1 size-4" />
                         Approve & Close
                     </Button>

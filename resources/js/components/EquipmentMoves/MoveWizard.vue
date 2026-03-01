@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
-import axios from 'axios';
+import { store } from '@/actions/App/Http/Controllers/EquipmentMoveController';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -9,16 +9,22 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import DeviceSelectionStep from './DeviceSelectionStep.vue';
+import type { LocationHierarchy } from '@/composables/useDestinationPicker';
+import type { DeviceData } from '@/types/rooms';
+import { router } from '@inertiajs/vue3';
+import axios from 'axios';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    ArrowRight,
+    Check,
+    Loader2,
+} from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
+import ConfirmationStep from './ConfirmationStep.vue';
 import ConnectionReviewStep from './ConnectionReviewStep.vue';
 import DestinationSelectionStep from './DestinationSelectionStep.vue';
-import ConfirmationStep from './ConfirmationStep.vue';
-import { store } from '@/actions/App/Http/Controllers/EquipmentMoveController';
-import { ArrowLeft, ArrowRight, Check, AlertTriangle, Loader2 } from 'lucide-vue-next';
-import type { DeviceData } from '@/types/rooms';
-import type { LocationHierarchy } from '@/composables/useDestinationPicker';
+import DeviceSelectionStep from './DeviceSelectionStep.vue';
 
 interface DeviceWithConnections extends DeviceData {
     connections?: ConnectionData[];
@@ -78,7 +84,12 @@ const submitSuccess = ref(false);
 const createdMoveId = ref<number | null>(null);
 
 // Step labels for progress indicator
-const stepLabels = ['Select Device', 'Review Connections', 'Select Destination', 'Confirm'];
+const stepLabels = [
+    'Select Device',
+    'Review Connections',
+    'Select Destination',
+    'Confirm',
+];
 
 // Watch for device prop changes
 watch(
@@ -100,7 +111,9 @@ watch(
         } else if (props.device) {
             // If opened with a pre-selected device, start at step 2
             selectedDevice.value = props.device;
-            currentStep.value = selectedDevice.value.connections?.length ? 2 : 3;
+            currentStep.value = selectedDevice.value.connections?.length
+                ? 2
+                : 3;
         }
     },
 );
@@ -111,10 +124,14 @@ watch(
 const canProceed = computed(() => {
     switch (currentStep.value) {
         case 1:
-            return selectedDevice.value !== null && !selectedDevice.value.has_pending_move;
+            return (
+                selectedDevice.value !== null &&
+                !selectedDevice.value.has_pending_move
+            );
         case 2:
             // If device has connections, must acknowledge
-            const hasConnections = (selectedDevice.value?.connections?.length ?? 0) > 0;
+            const hasConnections =
+                (selectedDevice.value?.connections?.length ?? 0) > 0;
             return !hasConnections || connectionsAcknowledged.value;
         case 3:
             return (
@@ -195,7 +212,8 @@ async function submitMoveRequest(): Promise<void> {
             destination_rack_id: destinationData.value.destination_rack_id,
             destination_start_u: destinationData.value.destination_start_u,
             destination_rack_face: destinationData.value.destination_rack_face,
-            destination_width_type: destinationData.value.destination_width_type,
+            destination_width_type:
+                destinationData.value.destination_width_type,
             operator_notes: operatorNotes.value || null,
         });
 
@@ -211,13 +229,19 @@ async function submitMoveRequest(): Promise<void> {
         }, 1500);
     } catch (err: unknown) {
         const axiosError = err as {
-            response?: { data?: { message?: string; errors?: Record<string, string[]> } };
+            response?: {
+                data?: { message?: string; errors?: Record<string, string[]> };
+            };
         };
         if (axiosError.response?.data?.errors) {
-            const errors = Object.values(axiosError.response.data.errors).flat();
+            const errors = Object.values(
+                axiosError.response.data.errors,
+            ).flat();
             error.value = errors.join(' ');
         } else {
-            error.value = axiosError.response?.data?.message || 'Failed to create move request.';
+            error.value =
+                axiosError.response?.data?.message ||
+                'Failed to create move request.';
         }
     } finally {
         isSubmitting.value = false;
@@ -259,14 +283,6 @@ function handleOpenChange(open: boolean): void {
         emit('close');
     }
 }
-
-/**
- * Get CSRF token from cookies
- */
-function getCsrfToken(): string {
-    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-    return match ? decodeURIComponent(match[1]) : '';
-}
 </script>
 
 <template>
@@ -297,13 +313,18 @@ function getCsrfToken(): string {
                                           : 'bg-muted text-muted-foreground',
                                 ]"
                             >
-                                <Check v-if="index + 1 < currentStep" class="h-4 w-4" />
+                                <Check
+                                    v-if="index + 1 < currentStep"
+                                    class="h-4 w-4"
+                                />
                                 <span v-else>{{ index + 1 }}</span>
                             </div>
                             <span
                                 :class="[
                                     'mt-1 hidden text-xs sm:block',
-                                    index + 1 <= currentStep ? 'text-foreground' : 'text-muted-foreground',
+                                    index + 1 <= currentStep
+                                        ? 'text-foreground'
+                                        : 'text-muted-foreground',
                                 ]"
                             >
                                 {{ label }}
@@ -313,7 +334,9 @@ function getCsrfToken(): string {
                             v-if="index < stepLabels.length - 1"
                             :class="[
                                 'mx-2 h-0.5 flex-1',
-                                index + 1 < currentStep ? 'bg-primary' : 'bg-muted',
+                                index + 1 < currentStep
+                                    ? 'bg-primary'
+                                    : 'bg-muted',
                             ]"
                         />
                     </template>
@@ -402,8 +425,15 @@ function getCsrfToken(): string {
                         :disabled="!canProceed || isSubmitting"
                         @click="submitMoveRequest"
                     >
-                        <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
-                        {{ isSubmitting ? 'Submitting...' : 'Submit Move Request' }}
+                        <Loader2
+                            v-if="isSubmitting"
+                            class="mr-2 h-4 w-4 animate-spin"
+                        />
+                        {{
+                            isSubmitting
+                                ? 'Submitting...'
+                                : 'Submit Move Request'
+                        }}
                     </Button>
 
                     <Button v-else-if="submitSuccess" @click="handleClose">

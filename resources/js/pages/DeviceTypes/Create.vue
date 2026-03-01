@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DeviceTypeController from '@/actions/App/Http/Controllers/DeviceTypeController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import DeviceTypeForm from '@/components/device-types/DeviceTypeForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

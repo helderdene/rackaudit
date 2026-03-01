@@ -38,22 +38,26 @@ const notificationCategories = [
     {
         key: 'audit_assignments' as const,
         label: 'Audit Assignments',
-        description: 'Notifications when you are assigned to or removed from an audit',
+        description:
+            'Notifications when you are assigned to or removed from an audit',
     },
     {
         key: 'finding_updates' as const,
         label: 'Finding Updates',
-        description: 'Notifications about finding status changes, assignments, and due dates',
+        description:
+            'Notifications about finding status changes, assignments, and due dates',
     },
     {
         key: 'approval_requests' as const,
         label: 'Approval Requests',
-        description: 'Notifications when implementation files need your approval or are approved',
+        description:
+            'Notifications when implementation files need your approval or are approved',
     },
     {
         key: 'discrepancies' as const,
         label: 'Discrepancies',
-        description: 'Notifications about new discrepancies and threshold alerts',
+        description:
+            'Notifications about new discrepancies and threshold alerts',
     },
     {
         key: 'scheduled_reports' as const,
@@ -85,10 +89,16 @@ const notificationCategories = [
                     <!-- Notification Categories Table -->
                     <div class="rounded-lg border">
                         <!-- Header -->
-                        <div class="grid grid-cols-[1fr_80px_80px] gap-4 border-b bg-muted/50 px-4 py-3">
+                        <div
+                            class="grid grid-cols-[1fr_80px_80px] gap-4 border-b bg-muted/50 px-4 py-3"
+                        >
                             <div class="text-sm font-medium">Category</div>
-                            <div class="text-center text-sm font-medium">In-App</div>
-                            <div class="text-center text-sm font-medium">Email</div>
+                            <div class="text-center text-sm font-medium">
+                                In-App
+                            </div>
+                            <div class="text-center text-sm font-medium">
+                                Email
+                            </div>
                         </div>
 
                         <!-- Category Rows -->
@@ -100,10 +110,15 @@ const notificationCategories = [
                             >
                                 <!-- Category Info -->
                                 <div>
-                                    <Label :for="category.key" class="text-sm font-medium">
+                                    <Label
+                                        :for="category.key"
+                                        class="text-sm font-medium"
+                                    >
                                         {{ category.label }}
                                     </Label>
-                                    <p class="text-sm text-muted-foreground mt-0.5">
+                                    <p
+                                        class="mt-0.5 text-sm text-muted-foreground"
+                                    >
                                         {{ category.description }}
                                     </p>
                                 </div>
@@ -123,7 +138,9 @@ const notificationCategories = [
                                     <Checkbox
                                         :id="category.key"
                                         :name="category.key"
-                                        :default-checked="props.preferences[category.key]"
+                                        :default-checked="
+                                            props.preferences[category.key]
+                                        "
                                         :value="true"
                                         data-test="email-toggle"
                                     />
@@ -134,7 +151,9 @@ const notificationCategories = [
 
                     <!-- Info Text -->
                     <p class="text-sm text-muted-foreground">
-                        In-app notifications cannot be disabled. Email notifications will only be sent when email delivery is configured.
+                        In-app notifications cannot be disabled. Email
+                        notifications will only be sent when email delivery is
+                        configured.
                     </p>
 
                     <!-- Submit Button -->

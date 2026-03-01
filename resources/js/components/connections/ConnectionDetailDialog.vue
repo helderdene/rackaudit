@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Cable, Pencil, Trash2, History } from 'lucide-vue-next';
+import ConnectionTimeline from '@/components/connections/ConnectionTimeline.vue';
+import DeleteConnectionConfirmation from '@/components/connections/DeleteConnectionConfirmation.vue';
+import EditConnectionDialog from '@/components/connections/EditConnectionDialog.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -13,10 +14,9 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { ConnectionWithPorts, CableTypeOption } from '@/types/connections';
-import EditConnectionDialog from '@/components/connections/EditConnectionDialog.vue';
-import DeleteConnectionConfirmation from '@/components/connections/DeleteConnectionConfirmation.vue';
-import ConnectionTimeline from '@/components/connections/ConnectionTimeline.vue';
+import type { CableTypeOption, ConnectionWithPorts } from '@/types/connections';
+import { Cable, History, Pencil, Trash2 } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface Props {
     /** Connection data with source and destination port info */
@@ -29,7 +29,7 @@ interface Props {
     showHistory?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     canEdit: false,
     cableTypeOptions: () => [],
     showHistory: true,
@@ -61,7 +61,9 @@ const formatCableLength = (length: number | null): string => {
 
 // Format logical path for display
 const formatLogicalPath = (
-    path: Array<{ id: number; label: string; device_name: string | null }> | undefined,
+    path:
+        | Array<{ id: number; label: string; device_name: string | null }>
+        | undefined,
 ): string => {
     if (!path || path.length === 0) return '';
     return path
@@ -74,48 +76,72 @@ const formatLogicalPath = (
     <Dialog v-model:open="isOpen">
         <DialogTrigger as-child>
             <slot>
-                <Button size="sm" variant="ghost">
-                    View Details
-                </Button>
+                <Button size="sm" variant="ghost"> View Details </Button>
             </slot>
         </DialogTrigger>
-        <DialogContent class="sm:max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogContent
+            class="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-lg"
+        >
             <DialogHeader>
                 <DialogTitle class="flex items-center gap-2">
                     <Cable class="size-5" />
                     Connection Details
                 </DialogTitle>
                 <DialogDescription>
-                    View the details of this port connection including source, destination, and cable properties.
+                    View the details of this port connection including source,
+                    destination, and cable properties.
                 </DialogDescription>
             </DialogHeader>
 
-            <Tabs v-model="activeTab" class="flex-1 overflow-hidden flex flex-col">
+            <Tabs
+                v-model="activeTab"
+                class="flex flex-1 flex-col overflow-hidden"
+            >
                 <TabsList class="grid w-full grid-cols-2">
                     <TabsTrigger value="details">Details</TabsTrigger>
-                    <TabsTrigger v-if="showHistory" value="history" class="flex items-center gap-1.5">
+                    <TabsTrigger
+                        v-if="showHistory"
+                        value="history"
+                        class="flex items-center gap-1.5"
+                    >
                         <History class="h-3.5 w-3.5" />
                         History
                     </TabsTrigger>
                 </TabsList>
 
                 <!-- Details Tab -->
-                <TabsContent value="details" class="flex-1 overflow-y-auto mt-0 pt-4">
+                <TabsContent
+                    value="details"
+                    class="mt-0 flex-1 overflow-y-auto pt-4"
+                >
                     <div class="space-y-6">
                         <!-- Source Port Info -->
                         <div class="space-y-2">
-                            <h4 class="text-sm font-medium text-muted-foreground">Source</h4>
-                            <div class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20">
+                            <h4
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Source
+                            </h4>
+                            <div
+                                class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20"
+                            >
                                 <div class="space-y-1">
                                     <p class="font-medium">
-                                        {{ connection.source_port.device?.name || 'Unknown Device' }}
+                                        {{
+                                            connection.source_port.device
+                                                ?.name || 'Unknown Device'
+                                        }}
                                     </p>
                                     <p class="text-sm text-muted-foreground">
                                         Port: {{ connection.source_port.label }}
                                     </p>
                                     <p class="text-xs text-muted-foreground">
-                                        {{ connection.source_port.type_label }} -
-                                        {{ connection.source_port.direction_label }}
+                                        {{ connection.source_port.type_label }}
+                                        -
+                                        {{
+                                            connection.source_port
+                                                .direction_label
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -123,18 +149,35 @@ const formatLogicalPath = (
 
                         <!-- Destination Port Info -->
                         <div class="space-y-2">
-                            <h4 class="text-sm font-medium text-muted-foreground">Destination</h4>
-                            <div class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20">
+                            <h4
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Destination
+                            </h4>
+                            <div
+                                class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20"
+                            >
                                 <div class="space-y-1">
                                     <p class="font-medium">
-                                        {{ connection.destination_port.device?.name || 'Unknown Device' }}
+                                        {{
+                                            connection.destination_port.device
+                                                ?.name || 'Unknown Device'
+                                        }}
                                     </p>
                                     <p class="text-sm text-muted-foreground">
-                                        Port: {{ connection.destination_port.label }}
+                                        Port:
+                                        {{ connection.destination_port.label }}
                                     </p>
                                     <p class="text-xs text-muted-foreground">
-                                        {{ connection.destination_port.type_label }} -
-                                        {{ connection.destination_port.direction_label }}
+                                        {{
+                                            connection.destination_port
+                                                .type_label
+                                        }}
+                                        -
+                                        {{
+                                            connection.destination_port
+                                                .direction_label
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -142,30 +185,54 @@ const formatLogicalPath = (
 
                         <!-- Cable Properties -->
                         <div class="space-y-2">
-                            <h4 class="text-sm font-medium text-muted-foreground">Cable Properties</h4>
+                            <h4
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Cable Properties
+                            </h4>
                             <div class="rounded-lg border p-4">
                                 <dl class="grid gap-3 text-sm">
                                     <div class="flex justify-between">
-                                        <dt class="text-muted-foreground">Type</dt>
+                                        <dt class="text-muted-foreground">
+                                            Type
+                                        </dt>
                                         <dd class="font-medium">
-                                            {{ connection.cable_type_label || '-' }}
+                                            {{
+                                                connection.cable_type_label ||
+                                                '-'
+                                            }}
                                         </dd>
                                     </div>
                                     <div class="flex justify-between">
-                                        <dt class="text-muted-foreground">Length</dt>
+                                        <dt class="text-muted-foreground">
+                                            Length
+                                        </dt>
                                         <dd class="font-medium">
-                                            {{ formatCableLength(connection.cable_length) }}
+                                            {{
+                                                formatCableLength(
+                                                    connection.cable_length,
+                                                )
+                                            }}
                                         </dd>
                                     </div>
                                     <div class="flex justify-between">
-                                        <dt class="text-muted-foreground">Color</dt>
+                                        <dt class="text-muted-foreground">
+                                            Color
+                                        </dt>
                                         <dd class="font-medium">
                                             {{ connection.cable_color || '-' }}
                                         </dd>
                                     </div>
-                                    <div v-if="connection.path_notes" class="border-t pt-3">
-                                        <dt class="mb-1 text-muted-foreground">Path Notes</dt>
-                                        <dd class="text-sm">{{ connection.path_notes }}</dd>
+                                    <div
+                                        v-if="connection.path_notes"
+                                        class="border-t pt-3"
+                                    >
+                                        <dt class="mb-1 text-muted-foreground">
+                                            Path Notes
+                                        </dt>
+                                        <dd class="text-sm">
+                                            {{ connection.path_notes }}
+                                        </dd>
                                     </div>
                                 </dl>
                             </div>
@@ -173,13 +240,28 @@ const formatLogicalPath = (
 
                         <!-- Logical Path (for patch panel connections) -->
                         <div
-                            v-if="connection.logical_path && connection.logical_path.length > 2"
+                            v-if="
+                                connection.logical_path &&
+                                connection.logical_path.length > 2
+                            "
                             class="space-y-2"
                         >
-                            <h4 class="text-sm font-medium text-muted-foreground">Logical Path</h4>
-                            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-                                <p class="text-sm text-blue-800 dark:text-blue-200">
-                                    {{ formatLogicalPath(connection.logical_path) }}
+                            <h4
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Logical Path
+                            </h4>
+                            <div
+                                class="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20"
+                            >
+                                <p
+                                    class="text-sm text-blue-800 dark:text-blue-200"
+                                >
+                                    {{
+                                        formatLogicalPath(
+                                            connection.logical_path,
+                                        )
+                                    }}
                                 </p>
                             </div>
                         </div>
@@ -187,7 +269,11 @@ const formatLogicalPath = (
                 </TabsContent>
 
                 <!-- History Tab -->
-                <TabsContent v-if="showHistory" value="history" class="flex-1 overflow-y-auto mt-0 pt-4">
+                <TabsContent
+                    v-if="showHistory"
+                    value="history"
+                    class="mt-0 flex-1 overflow-y-auto pt-4"
+                >
                     <ConnectionTimeline
                         ref="timelineRef"
                         :connection-id="connection.id"
@@ -196,7 +282,7 @@ const formatLogicalPath = (
                 </TabsContent>
             </Tabs>
 
-            <DialogFooter class="gap-2 pt-4 border-t">
+            <DialogFooter class="gap-2 border-t pt-4">
                 <DialogClose as-child>
                     <Button variant="secondary">Close</Button>
                 </DialogClose>

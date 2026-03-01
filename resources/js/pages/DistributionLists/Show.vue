@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { index, edit, destroy } from '@/actions/App/Http/Controllers/DistributionListController';
+import {
+    destroy,
+    edit,
+    index,
+} from '@/actions/App/Http/Controllers/DistributionListController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -16,7 +24,16 @@ import {
 } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Mail, ArrowLeft, Pencil, Trash2, Users, Calendar } from 'lucide-vue-next';
+import { Head, Link, router } from '@inertiajs/vue3';
+import {
+    ArrowLeft,
+    Calendar,
+    Mail,
+    Pencil,
+    Trash2,
+    Users,
+} from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface Member {
     id: number;
@@ -85,7 +102,9 @@ const handleDelete = () => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div class="flex items-center gap-4">
                     <Link :href="index.url()">
                         <Button variant="ghost" size="icon">
@@ -94,7 +113,9 @@ const handleDelete = () => {
                     </Link>
                     <HeadingSmall
                         :title="distributionList.name"
-                        :description="distributionList.description || 'No description'"
+                        :description="
+                            distributionList.description || 'No description'
+                        "
                     />
                 </div>
                 <div class="flex items-center gap-2">
@@ -126,12 +147,16 @@ const handleDelete = () => {
                         <div class="flex items-center gap-2 text-sm">
                             <Users class="h-4 w-4 text-muted-foreground" />
                             <span class="text-muted-foreground">Members:</span>
-                            <Badge variant="secondary">{{ distributionList.members.length }}</Badge>
+                            <Badge variant="secondary">{{
+                                distributionList.members.length
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2 text-sm">
                             <Calendar class="h-4 w-4 text-muted-foreground" />
                             <span class="text-muted-foreground">Created:</span>
-                            <span>{{ formatDate(distributionList.created_at) }}</span>
+                            <span>{{
+                                formatDate(distributionList.created_at)
+                            }}</span>
                         </div>
                     </CardContent>
                 </Card>
@@ -148,15 +173,22 @@ const handleDelete = () => {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div v-if="distributionList.members.length > 0" class="rounded-md border">
+                        <div
+                            v-if="distributionList.members.length > 0"
+                            class="rounded-md border"
+                        >
                             <ul class="divide-y">
                                 <li
                                     v-for="member in distributionList.members"
                                     :key="member.id"
                                     class="flex items-center gap-3 px-4 py-3"
                                 >
-                                    <Mail class="h-4 w-4 shrink-0 text-muted-foreground" />
-                                    <span class="text-sm">{{ member.email }}</span>
+                                    <Mail
+                                        class="h-4 w-4 shrink-0 text-muted-foreground"
+                                    />
+                                    <span class="text-sm">{{
+                                        member.email
+                                    }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -168,7 +200,11 @@ const handleDelete = () => {
                             <p class="mt-2 text-sm text-muted-foreground">
                                 No members in this distribution list.
                             </p>
-                            <Link v-if="canEdit" :href="edit.url(distributionList.id)" class="mt-4">
+                            <Link
+                                v-if="canEdit"
+                                :href="edit.url(distributionList.id)"
+                                class="mt-4"
+                            >
                                 <Button variant="outline" size="sm">
                                     Add Members
                                 </Button>
@@ -185,15 +221,26 @@ const handleDelete = () => {
                 <DialogHeader>
                     <DialogTitle>Delete Distribution List</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to delete "{{ distributionList.name }}"? This action cannot be undone.
-                        All {{ distributionList.members.length }} member(s) will be removed from this list.
+                        Are you sure you want to delete "{{
+                            distributionList.name
+                        }}"? This action cannot be undone. All
+                        {{ distributionList.members.length }} member(s) will be
+                        removed from this list.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="outline" @click="showDeleteDialog = false" :disabled="isDeleting">
+                    <Button
+                        variant="outline"
+                        @click="showDeleteDialog = false"
+                        :disabled="isDeleting"
+                    >
                         Cancel
                     </Button>
-                    <Button variant="destructive" @click="handleDelete" :disabled="isDeleting">
+                    <Button
+                        variant="destructive"
+                        @click="handleDelete"
+                        :disabled="isDeleting"
+                    >
                         {{ isDeleting ? 'Deleting...' : 'Delete' }}
                     </Button>
                 </DialogFooter>

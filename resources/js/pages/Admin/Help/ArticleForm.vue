@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
-import { Form } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
+import { MarkdownRenderer } from '@/components/help';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { MarkdownRenderer } from '@/components/help';
-import { ArrowLeft, Save, Eye } from 'lucide-vue-next';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItemType } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ArrowLeft, Eye, Save } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface ArticleType {
     value: string;
@@ -43,7 +48,10 @@ const props = defineProps<Props>();
 const breadcrumbs: BreadcrumbItemType[] = [
     { title: 'Admin', href: '/admin/help' },
     { title: 'Help Management', href: '/admin/help' },
-    { title: props.mode === 'create' ? 'New Article' : 'Edit Article', href: '#' },
+    {
+        title: props.mode === 'create' ? 'New Article' : 'Edit Article',
+        href: '#',
+    },
 ];
 
 const isPreviewMode = ref(false);
@@ -83,11 +91,14 @@ function generateSlug(title: string): string {
         .replace(/^-|-$/g, '');
 }
 
-watch(() => form.value.title, (newTitle) => {
-    if (props.mode === 'create' && !form.value.slug) {
-        form.value.slug = generateSlug(newTitle);
-    }
-});
+watch(
+    () => form.value.title,
+    (newTitle) => {
+        if (props.mode === 'create' && !form.value.slug) {
+            form.value.slug = generateSlug(newTitle);
+        }
+    },
+);
 
 function handleCategoryChange(event: Event) {
     const target = event.target as HTMLSelectElement;
@@ -115,16 +126,21 @@ function submit() {
     processing.value = true;
     errors.value = {};
 
-    const url = props.mode === 'create'
-        ? '/admin/help/articles'
-        : `/admin/help/articles/${props.article?.id}`;
+    const url =
+        props.mode === 'create'
+            ? '/admin/help/articles'
+            : `/admin/help/articles/${props.article?.id}`;
 
     const method = props.mode === 'create' ? 'post' : 'put';
 
     const data = {
         ...form.value,
-        category: showCustomCategory.value ? customCategory.value : form.value.category,
-        context_key: showCustomContextKey.value ? customContextKey.value : form.value.context_key,
+        category: showCustomCategory.value
+            ? customCategory.value
+            : form.value.category,
+        context_key: showCustomContextKey.value
+            ? customContextKey.value
+            : form.value.context_key,
     };
 
     router[method](url, data, {
@@ -141,7 +157,11 @@ function submit() {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Head :title="mode === 'create' ? 'Create Help Article' : 'Edit Help Article'" />
+        <Head
+            :title="
+                mode === 'create' ? 'Create Help Article' : 'Edit Help Article'
+            "
+        />
 
         <div class="flex h-full flex-1 flex-col gap-4 p-4 md:p-6">
             <div class="flex items-center justify-between">
@@ -153,10 +173,18 @@ function submit() {
                     </Link>
                     <div>
                         <h1 class="text-2xl font-bold tracking-tight">
-                            {{ mode === 'create' ? 'Create Help Article' : 'Edit Help Article' }}
+                            {{
+                                mode === 'create'
+                                    ? 'Create Help Article'
+                                    : 'Edit Help Article'
+                            }}
                         </h1>
                         <p class="text-muted-foreground">
-                            {{ mode === 'create' ? 'Add a new help article, tooltip, or tour step.' : 'Update the help article details.' }}
+                            {{
+                                mode === 'create'
+                                    ? 'Add a new help article, tooltip, or tour step.'
+                                    : 'Update the help article details.'
+                            }}
                         </p>
                     </div>
                 </div>
@@ -189,9 +217,16 @@ function submit() {
                                         id="title"
                                         v-model="form.title"
                                         placeholder="Enter article title"
-                                        :class="{ 'border-destructive': errors.title }"
+                                        :class="{
+                                            'border-destructive': errors.title,
+                                        }"
                                     />
-                                    <p v-if="errors.title" class="text-sm text-destructive">{{ errors.title }}</p>
+                                    <p
+                                        v-if="errors.title"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ errors.title }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
@@ -200,26 +235,47 @@ function submit() {
                                         id="slug"
                                         v-model="form.slug"
                                         placeholder="article-slug"
-                                        :class="{ 'border-destructive': errors.slug }"
+                                        :class="{
+                                            'border-destructive': errors.slug,
+                                        }"
                                     />
-                                    <p v-if="errors.slug" class="text-sm text-destructive">{{ errors.slug }}</p>
+                                    <p
+                                        v-if="errors.slug"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ errors.slug }}
+                                    </p>
                                 </div>
                             </div>
 
                             <div class="grid gap-4 sm:grid-cols-2">
                                 <div class="space-y-2">
-                                    <Label for="article_type">Article Type</Label>
+                                    <Label for="article_type"
+                                        >Article Type</Label
+                                    >
                                     <select
                                         id="article_type"
                                         v-model="form.article_type"
-                                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                        :class="{ 'border-destructive': errors.article_type }"
+                                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
+                                        :class="{
+                                            'border-destructive':
+                                                errors.article_type,
+                                        }"
                                     >
-                                        <option v-for="type in articleTypes" :key="type.value" :value="type.value">
+                                        <option
+                                            v-for="type in articleTypes"
+                                            :key="type.value"
+                                            :value="type.value"
+                                        >
                                             {{ type.label }}
                                         </option>
                                     </select>
-                                    <p v-if="errors.article_type" class="text-sm text-destructive">{{ errors.article_type }}</p>
+                                    <p
+                                        v-if="errors.article_type"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ errors.article_type }}
+                                    </p>
                                 </div>
 
                                 <div class="space-y-2">
@@ -229,20 +285,31 @@ function submit() {
                                         id="category"
                                         :value="form.category"
                                         @change="handleCategoryChange"
-                                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
                                     >
                                         <option value="">No Category</option>
-                                        <option v-for="cat in categories" :key="cat" :value="cat">
+                                        <option
+                                            v-for="cat in categories"
+                                            :key="cat"
+                                            :value="cat"
+                                        >
                                             {{ cat }}
                                         </option>
-                                        <option value="__custom__">+ Add Custom Category</option>
+                                        <option value="__custom__">
+                                            + Add Custom Category
+                                        </option>
                                     </select>
                                     <div v-else class="flex gap-2">
                                         <Input
                                             v-model="customCategory"
                                             placeholder="Enter custom category"
                                         />
-                                        <Button type="button" variant="outline" size="icon" @click="showCustomCategory = false">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="icon"
+                                            @click="showCustomCategory = false"
+                                        >
                                             X
                                         </Button>
                                     </div>
@@ -252,27 +319,41 @@ function submit() {
                             <div class="space-y-2">
                                 <Label for="context_key">Context Key</Label>
                                 <p class="text-xs text-muted-foreground">
-                                    The context key determines which pages will show this content.
+                                    The context key determines which pages will
+                                    show this content.
                                 </p>
                                 <select
                                     v-if="!showCustomContextKey"
                                     id="context_key"
                                     :value="form.context_key"
                                     @change="handleContextKeyChange"
-                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
                                 >
-                                    <option value="">No Context (Global)</option>
-                                    <option v-for="ctx in contextKeysList" :key="ctx.key" :value="ctx.key">
+                                    <option value="">
+                                        No Context (Global)
+                                    </option>
+                                    <option
+                                        v-for="ctx in contextKeysList"
+                                        :key="ctx.key"
+                                        :value="ctx.key"
+                                    >
                                         {{ ctx.key }} - {{ ctx.description }}
                                     </option>
-                                    <option value="__custom__">+ Add Custom Context Key</option>
+                                    <option value="__custom__">
+                                        + Add Custom Context Key
+                                    </option>
                                 </select>
                                 <div v-else class="flex gap-2">
                                     <Input
                                         v-model="customContextKey"
                                         placeholder="e.g., page.feature.action"
                                     />
-                                    <Button type="button" variant="outline" size="icon" @click="showCustomContextKey = false">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        @click="showCustomContextKey = false"
+                                    >
                                         X
                                     </Button>
                                 </div>
@@ -288,14 +369,21 @@ function submit() {
                                         min="0"
                                         max="9999"
                                     />
-                                    <p v-if="errors.sort_order" class="text-sm text-destructive">{{ errors.sort_order }}</p>
+                                    <p
+                                        v-if="errors.sort_order"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ errors.sort_order }}
+                                    </p>
                                 </div>
 
                                 <div class="flex items-center space-x-2 pt-6">
                                     <Switch
                                         id="is_active"
                                         :checked="form.is_active"
-                                        @update:checked="form.is_active = $event"
+                                        @update:checked="
+                                            form.is_active = $event
+                                        "
                                     />
                                     <Label for="is_active">Active</Label>
                                 </div>
@@ -308,18 +396,31 @@ function submit() {
                                     v-model="form.content"
                                     placeholder="Write your article content using Markdown..."
                                     class="min-h-[300px] font-mono text-sm"
-                                    :class="{ 'border-destructive': errors.content }"
+                                    :class="{
+                                        'border-destructive': errors.content,
+                                    }"
                                 />
-                                <p v-if="errors.content" class="text-sm text-destructive">{{ errors.content }}</p>
+                                <p
+                                    v-if="errors.content"
+                                    class="text-sm text-destructive"
+                                >
+                                    {{ errors.content }}
+                                </p>
                             </div>
 
                             <div class="flex justify-end gap-4">
                                 <Link href="/admin/help">
-                                    <Button type="button" variant="outline">Cancel</Button>
+                                    <Button type="button" variant="outline"
+                                        >Cancel</Button
+                                    >
                                 </Link>
                                 <Button type="submit" :disabled="processing">
                                     <Save class="mr-2 h-4 w-4" />
-                                    {{ processing ? 'Saving...' : 'Save Article' }}
+                                    {{
+                                        processing
+                                            ? 'Saving...'
+                                            : 'Save Article'
+                                    }}
                                 </Button>
                             </div>
                         </form>
@@ -335,10 +436,16 @@ function submit() {
                     </CardHeader>
                     <CardContent>
                         <div class="rounded-lg border bg-card p-4">
-                            <h3 v-if="form.title" class="mb-4 text-lg font-semibold">
+                            <h3
+                                v-if="form.title"
+                                class="mb-4 text-lg font-semibold"
+                            >
                                 {{ form.title }}
                             </h3>
-                            <div v-if="form.content" class="prose prose-sm dark:prose-invert max-w-none">
+                            <div
+                                v-if="form.content"
+                                class="prose prose-sm dark:prose-invert max-w-none"
+                            >
                                 <MarkdownRenderer :content="form.content" />
                             </div>
                             <p v-else class="text-muted-foreground italic">

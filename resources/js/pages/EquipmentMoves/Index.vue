@@ -1,26 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
 import { show as showMove } from '@/actions/App/Http/Controllers/EquipmentMoveController';
-import HeadingSmall from '@/components/HeadingSmall.vue';
 import MoveWizard from '@/components/EquipmentMoves/MoveWizard.vue';
+import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
 import { debounce } from '@/lib/utils';
-import {
-    ArrowRight,
-    Calendar,
-    Filter,
-    Plus,
-    Server,
-    User,
-    X,
-    RefreshCw,
-} from 'lucide-vue-next';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ArrowRight, Plus, RefreshCw, Server, User, X } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface MoveData {
     id: number;
@@ -112,7 +103,14 @@ const isWizardOpen = ref(false);
  */
 function getStatusVariant(
     status: string,
-): 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info' {
+):
+    | 'default'
+    | 'secondary'
+    | 'destructive'
+    | 'outline'
+    | 'success'
+    | 'warning'
+    | 'info' {
     switch (status) {
         case 'pending_approval':
             return 'warning';
@@ -183,7 +181,7 @@ watch(endDate, debouncedApplyFilters);
 /**
  * Handle wizard completion
  */
-function handleWizardComplete(moveId: number): void {
+function handleWizardComplete(_moveId: number): void {
     // Router will reload after wizard closes
 }
 
@@ -201,7 +199,9 @@ function refreshData(): void {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Equipment Moves"
                     description="Track and manage equipment move requests."
@@ -226,7 +226,7 @@ function refreshData(): void {
                             <label class="text-sm font-medium">Status</label>
                             <select
                                 v-model="statusFilter"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                             >
                                 <option value="">All Statuses</option>
                                 <option
@@ -239,7 +239,9 @@ function refreshData(): void {
                             </select>
                         </div>
                         <div class="flex-1 space-y-2">
-                            <label class="text-sm font-medium">Start Date</label>
+                            <label class="text-sm font-medium"
+                                >Start Date</label
+                            >
                             <Input v-model="startDate" type="date" />
                         </div>
                         <div class="flex-1 space-y-2">
@@ -265,22 +267,34 @@ function refreshData(): void {
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
                                     Device
                                 </th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
                                     Source
                                 </th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
                                     Destination
                                 </th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
                                     Status
                                 </th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
                                     Requested
                                 </th>
-                                <th class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground"
+                                >
                                     Actions
                                 </th>
                             </tr>
@@ -293,14 +307,23 @@ function refreshData(): void {
                             >
                                 <td class="p-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="flex h-9 w-9 items-center justify-center rounded bg-muted">
-                                            <Server class="h-4 w-4 text-muted-foreground" />
+                                        <div
+                                            class="flex h-9 w-9 items-center justify-center rounded bg-muted"
+                                        >
+                                            <Server
+                                                class="h-4 w-4 text-muted-foreground"
+                                            />
                                         </div>
                                         <div class="min-w-0">
                                             <p class="truncate font-medium">
-                                                {{ move.device?.name || 'Unknown' }}
+                                                {{
+                                                    move.device?.name ||
+                                                    'Unknown'
+                                                }}
                                             </p>
-                                            <p class="truncate text-xs text-muted-foreground">
+                                            <p
+                                                class="truncate text-xs text-muted-foreground"
+                                            >
                                                 {{ move.device?.asset_tag }}
                                             </p>
                                         </div>
@@ -311,35 +334,54 @@ function refreshData(): void {
                                         <p class="truncate text-sm">
                                             {{ move.source_rack?.name || '-' }}
                                         </p>
-                                        <p v-if="move.source_start_u" class="text-xs text-muted-foreground">
+                                        <p
+                                            v-if="move.source_start_u"
+                                            class="text-xs text-muted-foreground"
+                                        >
                                             U{{ move.source_start_u }}
                                         </p>
                                     </div>
                                 </td>
                                 <td class="p-4">
                                     <div class="flex items-center gap-2">
-                                        <ArrowRight class="h-4 w-4 shrink-0 text-muted-foreground" />
+                                        <ArrowRight
+                                            class="h-4 w-4 shrink-0 text-muted-foreground"
+                                        />
                                         <div class="min-w-0">
                                             <p class="truncate text-sm">
-                                                {{ move.destination_rack?.name || '-' }}
+                                                {{
+                                                    move.destination_rack
+                                                        ?.name || '-'
+                                                }}
                                             </p>
-                                            <p v-if="move.destination_start_u" class="text-xs text-muted-foreground">
+                                            <p
+                                                v-if="move.destination_start_u"
+                                                class="text-xs text-muted-foreground"
+                                            >
                                                 U{{ move.destination_start_u }}
                                             </p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="p-4">
-                                    <Badge :variant="getStatusVariant(move.status)">
+                                    <Badge
+                                        :variant="getStatusVariant(move.status)"
+                                    >
                                         {{ move.status_label }}
                                     </Badge>
                                 </td>
                                 <td class="p-4">
                                     <div class="min-w-0">
                                         <p class="truncate text-sm">
-                                            {{ move.requested_at_formatted || '-' }}
+                                            {{
+                                                move.requested_at_formatted ||
+                                                '-'
+                                            }}
                                         </p>
-                                        <p v-if="move.requester" class="flex items-center gap-1 text-xs text-muted-foreground">
+                                        <p
+                                            v-if="move.requester"
+                                            class="flex items-center gap-1 text-xs text-muted-foreground"
+                                        >
                                             <User class="h-3 w-3" />
                                             {{ move.requester.name }}
                                         </p>
@@ -347,12 +389,17 @@ function refreshData(): void {
                                 </td>
                                 <td class="p-4">
                                     <Link :href="showMove.url(move.id)">
-                                        <Button variant="outline" size="sm">View</Button>
+                                        <Button variant="outline" size="sm"
+                                            >View</Button
+                                        >
                                     </Link>
                                 </td>
                             </tr>
                             <tr v-if="moves.data.length === 0">
-                                <td colspan="6" class="p-8 text-center text-muted-foreground">
+                                <td
+                                    colspan="6"
+                                    class="p-8 text-center text-muted-foreground"
+                                >
                                     No move requests found.
                                 </td>
                             </tr>
@@ -362,11 +409,20 @@ function refreshData(): void {
             </div>
 
             <!-- Pagination -->
-            <div v-if="moves.last_page > 1" class="flex items-center justify-between">
+            <div
+                v-if="moves.last_page > 1"
+                class="flex items-center justify-between"
+            >
                 <p class="text-sm text-muted-foreground">
-                    Showing {{ (moves.current_page - 1) * moves.per_page + 1 }} to
-                    {{ Math.min(moves.current_page * moves.per_page, moves.total) }} of
-                    {{ moves.total }} moves
+                    Showing
+                    {{ (moves.current_page - 1) * moves.per_page + 1 }} to
+                    {{
+                        Math.min(
+                            moves.current_page * moves.per_page,
+                            moves.total,
+                        )
+                    }}
+                    of {{ moves.total }} moves
                 </p>
                 <div class="flex gap-1">
                     <template v-for="link in moves.links" :key="link.label">
@@ -380,16 +436,12 @@ function refreshData(): void {
                                 variant="outline"
                                 size="sm"
                                 :class="{ 'bg-muted': link.active }"
-                                v-html="link.label"
-                            />
+                                ><span v-html="link.label"
+                            /></Button>
                         </Link>
-                        <Button
-                            v-else
-                            variant="outline"
-                            size="sm"
-                            disabled
-                            v-html="link.label"
-                        />
+                        <Button v-else variant="outline" size="sm" disabled
+                            ><span v-html="link.label"
+                        /></Button>
                     </template>
                 </div>
             </div>

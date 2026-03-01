@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { diagramPage } from '@/actions/App/Http/Controllers/ConnectionController';
 import { edit } from '@/actions/App/Http/Controllers/DeviceController';
 import RackController from '@/actions/App/Http/Controllers/RackController';
-import { diagramPage } from '@/actions/App/Http/Controllers/ConnectionController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import QrCodeDialog from '@/components/common/QrCodeDialog.vue';
 import DeleteDeviceDialog from '@/components/devices/DeleteDeviceDialog.vue';
@@ -12,19 +11,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DeviceData } from '@/types/rooms';
-import type {
-    PortData,
-    PortTypeOption,
-    PortSubtypeOption,
-    PortStatusOption,
-    PortDirectionOption,
-} from '@/types/ports';
 import type {
     CableTypeOption,
     HierarchicalFilterOptions,
 } from '@/types/connections';
-import { Server, Settings, Shield, FileText, MapPin, QrCode, Cable } from 'lucide-vue-next';
+import type {
+    PortData,
+    PortDirectionOption,
+    PortStatusOption,
+    PortSubtypeOption,
+    PortTypeOption,
+} from '@/types/ports';
+import type { DeviceData } from '@/types/rooms';
+import { Head, Link } from '@inertiajs/vue3';
+import {
+    Cable,
+    FileText,
+    MapPin,
+    QrCode,
+    Server,
+    Settings,
+    Shield,
+} from 'lucide-vue-next';
 
 interface Props {
     device: DeviceData;
@@ -89,7 +97,9 @@ const formatDateTime = (dateString: string | undefined): string => {
 };
 
 // Get lifecycle status badge variant
-const getLifecycleStatusVariant = (status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getLifecycleStatusVariant = (
+    status: string | null,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'deployed':
             return 'default';
@@ -108,7 +118,9 @@ const getLifecycleStatusVariant = (status: string | null): 'default' | 'secondar
 };
 
 // Get warranty status badge variant
-const getWarrantyStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getWarrantyStatusVariant = (
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'active':
             return 'default';
@@ -139,7 +151,9 @@ const hasSpecs = () => {
 };
 
 // Get connection diagram URL for this device
-const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.id } });
+const connectionDiagramUrl = diagramPage.url({
+    query: { device_id: props.device.id },
+});
 </script>
 
 <template>
@@ -148,7 +162,9 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <div>
                     <HeadingSmall
                         :title="device.name"
@@ -200,40 +216,91 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                 <CardContent>
                     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Name</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Name
+                            </dt>
                             <dd class="text-sm">{{ device.name }}</dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Device Type</dt>
-                            <dd class="text-sm">{{ device.device_type?.name || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Device Type
+                            </dt>
+                            <dd class="text-sm">
+                                {{ device.device_type?.name || '-' }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Lifecycle Status</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Lifecycle Status
+                            </dt>
                             <dd>
-                                <Badge :variant="getLifecycleStatusVariant(device.lifecycle_status)">
-                                    {{ device.lifecycle_status_label || 'Unknown' }}
+                                <Badge
+                                    :variant="
+                                        getLifecycleStatusVariant(
+                                            device.lifecycle_status,
+                                        )
+                                    "
+                                >
+                                    {{
+                                        device.lifecycle_status_label ||
+                                        'Unknown'
+                                    }}
                                 </Badge>
                             </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Asset Tag</dt>
-                            <dd class="font-mono text-sm">{{ device.asset_tag }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Asset Tag
+                            </dt>
+                            <dd class="font-mono text-sm">
+                                {{ device.asset_tag }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Serial Number</dt>
-                            <dd class="text-sm">{{ device.serial_number || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Serial Number
+                            </dt>
+                            <dd class="text-sm">
+                                {{ device.serial_number || '-' }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Manufacturer</dt>
-                            <dd class="text-sm">{{ device.manufacturer || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Manufacturer
+                            </dt>
+                            <dd class="text-sm">
+                                {{ device.manufacturer || '-' }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Model</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Model
+                            </dt>
                             <dd class="text-sm">{{ device.model || '-' }}</dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Created</dt>
-                            <dd class="text-sm text-muted-foreground">{{ formatDateTime(device.created_at) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Created
+                            </dt>
+                            <dd class="text-sm text-muted-foreground">
+                                {{ formatDateTime(device.created_at) }}
+                            </dd>
                         </div>
                     </div>
                 </CardContent>
@@ -250,20 +317,42 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                 <CardContent>
                     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">U Height</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                U Height
+                            </dt>
                             <dd class="text-sm">{{ device.u_height }}U</dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Depth</dt>
-                            <dd class="text-sm">{{ device.depth_label || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Depth
+                            </dt>
+                            <dd class="text-sm">
+                                {{ device.depth_label || '-' }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Width Type</dt>
-                            <dd class="text-sm">{{ device.width_type_label || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Width Type
+                            </dt>
+                            <dd class="text-sm">
+                                {{ device.width_type_label || '-' }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Rack Face</dt>
-                            <dd class="text-sm">{{ device.rack_face_label || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Rack Face
+                            </dt>
+                            <dd class="text-sm">
+                                {{ device.rack_face_label || '-' }}
+                            </dd>
                         </div>
                     </div>
                 </CardContent>
@@ -278,18 +367,32 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div v-if="device.rack?.id" class="grid gap-6 sm:grid-cols-3">
+                    <div
+                        v-if="device.rack?.id"
+                        class="grid gap-6 sm:grid-cols-3"
+                    >
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Rack</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Rack
+                            </dt>
                             <dd class="text-sm">
                                 <Link
-                                    v-if="device.rack.datacenter_id && device.rack.room_id && device.rack.row_id"
-                                    :href="RackController.show.url({
-                                        datacenter: device.rack.datacenter_id,
-                                        room: device.rack.room_id,
-                                        row: device.rack.row_id,
-                                        rack: device.rack.id
-                                    })"
+                                    v-if="
+                                        device.rack.datacenter_id &&
+                                        device.rack.room_id &&
+                                        device.rack.row_id
+                                    "
+                                    :href="
+                                        RackController.show.url({
+                                            datacenter:
+                                                device.rack.datacenter_id,
+                                            room: device.rack.room_id,
+                                            row: device.rack.row_id,
+                                            rack: device.rack.id,
+                                        })
+                                    "
                                     class="text-primary hover:underline"
                                 >
                                     {{ device.rack.name }}
@@ -298,11 +401,21 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                             </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Starting U Position</dt>
-                            <dd class="text-sm">U{{ device.start_u || '-' }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Starting U Position
+                            </dt>
+                            <dd class="text-sm">
+                                U{{ device.start_u || '-' }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Ending U Position</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Ending U Position
+                            </dt>
                             <dd class="text-sm">
                                 <template v-if="device.start_u">
                                     U{{ device.start_u + device.u_height - 1 }}
@@ -312,7 +425,8 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                         </div>
                     </div>
                     <div v-else class="py-4 text-center text-muted-foreground">
-                        This device is not placed in any rack. It is currently in inventory.
+                        This device is not placed in any rack. It is currently
+                        in inventory.
                     </div>
                 </CardContent>
             </Card>
@@ -341,24 +455,56 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                 <CardContent>
                     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Warranty Status</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Warranty Status
+                            </dt>
                             <dd>
-                                <Badge :variant="getWarrantyStatusVariant(device.warranty_status)">
-                                    {{ getWarrantyStatusLabel(device.warranty_status) }}
+                                <Badge
+                                    :variant="
+                                        getWarrantyStatusVariant(
+                                            device.warranty_status,
+                                        )
+                                    "
+                                >
+                                    {{
+                                        getWarrantyStatusLabel(
+                                            device.warranty_status,
+                                        )
+                                    }}
                                 </Badge>
                             </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Purchase Date</dt>
-                            <dd class="text-sm">{{ formatDate(device.purchase_date) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Purchase Date
+                            </dt>
+                            <dd class="text-sm">
+                                {{ formatDate(device.purchase_date) }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Warranty Start</dt>
-                            <dd class="text-sm">{{ formatDate(device.warranty_start_date) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Warranty Start
+                            </dt>
+                            <dd class="text-sm">
+                                {{ formatDate(device.warranty_start_date) }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Warranty End</dt>
-                            <dd class="text-sm">{{ formatDate(device.warranty_end_date) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Warranty End
+                            </dt>
+                            <dd class="text-sm">
+                                {{ formatDate(device.warranty_end_date) }}
+                            </dd>
                         </div>
                     </div>
                 </CardContent>
@@ -373,13 +519,24 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div v-if="hasSpecs()" class="overflow-hidden rounded-md border">
+                    <div
+                        v-if="hasSpecs()"
+                        class="overflow-hidden rounded-md border"
+                    >
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
                                 <thead class="border-b bg-muted/50">
                                     <tr>
-                                        <th class="h-10 px-4 text-left font-medium text-muted-foreground">Key</th>
-                                        <th class="h-10 px-4 text-left font-medium text-muted-foreground">Value</th>
+                                        <th
+                                            class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                        >
+                                            Key
+                                        </th>
+                                        <th
+                                            class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                        >
+                                            Value
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -388,7 +545,9 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                                         :key="key"
                                         class="border-b transition-colors hover:bg-muted/50"
                                     >
-                                        <td class="p-4 font-medium">{{ key }}</td>
+                                        <td class="p-4 font-medium">
+                                            {{ key }}
+                                        </td>
                                         <td class="p-4">{{ value }}</td>
                                     </tr>
                                 </tbody>
@@ -410,7 +569,9 @@ const connectionDiagramUrl = diagramPage.url({ query: { device_id: props.device.
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p class="whitespace-pre-wrap text-sm">{{ device.notes }}</p>
+                    <p class="text-sm whitespace-pre-wrap">
+                        {{ device.notes }}
+                    </p>
                 </CardContent>
             </Card>
 

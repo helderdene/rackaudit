@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Plug } from 'lucide-vue-next';
+import ConnectionDetailDialog from '@/components/connections/ConnectionDetailDialog.vue';
+import CreateConnectionDialog from '@/components/connections/CreateConnectionDialog.vue';
 import AddPortDialog from '@/components/ports/AddPortDialog.vue';
 import BulkAddPortDialog from '@/components/ports/BulkAddPortDialog.vue';
 import DeletePortDialog from '@/components/ports/DeletePortDialog.vue';
 import EditPortDialog from '@/components/ports/EditPortDialog.vue';
 import PortStatusBadge from '@/components/ports/PortStatusBadge.vue';
-import CreateConnectionDialog from '@/components/connections/CreateConnectionDialog.vue';
-import ConnectionDetailDialog from '@/components/connections/ConnectionDetailDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type {
-    PortData,
-    PortTypeOption,
-    PortSubtypeOption,
-    PortStatusOption,
-    PortDirectionOption,
-} from '@/types/ports';
 import type {
     CableTypeOption,
     HierarchicalFilterOptions,
 } from '@/types/connections';
+import type {
+    PortData,
+    PortDirectionOption,
+    PortStatusOption,
+    PortSubtypeOption,
+    PortTypeOption,
+} from '@/types/ports';
+import { Plug } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     ports: PortData[];
@@ -46,7 +46,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Check if any port has a connection (to show/hide the column)
 const hasAnyConnections = computed(() => {
-    return props.ports.some(port => port.connection !== null && port.connection !== undefined);
+    return props.ports.some(
+        (port) => port.connection !== null && port.connection !== undefined,
+    );
 });
 
 // Format connection info for display
@@ -94,27 +96,62 @@ const canConnect = (port: PortData): boolean => {
         </CardHeader>
         <CardContent>
             <!-- Ports Table -->
-            <div v-if="ports.length > 0" class="overflow-hidden rounded-md border">
+            <div
+                v-if="ports.length > 0"
+                class="overflow-hidden rounded-md border"
+            >
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Label</th>
-                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Type</th>
-                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Subtype</th>
-                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Direction</th>
-                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Status</th>
-                                <th v-if="hasAnyConnections" class="h-10 px-4 text-left font-medium text-muted-foreground">Connected To</th>
-                                <th v-if="canEdit" class="h-10 px-4 text-right font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Label
+                                </th>
+                                <th
+                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Type
+                                </th>
+                                <th
+                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Subtype
+                                </th>
+                                <th
+                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Direction
+                                </th>
+                                <th
+                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    v-if="hasAnyConnections"
+                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Connected To
+                                </th>
+                                <th
+                                    v-if="canEdit"
+                                    class="h-10 px-4 text-right font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr
                                 v-for="port in ports"
                                 :key="port.id"
-                                class="border-b transition-colors hover:bg-muted/50 last:border-b-0"
+                                class="border-b transition-colors last:border-b-0 hover:bg-muted/50"
                             >
-                                <td class="p-4 font-medium">{{ port.label }}</td>
+                                <td class="p-4 font-medium">
+                                    {{ port.label }}
+                                </td>
                                 <td class="p-4">{{ port.type_label }}</td>
                                 <td class="p-4">{{ port.subtype_label }}</td>
                                 <td class="p-4">{{ port.direction_label }}</td>
@@ -130,18 +167,22 @@ const canConnect = (port: PortData): boolean => {
                                         <ConnectionDetailDialog
                                             :connection="port.connection"
                                             :can-edit="canEdit"
-                                            :cable-type-options="cableTypeOptions"
+                                            :cable-type-options="
+                                                cableTypeOptions
+                                            "
                                         >
                                             <button
                                                 type="button"
-                                                class="text-left text-sm font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+                                                class="rounded text-left text-sm font-medium text-primary hover:underline focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                                             >
                                                 {{ getConnectionDisplay(port) }}
                                             </button>
                                         </ConnectionDetailDialog>
                                     </template>
                                     <template v-else>
-                                        <span class="text-muted-foreground">-</span>
+                                        <span class="text-muted-foreground"
+                                            >-</span
+                                        >
                                     </template>
                                 </td>
                                 <!-- Actions Column -->
@@ -153,10 +194,14 @@ const canConnect = (port: PortData): boolean => {
                                             :source-port="port"
                                             :device-id="deviceId"
                                             :filter-options="filterOptions"
-                                            :cable-type-options="cableTypeOptions"
+                                            :cable-type-options="
+                                                cableTypeOptions
+                                            "
                                             :can-edit="canEdit"
                                         >
-                                            <Button size="sm" variant="outline">Connect</Button>
+                                            <Button size="sm" variant="outline"
+                                                >Connect</Button
+                                            >
                                         </CreateConnectionDialog>
                                         <EditPortDialog
                                             :device-id="deviceId"
@@ -164,9 +209,13 @@ const canConnect = (port: PortData): boolean => {
                                             :type-options="typeOptions"
                                             :subtype-options="subtypeOptions"
                                             :status-options="statusOptions"
-                                            :direction-options="directionOptions"
+                                            :direction-options="
+                                                directionOptions
+                                            "
                                         >
-                                            <Button size="sm" variant="ghost">Edit</Button>
+                                            <Button size="sm" variant="ghost"
+                                                >Edit</Button
+                                            >
                                         </EditPortDialog>
                                         <DeletePortDialog
                                             :device-id="deviceId"

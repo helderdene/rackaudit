@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 /**
  * TypeScript interfaces
@@ -38,28 +42,61 @@ const emit = defineEmits<{
 const isOpen = ref(false);
 
 // Common select styling with accessible focus states
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-input dark:bg-transparent dark:text-foreground';
 
 // Local filter state based on report type
 // Assets filters
-const deviceTypeId = ref<string>(props.filters.device_type_id ? String(props.filters.device_type_id) : '');
-const lifecycleStatus = ref<string>(props.filters.lifecycle_status ? String(props.filters.lifecycle_status) : '');
-const manufacturer = ref<string>(props.filters.manufacturer ? String(props.filters.manufacturer) : '');
-const warrantyStart = ref<string>(props.filters.warranty_start ? String(props.filters.warranty_start) : '');
-const warrantyEnd = ref<string>(props.filters.warranty_end ? String(props.filters.warranty_end) : '');
+const deviceTypeId = ref<string>(
+    props.filters.device_type_id ? String(props.filters.device_type_id) : '',
+);
+const lifecycleStatus = ref<string>(
+    props.filters.lifecycle_status
+        ? String(props.filters.lifecycle_status)
+        : '',
+);
+const manufacturer = ref<string>(
+    props.filters.manufacturer ? String(props.filters.manufacturer) : '',
+);
+const warrantyStart = ref<string>(
+    props.filters.warranty_start ? String(props.filters.warranty_start) : '',
+);
+const warrantyEnd = ref<string>(
+    props.filters.warranty_end ? String(props.filters.warranty_end) : '',
+);
 
 // Capacity filters
-const utilizationThreshold = ref<string>(props.filters.utilization_threshold ? String(props.filters.utilization_threshold) : '');
+const utilizationThreshold = ref<string>(
+    props.filters.utilization_threshold
+        ? String(props.filters.utilization_threshold)
+        : '',
+);
 
 // Connections filters
-const cableType = ref<string>(props.filters.cable_type ? String(props.filters.cable_type) : '');
-const connectionStatus = ref<string>(props.filters.connection_status ? String(props.filters.connection_status) : '');
+const cableType = ref<string>(
+    props.filters.cable_type ? String(props.filters.cable_type) : '',
+);
+const connectionStatus = ref<string>(
+    props.filters.connection_status
+        ? String(props.filters.connection_status)
+        : '',
+);
 
 // AuditHistory filters
-const startDate = ref<string>(props.filters.start_date ? String(props.filters.start_date) : '');
-const endDate = ref<string>(props.filters.end_date ? String(props.filters.end_date) : '');
-const auditType = ref<string>(props.filters.audit_type ? String(props.filters.audit_type) : '');
-const findingSeverity = ref<string>(props.filters.finding_severity ? String(props.filters.finding_severity) : '');
+const startDate = ref<string>(
+    props.filters.start_date ? String(props.filters.start_date) : '',
+);
+const endDate = ref<string>(
+    props.filters.end_date ? String(props.filters.end_date) : '',
+);
+const auditType = ref<string>(
+    props.filters.audit_type ? String(props.filters.audit_type) : '',
+);
+const findingSeverity = ref<string>(
+    props.filters.finding_severity
+        ? String(props.filters.finding_severity)
+        : '',
+);
 
 /**
  * Get filter options for a specific filter key
@@ -75,7 +112,7 @@ const hasTypeSpecificFilters = computed(() => {
     // Location filters are handled by CustomReportFilters
     const locationFilters = ['datacenter_id', 'room_id', 'row_id'];
     const typeSpecificFilters = Object.keys(props.filterOptions).filter(
-        key => !locationFilters.includes(key)
+        (key) => !locationFilters.includes(key),
     );
     return typeSpecificFilters.length > 0;
 });
@@ -86,13 +123,24 @@ const hasTypeSpecificFilters = computed(() => {
 const hasActiveFilters = computed(() => {
     switch (props.reportType) {
         case 'assets':
-            return !!(deviceTypeId.value || lifecycleStatus.value || manufacturer.value || warrantyStart.value || warrantyEnd.value);
+            return !!(
+                deviceTypeId.value ||
+                lifecycleStatus.value ||
+                manufacturer.value ||
+                warrantyStart.value ||
+                warrantyEnd.value
+            );
         case 'capacity':
             return !!utilizationThreshold.value;
         case 'connections':
             return !!(cableType.value || connectionStatus.value);
         case 'audit_history':
-            return !!(startDate.value || endDate.value || auditType.value || findingSeverity.value);
+            return !!(
+                startDate.value ||
+                endDate.value ||
+                auditType.value ||
+                findingSeverity.value
+            );
         default:
             return false;
     }
@@ -134,14 +182,18 @@ function emitFilters() {
 
     switch (props.reportType) {
         case 'assets':
-            typeFilters.device_type_id = deviceTypeId.value ? parseInt(deviceTypeId.value) : null;
+            typeFilters.device_type_id = deviceTypeId.value
+                ? parseInt(deviceTypeId.value)
+                : null;
             typeFilters.lifecycle_status = lifecycleStatus.value || null;
             typeFilters.manufacturer = manufacturer.value || null;
             typeFilters.warranty_start = warrantyStart.value || null;
             typeFilters.warranty_end = warrantyEnd.value || null;
             break;
         case 'capacity':
-            typeFilters.utilization_threshold = utilizationThreshold.value ? parseFloat(utilizationThreshold.value) : null;
+            typeFilters.utilization_threshold = utilizationThreshold.value
+                ? parseFloat(utilizationThreshold.value)
+                : null;
             break;
         case 'connections':
             typeFilters.cable_type = cableType.value || null;
@@ -188,74 +240,116 @@ function clearFilters() {
 }
 
 // Watch all filter values and emit changes
-watch([
-    deviceTypeId, lifecycleStatus, manufacturer, warrantyStart, warrantyEnd,
-    utilizationThreshold,
-    cableType, connectionStatus,
-    startDate, endDate, auditType, findingSeverity,
-], () => {
-    emitFilters();
-});
+watch(
+    [
+        deviceTypeId,
+        lifecycleStatus,
+        manufacturer,
+        warrantyStart,
+        warrantyEnd,
+        utilizationThreshold,
+        cableType,
+        connectionStatus,
+        startDate,
+        endDate,
+        auditType,
+        findingSeverity,
+    ],
+    () => {
+        emitFilters();
+    },
+);
 
 // Sync with external filter changes
-watch(() => props.filters, (newFilters) => {
-    // Assets
-    if (newFilters.device_type_id !== undefined) {
-        deviceTypeId.value = newFilters.device_type_id ? String(newFilters.device_type_id) : '';
-    }
-    if (newFilters.lifecycle_status !== undefined) {
-        lifecycleStatus.value = newFilters.lifecycle_status ? String(newFilters.lifecycle_status) : '';
-    }
-    if (newFilters.manufacturer !== undefined) {
-        manufacturer.value = newFilters.manufacturer ? String(newFilters.manufacturer) : '';
-    }
-    if (newFilters.warranty_start !== undefined) {
-        warrantyStart.value = newFilters.warranty_start ? String(newFilters.warranty_start) : '';
-    }
-    if (newFilters.warranty_end !== undefined) {
-        warrantyEnd.value = newFilters.warranty_end ? String(newFilters.warranty_end) : '';
-    }
-    // Capacity
-    if (newFilters.utilization_threshold !== undefined) {
-        utilizationThreshold.value = newFilters.utilization_threshold ? String(newFilters.utilization_threshold) : '';
-    }
-    // Connections
-    if (newFilters.cable_type !== undefined) {
-        cableType.value = newFilters.cable_type ? String(newFilters.cable_type) : '';
-    }
-    if (newFilters.connection_status !== undefined) {
-        connectionStatus.value = newFilters.connection_status ? String(newFilters.connection_status) : '';
-    }
-    // AuditHistory
-    if (newFilters.start_date !== undefined) {
-        startDate.value = newFilters.start_date ? String(newFilters.start_date) : '';
-    }
-    if (newFilters.end_date !== undefined) {
-        endDate.value = newFilters.end_date ? String(newFilters.end_date) : '';
-    }
-    if (newFilters.audit_type !== undefined) {
-        auditType.value = newFilters.audit_type ? String(newFilters.audit_type) : '';
-    }
-    if (newFilters.finding_severity !== undefined) {
-        findingSeverity.value = newFilters.finding_severity ? String(newFilters.finding_severity) : '';
-    }
-}, { deep: true });
+watch(
+    () => props.filters,
+    (newFilters) => {
+        // Assets
+        if (newFilters.device_type_id !== undefined) {
+            deviceTypeId.value = newFilters.device_type_id
+                ? String(newFilters.device_type_id)
+                : '';
+        }
+        if (newFilters.lifecycle_status !== undefined) {
+            lifecycleStatus.value = newFilters.lifecycle_status
+                ? String(newFilters.lifecycle_status)
+                : '';
+        }
+        if (newFilters.manufacturer !== undefined) {
+            manufacturer.value = newFilters.manufacturer
+                ? String(newFilters.manufacturer)
+                : '';
+        }
+        if (newFilters.warranty_start !== undefined) {
+            warrantyStart.value = newFilters.warranty_start
+                ? String(newFilters.warranty_start)
+                : '';
+        }
+        if (newFilters.warranty_end !== undefined) {
+            warrantyEnd.value = newFilters.warranty_end
+                ? String(newFilters.warranty_end)
+                : '';
+        }
+        // Capacity
+        if (newFilters.utilization_threshold !== undefined) {
+            utilizationThreshold.value = newFilters.utilization_threshold
+                ? String(newFilters.utilization_threshold)
+                : '';
+        }
+        // Connections
+        if (newFilters.cable_type !== undefined) {
+            cableType.value = newFilters.cable_type
+                ? String(newFilters.cable_type)
+                : '';
+        }
+        if (newFilters.connection_status !== undefined) {
+            connectionStatus.value = newFilters.connection_status
+                ? String(newFilters.connection_status)
+                : '';
+        }
+        // AuditHistory
+        if (newFilters.start_date !== undefined) {
+            startDate.value = newFilters.start_date
+                ? String(newFilters.start_date)
+                : '';
+        }
+        if (newFilters.end_date !== undefined) {
+            endDate.value = newFilters.end_date
+                ? String(newFilters.end_date)
+                : '';
+        }
+        if (newFilters.audit_type !== undefined) {
+            auditType.value = newFilters.audit_type
+                ? String(newFilters.audit_type)
+                : '';
+        }
+        if (newFilters.finding_severity !== undefined) {
+            findingSeverity.value = newFilters.finding_severity
+                ? String(newFilters.finding_severity)
+                : '';
+        }
+    },
+    { deep: true },
+);
 
 // Reset filters when report type changes
-watch(() => props.reportType, () => {
-    deviceTypeId.value = '';
-    lifecycleStatus.value = '';
-    manufacturer.value = '';
-    warrantyStart.value = '';
-    warrantyEnd.value = '';
-    utilizationThreshold.value = '';
-    cableType.value = '';
-    connectionStatus.value = '';
-    startDate.value = '';
-    endDate.value = '';
-    auditType.value = '';
-    findingSeverity.value = '';
-});
+watch(
+    () => props.reportType,
+    () => {
+        deviceTypeId.value = '';
+        lifecycleStatus.value = '';
+        manufacturer.value = '';
+        warrantyStart.value = '';
+        warrantyEnd.value = '';
+        utilizationThreshold.value = '';
+        cableType.value = '';
+        connectionStatus.value = '';
+        startDate.value = '';
+        endDate.value = '';
+        auditType.value = '';
+        findingSeverity.value = '';
+    },
+);
 </script>
 
 <template>
@@ -270,8 +364,13 @@ watch(() => props.reportType, () => {
                             :aria-expanded="isOpen"
                             aria-controls="type-filters-mobile-content"
                         >
-                            <CardTitle class="flex items-center gap-2 text-base">
-                                <SlidersHorizontal class="size-4" aria-hidden="true" />
+                            <CardTitle
+                                class="flex items-center gap-2 text-base"
+                            >
+                                <SlidersHorizontal
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
                                 <span>Report Filters</span>
                                 <Badge
                                     v-if="hasActiveFilters"
@@ -294,8 +393,13 @@ watch(() => props.reportType, () => {
                             <!-- Assets Filters -->
                             <template v-if="reportType === 'assets'">
                                 <!-- Device Type -->
-                                <div v-if="filterOptions.device_type_id" class="space-y-2">
-                                    <Label for="device-type-mobile">Device Type</Label>
+                                <div
+                                    v-if="filterOptions.device_type_id"
+                                    class="space-y-2"
+                                >
+                                    <Label for="device-type-mobile"
+                                        >Device Type</Label
+                                    >
                                     <select
                                         id="device-type-mobile"
                                         v-model="deviceTypeId"
@@ -303,7 +407,9 @@ watch(() => props.reportType, () => {
                                     >
                                         <option value="">All Types</option>
                                         <option
-                                            v-for="option in getFilterOptions('device_type_id')"
+                                            v-for="option in getFilterOptions(
+                                                'device_type_id',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -313,8 +419,13 @@ watch(() => props.reportType, () => {
                                 </div>
 
                                 <!-- Lifecycle Status -->
-                                <div v-if="filterOptions.lifecycle_status" class="space-y-2">
-                                    <Label for="lifecycle-status-mobile">Lifecycle Status</Label>
+                                <div
+                                    v-if="filterOptions.lifecycle_status"
+                                    class="space-y-2"
+                                >
+                                    <Label for="lifecycle-status-mobile"
+                                        >Lifecycle Status</Label
+                                    >
                                     <select
                                         id="lifecycle-status-mobile"
                                         v-model="lifecycleStatus"
@@ -322,7 +433,9 @@ watch(() => props.reportType, () => {
                                     >
                                         <option value="">All Statuses</option>
                                         <option
-                                            v-for="option in getFilterOptions('lifecycle_status')"
+                                            v-for="option in getFilterOptions(
+                                                'lifecycle_status',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -332,16 +445,25 @@ watch(() => props.reportType, () => {
                                 </div>
 
                                 <!-- Manufacturer -->
-                                <div v-if="filterOptions.manufacturer" class="space-y-2">
-                                    <Label for="manufacturer-mobile">Manufacturer</Label>
+                                <div
+                                    v-if="filterOptions.manufacturer"
+                                    class="space-y-2"
+                                >
+                                    <Label for="manufacturer-mobile"
+                                        >Manufacturer</Label
+                                    >
                                     <select
                                         id="manufacturer-mobile"
                                         v-model="manufacturer"
                                         :class="selectClass"
                                     >
-                                        <option value="">All Manufacturers</option>
+                                        <option value="">
+                                            All Manufacturers
+                                        </option>
                                         <option
-                                            v-for="option in getFilterOptions('manufacturer')"
+                                            v-for="option in getFilterOptions(
+                                                'manufacturer',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -352,10 +474,16 @@ watch(() => props.reportType, () => {
 
                                 <!-- Warranty Date Range -->
                                 <fieldset class="space-y-2">
-                                    <legend class="text-sm font-medium">Warranty Date Range</legend>
+                                    <legend class="text-sm font-medium">
+                                        Warranty Date Range
+                                    </legend>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
-                                            <Label for="warranty-start-mobile" class="sr-only">From date</Label>
+                                            <Label
+                                                for="warranty-start-mobile"
+                                                class="sr-only"
+                                                >From date</Label
+                                            >
                                             <Input
                                                 id="warranty-start-mobile"
                                                 v-model="warrantyStart"
@@ -364,7 +492,11 @@ watch(() => props.reportType, () => {
                                             />
                                         </div>
                                         <div>
-                                            <Label for="warranty-end-mobile" class="sr-only">To date</Label>
+                                            <Label
+                                                for="warranty-end-mobile"
+                                                class="sr-only"
+                                                >To date</Label
+                                            >
                                             <Input
                                                 id="warranty-end-mobile"
                                                 v-model="warrantyEnd"
@@ -378,8 +510,13 @@ watch(() => props.reportType, () => {
 
                             <!-- Capacity Filters -->
                             <template v-if="reportType === 'capacity'">
-                                <div v-if="filterOptions.utilization_threshold" class="space-y-2">
-                                    <Label for="utilization-threshold-mobile">Utilization Threshold (%)</Label>
+                                <div
+                                    v-if="filterOptions.utilization_threshold"
+                                    class="space-y-2"
+                                >
+                                    <Label for="utilization-threshold-mobile"
+                                        >Utilization Threshold (%)</Label
+                                    >
                                     <Input
                                         id="utilization-threshold-mobile"
                                         v-model="utilizationThreshold"
@@ -389,8 +526,12 @@ watch(() => props.reportType, () => {
                                         placeholder="e.g., 80"
                                         aria-describedby="utilization-threshold-mobile-description"
                                     />
-                                    <p id="utilization-threshold-mobile-description" class="text-xs text-muted-foreground">
-                                        Show racks with utilization above this threshold
+                                    <p
+                                        id="utilization-threshold-mobile-description"
+                                        class="text-xs text-muted-foreground"
+                                    >
+                                        Show racks with utilization above this
+                                        threshold
                                     </p>
                                 </div>
                             </template>
@@ -398,16 +539,25 @@ watch(() => props.reportType, () => {
                             <!-- Connections Filters -->
                             <template v-if="reportType === 'connections'">
                                 <!-- Cable Type -->
-                                <div v-if="filterOptions.cable_type" class="space-y-2">
-                                    <Label for="cable-type-mobile">Cable Type</Label>
+                                <div
+                                    v-if="filterOptions.cable_type"
+                                    class="space-y-2"
+                                >
+                                    <Label for="cable-type-mobile"
+                                        >Cable Type</Label
+                                    >
                                     <select
                                         id="cable-type-mobile"
                                         v-model="cableType"
                                         :class="selectClass"
                                     >
-                                        <option value="">All Cable Types</option>
+                                        <option value="">
+                                            All Cable Types
+                                        </option>
                                         <option
-                                            v-for="option in getFilterOptions('cable_type')"
+                                            v-for="option in getFilterOptions(
+                                                'cable_type',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -417,8 +567,13 @@ watch(() => props.reportType, () => {
                                 </div>
 
                                 <!-- Connection Status -->
-                                <div v-if="filterOptions.connection_status" class="space-y-2">
-                                    <Label for="connection-status-mobile">Connection Status</Label>
+                                <div
+                                    v-if="filterOptions.connection_status"
+                                    class="space-y-2"
+                                >
+                                    <Label for="connection-status-mobile"
+                                        >Connection Status</Label
+                                    >
                                     <select
                                         id="connection-status-mobile"
                                         v-model="connectionStatus"
@@ -426,7 +581,9 @@ watch(() => props.reportType, () => {
                                     >
                                         <option value="">All Statuses</option>
                                         <option
-                                            v-for="option in getFilterOptions('connection_status')"
+                                            v-for="option in getFilterOptions(
+                                                'connection_status',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -440,10 +597,16 @@ watch(() => props.reportType, () => {
                             <template v-if="reportType === 'audit_history'">
                                 <!-- Date Range -->
                                 <fieldset class="space-y-2">
-                                    <legend class="text-sm font-medium">Date Range</legend>
+                                    <legend class="text-sm font-medium">
+                                        Date Range
+                                    </legend>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
-                                            <Label for="start-date-mobile" class="sr-only">From date</Label>
+                                            <Label
+                                                for="start-date-mobile"
+                                                class="sr-only"
+                                                >From date</Label
+                                            >
                                             <Input
                                                 id="start-date-mobile"
                                                 v-model="startDate"
@@ -452,7 +615,11 @@ watch(() => props.reportType, () => {
                                             />
                                         </div>
                                         <div>
-                                            <Label for="end-date-mobile" class="sr-only">To date</Label>
+                                            <Label
+                                                for="end-date-mobile"
+                                                class="sr-only"
+                                                >To date</Label
+                                            >
                                             <Input
                                                 id="end-date-mobile"
                                                 v-model="endDate"
@@ -464,8 +631,13 @@ watch(() => props.reportType, () => {
                                 </fieldset>
 
                                 <!-- Audit Type -->
-                                <div v-if="filterOptions.audit_type" class="space-y-2">
-                                    <Label for="audit-type-mobile">Audit Type</Label>
+                                <div
+                                    v-if="filterOptions.audit_type"
+                                    class="space-y-2"
+                                >
+                                    <Label for="audit-type-mobile"
+                                        >Audit Type</Label
+                                    >
                                     <select
                                         id="audit-type-mobile"
                                         v-model="auditType"
@@ -473,7 +645,9 @@ watch(() => props.reportType, () => {
                                     >
                                         <option value="">All Types</option>
                                         <option
-                                            v-for="option in getFilterOptions('audit_type')"
+                                            v-for="option in getFilterOptions(
+                                                'audit_type',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -483,8 +657,13 @@ watch(() => props.reportType, () => {
                                 </div>
 
                                 <!-- Finding Severity -->
-                                <div v-if="filterOptions.finding_severity" class="space-y-2">
-                                    <Label for="finding-severity-mobile">Finding Severity</Label>
+                                <div
+                                    v-if="filterOptions.finding_severity"
+                                    class="space-y-2"
+                                >
+                                    <Label for="finding-severity-mobile"
+                                        >Finding Severity</Label
+                                    >
                                     <select
                                         id="finding-severity-mobile"
                                         v-model="findingSeverity"
@@ -492,7 +671,9 @@ watch(() => props.reportType, () => {
                                     >
                                         <option value="">All Severities</option>
                                         <option
-                                            v-for="option in getFilterOptions('finding_severity')"
+                                            v-for="option in getFilterOptions(
+                                                'finding_severity',
+                                            )"
                                             :key="option.value"
                                             :value="option.value"
                                         >
@@ -524,9 +705,14 @@ watch(() => props.reportType, () => {
         <div class="hidden lg:block">
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="flex items-center justify-between text-sm font-medium">
+                    <CardTitle
+                        class="flex items-center justify-between text-sm font-medium"
+                    >
                         <span class="flex items-center gap-2">
-                            <SlidersHorizontal class="size-4" aria-hidden="true" />
+                            <SlidersHorizontal
+                                class="size-4"
+                                aria-hidden="true"
+                            />
                             <span>Report Filters</span>
                             <Badge
                                 v-if="hasActiveFilters"
@@ -553,10 +739,20 @@ watch(() => props.reportType, () => {
                 <CardContent class="pt-0">
                     <!-- Assets Filters -->
                     <template v-if="reportType === 'assets'">
-                        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4" role="group" aria-label="Asset filters">
+                        <div
+                            class="grid grid-cols-2 gap-4 lg:grid-cols-4"
+                            role="group"
+                            aria-label="Asset filters"
+                        >
                             <!-- Device Type -->
-                            <div v-if="filterOptions.device_type_id" class="space-y-1">
-                                <Label for="device-type-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.device_type_id"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="device-type-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Device Type
                                 </Label>
                                 <select
@@ -566,7 +762,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Types</option>
                                     <option
-                                        v-for="option in getFilterOptions('device_type_id')"
+                                        v-for="option in getFilterOptions(
+                                            'device_type_id',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >
@@ -576,8 +774,14 @@ watch(() => props.reportType, () => {
                             </div>
 
                             <!-- Lifecycle Status -->
-                            <div v-if="filterOptions.lifecycle_status" class="space-y-1">
-                                <Label for="lifecycle-status-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.lifecycle_status"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="lifecycle-status-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Lifecycle Status
                                 </Label>
                                 <select
@@ -587,7 +791,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Statuses</option>
                                     <option
-                                        v-for="option in getFilterOptions('lifecycle_status')"
+                                        v-for="option in getFilterOptions(
+                                            'lifecycle_status',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >
@@ -597,8 +803,14 @@ watch(() => props.reportType, () => {
                             </div>
 
                             <!-- Manufacturer -->
-                            <div v-if="filterOptions.manufacturer" class="space-y-1">
-                                <Label for="manufacturer-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.manufacturer"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="manufacturer-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Manufacturer
                                 </Label>
                                 <select
@@ -608,7 +820,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Manufacturers</option>
                                     <option
-                                        v-for="option in getFilterOptions('manufacturer')"
+                                        v-for="option in getFilterOptions(
+                                            'manufacturer',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >
@@ -619,7 +833,9 @@ watch(() => props.reportType, () => {
 
                             <!-- Warranty Date Range -->
                             <div class="space-y-1">
-                                <Label class="text-xs text-muted-foreground">Warranty Date Range</Label>
+                                <Label class="text-xs text-muted-foreground"
+                                    >Warranty Date Range</Label
+                                >
                                 <div class="flex gap-2">
                                     <Input
                                         v-model="warrantyStart"
@@ -640,9 +856,19 @@ watch(() => props.reportType, () => {
 
                     <!-- Capacity Filters -->
                     <template v-if="reportType === 'capacity'">
-                        <div class="flex items-end gap-4" role="group" aria-label="Capacity filters">
-                            <div v-if="filterOptions.utilization_threshold" class="w-48 space-y-1">
-                                <Label for="utilization-threshold-desktop" class="text-xs text-muted-foreground">
+                        <div
+                            class="flex items-end gap-4"
+                            role="group"
+                            aria-label="Capacity filters"
+                        >
+                            <div
+                                v-if="filterOptions.utilization_threshold"
+                                class="w-48 space-y-1"
+                            >
+                                <Label
+                                    for="utilization-threshold-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Utilization Threshold (%)
                                 </Label>
                                 <Input
@@ -655,7 +881,10 @@ watch(() => props.reportType, () => {
                                     aria-describedby="utilization-threshold-desktop-description"
                                 />
                             </div>
-                            <p id="utilization-threshold-desktop-description" class="pb-2 text-xs text-muted-foreground">
+                            <p
+                                id="utilization-threshold-desktop-description"
+                                class="pb-2 text-xs text-muted-foreground"
+                            >
                                 Show racks with utilization above this threshold
                             </p>
                         </div>
@@ -663,10 +892,20 @@ watch(() => props.reportType, () => {
 
                     <!-- Connections Filters -->
                     <template v-if="reportType === 'connections'">
-                        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4" role="group" aria-label="Connection filters">
+                        <div
+                            class="grid grid-cols-2 gap-4 lg:grid-cols-4"
+                            role="group"
+                            aria-label="Connection filters"
+                        >
                             <!-- Cable Type -->
-                            <div v-if="filterOptions.cable_type" class="space-y-1">
-                                <Label for="cable-type-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.cable_type"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="cable-type-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Cable Type
                                 </Label>
                                 <select
@@ -676,7 +915,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Cable Types</option>
                                     <option
-                                        v-for="option in getFilterOptions('cable_type')"
+                                        v-for="option in getFilterOptions(
+                                            'cable_type',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >
@@ -686,8 +927,14 @@ watch(() => props.reportType, () => {
                             </div>
 
                             <!-- Connection Status -->
-                            <div v-if="filterOptions.connection_status" class="space-y-1">
-                                <Label for="connection-status-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.connection_status"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="connection-status-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Connection Status
                                 </Label>
                                 <select
@@ -697,7 +944,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Statuses</option>
                                     <option
-                                        v-for="option in getFilterOptions('connection_status')"
+                                        v-for="option in getFilterOptions(
+                                            'connection_status',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >
@@ -710,10 +959,18 @@ watch(() => props.reportType, () => {
 
                     <!-- Audit History Filters -->
                     <template v-if="reportType === 'audit_history'">
-                        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4" role="group" aria-label="Audit history filters">
+                        <div
+                            class="grid grid-cols-2 gap-4 lg:grid-cols-4"
+                            role="group"
+                            aria-label="Audit history filters"
+                        >
                             <!-- Date Range -->
                             <div class="space-y-1">
-                                <Label for="start-date-desktop" class="text-xs text-muted-foreground">Start Date</Label>
+                                <Label
+                                    for="start-date-desktop"
+                                    class="text-xs text-muted-foreground"
+                                    >Start Date</Label
+                                >
                                 <Input
                                     id="start-date-desktop"
                                     v-model="startDate"
@@ -722,7 +979,11 @@ watch(() => props.reportType, () => {
                                 />
                             </div>
                             <div class="space-y-1">
-                                <Label for="end-date-desktop" class="text-xs text-muted-foreground">End Date</Label>
+                                <Label
+                                    for="end-date-desktop"
+                                    class="text-xs text-muted-foreground"
+                                    >End Date</Label
+                                >
                                 <Input
                                     id="end-date-desktop"
                                     v-model="endDate"
@@ -732,8 +993,14 @@ watch(() => props.reportType, () => {
                             </div>
 
                             <!-- Audit Type -->
-                            <div v-if="filterOptions.audit_type" class="space-y-1">
-                                <Label for="audit-type-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.audit_type"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="audit-type-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Audit Type
                                 </Label>
                                 <select
@@ -743,7 +1010,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Types</option>
                                     <option
-                                        v-for="option in getFilterOptions('audit_type')"
+                                        v-for="option in getFilterOptions(
+                                            'audit_type',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >
@@ -753,8 +1022,14 @@ watch(() => props.reportType, () => {
                             </div>
 
                             <!-- Finding Severity -->
-                            <div v-if="filterOptions.finding_severity" class="space-y-1">
-                                <Label for="finding-severity-desktop" class="text-xs text-muted-foreground">
+                            <div
+                                v-if="filterOptions.finding_severity"
+                                class="space-y-1"
+                            >
+                                <Label
+                                    for="finding-severity-desktop"
+                                    class="text-xs text-muted-foreground"
+                                >
                                     Finding Severity
                                 </Label>
                                 <select
@@ -764,7 +1039,9 @@ watch(() => props.reportType, () => {
                                 >
                                     <option value="">All Severities</option>
                                     <option
-                                        v-for="option in getFilterOptions('finding_severity')"
+                                        v-for="option in getFilterOptions(
+                                            'finding_severity',
+                                        )"
                                         :key="option.value"
                                         :value="option.value"
                                     >

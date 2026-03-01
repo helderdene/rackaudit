@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { index as assetReportsIndex } from '@/actions/App/Http/Controllers/AssetReportController';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, Filter, X, Calendar } from 'lucide-vue-next';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Label } from '@/components/ui/label';
 import { debounce } from '@/lib/utils';
+import { router } from '@inertiajs/vue3';
+import { Calendar, ChevronDown, Filter, X } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface FilterOption {
     id: number;
@@ -45,9 +49,13 @@ const emit = defineEmits<{
 }>();
 
 // Local filter state
-const datacenterId = ref(props.filters.datacenter_id ? String(props.filters.datacenter_id) : '');
+const datacenterId = ref(
+    props.filters.datacenter_id ? String(props.filters.datacenter_id) : '',
+);
 const roomId = ref(props.filters.room_id ? String(props.filters.room_id) : '');
-const deviceTypeId = ref(props.filters.device_type_id ? String(props.filters.device_type_id) : '');
+const deviceTypeId = ref(
+    props.filters.device_type_id ? String(props.filters.device_type_id) : '',
+);
 const lifecycleStatus = ref(props.filters.lifecycle_status ?? '');
 const manufacturer = ref(props.filters.manufacturer ?? '');
 const warrantyStart = ref(props.filters.warranty_start ?? '');
@@ -57,8 +65,10 @@ const warrantyEnd = ref(props.filters.warranty_end ?? '');
 const isOpen = ref(false);
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
-const inputClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const inputClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
@@ -88,7 +98,7 @@ const applyFilters = () => {
     };
 
     // Remove undefined values
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
         if (params[key] === undefined) {
             delete params[key];
         }
@@ -117,13 +127,17 @@ const clearFilters = () => {
     warrantyEnd.value = '';
 
     emit('filtering', true);
-    router.get(assetReportsIndex.url(), {}, {
-        preserveState: true,
-        preserveScroll: true,
-        onFinish: () => {
-            emit('filtering', false);
+    router.get(
+        assetReportsIndex.url(),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+            onFinish: () => {
+                emit('filtering', false);
+            },
         },
-    });
+    );
 };
 
 // Watch for datacenter changes to reset room filter
@@ -168,15 +182,23 @@ watch(warrantyEnd, () => {
         <Collapsible v-model:open="isOpen">
             <Card>
                 <CardHeader class="p-3">
-                    <CollapsibleTrigger class="flex w-full items-center justify-between">
+                    <CollapsibleTrigger
+                        class="flex w-full items-center justify-between"
+                    >
                         <CardTitle class="flex items-center gap-2 text-base">
                             <Filter class="size-4" />
                             Filters
-                            <span v-if="hasActiveFilters" class="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                            <span
+                                v-if="hasActiveFilters"
+                                class="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground"
+                            >
                                 Active
                             </span>
                         </CardTitle>
-                        <ChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': isOpen }" />
+                        <ChevronDown
+                            class="size-4 transition-transform"
+                            :class="{ 'rotate-180': isOpen }"
+                        />
                     </CollapsibleTrigger>
                 </CardHeader>
                 <CollapsibleContent>
@@ -201,7 +223,10 @@ watch(warrantyEnd, () => {
                         </div>
 
                         <!-- Room Filter (visible when datacenter selected) -->
-                        <div v-if="datacenterId && rooms.length > 0" class="space-y-2">
+                        <div
+                            v-if="datacenterId && rooms.length > 0"
+                            class="space-y-2"
+                        >
                             <Label for="room-mobile">Room</Label>
                             <select
                                 id="room-mobile"
@@ -240,7 +265,9 @@ watch(warrantyEnd, () => {
 
                         <!-- Lifecycle Status Filter -->
                         <div class="space-y-2">
-                            <Label for="lifecycle-mobile">Lifecycle Status</Label>
+                            <Label for="lifecycle-mobile"
+                                >Lifecycle Status</Label
+                            >
                             <select
                                 id="lifecycle-mobile"
                                 v-model="lifecycleStatus"
@@ -259,7 +286,9 @@ watch(warrantyEnd, () => {
 
                         <!-- Manufacturer Filter -->
                         <div class="space-y-2">
-                            <Label for="manufacturer-mobile">Manufacturer</Label>
+                            <Label for="manufacturer-mobile"
+                                >Manufacturer</Label
+                            >
                             <select
                                 id="manufacturer-mobile"
                                 v-model="manufacturer"
@@ -330,7 +359,10 @@ watch(warrantyEnd, () => {
                     <div class="flex flex-row items-end gap-4">
                         <!-- Datacenter Filter -->
                         <div class="flex-1">
-                            <Label for="datacenter-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="datacenter-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Datacenter
                             </Label>
                             <select
@@ -350,8 +382,14 @@ watch(warrantyEnd, () => {
                         </div>
 
                         <!-- Room Filter (visible when datacenter selected) -->
-                        <div v-if="datacenterId && rooms.length > 0" class="flex-1">
-                            <Label for="room-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                        <div
+                            v-if="datacenterId && rooms.length > 0"
+                            class="flex-1"
+                        >
+                            <Label
+                                for="room-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Room
                             </Label>
                             <select
@@ -372,7 +410,10 @@ watch(warrantyEnd, () => {
 
                         <!-- Device Type Filter -->
                         <div class="flex-1">
-                            <Label for="device-type-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="device-type-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Device Type
                             </Label>
                             <select
@@ -393,7 +434,10 @@ watch(warrantyEnd, () => {
 
                         <!-- Lifecycle Status Filter -->
                         <div class="flex-1">
-                            <Label for="lifecycle-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="lifecycle-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Lifecycle Status
                             </Label>
                             <select
@@ -417,7 +461,10 @@ watch(warrantyEnd, () => {
                     <div class="flex flex-row items-end gap-4">
                         <!-- Manufacturer Filter -->
                         <div class="flex-1">
-                            <Label for="manufacturer-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="manufacturer-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Manufacturer
                             </Label>
                             <select
@@ -438,7 +485,10 @@ watch(warrantyEnd, () => {
 
                         <!-- Warranty Start Date -->
                         <div class="flex-1">
-                            <Label for="warranty-start-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="warranty-start-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Warranty Start
                             </Label>
                             <input
@@ -451,7 +501,10 @@ watch(warrantyEnd, () => {
 
                         <!-- Warranty End Date -->
                         <div class="flex-1">
-                            <Label for="warranty-end-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="warranty-end-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Warranty End
                             </Label>
                             <input

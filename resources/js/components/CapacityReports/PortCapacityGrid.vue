@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Network, Zap, Cable } from 'lucide-vue-next';
+import { Cable, Network, Zap } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface PortCapacityItem {
     total_ports: number;
@@ -66,7 +66,10 @@ const getProgressBarClass = (utilization: number): string => {
             <CardTitle class="text-base">Port Capacity by Type</CardTitle>
         </CardHeader>
         <CardContent :class="{ 'pt-6': !showTitle }">
-            <div v-if="hasData" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+                v-if="hasData"
+                class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            >
                 <div
                     v-for="(stats, portType) in portStats"
                     :key="portType"
@@ -74,25 +77,38 @@ const getProgressBarClass = (utilization: number): string => {
                 >
                     <!-- Port type header with icon -->
                     <div class="mb-3 flex items-center gap-2">
-                        <component :is="getPortIcon(portType)" class="size-5 text-muted-foreground" />
+                        <component
+                            :is="getPortIcon(portType)"
+                            class="size-5 text-muted-foreground"
+                        />
                         <h4 class="font-medium">{{ stats.label }}</h4>
                     </div>
 
                     <!-- Utilization bar -->
                     <div class="mb-3">
                         <div class="mb-1 flex items-baseline justify-between">
-                            <span class="text-sm text-muted-foreground">Utilization</span>
+                            <span class="text-sm text-muted-foreground"
+                                >Utilization</span
+                            >
                             <span
                                 class="text-sm font-medium"
-                                :class="getUtilizationColorClass(getUtilization(stats))"
+                                :class="
+                                    getUtilizationColorClass(
+                                        getUtilization(stats),
+                                    )
+                                "
                             >
                                 {{ getUtilization(stats) }}%
                             </span>
                         </div>
-                        <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                            class="h-2 w-full overflow-hidden rounded-full bg-muted"
+                        >
                             <div
                                 class="h-full transition-all duration-300"
-                                :class="getProgressBarClass(getUtilization(stats))"
+                                :class="
+                                    getProgressBarClass(getUtilization(stats))
+                                "
                                 :style="{ width: `${getUtilization(stats)}%` }"
                             />
                         </div>
@@ -102,15 +118,25 @@ const getProgressBarClass = (utilization: number): string => {
                     <div class="space-y-1 text-sm">
                         <div class="flex justify-between">
                             <span class="text-muted-foreground">Total:</span>
-                            <span class="font-medium">{{ stats.total_ports.toLocaleString() }}</span>
+                            <span class="font-medium">{{
+                                stats.total_ports.toLocaleString()
+                            }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-muted-foreground">Connected:</span>
-                            <span class="font-medium">{{ stats.connected_ports.toLocaleString() }}</span>
+                            <span class="text-muted-foreground"
+                                >Connected:</span
+                            >
+                            <span class="font-medium">{{
+                                stats.connected_ports.toLocaleString()
+                            }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-muted-foreground">Available:</span>
-                            <span class="font-medium text-green-600 dark:text-green-400">
+                            <span class="text-muted-foreground"
+                                >Available:</span
+                            >
+                            <span
+                                class="font-medium text-green-600 dark:text-green-400"
+                            >
                                 {{ stats.available_ports.toLocaleString() }}
                             </span>
                         </div>

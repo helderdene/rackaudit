@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
-import { index as helpIndex, show as helpShow } from '@/actions/App/Http/Controllers/HelpCenterController';
 import { store as storeInteraction } from '@/actions/App/Http/Controllers/Api/Help/UserHelpInteractionController';
+import {
+    index as helpIndex,
+    show as helpShow,
+} from '@/actions/App/Http/Controllers/HelpCenterController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 import HelpArticleCard from '@/components/HelpCenter/HelpArticleCard.vue';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Search, BookOpen, TrendingUp } from 'lucide-vue-next';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { debounce } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
+import { BookOpen, Search, TrendingUp } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 /**
  * Type definitions for Help Center props
@@ -107,7 +110,10 @@ const applyFilters = () => {
         helpIndex.url(),
         {
             search: searchQuery.value || undefined,
-            category: selectedCategory.value === 'all' ? undefined : selectedCategory.value,
+            category:
+                selectedCategory.value === 'all'
+                    ? undefined
+                    : selectedCategory.value,
         },
         {
             preserveState: true,
@@ -159,7 +165,9 @@ const clearSearch = () => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4 md:p-6">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Help Center"
                     description="Find answers to your questions and learn how to use the application effectively."
@@ -169,18 +177,18 @@ const clearSearch = () => {
             <!-- Search Bar -->
             <div class="relative">
                 <Search
-                    class="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+                    class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
                     v-model="searchQuery"
                     placeholder="Search help articles..."
-                    class="pl-10 pr-20"
+                    class="pr-20 pl-10"
                 />
                 <Button
                     v-if="searchQuery"
                     variant="ghost"
                     size="sm"
-                    class="absolute right-2 top-1/2 -translate-y-1/2"
+                    class="absolute top-1/2 right-2 -translate-y-1/2"
                     @click="clearSearch"
                 >
                     Clear
@@ -229,10 +237,15 @@ const clearSearch = () => {
                                 v-else
                                 class="flex flex-col items-center justify-center py-12 text-center"
                             >
-                                <BookOpen class="text-muted-foreground mb-4 h-12 w-12" />
-                                <h3 class="text-lg font-medium">No articles found</h3>
-                                <p class="text-muted-foreground mt-1 text-sm">
-                                    Try adjusting your search or filter criteria.
+                                <BookOpen
+                                    class="mb-4 h-12 w-12 text-muted-foreground"
+                                />
+                                <h3 class="text-lg font-medium">
+                                    No articles found
+                                </h3>
+                                <p class="mt-1 text-sm text-muted-foreground">
+                                    Try adjusting your search or filter
+                                    criteria.
                                 </p>
                             </div>
                         </TabsContent>
@@ -258,9 +271,13 @@ const clearSearch = () => {
                                 v-else
                                 class="flex flex-col items-center justify-center py-12 text-center"
                             >
-                                <BookOpen class="text-muted-foreground mb-4 h-12 w-12" />
-                                <h3 class="text-lg font-medium">No articles in this category</h3>
-                                <p class="text-muted-foreground mt-1 text-sm">
+                                <BookOpen
+                                    class="mb-4 h-12 w-12 text-muted-foreground"
+                                />
+                                <h3 class="text-lg font-medium">
+                                    No articles in this category
+                                </h3>
+                                <p class="mt-1 text-sm text-muted-foreground">
                                     Check back later for new content.
                                 </p>
                             </div>
@@ -273,7 +290,9 @@ const clearSearch = () => {
                     <!-- Most Viewed Articles -->
                     <Card v-if="mostViewed.length > 0">
                         <CardHeader class="pb-3">
-                            <CardTitle class="flex items-center gap-2 text-base">
+                            <CardTitle
+                                class="flex items-center gap-2 text-base"
+                            >
                                 <TrendingUp class="h-4 w-4" />
                                 Most Viewed
                             </CardTitle>
@@ -282,20 +301,29 @@ const clearSearch = () => {
                             <button
                                 v-for="article in mostViewed"
                                 :key="article.id"
-                                class="hover:bg-muted block w-full rounded-md p-2 text-left transition-colors"
-                                @click="navigateToArticle(article as HelpArticle)"
+                                class="block w-full rounded-md p-2 text-left transition-colors hover:bg-muted"
+                                @click="
+                                    navigateToArticle(article as HelpArticle)
+                                "
                             >
-                                <div class="flex items-start justify-between gap-2">
-                                    <span class="text-sm font-medium line-clamp-2">
+                                <div
+                                    class="flex items-start justify-between gap-2"
+                                >
+                                    <span
+                                        class="line-clamp-2 text-sm font-medium"
+                                    >
                                         {{ article.title }}
                                     </span>
-                                    <Badge variant="secondary" class="shrink-0 text-xs">
+                                    <Badge
+                                        variant="secondary"
+                                        class="shrink-0 text-xs"
+                                    >
                                         {{ article.view_count }} views
                                     </Badge>
                                 </div>
                                 <span
                                     v-if="article.category"
-                                    class="text-muted-foreground mt-1 text-xs"
+                                    class="mt-1 text-xs text-muted-foreground"
                                 >
                                     {{ article.category }}
                                 </span>
@@ -306,7 +334,9 @@ const clearSearch = () => {
                     <!-- Browse by Category (visible on mobile/tablet) -->
                     <Card class="lg:hidden">
                         <CardHeader class="pb-3">
-                            <CardTitle class="text-base">Browse by Category</CardTitle>
+                            <CardTitle class="text-base"
+                                >Browse by Category</CardTitle
+                            >
                         </CardHeader>
                         <CardContent class="flex flex-wrap gap-2">
                             <Button
@@ -318,7 +348,10 @@ const clearSearch = () => {
                             >
                                 {{ category }}
                                 <Badge variant="secondary" class="ml-1">
-                                    {{ articlesByCategory[category]?.length || 0 }}
+                                    {{
+                                        articlesByCategory[category]?.length ||
+                                        0
+                                    }}
                                 </Badge>
                             </Button>
                         </CardContent>
@@ -327,16 +360,20 @@ const clearSearch = () => {
                     <!-- Quick Links Card -->
                     <Card>
                         <CardHeader class="pb-3">
-                            <CardTitle class="text-base">Need More Help?</CardTitle>
+                            <CardTitle class="text-base"
+                                >Need More Help?</CardTitle
+                            >
                         </CardHeader>
-                        <CardContent class="text-muted-foreground space-y-2 text-sm">
+                        <CardContent
+                            class="space-y-2 text-sm text-muted-foreground"
+                        >
                             <p>
-                                Can't find what you're looking for? Try using the search bar or
-                                browse articles by category.
+                                Can't find what you're looking for? Try using
+                                the search bar or browse articles by category.
                             </p>
                             <p>
-                                For context-specific help, look for the help button (?) on any
-                                page.
+                                For context-specific help, look for the help
+                                button (?) on any page.
                             </p>
                         </CardContent>
                     </Card>

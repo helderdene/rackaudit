@@ -6,19 +6,19 @@
  * click functionality to filter findings by severity level.
  */
 
-import { computed, ref } from 'vue';
-import { Doughnut } from 'vue-chartjs';
-import {
-    Chart as ChartJS,
-    ArcElement,
-    Tooltip,
-    Legend,
-    type ChartOptions,
-    type ChartData,
-} from 'chart.js';
-import { router } from '@inertiajs/vue3';
 import FindingController from '@/actions/App/Http/Controllers/FindingController';
-import type { SeverityMetrics, FindingSeverityValue } from '@/types/dashboard';
+import type { FindingSeverityValue, SeverityMetrics } from '@/types/dashboard';
+import { router } from '@inertiajs/vue3';
+import {
+    ArcElement,
+    Chart as ChartJS,
+    Legend,
+    Tooltip,
+    type ChartData,
+    type ChartOptions,
+} from 'chart.js';
+import { computed } from 'vue';
+import { Doughnut } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -44,7 +44,12 @@ const severityHoverColors: Record<FindingSeverityValue, string> = {
 };
 
 // Severity order for consistent display
-const severityOrder: FindingSeverityValue[] = ['critical', 'high', 'medium', 'low'];
+const severityOrder: FindingSeverityValue[] = [
+    'critical',
+    'high',
+    'medium',
+    'low',
+];
 
 // Check if there is any data to display
 const hasData = computed(() => props.severityMetrics.total > 0);
@@ -99,9 +104,12 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
                 label: (context) => {
                     const label = context.label || '';
                     const value = context.raw as number;
-                    const percentage = props.severityMetrics.total > 0
-                        ? Math.round((value / props.severityMetrics.total) * 100)
-                        : 0;
+                    const percentage =
+                        props.severityMetrics.total > 0
+                            ? Math.round(
+                                  (value / props.severityMetrics.total) * 100,
+                              )
+                            : 0;
                     return `${label}: ${value} (${percentage}%)`;
                 },
             },
@@ -138,7 +146,9 @@ const navigateToFindingsBySeverity = (severity: FindingSeverityValue) => {
             <div
                 class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
             >
-                <span class="text-3xl font-bold">{{ severityMetrics.total }}</span>
+                <span class="text-3xl font-bold">{{
+                    severityMetrics.total
+                }}</span>
                 <span class="text-sm text-muted-foreground">
                     {{ severityMetrics.total === 1 ? 'Finding' : 'Findings' }}
                 </span>
@@ -169,11 +179,16 @@ const navigateToFindingsBySeverity = (severity: FindingSeverityValue) => {
                     d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
                 />
             </svg>
-            <p class="text-sm text-muted-foreground">No findings in selected period</p>
+            <p class="text-sm text-muted-foreground">
+                No findings in selected period
+            </p>
         </div>
 
         <!-- Click hint -->
-        <p v-if="hasData" class="mt-3 text-center text-xs text-muted-foreground">
+        <p
+            v-if="hasData"
+            class="mt-3 text-center text-xs text-muted-foreground"
+        >
             Click a segment to view findings
         </p>
     </div>

@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { createDevicePort } from '@/actions/App/Http/Controllers/ExpectedConnectionController';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import {
     Dialog,
     DialogClose,
@@ -13,9 +10,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { AlertCircle, Plus } from 'lucide-vue-next';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import axios from 'axios';
-import { createDevicePort } from '@/actions/App/Http/Controllers/ExpectedConnectionController';
+import { AlertCircle, Plus } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface Props {
     isOpen: boolean;
@@ -107,7 +107,8 @@ async function handleSubmit(): Promise<void> {
                 portLabelError.value = errors.port_label[0];
             }
         } else {
-            submitError.value = 'Failed to create device and port. Please try again.';
+            submitError.value =
+                'Failed to create device and port. Please try again.';
         }
     } finally {
         isSubmitting.value = false;
@@ -125,11 +126,14 @@ function handleClose(): void {
 }
 
 // Reset form when dialog opens
-watch(() => props.isOpen, (open) => {
-    if (open) {
-        resetForm();
-    }
-});
+watch(
+    () => props.isOpen,
+    (open) => {
+        if (open) {
+            resetForm();
+        }
+    },
+);
 </script>
 
 <template>
@@ -142,8 +146,8 @@ watch(() => props.isOpen, (open) => {
                 </DialogTitle>
                 <DialogDescription>
                     Create a new device and port for this
-                    {{ target === 'source' ? 'source' : 'destination' }} connection.
-                    The device will be created if it doesn't exist.
+                    {{ target === 'source' ? 'source' : 'destination' }}
+                    connection. The device will be created if it doesn't exist.
                 </DialogDescription>
             </DialogHeader>
 
@@ -162,7 +166,8 @@ watch(() => props.isOpen, (open) => {
                         {{ deviceNameError }}
                     </p>
                     <p class="text-xs text-muted-foreground">
-                        If a device with this name exists, it will be used instead of creating a new one.
+                        If a device with this name exists, it will be used
+                        instead of creating a new one.
                     </p>
                 </div>
 
@@ -184,10 +189,19 @@ watch(() => props.isOpen, (open) => {
                 <!-- Info Box -->
                 <div class="rounded-lg border bg-muted/30 p-3 text-sm">
                     <p class="font-medium">Note:</p>
-                    <ul class="mt-1 list-inside list-disc space-y-1 text-xs text-muted-foreground">
-                        <li>New devices will be created with default settings</li>
-                        <li>Ports will be created as Ethernet type by default</li>
-                        <li>You can edit device details later from the Devices page</li>
+                    <ul
+                        class="mt-1 list-inside list-disc space-y-1 text-xs text-muted-foreground"
+                    >
+                        <li>
+                            New devices will be created with default settings
+                        </li>
+                        <li>
+                            Ports will be created as Ethernet type by default
+                        </li>
+                        <li>
+                            You can edit device details later from the Devices
+                            page
+                        </li>
                     </ul>
                 </div>
 
@@ -203,15 +217,16 @@ watch(() => props.isOpen, (open) => {
 
             <DialogFooter class="gap-2">
                 <DialogClose as-child>
-                    <Button variant="secondary" :disabled="isSubmitting" @click="handleClose">
+                    <Button
+                        variant="secondary"
+                        :disabled="isSubmitting"
+                        @click="handleClose"
+                    >
                         Cancel
                     </Button>
                 </DialogClose>
 
-                <Button
-                    :disabled="isSubmitting"
-                    @click="handleSubmit"
-                >
+                <Button :disabled="isSubmitting" @click="handleSubmit">
                     <Spinner v-if="isSubmitting" class="mr-2 size-4" />
                     {{ isSubmitting ? 'Creating...' : 'Create Device & Port' }}
                 </Button>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { downloadErrors } from '@/actions/App/Http/Controllers/BulkImportController';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Download, FileWarning } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     importId: number;
@@ -26,17 +26,23 @@ const handleDownload = () => {
         class="rounded-lg border border-destructive/30 bg-destructive/5 p-4"
     >
         <div class="flex items-start gap-3">
-            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+            <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive"
+            >
                 <AlertTriangle class="h-5 w-5" />
             </div>
             <div class="flex-1 space-y-3">
                 <div>
                     <h4 class="font-medium text-destructive">
-                        {{ failureCount }} row{{ failureCount !== 1 ? 's' : '' }} failed to import
+                        {{ failureCount }} row{{
+                            failureCount !== 1 ? 's' : ''
+                        }}
+                        failed to import
                     </h4>
                     <p class="mt-1 text-sm text-muted-foreground">
-                        Some rows in your import file could not be processed due to validation errors.
-                        Download the error report to see detailed information about each failed row.
+                        Some rows in your import file could not be processed due
+                        to validation errors. Download the error report to see
+                        detailed information about each failed row.
                     </p>
                 </div>
 
@@ -50,7 +56,10 @@ const handleDownload = () => {
                     Download Error Report
                 </Button>
 
-                <div v-else class="flex items-center gap-2 text-sm text-muted-foreground">
+                <div
+                    v-else
+                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                >
                     <FileWarning class="h-4 w-4" />
                     <span>Error report not available or has expired</span>
                 </div>

@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
-import { ChevronDown, ChevronRight } from 'lucide-vue-next';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
 import FindingController from '@/actions/App/Http/Controllers/FindingController';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import type { AuditBreakdownItem, FindingSeverityValue } from '@/types/dashboard';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import type {
+    AuditBreakdownItem,
+    FindingSeverityValue,
+} from '@/types/dashboard';
+import { Link, router } from '@inertiajs/vue3';
+import { ChevronDown, ChevronRight } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface Props {
     auditBreakdown: AuditBreakdownItem[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 // Collapsible state - default to expanded
 const isExpanded = ref(true);
@@ -31,7 +38,7 @@ const navigateToAudit = (auditId: number) => {
 const navigateToFindingsBySeverity = (
     event: Event,
     auditId: number,
-    severity: FindingSeverityValue
+    severity: FindingSeverityValue,
 ) => {
     event.stopPropagation();
     router.get(
@@ -40,7 +47,7 @@ const navigateToFindingsBySeverity = (
                 audit_id: auditId,
                 severity: severity,
             },
-        })
+        }),
     );
 };
 
@@ -51,7 +58,7 @@ const navigateToFindingsBySeverity = (
  */
 const getSeverityCellBadgeClass = (
     severity: FindingSeverityValue,
-    count: number
+    count: number,
 ): string => {
     const baseClasses =
         'inline-flex min-w-[2rem] items-center justify-center rounded-full px-2 py-0.5 text-xs font-medium transition-colors';
@@ -102,19 +109,31 @@ const getStatusBadgeClass = (status: string): string => {
     <Collapsible v-model:open="isExpanded" class="w-full">
         <Card>
             <CardHeader class="pb-3">
-                <CollapsibleTrigger class="flex w-full items-center justify-between cursor-pointer group">
+                <CollapsibleTrigger
+                    class="group flex w-full cursor-pointer items-center justify-between"
+                >
                     <CardTitle class="flex items-center gap-2">
                         <span>Per-Audit Finding Breakdown</span>
                         <span class="text-sm font-normal text-muted-foreground">
-                            ({{ auditBreakdown.length }} audit{{ auditBreakdown.length !== 1 ? 's' : '' }})
+                            ({{ auditBreakdown.length }} audit{{
+                                auditBreakdown.length !== 1 ? 's' : ''
+                            }})
                         </span>
                     </CardTitle>
-                    <div class="flex items-center gap-1 text-muted-foreground group-hover:text-foreground transition-colors">
-                        <span class="text-sm hidden sm:inline">
+                    <div
+                        class="flex items-center gap-1 text-muted-foreground transition-colors group-hover:text-foreground"
+                    >
+                        <span class="hidden text-sm sm:inline">
                             {{ isExpanded ? 'Collapse' : 'Expand' }}
                         </span>
-                        <ChevronDown v-if="isExpanded" class="h-5 w-5 transition-transform" />
-                        <ChevronRight v-else class="h-5 w-5 transition-transform" />
+                        <ChevronDown
+                            v-if="isExpanded"
+                            class="h-5 w-5 transition-transform"
+                        />
+                        <ChevronRight
+                            v-else
+                            class="h-5 w-5 transition-transform"
+                        />
                     </div>
                 </CollapsibleTrigger>
             </CardHeader>
@@ -133,28 +152,44 @@ const getStatusBadgeClass = (status: string): string => {
                         <table class="w-full text-sm">
                             <thead class="border-b bg-muted/50">
                                 <tr>
-                                    <th class="h-10 px-3 text-left font-medium text-muted-foreground">
+                                    <th
+                                        class="h-10 px-3 text-left font-medium text-muted-foreground"
+                                    >
                                         Audit
                                     </th>
-                                    <th class="h-10 px-3 text-left font-medium text-muted-foreground hidden sm:table-cell">
+                                    <th
+                                        class="hidden h-10 px-3 text-left font-medium text-muted-foreground sm:table-cell"
+                                    >
                                         Datacenter
                                     </th>
-                                    <th class="h-10 px-3 text-left font-medium text-muted-foreground hidden md:table-cell">
+                                    <th
+                                        class="hidden h-10 px-3 text-left font-medium text-muted-foreground md:table-cell"
+                                    >
                                         Status
                                     </th>
-                                    <th class="h-10 px-3 text-center font-medium text-red-600 dark:text-red-400">
+                                    <th
+                                        class="h-10 px-3 text-center font-medium text-red-600 dark:text-red-400"
+                                    >
                                         Critical
                                     </th>
-                                    <th class="h-10 px-3 text-center font-medium text-orange-600 dark:text-orange-400">
+                                    <th
+                                        class="h-10 px-3 text-center font-medium text-orange-600 dark:text-orange-400"
+                                    >
                                         High
                                     </th>
-                                    <th class="h-10 px-3 text-center font-medium text-yellow-600 dark:text-yellow-400 hidden sm:table-cell">
+                                    <th
+                                        class="hidden h-10 px-3 text-center font-medium text-yellow-600 sm:table-cell dark:text-yellow-400"
+                                    >
                                         Medium
                                     </th>
-                                    <th class="h-10 px-3 text-center font-medium text-blue-600 dark:text-blue-400 hidden sm:table-cell">
+                                    <th
+                                        class="hidden h-10 px-3 text-center font-medium text-blue-600 sm:table-cell dark:text-blue-400"
+                                    >
                                         Low
                                     </th>
-                                    <th class="h-10 px-3 text-center font-medium text-muted-foreground">
+                                    <th
+                                        class="h-10 px-3 text-center font-medium text-muted-foreground"
+                                    >
                                         Total
                                     </th>
                                 </tr>
@@ -163,7 +198,7 @@ const getStatusBadgeClass = (status: string): string => {
                                 <tr
                                     v-for="audit in auditBreakdown"
                                     :key="audit.id"
-                                    class="border-b transition-colors hover:bg-muted/50 cursor-pointer"
+                                    class="cursor-pointer border-b transition-colors hover:bg-muted/50"
                                     @click="navigateToAudit(audit.id)"
                                     role="button"
                                     tabindex="0"
@@ -172,7 +207,11 @@ const getStatusBadgeClass = (status: string): string => {
                                     <!-- Audit Name -->
                                     <td class="p-3 font-medium">
                                         <Link
-                                            :href="AuditController.show.url(audit.id)"
+                                            :href="
+                                                AuditController.show.url(
+                                                    audit.id,
+                                                )
+                                            "
                                             class="hover:underline"
                                             @click.stop
                                         >
@@ -181,13 +220,19 @@ const getStatusBadgeClass = (status: string): string => {
                                     </td>
 
                                     <!-- Datacenter -->
-                                    <td class="p-3 hidden sm:table-cell">
+                                    <td class="hidden p-3 sm:table-cell">
                                         {{ audit.datacenter }}
                                     </td>
 
                                     <!-- Status -->
-                                    <td class="p-3 hidden md:table-cell">
-                                        <span :class="getStatusBadgeClass(audit.status)">
+                                    <td class="hidden p-3 md:table-cell">
+                                        <span
+                                            :class="
+                                                getStatusBadgeClass(
+                                                    audit.status,
+                                                )
+                                            "
+                                        >
                                             {{ audit.status_label }}
                                         </span>
                                     </td>
@@ -195,11 +240,40 @@ const getStatusBadgeClass = (status: string): string => {
                                     <!-- Critical count - clickable when > 0 -->
                                     <td class="p-3 text-center">
                                         <span
-                                            :class="getSeverityCellBadgeClass('critical', audit.critical)"
-                                            @click="audit.critical > 0 ? navigateToFindingsBySeverity($event, audit.id, 'critical') : null"
-                                            :role="audit.critical > 0 ? 'button' : undefined"
-                                            :tabindex="audit.critical > 0 ? 0 : undefined"
-                                            @keydown.enter="audit.critical > 0 ? navigateToFindingsBySeverity($event, audit.id, 'critical') : null"
+                                            :class="
+                                                getSeverityCellBadgeClass(
+                                                    'critical',
+                                                    audit.critical,
+                                                )
+                                            "
+                                            @click="
+                                                audit.critical > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'critical',
+                                                      )
+                                                    : null
+                                            "
+                                            :role="
+                                                audit.critical > 0
+                                                    ? 'button'
+                                                    : undefined
+                                            "
+                                            :tabindex="
+                                                audit.critical > 0
+                                                    ? 0
+                                                    : undefined
+                                            "
+                                            @keydown.enter="
+                                                audit.critical > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'critical',
+                                                      )
+                                                    : null
+                                            "
                                         >
                                             {{ audit.critical }}
                                         </span>
@@ -208,37 +282,122 @@ const getStatusBadgeClass = (status: string): string => {
                                     <!-- High count - clickable when > 0 -->
                                     <td class="p-3 text-center">
                                         <span
-                                            :class="getSeverityCellBadgeClass('high', audit.high)"
-                                            @click="audit.high > 0 ? navigateToFindingsBySeverity($event, audit.id, 'high') : null"
-                                            :role="audit.high > 0 ? 'button' : undefined"
-                                            :tabindex="audit.high > 0 ? 0 : undefined"
-                                            @keydown.enter="audit.high > 0 ? navigateToFindingsBySeverity($event, audit.id, 'high') : null"
+                                            :class="
+                                                getSeverityCellBadgeClass(
+                                                    'high',
+                                                    audit.high,
+                                                )
+                                            "
+                                            @click="
+                                                audit.high > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'high',
+                                                      )
+                                                    : null
+                                            "
+                                            :role="
+                                                audit.high > 0
+                                                    ? 'button'
+                                                    : undefined
+                                            "
+                                            :tabindex="
+                                                audit.high > 0 ? 0 : undefined
+                                            "
+                                            @keydown.enter="
+                                                audit.high > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'high',
+                                                      )
+                                                    : null
+                                            "
                                         >
                                             {{ audit.high }}
                                         </span>
                                     </td>
 
                                     <!-- Medium count - clickable when > 0 -->
-                                    <td class="p-3 text-center hidden sm:table-cell">
+                                    <td
+                                        class="hidden p-3 text-center sm:table-cell"
+                                    >
                                         <span
-                                            :class="getSeverityCellBadgeClass('medium', audit.medium)"
-                                            @click="audit.medium > 0 ? navigateToFindingsBySeverity($event, audit.id, 'medium') : null"
-                                            :role="audit.medium > 0 ? 'button' : undefined"
-                                            :tabindex="audit.medium > 0 ? 0 : undefined"
-                                            @keydown.enter="audit.medium > 0 ? navigateToFindingsBySeverity($event, audit.id, 'medium') : null"
+                                            :class="
+                                                getSeverityCellBadgeClass(
+                                                    'medium',
+                                                    audit.medium,
+                                                )
+                                            "
+                                            @click="
+                                                audit.medium > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'medium',
+                                                      )
+                                                    : null
+                                            "
+                                            :role="
+                                                audit.medium > 0
+                                                    ? 'button'
+                                                    : undefined
+                                            "
+                                            :tabindex="
+                                                audit.medium > 0 ? 0 : undefined
+                                            "
+                                            @keydown.enter="
+                                                audit.medium > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'medium',
+                                                      )
+                                                    : null
+                                            "
                                         >
                                             {{ audit.medium }}
                                         </span>
                                     </td>
 
                                     <!-- Low count - clickable when > 0 -->
-                                    <td class="p-3 text-center hidden sm:table-cell">
+                                    <td
+                                        class="hidden p-3 text-center sm:table-cell"
+                                    >
                                         <span
-                                            :class="getSeverityCellBadgeClass('low', audit.low)"
-                                            @click="audit.low > 0 ? navigateToFindingsBySeverity($event, audit.id, 'low') : null"
-                                            :role="audit.low > 0 ? 'button' : undefined"
-                                            :tabindex="audit.low > 0 ? 0 : undefined"
-                                            @keydown.enter="audit.low > 0 ? navigateToFindingsBySeverity($event, audit.id, 'low') : null"
+                                            :class="
+                                                getSeverityCellBadgeClass(
+                                                    'low',
+                                                    audit.low,
+                                                )
+                                            "
+                                            @click="
+                                                audit.low > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'low',
+                                                      )
+                                                    : null
+                                            "
+                                            :role="
+                                                audit.low > 0
+                                                    ? 'button'
+                                                    : undefined
+                                            "
+                                            :tabindex="
+                                                audit.low > 0 ? 0 : undefined
+                                            "
+                                            @keydown.enter="
+                                                audit.low > 0
+                                                    ? navigateToFindingsBySeverity(
+                                                          $event,
+                                                          audit.id,
+                                                          'low',
+                                                      )
+                                                    : null
+                                            "
                                         >
                                             {{ audit.low }}
                                         </span>

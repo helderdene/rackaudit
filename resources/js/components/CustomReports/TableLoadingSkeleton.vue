@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Skeleton } from '@/components/ui/skeleton';
+import { computed } from 'vue';
 
 interface Props {
     columnCount?: number;
@@ -15,8 +15,12 @@ const props = withDefaults(defineProps<Props>(), {
 /**
  * Generate array for iteration
  */
-const columns = computed(() => Array.from({ length: props.columnCount }, (_, i) => i));
-const rows = computed(() => Array.from({ length: props.rowCount }, (_, i) => i));
+const columns = computed(() =>
+    Array.from({ length: props.columnCount }, (_, i) => i),
+);
+const rows = computed(() =>
+    Array.from({ length: props.rowCount }, (_, i) => i),
+);
 
 /**
  * Generate random width for skeleton cells to look more natural
@@ -75,7 +79,9 @@ function getHeaderWidth(index: number): string {
                             :key="`cell-${row}-${col}`"
                             class="p-4"
                         >
-                            <Skeleton :class="['h-4', getRandomWidth(row + col)]" />
+                            <Skeleton
+                                :class="['h-4', getRandomWidth(row + col)]"
+                            />
                         </td>
                     </tr>
                 </tbody>
@@ -83,10 +89,17 @@ function getHeaderWidth(index: number): string {
         </div>
 
         <!-- Pagination Skeleton -->
-        <div class="flex items-center justify-between border-t pt-4" aria-hidden="true">
+        <div
+            class="flex items-center justify-between border-t pt-4"
+            aria-hidden="true"
+        >
             <Skeleton class="h-4 w-48" />
             <div class="flex gap-2">
-                <Skeleton v-for="i in 5" :key="`page-${i}`" class="size-8 rounded-md" />
+                <Skeleton
+                    v-for="i in 5"
+                    :key="`page-${i}`"
+                    class="size-8 rounded-md"
+                />
             </div>
         </div>
     </div>

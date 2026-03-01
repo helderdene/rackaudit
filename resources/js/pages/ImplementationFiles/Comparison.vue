@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import axios from 'axios';
-import AppLayout from '@/layouts/AppLayout.vue';
+import { ComparisonFilters, ComparisonTable } from '@/components/comparison';
+import ConnectionDetailsModal from '@/components/comparison/ConnectionDetailsModal.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import { FeatureTour } from '@/components/help';
+import InputError from '@/components/InputError.vue';
 import RealtimeToastContainer from '@/components/notifications/RealtimeToastContainer.vue';
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import {
     Dialog,
     DialogClose,
@@ -16,28 +15,22 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import InputError from '@/components/InputError.vue';
-import {
-    ArrowLeft,
-    AlertTriangle,
-    GitCompare,
-} from 'lucide-vue-next';
-import {
-    ComparisonTable,
-    ComparisonFilters,
-} from '@/components/comparison';
-import ConnectionDetailsModal from '@/components/comparison/ConnectionDetailsModal.vue';
-import { FeatureTour } from '@/components/help';
 import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem } from '@/types';
 import type {
+    ComparisonFilterOptions,
     ComparisonResultData,
     ComparisonStatistics as ComparisonStatsType,
-    ComparisonFilterOptions,
 } from '@/types/comparison';
-import type { BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import axios from 'axios';
+import { AlertTriangle, ArrowLeft, GitCompare } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface ImplementationFileData {
     id: number;
@@ -85,12 +78,8 @@ const detailsModalOpen = ref(false);
 const selectedComparison = ref<ComparisonResultData | null>(null);
 
 // Real-time updates integration
-const {
-    pendingUpdates,
-    dismissUpdate,
-    clearUpdates,
-    onDataChange,
-} = useRealtimeUpdates(props.implementationFile.datacenter_id);
+const { pendingUpdates, dismissUpdate, clearUpdates, onDataChange } =
+    useRealtimeUpdates(props.implementationFile.datacenter_id);
 
 // Register handlers for relevant changes
 onDataChange('connection', (data) => {
@@ -154,7 +143,9 @@ const cableTypeOptions = [
 /**
  * Load comparison data from API
  */
-async function loadComparisons(queryParams: Record<string, string | string[]> = {}): Promise<void> {
+async function loadComparisons(
+    queryParams: Record<string, string | string[]> = {},
+): Promise<void> {
     isLoading.value = true;
     loadError.value = null;
 
@@ -307,7 +298,9 @@ async function submitDeleteConnection(): Promise<void> {
     deleteFormError.value = null;
 
     try {
-        await axios.delete(`/connections/${deleteDialogComparison.value.actual_connection.id}`);
+        await axios.delete(
+            `/connections/${deleteDialogComparison.value.actual_connection.id}`,
+        );
 
         deleteDialogOpen.value = false;
         deleteDialogComparison.value = null;
@@ -344,9 +337,15 @@ const selectClass =
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div data-tour="file-header" class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                data-tour="file-header"
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <div class="flex items-start gap-4">
-                    <Link :href="`/datacenters/${implementationFile.datacenter_id}`" class="mt-1">
+                    <Link
+                        :href="`/datacenters/${implementationFile.datacenter_id}`"
+                        class="mt-1"
+                    >
                         <Button variant="ghost" size="icon" class="size-8">
                             <ArrowLeft class="size-4" />
                         </Button>
@@ -358,7 +357,12 @@ const selectClass =
                 </div>
 
                 <div data-tour="upload-button" class="flex items-center gap-2">
-                    <Button id="comparison-refresh-btn" variant="outline" class="gap-2" @click="handleRefresh">
+                    <Button
+                        id="comparison-refresh-btn"
+                        variant="outline"
+                        class="gap-2"
+                        @click="handleRefresh"
+                    >
                         <GitCompare class="size-4" />
                         Refresh
                     </Button>
@@ -379,10 +383,15 @@ const selectClass =
             </div>
 
             <!-- Loading State -->
-            <div v-if="isLoading" class="flex items-center justify-center py-12">
+            <div
+                v-if="isLoading"
+                class="flex items-center justify-center py-12"
+            >
                 <div class="flex flex-col items-center gap-4">
                     <Spinner class="size-8" />
-                    <p class="text-sm text-muted-foreground">Loading comparison data...</p>
+                    <p class="text-sm text-muted-foreground">
+                        Loading comparison data...
+                    </p>
                 </div>
             </div>
 
@@ -393,8 +402,12 @@ const selectClass =
             >
                 <AlertTriangle class="size-12 text-amber-500" />
                 <div class="text-center">
-                    <h3 class="text-lg font-medium">Failed to load comparison</h3>
-                    <p class="mt-1 text-sm text-muted-foreground">{{ loadError }}</p>
+                    <h3 class="text-lg font-medium">
+                        Failed to load comparison
+                    </h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        {{ loadError }}
+                    </p>
                 </div>
                 <Button variant="outline" @click="handleRefresh">
                     Try Again
@@ -421,26 +434,45 @@ const selectClass =
                     <DialogHeader>
                         <DialogTitle>Create Connection</DialogTitle>
                         <DialogDescription>
-                            Create the missing connection to match the expected configuration.
+                            Create the missing connection to match the expected
+                            configuration.
                         </DialogDescription>
                     </DialogHeader>
 
                     <div v-if="createDialogComparison" class="space-y-4">
                         <!-- Connection Summary -->
-                        <div class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20">
+                        <div
+                            class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20"
+                        >
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-muted-foreground">From:</span>
+                                    <span class="text-muted-foreground"
+                                        >From:</span
+                                    >
                                     <span class="font-medium">
-                                        {{ createDialogComparison.source_device?.name ?? 'Unknown' }}
-                                        ({{ createDialogComparison.source_port?.label ?? 'Unknown' }})
+                                        {{
+                                            createDialogComparison.source_device
+                                                ?.name ?? 'Unknown'
+                                        }}
+                                        ({{
+                                            createDialogComparison.source_port
+                                                ?.label ?? 'Unknown'
+                                        }})
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-muted-foreground">To:</span>
+                                    <span class="text-muted-foreground"
+                                        >To:</span
+                                    >
                                     <span class="font-medium">
-                                        {{ createDialogComparison.dest_device?.name ?? 'Unknown' }}
-                                        ({{ createDialogComparison.dest_port?.label ?? 'Unknown' }})
+                                        {{
+                                            createDialogComparison.dest_device
+                                                ?.name ?? 'Unknown'
+                                        }}
+                                        ({{
+                                            createDialogComparison.dest_port
+                                                ?.label ?? 'Unknown'
+                                        }})
                                     </span>
                                 </div>
                             </div>
@@ -466,7 +498,9 @@ const selectClass =
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="cable-length">Cable Length (meters)</Label>
+                                <Label for="cable-length"
+                                    >Cable Length (meters)</Label
+                                >
                                 <Input
                                     id="cable-length"
                                     v-model="cableLength"
@@ -477,7 +511,9 @@ const selectClass =
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="cable-color">Cable Color (optional)</Label>
+                                <Label for="cable-color"
+                                    >Cable Color (optional)</Label
+                                >
                                 <Input
                                     id="cable-color"
                                     v-model="cableColor"
@@ -486,7 +522,9 @@ const selectClass =
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="path-notes">Path Notes (optional)</Label>
+                                <Label for="path-notes"
+                                    >Path Notes (optional)</Label
+                                >
                                 <Textarea
                                     id="path-notes"
                                     v-model="pathNotes"
@@ -496,12 +534,18 @@ const selectClass =
                             </div>
                         </div>
 
-                        <InputError v-if="createFormError" :message="createFormError" />
+                        <InputError
+                            v-if="createFormError"
+                            :message="createFormError"
+                        />
                     </div>
 
                     <DialogFooter data-tour="approval-actions" class="gap-2">
                         <DialogClose as-child>
-                            <Button variant="secondary" :disabled="createFormProcessing">
+                            <Button
+                                variant="secondary"
+                                :disabled="createFormProcessing"
+                            >
                                 Cancel
                             </Button>
                         </DialogClose>
@@ -509,7 +553,11 @@ const selectClass =
                             :disabled="createFormProcessing"
                             @click="submitCreateConnection"
                         >
-                            {{ createFormProcessing ? 'Creating...' : 'Create Connection' }}
+                            {{
+                                createFormProcessing
+                                    ? 'Creating...'
+                                    : 'Create Connection'
+                            }}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -524,25 +572,40 @@ const selectClass =
                             Delete Connection
                         </DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete this unexpected connection?
-                            This action cannot be undone.
+                            Are you sure you want to delete this unexpected
+                            connection? This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div v-if="deleteDialogComparison" class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20">
+                    <div
+                        v-if="deleteDialogComparison"
+                        class="rounded-lg border bg-muted/30 p-4 dark:bg-muted/20"
+                    >
                         <div class="space-y-2 text-sm">
                             <div class="flex items-center gap-2">
                                 <span class="text-muted-foreground">From:</span>
                                 <span class="font-medium">
-                                    {{ deleteDialogComparison.source_device?.name ?? 'Unknown' }}
-                                    ({{ deleteDialogComparison.source_port?.label ?? 'Unknown' }})
+                                    {{
+                                        deleteDialogComparison.source_device
+                                            ?.name ?? 'Unknown'
+                                    }}
+                                    ({{
+                                        deleteDialogComparison.source_port
+                                            ?.label ?? 'Unknown'
+                                    }})
                                 </span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-muted-foreground">To:</span>
                                 <span class="font-medium">
-                                    {{ deleteDialogComparison.dest_device?.name ?? 'Unknown' }}
-                                    ({{ deleteDialogComparison.dest_port?.label ?? 'Unknown' }})
+                                    {{
+                                        deleteDialogComparison.dest_device
+                                            ?.name ?? 'Unknown'
+                                    }}
+                                    ({{
+                                        deleteDialogComparison.dest_port
+                                            ?.label ?? 'Unknown'
+                                    }})
                                 </span>
                             </div>
                         </div>
@@ -552,20 +615,29 @@ const selectClass =
                     <div
                         class="rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
                     >
-                        <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                        <div
+                            class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                        >
                             <p class="font-medium">Warning</p>
                             <p class="text-sm">
-                                Both ports will be set back to "Available" status.
-                                The connection record will be permanently removed.
+                                Both ports will be set back to "Available"
+                                status. The connection record will be
+                                permanently removed.
                             </p>
                         </div>
                     </div>
 
-                    <InputError v-if="deleteFormError" :message="deleteFormError" />
+                    <InputError
+                        v-if="deleteFormError"
+                        :message="deleteFormError"
+                    />
 
                     <DialogFooter class="gap-2">
                         <DialogClose as-child>
-                            <Button variant="secondary" :disabled="deleteFormProcessing">
+                            <Button
+                                variant="secondary"
+                                :disabled="deleteFormProcessing"
+                            >
                                 Cancel
                             </Button>
                         </DialogClose>
@@ -574,7 +646,11 @@ const selectClass =
                             :disabled="deleteFormProcessing"
                             @click="submitDeleteConnection"
                         >
-                            {{ deleteFormProcessing ? 'Deleting...' : 'Delete Connection' }}
+                            {{
+                                deleteFormProcessing
+                                    ? 'Deleting...'
+                                    : 'Delete Connection'
+                            }}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -596,9 +672,6 @@ const selectClass =
         />
 
         <!-- Feature Tour for Implementation File Comparison -->
-        <FeatureTour
-            context-key="implementations.files"
-            :auto-start="true"
-        />
+        <FeatureTour context-key="implementations.files" :auto-start="true" />
     </AppLayout>
 </template>

@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { index, downloadErrors } from '@/actions/App/Http/Controllers/BulkImportController';
-import ImportProgress from '@/components/imports/ImportProgress.vue';
-import ImportErrorSummary from '@/components/imports/ImportErrorSummary.vue';
+import { index } from '@/actions/App/Http/Controllers/BulkImportController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import ImportErrorSummary from '@/components/imports/ImportErrorSummary.vue';
+import ImportProgress from '@/components/imports/ImportProgress.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { ArrowLeft, FileSpreadsheet, Calendar, User, Download } from 'lucide-vue-next';
+import { Head, Link } from '@inertiajs/vue3';
+import { ArrowLeft, Calendar, FileSpreadsheet, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 interface BulkImportData {
@@ -87,7 +93,9 @@ const handleCompleted = (data: BulkImportData) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Import Details"
                     :description="`Viewing import: ${bulkImport.file_name}`"
@@ -119,7 +127,8 @@ const handleCompleted = (data: BulkImportData) => {
                                 processed_rows: bulkImport.processed_rows ?? 0,
                                 success_count: bulkImport.success_count ?? 0,
                                 failure_count: bulkImport.failure_count ?? 0,
-                                progress_percentage: bulkImport.progress_percentage ?? 0,
+                                progress_percentage:
+                                    bulkImport.progress_percentage ?? 0,
                                 has_errors: bulkImport.has_errors,
                             }"
                             @status-updated="handleStatusUpdate"
@@ -139,54 +148,98 @@ const handleCompleted = (data: BulkImportData) => {
                     <CardContent>
                         <dl class="space-y-4">
                             <div class="flex items-start gap-3">
-                                <FileSpreadsheet class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <FileSpreadsheet
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
-                                    <dt class="text-sm font-medium">File Name</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ bulkImport.file_name }}</dd>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-3">
-                                <div class="mt-0.5 h-4 w-4 text-muted-foreground flex items-center justify-center text-xs font-bold">
-                                    T
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium">Entity Type</dt>
+                                    <dt class="text-sm font-medium">
+                                        File Name
+                                    </dt>
                                     <dd class="text-sm text-muted-foreground">
-                                        {{ bulkImport.entity_type_label || 'Auto-detected' }}
+                                        {{ bulkImport.file_name }}
                                     </dd>
                                 </div>
                             </div>
 
-                            <div v-if="bulkImport.user" class="flex items-start gap-3">
-                                <User class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="mt-0.5 flex h-4 w-4 items-center justify-center text-xs font-bold text-muted-foreground"
+                                >
+                                    T
+                                </div>
                                 <div>
-                                    <dt class="text-sm font-medium">Imported By</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ bulkImport.user.name }}</dd>
+                                    <dt class="text-sm font-medium">
+                                        Entity Type
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{
+                                            bulkImport.entity_type_label ||
+                                            'Auto-detected'
+                                        }}
+                                    </dd>
+                                </div>
+                            </div>
+
+                            <div
+                                v-if="bulkImport.user"
+                                class="flex items-start gap-3"
+                            >
+                                <User
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
+                                <div>
+                                    <dt class="text-sm font-medium">
+                                        Imported By
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ bulkImport.user.name }}
+                                    </dd>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <Calendar class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <Calendar
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
                                     <dt class="text-sm font-medium">Created</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDate(bulkImport.created_at) }}</dd>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ formatDate(bulkImport.created_at) }}
+                                    </dd>
                                 </div>
                             </div>
 
-                            <div v-if="bulkImport.started_at" class="flex items-start gap-3">
-                                <Calendar class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                            <div
+                                v-if="bulkImport.started_at"
+                                class="flex items-start gap-3"
+                            >
+                                <Calendar
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
                                     <dt class="text-sm font-medium">Started</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDate(bulkImport.started_at) }}</dd>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ formatDate(bulkImport.started_at) }}
+                                    </dd>
                                 </div>
                             </div>
 
-                            <div v-if="bulkImport.completed_at" class="flex items-start gap-3">
-                                <Calendar class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                            <div
+                                v-if="bulkImport.completed_at"
+                                class="flex items-start gap-3"
+                            >
+                                <Calendar
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
-                                    <dt class="text-sm font-medium">Completed</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDate(bulkImport.completed_at) }}</dd>
+                                    <dt class="text-sm font-medium">
+                                        Completed
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{
+                                            formatDate(bulkImport.completed_at)
+                                        }}
+                                    </dd>
                                 </div>
                             </div>
                         </dl>

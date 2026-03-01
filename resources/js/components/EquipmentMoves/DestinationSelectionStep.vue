@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-    MapPin,
-    Building2,
-    Layers,
-    Server,
-    AlertTriangle,
-    Check,
-    X,
-} from 'lucide-vue-next';
 import {
     useDestinationPicker,
     type LocationHierarchy,
     type PlacedDevice,
 } from '@/composables/useDestinationPicker';
-import type { DeviceData, DeviceWidth, RackFace } from '@/types/rooms';
 import { cn } from '@/lib/utils';
+import type { DeviceData, DeviceWidth, RackFace } from '@/types/rooms';
+import {
+    AlertTriangle,
+    Building2,
+    Check,
+    Layers,
+    MapPin,
+    Server,
+    X,
+} from 'lucide-vue-next';
+import { computed, onMounted, ref, watch } from 'vue';
 
 interface Props {
     device: DeviceData | null;
@@ -72,7 +72,6 @@ const {
     setRackFace,
     setWidthType,
     canPlaceAt,
-    getValidDropPositions,
 } = useDestinationPicker(props.locationHierarchy, deviceRef);
 
 // Face and width options
@@ -92,7 +91,10 @@ watch(
     () => props.device,
     (newDevice) => {
         if (newDevice) {
-            deviceRef.value = { id: newDevice.id, u_height: newDevice.u_height };
+            deviceRef.value = {
+                id: newDevice.id,
+                u_height: newDevice.u_height,
+            };
         }
     },
     { immediate: true },
@@ -114,18 +116,27 @@ watch(
 
 // Initialize from props
 onMounted(async () => {
-    if (props.initialDestination?.destination_rack_id && props.locationHierarchy) {
+    if (
+        props.initialDestination?.destination_rack_id &&
+        props.locationHierarchy
+    ) {
         // Find the rack in hierarchy and set selections
         const rack = props.locationHierarchy.racks.find(
             (r) => r.id === props.initialDestination!.destination_rack_id,
         );
         if (rack) {
-            const row = props.locationHierarchy.rows.find((r) => r.id === rack.row_id);
+            const row = props.locationHierarchy.rows.find(
+                (r) => r.id === rack.row_id,
+            );
             const room = row
-                ? props.locationHierarchy.rooms.find((r) => r.id === row.room_id)
+                ? props.locationHierarchy.rooms.find(
+                      (r) => r.id === row.room_id,
+                  )
                 : null;
             const datacenter = room
-                ? props.locationHierarchy.datacenters.find((d) => d.id === room.datacenter_id)
+                ? props.locationHierarchy.datacenters.find(
+                      (d) => d.id === room.datacenter_id,
+                  )
                 : null;
 
             if (datacenter) {
@@ -143,10 +154,16 @@ onMounted(async () => {
                 setPosition(props.initialDestination.destination_start_u);
             }
             if (props.initialDestination.destination_rack_face) {
-                setRackFace(props.initialDestination.destination_rack_face as RackFace);
+                setRackFace(
+                    props.initialDestination.destination_rack_face as RackFace,
+                );
             }
             if (props.initialDestination.destination_width_type) {
-                setWidthType(mapWidthFromBackend(props.initialDestination.destination_width_type));
+                setWidthType(
+                    mapWidthFromBackend(
+                        props.initialDestination.destination_width_type,
+                    ),
+                );
             }
         }
     }
@@ -181,14 +198,6 @@ function mapWidthFromBackend(widthType: string): DeviceWidth {
 }
 
 /**
- * Get valid positions for U position picker
- */
-const validPositions = computed(() => {
-    if (!props.device) return [];
-    return getValidDropPositions(props.device.u_height);
-});
-
-/**
  * Generate U slots for visual picker (high to low)
  */
 const uSlots = computed(() => {
@@ -205,7 +214,12 @@ const uSlots = computed(() => {
  */
 function isPositionValid(startU: number): boolean {
     if (!props.device) return false;
-    return canPlaceAt(startU, selection.value.rackFace, selection.value.widthType, props.device.u_height);
+    return canPlaceAt(
+        startU,
+        selection.value.rackFace,
+        selection.value.widthType,
+        props.device.u_height,
+    );
 }
 
 /**
@@ -214,10 +228,12 @@ function isPositionValid(startU: number): boolean {
 function isPositionOccupied(uNumber: number): PlacedDevice | null {
     if (!selectedRack.value) return null;
 
-    return selectedRack.value.devices.find((d) => {
-        if (d.rack_face !== selection.value.rackFace) return false;
-        return uNumber >= d.start_u && uNumber < d.start_u + d.u_height;
-    }) || null;
+    return (
+        selectedRack.value.devices.find((d) => {
+            if (d.rack_face !== selection.value.rackFace) return false;
+            return uNumber >= d.start_u && uNumber < d.start_u + d.u_height;
+        }) || null
+    );
 }
 
 /**
@@ -309,7 +325,7 @@ function handleWidthChange(width: DeviceWidth): void {
                 <select
                     id="datacenter-select"
                     :value="selection.datacenterId ?? ''"
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     @change="handleDatacenterChange"
                 >
                     <option value="">Select datacenter...</option>
@@ -330,11 +346,15 @@ function handleWidthChange(width: DeviceWidth): void {
                     id="room-select"
                     :value="selection.roomId ?? ''"
                     :disabled="!selection.datacenterId"
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
                     @change="handleRoomChange"
                 >
                     <option value="">Select room...</option>
-                    <option v-for="room in filteredRooms" :key="room.id" :value="room.id">
+                    <option
+                        v-for="room in filteredRooms"
+                        :key="room.id"
+                        :value="room.id"
+                    >
                         {{ room.name }}
                     </option>
                 </select>
@@ -347,11 +367,15 @@ function handleWidthChange(width: DeviceWidth): void {
                     id="row-select"
                     :value="selection.rowId ?? ''"
                     :disabled="!selection.roomId"
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
                     @change="handleRowChange"
                 >
                     <option value="">Select row...</option>
-                    <option v-for="row in filteredRows" :key="row.id" :value="row.id">
+                    <option
+                        v-for="row in filteredRows"
+                        :key="row.id"
+                        :value="row.id"
+                    >
                         {{ row.name }}
                     </option>
                 </select>
@@ -367,11 +391,15 @@ function handleWidthChange(width: DeviceWidth): void {
                     id="rack-select"
                     :value="selection.rackId ?? ''"
                     :disabled="!selection.rowId"
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
                     @change="handleRackChange"
                 >
                     <option value="">Select rack...</option>
-                    <option v-for="rack in filteredRacks" :key="rack.id" :value="rack.id">
+                    <option
+                        v-for="rack in filteredRacks"
+                        :key="rack.id"
+                        :value="rack.id"
+                    >
                         {{ rack.name }} ({{ rack.u_height }}U)
                     </option>
                 </select>
@@ -384,8 +412,8 @@ function handleWidthChange(width: DeviceWidth): void {
             <Alert v-if="isSourceRack">
                 <MapPin class="h-4 w-4" />
                 <AlertDescription>
-                    This is the device's current rack. You can move it to a different U position
-                    within the same rack (intra-rack move).
+                    This is the device's current rack. You can move it to a
+                    different U position within the same rack (intra-rack move).
                 </AlertDescription>
             </Alert>
 
@@ -405,18 +433,33 @@ function handleWidthChange(width: DeviceWidth): void {
                         <div class="flex items-center gap-4">
                             <div class="flex-1">
                                 <div class="mb-1 flex justify-between text-xs">
-                                    <span>{{ utilizationStats?.usedU }}U used</span>
-                                    <span>{{ utilizationStats?.availableU }}U available</span>
+                                    <span
+                                        >{{ utilizationStats?.usedU }}U
+                                        used</span
+                                    >
+                                    <span
+                                        >{{ utilizationStats?.availableU }}U
+                                        available</span
+                                    >
                                 </div>
-                                <div class="h-2 overflow-hidden rounded-full bg-muted">
+                                <div
+                                    class="h-2 overflow-hidden rounded-full bg-muted"
+                                >
                                     <div
                                         class="h-full bg-primary transition-all"
-                                        :style="{ width: `${utilizationStats?.utilizationPercent ?? 0}%` }"
+                                        :style="{
+                                            width: `${utilizationStats?.utilizationPercent ?? 0}%`,
+                                        }"
                                     />
                                 </div>
                             </div>
                             <Badge variant="outline">
-                                {{ Math.round(utilizationStats?.utilizationPercent ?? 0) }}%
+                                {{
+                                    Math.round(
+                                        utilizationStats?.utilizationPercent ??
+                                            0,
+                                    )
+                                }}%
                             </Badge>
                         </div>
                     </CardContent>
@@ -431,12 +474,14 @@ function handleWidthChange(width: DeviceWidth): void {
                                 v-for="option in faceOptions"
                                 :key="option.value"
                                 type="button"
-                                :class="cn(
-                                    'flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors',
-                                    selection.rackFace === option.value
-                                        ? 'border-primary bg-primary text-primary-foreground'
-                                        : 'border-input hover:bg-muted'
-                                )"
+                                :class="
+                                    cn(
+                                        'flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors',
+                                        selection.rackFace === option.value
+                                            ? 'border-primary bg-primary text-primary-foreground'
+                                            : 'border-input hover:bg-muted',
+                                    )
+                                "
                                 @click="handleFaceChange(option.value)"
                             >
                                 {{ option.label }}
@@ -450,12 +495,14 @@ function handleWidthChange(width: DeviceWidth): void {
                                 v-for="option in widthOptions"
                                 :key="option.value"
                                 type="button"
-                                :class="cn(
-                                    'flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors',
-                                    selection.widthType === option.value
-                                        ? 'border-primary bg-primary text-primary-foreground'
-                                        : 'border-input hover:bg-muted'
-                                )"
+                                :class="
+                                    cn(
+                                        'flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors',
+                                        selection.widthType === option.value
+                                            ? 'border-primary bg-primary text-primary-foreground'
+                                            : 'border-input hover:bg-muted',
+                                    )
+                                "
                                 @click="handleWidthChange(option.value)"
                             >
                                 {{ option.label }}
@@ -467,10 +514,19 @@ function handleWidthChange(width: DeviceWidth): void {
                 <!-- U Position Picker -->
                 <Card>
                     <CardHeader class="pb-2">
-                        <CardTitle class="flex items-center justify-between text-sm">
+                        <CardTitle
+                            class="flex items-center justify-between text-sm"
+                        >
                             <span>Select U Position</span>
-                            <span v-if="selection.startU" class="font-normal text-muted-foreground">
-                                Selected: U{{ selection.startU }} - U{{ selection.startU + (device?.u_height ?? 1) - 1 }}
+                            <span
+                                v-if="selection.startU"
+                                class="font-normal text-muted-foreground"
+                            >
+                                Selected: U{{ selection.startU }} - U{{
+                                    selection.startU +
+                                    (device?.u_height ?? 1) -
+                                    1
+                                }}
                             </span>
                         </CardTitle>
                     </CardHeader>
@@ -481,23 +537,36 @@ function handleWidthChange(width: DeviceWidth): void {
                                     v-for="uNumber in uSlots"
                                     :key="uNumber"
                                     type="button"
-                                    :class="cn(
-                                        'flex h-7 items-center gap-2 rounded px-2 text-sm transition-colors',
-                                        isPositionOccupied(uNumber)
-                                            ? 'bg-muted/50 text-muted-foreground cursor-not-allowed'
-                                            : isPositionValid(uNumber)
-                                              ? selection.startU === uNumber
-                                                ? 'bg-primary text-primary-foreground'
-                                                : selection.startU && uNumber > selection.startU && uNumber < selection.startU + (device?.u_height ?? 1)
-                                                  ? 'bg-primary/50 text-primary-foreground'
-                                                  : 'hover:bg-muted cursor-pointer'
-                                              : 'bg-red-50 dark:bg-red-950/20 text-muted-foreground cursor-not-allowed'
-                                    )"
+                                    :class="
+                                        cn(
+                                            'flex h-7 items-center gap-2 rounded px-2 text-sm transition-colors',
+                                            isPositionOccupied(uNumber)
+                                                ? 'cursor-not-allowed bg-muted/50 text-muted-foreground'
+                                                : isPositionValid(uNumber)
+                                                  ? selection.startU === uNumber
+                                                      ? 'bg-primary text-primary-foreground'
+                                                      : selection.startU &&
+                                                          uNumber >
+                                                              selection.startU &&
+                                                          uNumber <
+                                                              selection.startU +
+                                                                  (device?.u_height ??
+                                                                      1)
+                                                        ? 'bg-primary/50 text-primary-foreground'
+                                                        : 'cursor-pointer hover:bg-muted'
+                                                  : 'cursor-not-allowed bg-red-50 text-muted-foreground dark:bg-red-950/20',
+                                        )
+                                    "
                                     :disabled="!isPositionValid(uNumber)"
                                     @click="handlePositionClick(uNumber)"
                                 >
-                                    <span class="w-8 font-mono text-xs">U{{ uNumber }}</span>
-                                    <span v-if="isPositionOccupied(uNumber)" class="flex-1 truncate text-xs">
+                                    <span class="w-8 font-mono text-xs"
+                                        >U{{ uNumber }}</span
+                                    >
+                                    <span
+                                        v-if="isPositionOccupied(uNumber)"
+                                        class="flex-1 truncate text-xs"
+                                    >
                                         {{ isPositionOccupied(uNumber)?.name }}
                                     </span>
                                     <Check
@@ -505,15 +574,18 @@ function handleWidthChange(width: DeviceWidth): void {
                                         class="ml-auto h-4 w-4"
                                     />
                                     <X
-                                        v-else-if="!isPositionValid(uNumber) && !isPositionOccupied(uNumber)"
+                                        v-else-if="
+                                            !isPositionValid(uNumber) &&
+                                            !isPositionOccupied(uNumber)
+                                        "
                                         class="ml-auto h-4 w-4 text-red-500"
                                     />
                                 </button>
                             </div>
                         </div>
                         <p class="mt-2 text-xs text-muted-foreground">
-                            Device requires {{ device?.u_height ?? 1 }}U.
-                            Click on an available position to select.
+                            Device requires {{ device?.u_height ?? 1 }}U. Click
+                            on an available position to select.
                         </p>
                     </CardContent>
                 </Card>
@@ -521,13 +593,11 @@ function handleWidthChange(width: DeviceWidth): void {
         </div>
 
         <!-- No Rack Selected -->
-        <div
-            v-else
-            class="rounded-lg border border-dashed p-8 text-center"
-        >
+        <div v-else class="rounded-lg border border-dashed p-8 text-center">
             <Layers class="mx-auto h-12 w-12 text-muted-foreground/50" />
             <p class="mt-4 text-sm text-muted-foreground">
-                Select a datacenter, room, row, and rack to view available positions.
+                Select a datacenter, room, row, and rack to view available
+                positions.
             </p>
         </div>
     </div>

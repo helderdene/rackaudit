@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { CheckCircle, AlertTriangle } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { store as acknowledgeStore } from '@/actions/App/Http/Controllers/Api/DiscrepancyAcknowledgmentController';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -15,8 +11,14 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { store as acknowledgeStore } from '@/actions/App/Http/Controllers/Api/DiscrepancyAcknowledgmentController';
-import type { ComparisonResultData, DiscrepancyTypeValue } from '@/types/comparison';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import type {
+    ComparisonResultData,
+    DiscrepancyTypeValue,
+} from '@/types/comparison';
+import { AlertTriangle, CheckCircle } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     /** The discrepancy to acknowledge */
@@ -66,7 +68,8 @@ function getStatusBadgeClass(type: DiscrepancyTypeValue): string {
  */
 const sourceDisplay = computed(() => {
     if (!props.discrepancy) return '-';
-    const deviceName = props.discrepancy.source_device?.name ?? 'Unknown Device';
+    const deviceName =
+        props.discrepancy.source_device?.name ?? 'Unknown Device';
     const portLabel = props.discrepancy.source_port?.label ?? 'Unknown Port';
     return `${deviceName} (${portLabel})`;
 });
@@ -77,7 +80,10 @@ const sourceDisplay = computed(() => {
 const destDisplay = computed(() => {
     if (!props.discrepancy) return '-';
     const deviceName = props.discrepancy.dest_device?.name ?? 'Unknown Device';
-    const portLabel = props.discrepancy.dest_port?.label ?? props.discrepancy.actual_dest_port?.label ?? 'Unknown Port';
+    const portLabel =
+        props.discrepancy.dest_port?.label ??
+        props.discrepancy.actual_dest_port?.label ??
+        'Unknown Port';
     return `${deviceName} (${portLabel})`;
 });
 
@@ -85,7 +91,11 @@ const destDisplay = computed(() => {
  * Get additional info text for mismatched connections
  */
 const mismatchInfo = computed(() => {
-    if (!props.discrepancy || props.discrepancy.discrepancy_type !== 'mismatched') return null;
+    if (
+        !props.discrepancy ||
+        props.discrepancy.discrepancy_type !== 'mismatched'
+    )
+        return null;
     if (!props.discrepancy.actual_dest_port) return null;
 
     const expectedPort = props.discrepancy.dest_port?.label ?? 'Unknown';
@@ -118,7 +128,8 @@ async function handleSubmit(): Promise<void> {
 
     // Add the appropriate ID based on discrepancy type
     if (props.discrepancy.expected_connection?.id) {
-        payload.expected_connection_id = props.discrepancy.expected_connection.id;
+        payload.expected_connection_id =
+            props.discrepancy.expected_connection.id;
     }
     if (props.discrepancy.actual_connection?.id) {
         payload.connection_id = props.discrepancy.actual_connection.id;
@@ -134,7 +145,7 @@ async function handleSubmit(): Promise<void> {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-XSRF-TOKEN': getCsrfToken(),
             },
             credentials: 'same-origin',
@@ -143,7 +154,9 @@ async function handleSubmit(): Promise<void> {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to acknowledge discrepancy.');
+            throw new Error(
+                errorData.message || 'Failed to acknowledge discrepancy.',
+            );
         }
 
         // Success - close dialog and emit event
@@ -151,7 +164,8 @@ async function handleSubmit(): Promise<void> {
         notes.value = '';
         emit('acknowledged');
     } catch (e) {
-        error.value = e instanceof Error ? e.message : 'An unexpected error occurred.';
+        error.value =
+            e instanceof Error ? e.message : 'An unexpected error occurred.';
     } finally {
         isSubmitting.value = false;
     }
@@ -186,8 +200,8 @@ function handleOpenChange(open: boolean): void {
                     Acknowledge Discrepancy
                 </DialogTitle>
                 <DialogDescription>
-                    Mark this discrepancy as reviewed. You can add optional notes
-                    to explain why the discrepancy is being acknowledged.
+                    Mark this discrepancy as reviewed. You can add optional
+                    notes to explain why the discrepancy is being acknowledged.
                 </DialogDescription>
             </DialogHeader>
 
@@ -198,7 +212,13 @@ function handleOpenChange(open: boolean): void {
                         <!-- Status Badge -->
                         <div class="flex items-center gap-2">
                             <span class="text-muted-foreground">Status:</span>
-                            <Badge :class="getStatusBadgeClass(discrepancy.discrepancy_type)">
+                            <Badge
+                                :class="
+                                    getStatusBadgeClass(
+                                        discrepancy.discrepancy_type,
+                                    )
+                                "
+                            >
                                 {{ discrepancy.discrepancy_type_label }}
                             </Badge>
                         </div>
@@ -232,13 +252,18 @@ function handleOpenChange(open: boolean): void {
                             <div class="flex items-start gap-2">
                                 <AlertTriangle class="mt-0.5 size-4 shrink-0" />
                                 <div class="text-xs">
-                                    <p class="font-medium">Conflicting expectations:</p>
+                                    <p class="font-medium">
+                                        Conflicting expectations:
+                                    </p>
                                     <ul class="mt-1 list-inside list-disc">
                                         <li
-                                            v-for="file in discrepancy.conflict_info.conflicting_files"
+                                            v-for="file in discrepancy
+                                                .conflict_info
+                                                .conflicting_files"
                                             :key="file.file_id"
                                         >
-                                            {{ file.file_name }}: {{ file.dest_port_label }}
+                                            {{ file.file_name }}:
+                                            {{ file.dest_port_label }}
                                         </li>
                                     </ul>
                                 </div>

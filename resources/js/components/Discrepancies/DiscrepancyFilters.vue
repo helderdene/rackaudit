@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { index as discrepanciesIndex } from '@/actions/App/Http/Controllers/DiscrepancyController';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { router } from '@inertiajs/vue3';
 import { ChevronDown, Filter, X } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface FilterOption {
     value: string;
@@ -57,7 +61,8 @@ const dateTo = ref(props.filters.date_to);
 const isOpen = ref(false);
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
@@ -83,7 +88,7 @@ const applyFilters = () => {
     };
 
     // Remove undefined values
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
         if (params[key] === undefined) {
             delete params[key];
         }
@@ -104,10 +109,14 @@ const clearFilters = () => {
     dateFrom.value = '';
     dateTo.value = '';
 
-    router.get(discrepanciesIndex.url(), {}, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        discrepanciesIndex.url(),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 // Watch for datacenter changes to reset room filter
@@ -128,15 +137,23 @@ watch([discrepancyType, roomId, status, dateFrom, dateTo], () => {
         <Collapsible v-model:open="isOpen">
             <Card>
                 <CardHeader class="p-3">
-                    <CollapsibleTrigger class="flex w-full items-center justify-between">
+                    <CollapsibleTrigger
+                        class="flex w-full items-center justify-between"
+                    >
                         <CardTitle class="flex items-center gap-2 text-base">
                             <Filter class="size-4" />
                             Filters
-                            <span v-if="hasActiveFilters" class="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                            <span
+                                v-if="hasActiveFilters"
+                                class="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground"
+                            >
                                 Active
                             </span>
                         </CardTitle>
-                        <ChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': isOpen }" />
+                        <ChevronDown
+                            class="size-4 transition-transform"
+                            :class="{ 'rotate-180': isOpen }"
+                        />
                     </CollapsibleTrigger>
                 </CardHeader>
                 <CollapsibleContent>
@@ -180,7 +197,10 @@ watch([discrepancyType, roomId, status, dateFrom, dateTo], () => {
                         </div>
 
                         <!-- Room Filter -->
-                        <div v-if="datacenterId && rooms.length > 0" class="space-y-2">
+                        <div
+                            v-if="datacenterId && rooms.length > 0"
+                            class="space-y-2"
+                        >
                             <Label for="room-mobile">Room</Label>
                             <select
                                 id="room-mobile"
@@ -356,11 +376,7 @@ watch([discrepancyType, roomId, status, dateFrom, dateTo], () => {
                             type="date"
                             placeholder="From"
                         />
-                        <Input
-                            v-model="dateTo"
-                            type="date"
-                            placeholder="To"
-                        />
+                        <Input v-model="dateTo" type="date" placeholder="To" />
                     </div>
                 </div>
             </CardContent>

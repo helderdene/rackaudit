@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { show } from '@/actions/App/Http/Controllers/BulkImportController';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle, XCircle, Loader2, Clock } from 'lucide-vue-next';
+import { CheckCircle, Clock, Loader2, XCircle } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 interface BulkImportData {
     id: number;
@@ -38,12 +37,16 @@ const currentImport = ref<BulkImportData>(props.import);
 const isPolling = ref(false);
 const pollTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null);
 
-const isProcessing = computed(() =>
-    currentImport.value.status === 'pending' || currentImport.value.status === 'processing'
+const isProcessing = computed(
+    () =>
+        currentImport.value.status === 'pending' ||
+        currentImport.value.status === 'processing',
 );
 
-const isCompleted = computed(() =>
-    currentImport.value.status === 'completed' || currentImport.value.status === 'failed'
+const isCompleted = computed(
+    () =>
+        currentImport.value.status === 'completed' ||
+        currentImport.value.status === 'failed',
 );
 
 const progressPercent = computed(() => {
@@ -54,7 +57,9 @@ const progressPercent = computed(() => {
 const statusIcon = computed(() => {
     switch (currentImport.value.status) {
         case 'completed':
-            return currentImport.value.failure_count > 0 ? XCircle : CheckCircle;
+            return currentImport.value.failure_count > 0
+                ? XCircle
+                : CheckCircle;
         case 'failed':
             return XCircle;
         case 'processing':
@@ -64,18 +69,22 @@ const statusIcon = computed(() => {
     }
 });
 
-const statusVariant = computed((): 'default' | 'secondary' | 'destructive' | 'success' | 'warning' => {
-    switch (currentImport.value.status) {
-        case 'completed':
-            return currentImport.value.failure_count > 0 ? 'warning' : 'success';
-        case 'failed':
-            return 'destructive';
-        case 'processing':
-            return 'default';
-        default:
-            return 'secondary';
-    }
-});
+const statusVariant = computed(
+    (): 'default' | 'secondary' | 'destructive' | 'success' | 'warning' => {
+        switch (currentImport.value.status) {
+            case 'completed':
+                return currentImport.value.failure_count > 0
+                    ? 'warning'
+                    : 'success';
+            case 'failed':
+                return 'destructive';
+            case 'processing':
+                return 'default';
+            default:
+                return 'secondary';
+        }
+    },
+);
 
 const fetchStatus = async () => {
     if (isPolling.value || !isProcessing.value) return;
@@ -85,7 +94,7 @@ const fetchStatus = async () => {
     try {
         const response = await fetch(show.url(currentImport.value.id), {
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             },
         });
@@ -125,9 +134,12 @@ const stopPolling = () => {
 };
 
 // Watch for prop changes
-watch(() => props.import, (newImport) => {
-    currentImport.value = newImport;
-});
+watch(
+    () => props.import,
+    (newImport) => {
+        currentImport.value = newImport;
+    },
+);
 
 // Watch for status changes to manage polling
 watch(isProcessing, (processing) => {
@@ -160,17 +172,29 @@ defineExpose({
     <div class="space-y-4">
         <!-- Status badge and icon -->
         <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full" :class="{
-                'bg-primary/10 text-primary': currentImport.status === 'processing',
-                'bg-muted text-muted-foreground': currentImport.status === 'pending',
-                'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400': currentImport.status === 'completed' && currentImport.failure_count === 0,
-                'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400': currentImport.status === 'completed' && currentImport.failure_count > 0,
-                'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400': currentImport.status === 'failed',
-            }">
+            <div
+                class="flex h-10 w-10 items-center justify-center rounded-full"
+                :class="{
+                    'bg-primary/10 text-primary':
+                        currentImport.status === 'processing',
+                    'bg-muted text-muted-foreground':
+                        currentImport.status === 'pending',
+                    'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400':
+                        currentImport.status === 'completed' &&
+                        currentImport.failure_count === 0,
+                    'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400':
+                        currentImport.status === 'completed' &&
+                        currentImport.failure_count > 0,
+                    'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400':
+                        currentImport.status === 'failed',
+                }"
+            >
                 <component
                     :is="statusIcon"
                     class="h-5 w-5"
-                    :class="{ 'animate-spin': currentImport.status === 'processing' }"
+                    :class="{
+                        'animate-spin': currentImport.status === 'processing',
+                    }"
                 />
             </div>
             <div class="flex-1">
@@ -178,12 +202,19 @@ defineExpose({
                     <Badge :variant="statusVariant">
                         {{ currentImport.status_label }}
                     </Badge>
-                    <span v-if="isProcessing" class="text-xs text-muted-foreground">
+                    <span
+                        v-if="isProcessing"
+                        class="text-xs text-muted-foreground"
+                    >
                         Updating automatically...
                     </span>
                 </div>
-                <p v-if="currentImport.total_rows" class="mt-1 text-sm text-muted-foreground">
-                    {{ currentImport.processed_rows }} of {{ currentImport.total_rows }} rows processed
+                <p
+                    v-if="currentImport.total_rows"
+                    class="mt-1 text-sm text-muted-foreground"
+                >
+                    {{ currentImport.processed_rows }} of
+                    {{ currentImport.total_rows }} rows processed
                 </p>
             </div>
         </div>
@@ -192,15 +223,21 @@ defineExpose({
         <div v-if="currentImport.total_rows" class="space-y-2">
             <div class="flex justify-between text-sm">
                 <span class="text-muted-foreground">Progress</span>
-                <span class="font-medium">{{ progressPercent.toFixed(0) }}%</span>
+                <span class="font-medium"
+                    >{{ progressPercent.toFixed(0) }}%</span
+                >
             </div>
             <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
                     class="h-full rounded-full transition-all duration-300"
                     :class="{
                         'bg-primary': !isCompleted,
-                        'bg-green-500': currentImport.status === 'completed' && currentImport.failure_count === 0,
-                        'bg-yellow-500': currentImport.status === 'completed' && currentImport.failure_count > 0,
+                        'bg-green-500':
+                            currentImport.status === 'completed' &&
+                            currentImport.failure_count === 0,
+                        'bg-yellow-500':
+                            currentImport.status === 'completed' &&
+                            currentImport.failure_count > 0,
                         'bg-red-500': currentImport.status === 'failed',
                     }"
                     :style="{ width: `${progressPercent}%` }"
@@ -217,14 +254,24 @@ defineExpose({
         <!-- Success/failure counts on completion -->
         <div v-if="isCompleted" class="grid grid-cols-2 gap-4">
             <div class="rounded-lg bg-green-50 p-3 dark:bg-green-900/20">
-                <p class="text-xs font-medium text-green-600 dark:text-green-400">Successful</p>
-                <p class="mt-1 text-2xl font-semibold text-green-700 dark:text-green-300">
+                <p
+                    class="text-xs font-medium text-green-600 dark:text-green-400"
+                >
+                    Successful
+                </p>
+                <p
+                    class="mt-1 text-2xl font-semibold text-green-700 dark:text-green-300"
+                >
                     {{ currentImport.success_count }}
                 </p>
             </div>
             <div class="rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
-                <p class="text-xs font-medium text-red-600 dark:text-red-400">Failed</p>
-                <p class="mt-1 text-2xl font-semibold text-red-700 dark:text-red-300">
+                <p class="text-xs font-medium text-red-600 dark:text-red-400">
+                    Failed
+                </p>
+                <p
+                    class="mt-1 text-2xl font-semibold text-red-700 dark:text-red-300"
+                >
                     {{ currentImport.failure_count }}
                 </p>
             </div>

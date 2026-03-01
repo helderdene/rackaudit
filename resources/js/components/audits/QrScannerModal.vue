@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,7 +10,8 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import { Camera, XCircle, AlertTriangle, QrCode, CameraOff } from 'lucide-vue-next';
+import { AlertTriangle, Camera, CameraOff, QrCode } from 'lucide-vue-next';
+import { onUnmounted, ref, watch } from 'vue';
 
 interface Props {
     open: boolean;
@@ -72,11 +72,12 @@ async function startCamera(): Promise<void> {
             // Start scanning loop
             startScanning();
         }
-    } catch (err) {
+    } catch {
         console.error('Camera access error:', err);
         if (err instanceof DOMException) {
             if (err.name === 'NotAllowedError') {
-                error.value = 'Camera access was denied. Please allow camera access to scan QR codes.';
+                error.value =
+                    'Camera access was denied. Please allow camera access to scan QR codes.';
             } else if (err.name === 'NotFoundError') {
                 error.value = 'No camera found on this device.';
             } else if (err.name === 'NotReadableError') {
@@ -85,7 +86,8 @@ async function startCamera(): Promise<void> {
                 error.value = `Camera error: ${err.message}`;
             }
         } else {
-            error.value = 'Failed to access camera. Please check your device settings.';
+            error.value =
+                'Failed to access camera. Please check your device settings.';
         }
     } finally {
         isLoading.value = false;
@@ -102,7 +104,7 @@ function stopCamera(): void {
     }
 
     if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream.getTracks().forEach((track) => track.stop());
         mediaStream = null;
     }
 
@@ -137,9 +139,14 @@ function startScanning(): void {
 
         // Get image data for QR detection
         try {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(
+                0,
+                0,
+                canvas.width,
+                canvas.height,
+            );
             detectQrCode(imageData);
-        } catch (err) {
+        } catch {
             // Canvas might not be ready yet
         }
     }, 250); // Scan 4 times per second
@@ -162,7 +169,7 @@ async function detectQrCode(imageData: ImageData): Promise<void> {
                 const qrData = barcodes[0].rawValue;
                 handleScannedData(qrData);
             }
-        } catch (err) {
+        } catch {
             // Detection failed, continue scanning
         }
     } else {
@@ -170,7 +177,8 @@ async function detectQrCode(imageData: ImageData): Promise<void> {
         // This is a limited fallback - in production you'd use a JS QR library
         // For now, we'll show a message that BarcodeDetector is required
         if (!error.value) {
-            error.value = 'QR scanning requires a modern browser with BarcodeDetector support. Please use Chrome, Edge, or Safari.';
+            error.value =
+                'QR scanning requires a modern browser with BarcodeDetector support. Please use Chrome, Edge, or Safari.';
         }
     }
 }
@@ -237,7 +245,7 @@ watch(
             // Stop camera when dialog closes
             stopCamera();
         }
-    }
+    },
 );
 
 // Cleanup on unmount
@@ -255,15 +263,21 @@ onUnmounted(() => {
                     Scan Device QR Code
                 </DialogTitle>
                 <DialogDescription>
-                    Point your camera at a device QR code to quickly navigate to that device.
+                    Point your camera at a device QR code to quickly navigate to
+                    that device.
                 </DialogDescription>
             </DialogHeader>
 
             <div class="py-4">
                 <!-- Loading State -->
-                <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
+                <div
+                    v-if="isLoading"
+                    class="flex flex-col items-center justify-center py-12"
+                >
                     <Spinner class="size-8" />
-                    <p class="mt-4 text-sm text-muted-foreground">Accessing camera...</p>
+                    <p class="mt-4 text-sm text-muted-foreground">
+                        Accessing camera...
+                    </p>
                 </div>
 
                 <!-- Error State -->
@@ -272,12 +286,18 @@ onUnmounted(() => {
                     class="flex flex-col items-center justify-center py-8"
                 >
                     <CameraOff class="mb-4 size-12 text-muted-foreground" />
-                    <div class="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400">
+                    <div
+                        class="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+                    >
                         <AlertTriangle class="mt-0.5 size-4 shrink-0" />
                         <p>{{ error }}</p>
                     </div>
 
-                    <Button variant="outline" class="mt-4 min-h-11" @click="startCamera">
+                    <Button
+                        variant="outline"
+                        class="mt-4 min-h-11"
+                        @click="startCamera"
+                    >
                         <Camera class="mr-1 size-4" />
                         Try Again
                     </Button>
@@ -298,13 +318,18 @@ onUnmounted(() => {
                     <!-- Scanning indicator - Larger on tablet -->
                     <div
                         v-if="isScanning"
-                        class="absolute inset-0 flex items-center justify-center pointer-events-none"
+                        class="pointer-events-none absolute inset-0 flex items-center justify-center"
                     >
-                        <div class="size-48 md:size-64 border-2 border-primary rounded-lg opacity-50" />
+                        <div
+                            class="size-48 rounded-lg border-2 border-primary opacity-50 md:size-64"
+                        />
                     </div>
 
                     <!-- Scanning status -->
-                    <div v-if="isScanning" class="mt-3 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <div
+                        v-if="isScanning"
+                        class="mt-3 flex items-center justify-center gap-2 text-sm text-muted-foreground"
+                    >
                         <Spinner class="size-4" />
                         Scanning for QR code...
                     </div>
@@ -315,19 +340,23 @@ onUnmounted(() => {
 
                 <!-- Manual fallback - Enlarged for touch typing -->
                 <div class="mt-6 border-t pt-4">
-                    <p class="mb-2 text-sm text-muted-foreground">Or enter device ID manually:</p>
+                    <p class="mb-2 text-sm text-muted-foreground">
+                        Or enter device ID manually:
+                    </p>
                     <div class="flex gap-2">
                         <input
                             v-model="manualDeviceId"
                             type="number"
                             min="1"
                             placeholder="Device ID"
-                            class="flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-lg shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            class="flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none md:text-lg"
                             @keyup.enter="handleManualSubmit"
                         />
                         <Button
                             class="min-h-11 min-w-16"
-                            :disabled="!manualDeviceId || parseInt(manualDeviceId) <= 0"
+                            :disabled="
+                                !manualDeviceId || parseInt(manualDeviceId) <= 0
+                            "
                             @click="handleManualSubmit"
                         >
                             Go
@@ -338,7 +367,11 @@ onUnmounted(() => {
 
             <DialogFooter>
                 <DialogClose as-child>
-                    <Button variant="secondary" class="min-h-11" @click="emit('update:open', false)">
+                    <Button
+                        variant="secondary"
+                        class="min-h-11"
+                        @click="emit('update:open', false)"
+                    >
                         Close
                     </Button>
                 </DialogClose>

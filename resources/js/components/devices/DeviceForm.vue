@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Form, router } from '@inertiajs/vue3';
 import { store, update } from '@/actions/App/Http/Controllers/DeviceController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
@@ -10,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { DeviceData, DeviceTypeOption, SelectOption } from '@/types/rooms';
+import { Form, router } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     mode: 'create' | 'edit';
@@ -38,11 +38,15 @@ const props = withDefaults(defineProps<Props>(), {
 const deviceSpecs = ref<Record<string, string>>(props.device.specs || {});
 
 // Watch for device changes in edit mode
-watch(() => props.device.specs, (newSpecs) => {
-    if (newSpecs) {
-        deviceSpecs.value = { ...newSpecs };
-    }
-}, { immediate: true });
+watch(
+    () => props.device.specs,
+    (newSpecs) => {
+        if (newSpecs) {
+            deviceSpecs.value = { ...newSpecs };
+        }
+    },
+    { immediate: true },
+);
 
 // Determine form action based on mode
 const formAction = computed(() => {
@@ -72,7 +76,9 @@ const handleDeviceTypeChange = (event: Event) => {
 
     // Find the device type and update U height if creating
     if (props.mode === 'create') {
-        const deviceType = props.deviceTypeOptions.find(dt => dt.id === Number(target.value));
+        const deviceType = props.deviceTypeOptions.find(
+            (dt) => dt.id === Number(target.value),
+        );
         if (deviceType) {
             defaultUHeight.value = deviceType.default_u_size;
         }
@@ -97,10 +103,19 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
         v-slot="{ errors, processing, recentlySuccessful }"
     >
         <!-- Hidden method field for PUT request in edit mode -->
-        <input v-if="mode === 'edit'" type="hidden" name="_method" value="PUT" />
+        <input
+            v-if="mode === 'edit'"
+            type="hidden"
+            name="_method"
+            value="PUT"
+        />
 
         <!-- Hidden specs field with JSON data -->
-        <input type="hidden" name="specs" :value="JSON.stringify(deviceSpecs)" />
+        <input
+            type="hidden"
+            name="specs"
+            :value="JSON.stringify(deviceSpecs)"
+        />
 
         <!-- Device Basic Details Section -->
         <div class="space-y-4">
@@ -111,7 +126,9 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-2">
-                    <Label for="name">Name <span class="text-red-500">*</span></Label>
+                    <Label for="name"
+                        >Name <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="name"
                         name="name"
@@ -124,13 +141,15 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="device_type_id">Device Type <span class="text-red-500">*</span></Label>
+                    <Label for="device_type_id"
+                        >Device Type <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="device_type_id"
                         name="device_type_id"
                         :value="device.device_type?.id?.toString() ?? ''"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                         @change="handleDeviceTypeChange"
                     >
                         <option value="" disabled>Select device type</option>
@@ -146,13 +165,16 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="lifecycle_status">Lifecycle Status <span class="text-red-500">*</span></Label>
+                    <Label for="lifecycle_status"
+                        >Lifecycle Status
+                        <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="lifecycle_status"
                         name="lifecycle_status"
                         :value="device.lifecycle_status ?? 'in_stock'"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option value="" disabled>Select status</option>
                         <option
@@ -206,7 +228,9 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
             <!-- Asset Tag (display only in edit mode) -->
             <div v-if="mode === 'edit' && device.asset_tag" class="grid gap-2">
                 <Label>Asset Tag</Label>
-                <div class="flex h-9 items-center rounded-md border border-input bg-muted px-3 py-1 text-sm font-mono">
+                <div
+                    class="flex h-9 items-center rounded-md border border-input bg-muted px-3 py-1 font-mono text-sm"
+                >
                     {{ device.asset_tag }}
                 </div>
                 <p class="text-xs text-muted-foreground">
@@ -224,13 +248,15 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
 
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="grid gap-2">
-                    <Label for="u_height">U Height <span class="text-red-500">*</span></Label>
+                    <Label for="u_height"
+                        >U Height <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="u_height"
                         name="u_height"
                         :value="defaultUHeight.toString()"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option
                             v-for="option in uSizeOptions"
@@ -244,13 +270,15 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="depth">Depth <span class="text-red-500">*</span></Label>
+                    <Label for="depth"
+                        >Depth <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="depth"
                         name="depth"
                         :value="device.depth ?? 'standard'"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option
                             v-for="option in depthOptions"
@@ -264,13 +292,15 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="width_type">Width Type <span class="text-red-500">*</span></Label>
+                    <Label for="width_type"
+                        >Width Type <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="width_type"
                         name="width_type"
                         :value="device.width_type ?? 'full'"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option
                             v-for="option in widthTypeOptions"
@@ -284,13 +314,15 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="rack_face">Rack Face <span class="text-red-500">*</span></Label>
+                    <Label for="rack_face"
+                        >Rack Face <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="rack_face"
                         name="rack_face"
                         :value="device.rack_face ?? 'front'"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option
                             v-for="option in rackFaceOptions"
@@ -382,7 +414,13 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
         <!-- Submit Buttons -->
         <div class="flex items-center gap-4">
             <Button :disabled="processing" type="submit">
-                {{ processing ? 'Saving...' : (mode === 'create' ? 'Create Device' : 'Save Changes') }}
+                {{
+                    processing
+                        ? 'Saving...'
+                        : mode === 'create'
+                          ? 'Create Device'
+                          : 'Save Changes'
+                }}
             </Button>
             <Button
                 type="button"
@@ -399,7 +437,10 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 leave-active-class="transition ease-in-out"
                 leave-to-class="opacity-0"
             >
-                <p v-show="recentlySuccessful" class="text-sm text-neutral-600 dark:text-neutral-400">
+                <p
+                    v-show="recentlySuccessful"
+                    class="text-sm text-neutral-600 dark:text-neutral-400"
+                >
                     Saved.
                 </p>
             </Transition>

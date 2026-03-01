@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { ChevronDown, ChevronUp, Clock, User as UserIcon, Globe } from 'lucide-vue-next';
 import ActionBadge from '@/components/ActionBadge.vue';
 import ActivityDetailPanel from '@/components/activity/ActivityDetailPanel.vue';
+import {
+    ChevronDown,
+    ChevronUp,
+    Clock,
+    Globe,
+    User as UserIcon,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     /** Activity log ID */
@@ -95,9 +101,15 @@ const changesSummary = computed(() => {
         const keys = Object.keys(props.oldValues).slice(0, 3);
         if (keys.length === 0) return 'Connection deleted';
         return `Deleted: ${keys.join(', ')}${Object.keys(props.oldValues).length > 3 ? '...' : ''}`;
-    } else if ((props.action === 'updated' || props.action === 'restored') && props.oldValues && props.newValues) {
+    } else if (
+        (props.action === 'updated' || props.action === 'restored') &&
+        props.oldValues &&
+        props.newValues
+    ) {
         const changedKeys = Object.keys(props.newValues).filter(
-            (key) => JSON.stringify(props.oldValues?.[key]) !== JSON.stringify(props.newValues?.[key])
+            (key) =>
+                JSON.stringify(props.oldValues?.[key]) !==
+                JSON.stringify(props.newValues?.[key]),
         );
         if (changedKeys.length === 0) return 'No visible changes';
         return `Changed: ${changedKeys.slice(0, 3).join(', ')}${changedKeys.length > 3 ? '...' : ''}`;
@@ -119,8 +131,11 @@ const connectionIdentifier = computed(() => `#${props.subjectId}`);
     >
         <!-- Timestamp -->
         <td class="p-4 text-muted-foreground">
-            <span :title="formatExactDateTime(createdAt)" class="flex items-center gap-1.5">
-                <Clock class="h-3.5 w-3.5 hidden sm:inline-block" />
+            <span
+                :title="formatExactDateTime(createdAt)"
+                class="flex items-center gap-1.5"
+            >
+                <Clock class="hidden h-3.5 w-3.5 sm:inline-block" />
                 {{ formatRelativeTime(createdAt) }}
             </span>
         </td>
@@ -128,7 +143,9 @@ const connectionIdentifier = computed(() => `#${props.subjectId}`);
         <!-- User with role -->
         <td class="p-4">
             <span class="flex items-center gap-1.5 font-medium">
-                <UserIcon class="h-3.5 w-3.5 text-muted-foreground hidden sm:inline-block" />
+                <UserIcon
+                    class="hidden h-3.5 w-3.5 text-muted-foreground sm:inline-block"
+                />
                 {{ userDisplay }}
             </span>
         </td>
@@ -160,7 +177,7 @@ const connectionIdentifier = computed(() => `#${props.subjectId}`);
         <td class="p-4 text-right">
             <component
                 :is="isExpanded ? ChevronUp : ChevronDown"
-                class="h-4 w-4 text-muted-foreground inline-block"
+                class="inline-block h-4 w-4 text-muted-foreground"
             />
         </td>
     </tr>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DeviceTypeController from '@/actions/App/Http/Controllers/DeviceTypeController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import DeviceTypeForm from '@/components/device-types/DeviceTypeForm.vue';
 import DeleteDeviceTypeDialog from '@/components/device-types/DeleteDeviceTypeDialog.vue';
+import DeviceTypeForm from '@/components/device-types/DeviceTypeForm.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
 
 interface DeviceTypeData {
     id: number;
@@ -44,10 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             />
 
             <div class="max-w-2xl">
-                <DeviceTypeForm
-                    mode="edit"
-                    :device-type="deviceType"
-                />
+                <DeviceTypeForm mode="edit" :device-type="deviceType" />
             </div>
 
             <!-- Delete Device Type Section -->
@@ -59,11 +56,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div
                     class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
                 >
-                    <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                    <div
+                        class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                    >
                         <p class="font-medium">Warning</p>
                         <p class="text-sm">
-                            Once deleted, this device type will be permanently removed.
-                            Devices using this type may need to be reassigned.
+                            Once deleted, this device type will be permanently
+                            removed. Devices using this type may need to be
+                            reassigned.
                         </p>
                     </div>
                     <DeleteDeviceTypeDialog

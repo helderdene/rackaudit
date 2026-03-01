@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import { create } from '@/actions/App/Http/Controllers/DeviceController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import DeviceForm from '@/components/devices/DeviceForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { DeviceTypeOption, SelectOption } from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     deviceTypeOptions: DeviceTypeOption[];
@@ -15,7 +15,7 @@ interface Props {
     rackFaceOptions: SelectOption[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

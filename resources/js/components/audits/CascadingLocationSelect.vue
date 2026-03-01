@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
+import { computed, ref, watch } from 'vue';
 
 interface DatacenterOption {
     id: number;
@@ -63,12 +63,12 @@ const showRoomDropdown = computed(() => {
 
 // Get selected datacenter for display
 const selectedDatacenter = computed(() => {
-    return props.datacenters.find(dc => dc.id === props.datacenterId);
+    return props.datacenters.find((dc) => dc.id === props.datacenterId);
 });
 
 // Get selected room for display
 const selectedRoom = computed(() => {
-    return rooms.value.find(room => room.id === props.roomId);
+    return rooms.value.find((room) => room.id === props.roomId);
 });
 
 // Calculate total rack count for datacenter scope
@@ -77,22 +77,28 @@ const totalRackCount = computed(() => {
 });
 
 // Watch for datacenter changes and fetch rooms
-watch(() => props.datacenterId, async (newDatacenterId) => {
-    // Reset room selection when datacenter changes
-    emit('update:roomId', null);
-    rooms.value = [];
+watch(
+    () => props.datacenterId,
+    async (newDatacenterId) => {
+        // Reset room selection when datacenter changes
+        emit('update:roomId', null);
+        rooms.value = [];
 
-    if (newDatacenterId) {
-        await fetchRooms(newDatacenterId);
-    }
-});
+        if (newDatacenterId) {
+            await fetchRooms(newDatacenterId);
+        }
+    },
+);
 
 // Watch for scope type changes and reset room if not applicable
-watch(() => props.scopeType, (newScopeType) => {
-    if (newScopeType === 'datacenter') {
-        emit('update:roomId', null);
-    }
-});
+watch(
+    () => props.scopeType,
+    (newScopeType) => {
+        if (newScopeType === 'datacenter') {
+            emit('update:roomId', null);
+        }
+    },
+);
 
 /**
  * Fetch rooms for the selected datacenter
@@ -100,12 +106,15 @@ watch(() => props.scopeType, (newScopeType) => {
 async function fetchRooms(datacenterId: number): Promise<void> {
     isLoadingRooms.value = true;
     try {
-        const response = await fetch(`/api/audits/datacenters/${datacenterId}/rooms`, {
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
+        const response = await fetch(
+            `/api/audits/datacenters/${datacenterId}/rooms`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
             },
-        });
+        );
 
         if (!response.ok) {
             throw new Error('Failed to fetch rooms');
@@ -123,7 +132,8 @@ async function fetchRooms(datacenterId: number): Promise<void> {
 }
 
 // Common select styling
-const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
 <template>
@@ -138,7 +148,10 @@ const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transpar
                 <select
                     id="datacenter"
                     v-model="selectedDatacenterId"
-                    :class="[selectClass, datacenterError ? 'border-destructive' : '']"
+                    :class="[
+                        selectClass,
+                        datacenterError ? 'border-destructive' : '',
+                    ]"
                     name="datacenter_id"
                 >
                     <option :value="null">Select a datacenter</option>
@@ -159,8 +172,12 @@ const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transpar
             <div v-if="showRoomDropdown" class="grid gap-2">
                 <Label for="room">
                     Room
-                    <span v-if="scopeType === 'room'" class="text-red-500">*</span>
-                    <span v-else class="text-muted-foreground text-xs">(optional filter)</span>
+                    <span v-if="scopeType === 'room'" class="text-red-500"
+                        >*</span
+                    >
+                    <span v-else class="text-xs text-muted-foreground"
+                        >(optional filter)</span
+                    >
                 </Label>
                 <div class="relative">
                     <!-- Skeleton loading state -->
@@ -171,16 +188,29 @@ const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transpar
                         <select
                             id="room"
                             v-model="selectedRoomId"
-                            :class="[selectClass, roomError ? 'border-destructive' : '']"
+                            :class="[
+                                selectClass,
+                                roomError ? 'border-destructive' : '',
+                            ]"
                             :disabled="!selectedDatacenterId || isLoadingRooms"
                             name="room_id"
                         >
                             <option :value="null">
-                                <template v-if="isLoadingRooms">Loading rooms...</template>
-                                <template v-else-if="!selectedDatacenterId">Select datacenter first</template>
-                                <template v-else-if="rooms.length === 0">No rooms available</template>
+                                <template v-if="isLoadingRooms"
+                                    >Loading rooms...</template
+                                >
+                                <template v-else-if="!selectedDatacenterId"
+                                    >Select datacenter first</template
+                                >
+                                <template v-else-if="rooms.length === 0"
+                                    >No rooms available</template
+                                >
                                 <template v-else>
-                                    {{ scopeType === 'room' ? 'Select a room' : 'All rooms' }}
+                                    {{
+                                        scopeType === 'room'
+                                            ? 'Select a room'
+                                            : 'All rooms'
+                                    }}
                                 </template>
                             </option>
                             <option
@@ -188,7 +218,8 @@ const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transpar
                                 :key="room.id"
                                 :value="room.id"
                             >
-                                {{ room.name }} ({{ room.rack_count }} {{ room.rack_count === 1 ? 'rack' : 'racks' }})
+                                {{ room.name }} ({{ room.rack_count }}
+                                {{ room.rack_count === 1 ? 'rack' : 'racks' }})
                             </option>
                         </select>
                     </template>
@@ -204,23 +235,31 @@ const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transpar
         </div>
 
         <!-- Datacenter info badge - shown when datacenter scope is selected -->
-        <div v-if="selectedDatacenter && scopeType === 'datacenter'" class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <div
+            v-if="selectedDatacenter && scopeType === 'datacenter'"
+            class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+        >
             <template v-if="isLoadingRooms">
                 <Spinner class="h-3 w-3" />
                 <span>Loading rack count...</span>
             </template>
             <template v-else>
                 <Badge variant="secondary" class="font-normal">
-                    {{ totalRackCount }} {{ totalRackCount === 1 ? 'rack' : 'racks' }}
+                    {{ totalRackCount }}
+                    {{ totalRackCount === 1 ? 'rack' : 'racks' }}
                 </Badge>
                 <span>will be included in this audit</span>
             </template>
         </div>
 
         <!-- Room info badge - shown when room scope is selected -->
-        <div v-if="selectedRoom && scopeType === 'room'" class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <div
+            v-if="selectedRoom && scopeType === 'room'"
+            class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+        >
             <Badge variant="secondary" class="font-normal">
-                {{ selectedRoom.rack_count }} {{ selectedRoom.rack_count === 1 ? 'rack' : 'racks' }}
+                {{ selectedRoom.rack_count }}
+                {{ selectedRoom.rack_count === 1 ? 'rack' : 'racks' }}
             </Badge>
             <span>will be included in this audit</span>
         </div>

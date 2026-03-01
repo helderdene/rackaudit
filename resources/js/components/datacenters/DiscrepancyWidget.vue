@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge, type BadgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertTriangle, AlertCircle, GitCompare, Shuffle, Settings, ChevronRight, RefreshCw } from 'lucide-vue-next';
+import { Link } from '@inertiajs/vue3';
+import {
+    AlertCircle,
+    AlertTriangle,
+    ChevronRight,
+    GitCompare,
+    RefreshCw,
+    Settings,
+    Shuffle,
+} from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 interface Props {
     datacenterId: number;
@@ -22,7 +30,10 @@ const summary = ref<{
 } | null>(null);
 
 // Type configuration with icons
-const typeConfig: Record<string, { icon: typeof AlertTriangle; variant: BadgeVariants['variant'] }> = {
+const typeConfig: Record<
+    string,
+    { icon: typeof AlertTriangle; variant: BadgeVariants['variant'] }
+> = {
     missing: { icon: AlertTriangle, variant: 'destructive' },
     unexpected: { icon: AlertCircle, variant: 'warning' },
     mismatched: { icon: GitCompare, variant: 'info' },
@@ -43,8 +54,13 @@ const typeCounts = computed(() => {
         .map(([type, count]) => ({
             type,
             count,
-            config: typeConfig[type] || { icon: AlertCircle, variant: 'secondary' as BadgeVariants['variant'] },
-            label: type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            config: typeConfig[type] || {
+                icon: AlertCircle,
+                variant: 'secondary' as BadgeVariants['variant'],
+            },
+            label: type
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (l) => l.toUpperCase()),
         }));
 });
 
@@ -54,12 +70,15 @@ const fetchSummary = async () => {
     hasError.value = false;
 
     try {
-        const response = await fetch(`/api/discrepancies/summary?datacenter_id=${props.datacenterId}`, {
-            headers: {
-                'Accept': 'application/json',
+        const response = await fetch(
+            `/api/discrepancies/summary?datacenter_id=${props.datacenterId}`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                },
+                credentials: 'same-origin',
             },
-            credentials: 'same-origin',
-        });
+        );
 
         if (!response.ok) {
             throw new Error('Failed to fetch summary');
@@ -111,7 +130,10 @@ onMounted(() => {
                     @click="refresh"
                     :disabled="isLoading"
                 >
-                    <RefreshCw class="size-4" :class="{ 'animate-spin': isLoading }" />
+                    <RefreshCw
+                        class="size-4"
+                        :class="{ 'animate-spin': isLoading }"
+                    />
                 </Button>
             </div>
         </CardHeader>
@@ -135,7 +157,10 @@ onMounted(() => {
             </div>
 
             <!-- No Discrepancies -->
-            <div v-else-if="!hasDiscrepancies" class="text-sm text-muted-foreground">
+            <div
+                v-else-if="!hasDiscrepancies"
+                class="text-sm text-muted-foreground"
+            >
                 <p class="flex items-center gap-2">
                     <span class="text-green-500">No open discrepancies</span>
                 </p>
@@ -159,7 +184,11 @@ onMounted(() => {
 
                 <!-- Link to Dashboard -->
                 <Link :href="`/discrepancies?datacenter_id=${datacenterId}`">
-                    <Button variant="outline" size="sm" class="mt-2 w-full gap-1">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        class="mt-2 w-full gap-1"
+                    >
                         View All Discrepancies
                         <ChevronRight class="size-4" />
                     </Button>

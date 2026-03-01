@@ -7,9 +7,9 @@
  * - Counts by Manufacturer
  */
 
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Cpu, Building2 } from 'lucide-vue-next';
+import { Building2, Cpu } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface CountItem {
     name: string;
@@ -29,7 +29,10 @@ const totalByType = computed(() => {
 });
 
 const totalByManufacturer = computed(() => {
-    return props.countsByManufacturer.reduce((sum, item) => sum + item.count, 0);
+    return props.countsByManufacturer.reduce(
+        (sum, item) => sum + item.count,
+        0,
+    );
 });
 
 // Sort by count descending
@@ -84,20 +87,28 @@ const getBarWidth = (count: number, total: number): string => {
                             <span class="font-medium">{{ item.name }}</span>
                             <span class="text-muted-foreground">
                                 {{ item.count }}
-                                <span class="text-xs">({{ getPercentage(item.count, totalByType) }}%)</span>
+                                <span class="text-xs"
+                                    >({{
+                                        getPercentage(item.count, totalByType)
+                                    }}%)</span
+                                >
                             </span>
                         </div>
                         <!-- Progress bar -->
                         <div class="h-2 overflow-hidden rounded-full bg-muted">
                             <div
                                 class="h-full rounded-full bg-primary transition-all duration-300"
-                                :style="{ width: getBarWidth(item.count, totalByType) }"
+                                :style="{
+                                    width: getBarWidth(item.count, totalByType),
+                                }"
                             />
                         </div>
                     </div>
 
                     <!-- Total -->
-                    <div class="mt-4 flex items-center justify-between border-t pt-3 text-sm font-medium">
+                    <div
+                        class="mt-4 flex items-center justify-between border-t pt-3 text-sm font-medium"
+                    >
                         <span>Total</span>
                         <span>{{ totalByType }} devices</span>
                     </div>
@@ -130,23 +141,39 @@ const getBarWidth = (count: number, total: number): string => {
                         class="space-y-1"
                     >
                         <div class="flex items-center justify-between text-sm">
-                            <span class="font-medium">{{ item.name || 'Unknown' }}</span>
+                            <span class="font-medium">{{
+                                item.name || 'Unknown'
+                            }}</span>
                             <span class="text-muted-foreground">
                                 {{ item.count }}
-                                <span class="text-xs">({{ getPercentage(item.count, totalByManufacturer) }}%)</span>
+                                <span class="text-xs"
+                                    >({{
+                                        getPercentage(
+                                            item.count,
+                                            totalByManufacturer,
+                                        )
+                                    }}%)</span
+                                >
                             </span>
                         </div>
                         <!-- Progress bar -->
                         <div class="h-2 overflow-hidden rounded-full bg-muted">
                             <div
                                 class="h-full rounded-full bg-teal-500 transition-all duration-300"
-                                :style="{ width: getBarWidth(item.count, totalByManufacturer) }"
+                                :style="{
+                                    width: getBarWidth(
+                                        item.count,
+                                        totalByManufacturer,
+                                    ),
+                                }"
                             />
                         </div>
                     </div>
 
                     <!-- Total -->
-                    <div class="mt-4 flex items-center justify-between border-t pt-3 text-sm font-medium">
+                    <div
+                        class="mt-4 flex items-center justify-between border-t pt-3 text-sm font-medium"
+                    >
                         <span>Total</span>
                         <span>{{ totalByManufacturer }} devices</span>
                     </div>

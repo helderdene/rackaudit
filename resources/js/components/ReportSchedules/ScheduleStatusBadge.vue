@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, XCircle, PauseCircle, AlertTriangle } from 'lucide-vue-next';
+import {
+    AlertTriangle,
+    CheckCircle2,
+    PauseCircle,
+    XCircle,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     isEnabled: boolean;
@@ -17,25 +22,27 @@ const props = withDefaults(defineProps<Props>(), {
 /**
  * Determine the status state based on enabled/disabled and failure count
  */
-const statusState = computed<'active' | 'disabled' | 'failed' | 'warning'>(() => {
-    if (!props.isEnabled) {
-        return 'disabled';
-    }
+const statusState = computed<'active' | 'disabled' | 'failed' | 'warning'>(
+    () => {
+        if (!props.isEnabled) {
+            return 'disabled';
+        }
 
-    if (props.consecutiveFailures >= 3) {
-        return 'failed';
-    }
+        if (props.consecutiveFailures >= 3) {
+            return 'failed';
+        }
 
-    if (props.consecutiveFailures > 0) {
-        return 'warning';
-    }
+        if (props.consecutiveFailures > 0) {
+            return 'warning';
+        }
 
-    if (props.lastRunStatus === 'failed') {
-        return 'warning';
-    }
+        if (props.lastRunStatus === 'failed') {
+            return 'warning';
+        }
 
-    return 'active';
-});
+        return 'active';
+    },
+);
 
 /**
  * Badge variant based on status state
@@ -124,7 +131,9 @@ const showFailureCount = computed(() => {
             class="text-xs text-muted-foreground"
             :title="`${consecutiveFailures} consecutive failure(s)`"
         >
-            ({{ consecutiveFailures }} failure{{ consecutiveFailures !== 1 ? 's' : '' }})
+            ({{ consecutiveFailures }} failure{{
+                consecutiveFailures !== 1 ? 's' : ''
+            }})
         </span>
     </div>
 </template>

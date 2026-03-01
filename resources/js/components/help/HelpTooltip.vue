@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { CircleHelp, X } from 'lucide-vue-next';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import MarkdownRenderer from './MarkdownRenderer.vue';
 import { useHelpInteractions } from '@/composables/useHelpInteractions';
+import { cn } from '@/lib/utils';
+import { CircleHelp, X } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import MarkdownRenderer from './MarkdownRenderer.vue';
 
 interface Props {
     /** Base context key (e.g., 'audits.execute') */
@@ -54,7 +54,7 @@ const fullContextKey = computed(() => {
 });
 
 // Help interactions composable
-const { isDismissed, recordDismissal, recordView } = useHelpInteractions();
+const { recordDismissal, recordView } = useHelpInteractions();
 
 // Component state
 const isOpen = ref(false);
@@ -63,12 +63,6 @@ const article = ref<HelpArticle | null>(null);
 const hasFetched = ref(false);
 const dontShowAgain = ref(false);
 const error = ref<string | null>(null);
-
-// Check if already dismissed
-const shouldShow = computed(() => {
-    if (!article.value) return true;
-    return !isDismissed(article.value.id);
-});
 
 // Size classes for the trigger icon
 const sizeClasses = computed(() => {
@@ -163,10 +157,12 @@ function handleClose() {
             <TooltipTrigger as-child>
                 <button
                     type="button"
-                    :class="cn(
-                        'inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                        props.class,
-                    )"
+                    :class="
+                        cn(
+                            'inline-flex items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                            props.class,
+                        )
+                    "
                     :aria-label="`Help for ${fullContextKey}`"
                 >
                     <CircleHelp :class="sizeClasses" />
@@ -176,14 +172,16 @@ function handleClose() {
             <TooltipContent
                 :side="'bottom'"
                 :side-offset="8"
-                :class="cn(
-                    'w-72 max-h-80 overflow-y-auto p-0',
-                    'bg-popover text-popover-foreground',
-                )"
+                :class="
+                    cn(
+                        'max-h-80 w-72 overflow-y-auto p-0',
+                        'bg-popover text-popover-foreground',
+                    )
+                "
                 @pointer-down-outside.prevent
             >
                 <!-- Loading state -->
-                <div v-if="isLoading" class="p-4 space-y-2">
+                <div v-if="isLoading" class="space-y-2 p-4">
                     <Skeleton class="h-4 w-3/4" />
                     <Skeleton class="h-3 w-full" />
                     <Skeleton class="h-3 w-5/6" />
@@ -213,7 +211,7 @@ function handleClose() {
                         </h4>
                         <button
                             type="button"
-                            class="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                            class="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
                             @click="handleClose"
                         >
                             <X class="size-4" />
@@ -231,10 +229,10 @@ function handleClose() {
 
                     <!-- Footer with "Don't show again" -->
                     <div
-                        class="flex items-center justify-between gap-4 border-t px-4 py-3 bg-muted/30"
+                        class="flex items-center justify-between gap-4 border-t bg-muted/30 px-4 py-3"
                     >
                         <label
-                            class="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer"
+                            class="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground"
                         >
                             <Checkbox
                                 v-model:checked="dontShowAgain"

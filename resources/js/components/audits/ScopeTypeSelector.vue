@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { computed } from 'vue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ScopeTypeOption {
     value: string;
@@ -56,7 +62,7 @@ const selectScope = (scope: string): void => {
                         'relative h-full transition-all duration-200',
                         'hover:border-primary/50 hover:shadow-md',
                         isSelected(scope.value)
-                            ? 'border-primary ring-2 ring-primary/20 shadow-md'
+                            ? 'border-primary shadow-md ring-2 ring-primary/20'
                             : 'border-border',
                     ]"
                 >

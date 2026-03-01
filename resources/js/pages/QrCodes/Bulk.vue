@@ -1,24 +1,30 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import { generate } from '@/actions/App/Http/Controllers/BulkQrCodeController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { SelectOption } from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 import {
+    AlertCircle,
+    FileDown,
+    Filter,
+    HardDrive,
+    Info,
+    Loader2,
     QrCode,
     Server,
-    HardDrive,
-    FileDown,
-    Loader2,
-    AlertCircle,
-    Filter,
-    Info
 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface FilterOption {
     value: number;
@@ -72,7 +78,7 @@ const entityTypeIcons: Record<string, typeof Server> = {
 const filteredRooms = computed(() => {
     if (!selectedDatacenterId.value) return [];
     return props.filterOptions.rooms.filter(
-        room => room.datacenter_id === selectedDatacenterId.value
+        (room) => room.datacenter_id === selectedDatacenterId.value,
     );
 });
 
@@ -80,7 +86,7 @@ const filteredRooms = computed(() => {
 const filteredRows = computed(() => {
     if (!selectedRoomId.value) return [];
     return props.filterOptions.rows.filter(
-        row => row.room_id === selectedRoomId.value
+        (row) => row.room_id === selectedRoomId.value,
     );
 });
 
@@ -88,7 +94,7 @@ const filteredRows = computed(() => {
 const filteredRacks = computed(() => {
     if (!selectedRowId.value) return [];
     return props.filterOptions.racks.filter(
-        rack => rack.row_id === selectedRowId.value
+        (rack) => rack.row_id === selectedRowId.value,
     );
 });
 
@@ -145,7 +151,9 @@ const handleSubmit = async () => {
     form.style.display = 'none';
 
     // Add CSRF token
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content');
     if (csrfToken) {
         const csrfInput = document.createElement('input');
         csrfInput.type = 'hidden';
@@ -179,16 +187,24 @@ const handleSubmit = async () => {
 const activeFilterDescription = computed(() => {
     const parts: string[] = [];
     if (selectedRackId.value) {
-        const rack = filteredRacks.value.find(r => r.value === selectedRackId.value);
+        const rack = filteredRacks.value.find(
+            (r) => r.value === selectedRackId.value,
+        );
         if (rack) parts.push(`Rack: ${rack.label}`);
     } else if (selectedRowId.value) {
-        const row = filteredRows.value.find(r => r.value === selectedRowId.value);
+        const row = filteredRows.value.find(
+            (r) => r.value === selectedRowId.value,
+        );
         if (row) parts.push(`Row: ${row.label}`);
     } else if (selectedRoomId.value) {
-        const room = filteredRooms.value.find(r => r.value === selectedRoomId.value);
+        const room = filteredRooms.value.find(
+            (r) => r.value === selectedRoomId.value,
+        );
         if (room) parts.push(`Room: ${room.label}`);
     } else if (selectedDatacenterId.value) {
-        const dc = props.filterOptions.datacenters.find(d => d.value === selectedDatacenterId.value);
+        const dc = props.filterOptions.datacenters.find(
+            (d) => d.value === selectedDatacenterId.value,
+        );
         if (dc) parts.push(`Datacenter: ${dc.label}`);
     }
     return parts.length > 0 ? parts.join(' > ') : 'All items (no filter)';
@@ -196,7 +212,9 @@ const activeFilterDescription = computed(() => {
 
 // Get entity type label for display
 const selectedEntityTypeLabel = computed(() => {
-    const option = props.entityTypeOptions.find(o => o.value === selectedEntityType.value);
+    const option = props.entityTypeOptions.find(
+        (o) => o.value === selectedEntityType.value,
+    );
     return option?.label || '';
 });
 </script>
@@ -236,18 +254,30 @@ const selectedEntityTypeLabel = computed(() => {
                                     :disabled="isSubmitting"
                                     class="flex items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-muted/50"
                                     :class="{
-                                        'border-primary bg-primary/5 ring-1 ring-primary': selectedEntityType === option.value,
-                                        'border-muted': selectedEntityType !== option.value,
-                                        'cursor-not-allowed opacity-50': isSubmitting,
+                                        'border-primary bg-primary/5 ring-1 ring-primary':
+                                            selectedEntityType === option.value,
+                                        'border-muted':
+                                            selectedEntityType !== option.value,
+                                        'cursor-not-allowed opacity-50':
+                                            isSubmitting,
                                     }"
                                     @click="selectedEntityType = option.value"
                                 >
                                     <component
-                                        :is="entityTypeIcons[option.value] || QrCode"
+                                        :is="
+                                            entityTypeIcons[option.value] ||
+                                            QrCode
+                                        "
                                         class="h-5 w-5"
-                                        :class="selectedEntityType === option.value ? 'text-primary' : 'text-muted-foreground'"
+                                        :class="
+                                            selectedEntityType === option.value
+                                                ? 'text-primary'
+                                                : 'text-muted-foreground'
+                                        "
                                     />
-                                    <span class="font-medium">{{ option.label }}</span>
+                                    <span class="font-medium">{{
+                                        option.label
+                                    }}</span>
                                 </button>
                             </div>
                         </div>
@@ -255,10 +285,19 @@ const selectedEntityTypeLabel = computed(() => {
                         <!-- PDF Format Info -->
                         <div class="rounded-lg bg-muted/50 p-4">
                             <div class="flex items-start gap-3">
-                                <Info class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <Info
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div class="text-sm text-muted-foreground">
-                                    <p class="font-medium text-foreground">Avery 5160 Format</p>
-                                    <p>Labels are formatted for standard label sheets (30 labels per page, 3 columns x 10 rows). Each label includes a QR code, name, and secondary identifier.</p>
+                                    <p class="font-medium text-foreground">
+                                        Avery 5160 Format
+                                    </p>
+                                    <p>
+                                        Labels are formatted for standard label
+                                        sheets (30 labels per page, 3 columns x
+                                        10 rows). Each label includes a QR code,
+                                        name, and secondary identifier.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -278,9 +317,16 @@ const selectedEntityTypeLabel = computed(() => {
                             class="w-full"
                             @click="handleSubmit"
                         >
-                            <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2
+                                v-if="isSubmitting"
+                                class="mr-2 h-4 w-4 animate-spin"
+                            />
                             <FileDown v-else class="mr-2 h-4 w-4" />
-                            {{ isSubmitting ? 'Generating PDF...' : 'Generate PDF' }}
+                            {{
+                                isSubmitting
+                                    ? 'Generating PDF...'
+                                    : 'Generate PDF'
+                            }}
                         </Button>
                     </CardContent>
                 </Card>
@@ -293,7 +339,8 @@ const selectedEntityTypeLabel = computed(() => {
                             Filter Items (Optional)
                         </CardTitle>
                         <CardDescription>
-                            Narrow down your QR codes to specific locations in the hierarchy.
+                            Narrow down your QR codes to specific locations in
+                            the hierarchy.
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-4">
@@ -303,8 +350,11 @@ const selectedEntityTypeLabel = computed(() => {
                             <select
                                 id="datacenter-filter"
                                 v-model="selectedDatacenterId"
-                                :disabled="isSubmitting || filterOptions.datacenters.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    filterOptions.datacenters.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Datacenters</option>
                                 <option
@@ -323,8 +373,12 @@ const selectedEntityTypeLabel = computed(() => {
                             <select
                                 id="room-filter"
                                 v-model="selectedRoomId"
-                                :disabled="isSubmitting || !selectedDatacenterId || filteredRooms.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    !selectedDatacenterId ||
+                                    filteredRooms.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Rooms</option>
                                 <option
@@ -343,8 +397,12 @@ const selectedEntityTypeLabel = computed(() => {
                             <select
                                 id="row-filter"
                                 v-model="selectedRowId"
-                                :disabled="isSubmitting || !selectedRoomId || filteredRows.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    !selectedRoomId ||
+                                    filteredRows.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Rows</option>
                                 <option
@@ -363,8 +421,12 @@ const selectedEntityTypeLabel = computed(() => {
                             <select
                                 id="rack-filter"
                                 v-model="selectedRackId"
-                                :disabled="isSubmitting || !selectedRowId || filteredRacks.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    !selectedRowId ||
+                                    filteredRacks.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Racks</option>
                                 <option
@@ -379,21 +441,41 @@ const selectedEntityTypeLabel = computed(() => {
 
                         <!-- Active filter summary -->
                         <div class="rounded-lg bg-muted/50 p-4 text-sm">
-                            <h4 class="mb-2 font-medium text-foreground">Generation Scope</h4>
+                            <h4 class="mb-2 font-medium text-foreground">
+                                Generation Scope
+                            </h4>
                             <p class="text-muted-foreground">
-                                <span v-if="selectedEntityType">{{ selectedEntityTypeLabel }}: </span>
+                                <span v-if="selectedEntityType"
+                                    >{{ selectedEntityTypeLabel }}:
+                                </span>
                                 {{ activeFilterDescription }}
                             </p>
                         </div>
 
                         <!-- Help text -->
-                        <div class="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-                            <h4 class="mb-2 font-medium text-foreground">Filter Tips</h4>
+                        <div
+                            class="rounded-lg border border-dashed p-4 text-sm text-muted-foreground"
+                        >
+                            <h4 class="mb-2 font-medium text-foreground">
+                                Filter Tips
+                            </h4>
                             <ul class="list-inside list-disc space-y-1">
-                                <li>Filters cascade: selecting a datacenter filters rooms</li>
-                                <li>Leave filters empty to generate QR codes for all items</li>
-                                <li>For devices, rack filter limits to devices in that rack</li>
-                                <li>Each QR code links directly to the item's detail page</li>
+                                <li>
+                                    Filters cascade: selecting a datacenter
+                                    filters rooms
+                                </li>
+                                <li>
+                                    Leave filters empty to generate QR codes for
+                                    all items
+                                </li>
+                                <li>
+                                    For devices, rack filter limits to devices
+                                    in that rack
+                                </li>
+                                <li>
+                                    Each QR code links directly to the item's
+                                    detail page
+                                </li>
                             </ul>
                         </div>
                     </CardContent>

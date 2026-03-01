@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import ActionBadge from '@/components/ActionBadge.vue';
 import ActivityDetailPanel from '@/components/activity/ActivityDetailPanel.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, ref } from 'vue';
 
 interface ActivityLogEntry {
     id: number;
@@ -62,7 +62,11 @@ const getDateGroup = (timestamp: string): string => {
     const weekAgo = new Date(today);
     weekAgo.setDate(weekAgo.getDate() - 7);
 
-    const activityDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const activityDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+    );
 
     if (activityDate.getTime() === today.getTime()) {
         return 'Today';
@@ -115,7 +119,9 @@ const isEmpty = computed(() => props.activities.length === 0);
 <template>
     <Card>
         <CardHeader class="pb-3">
-            <CardTitle class="text-lg font-semibold text-foreground">Recent Activity</CardTitle>
+            <CardTitle class="text-lg font-semibold text-foreground"
+                >Recent Activity</CardTitle
+            >
         </CardHeader>
         <CardContent class="max-h-80 overflow-y-auto pt-0">
             <!-- Empty state -->
@@ -144,51 +150,82 @@ const isEmpty = computed(() => props.activities.length === 0);
                 <div v-for="group in groupedActivities" :key="group.label">
                     <!-- Group header -->
                     <div class="mb-3 flex items-center gap-3">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        <h3
+                            class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                        >
                             {{ group.label }}
                         </h3>
                         <div class="h-px flex-1 bg-border" />
                         <span class="text-xs text-muted-foreground/70">
-                            {{ group.activities.length }} {{ group.activities.length === 1 ? 'activity' : 'activities' }}
+                            {{ group.activities.length }}
+                            {{
+                                group.activities.length === 1
+                                    ? 'activity'
+                                    : 'activities'
+                            }}
                         </span>
                     </div>
 
                     <!-- Activities in group -->
                     <div class="space-y-1">
-                        <template v-for="activity in group.activities" :key="activity.id">
+                        <template
+                            v-for="activity in group.activities"
+                            :key="activity.id"
+                        >
                             <!-- Activity row -->
                             <div
                                 class="group cursor-pointer rounded-lg border border-transparent px-3 py-2.5 transition-all duration-150 hover:border-border/50 hover:bg-muted/50 dark:hover:bg-muted/30"
                                 :class="{
-                                    'border-border bg-muted/40 dark:bg-muted/20': isRowExpanded(activity.id),
+                                    'border-border bg-muted/40 dark:bg-muted/20':
+                                        isRowExpanded(activity.id),
                                 }"
                                 @click="toggleRowExpansion(activity.id)"
                             >
-                                <div class="flex items-start justify-between gap-3">
+                                <div
+                                    class="flex items-start justify-between gap-3"
+                                >
                                     <!-- Left side: Content -->
                                     <div class="min-w-0 flex-1">
-                                        <div class="flex flex-wrap items-center gap-2">
-                                            <span class="font-medium text-foreground">
+                                        <div
+                                            class="flex flex-wrap items-center gap-2"
+                                        >
+                                            <span
+                                                class="font-medium text-foreground"
+                                            >
                                                 {{ activity.user_name }}
                                             </span>
-                                            <ActionBadge :action="activity.action" />
-                                            <span class="text-sm text-muted-foreground">
+                                            <ActionBadge
+                                                :action="activity.action"
+                                            />
+                                            <span
+                                                class="text-sm text-muted-foreground"
+                                            >
                                                 {{ activity.entity_type }}
                                             </span>
                                         </div>
-                                        <p class="mt-1 truncate text-sm text-muted-foreground/80">
+                                        <p
+                                            class="mt-1 truncate text-sm text-muted-foreground/80"
+                                        >
                                             {{ activity.summary }}
                                         </p>
                                     </div>
 
                                     <!-- Right side: Time and expand indicator -->
-                                    <div class="flex shrink-0 items-center gap-2">
-                                        <span class="text-xs text-muted-foreground/70">
+                                    <div
+                                        class="flex shrink-0 items-center gap-2"
+                                    >
+                                        <span
+                                            class="text-xs text-muted-foreground/70"
+                                        >
                                             {{ formatTime(activity.timestamp) }}
                                         </span>
                                         <svg
                                             class="h-4 w-4 text-muted-foreground/50 transition-transform duration-200"
-                                            :class="{ 'rotate-180': isRowExpanded(activity.id) }"
+                                            :class="{
+                                                'rotate-180': isRowExpanded(
+                                                    activity.id,
+                                                ),
+                                            }"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"

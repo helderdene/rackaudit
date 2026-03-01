@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
 import { index as discrepanciesIndex } from '@/actions/App/Http/Controllers/DiscrepancyController';
-import HeadingSmall from '@/components/HeadingSmall.vue';
-import DiscrepancyFilters from '@/components/Discrepancies/DiscrepancyFilters.vue';
-import DiscrepancyTable from '@/components/Discrepancies/DiscrepancyTable.vue';
-import DiscrepancySummaryStats from '@/components/Discrepancies/DiscrepancySummaryStats.vue';
 import DiscrepancyDetailModal from '@/components/Discrepancies/DiscrepancyDetailModal.vue';
+import DiscrepancyFilters from '@/components/Discrepancies/DiscrepancyFilters.vue';
+import DiscrepancySummaryStats from '@/components/Discrepancies/DiscrepancySummaryStats.vue';
+import DiscrepancyTable from '@/components/Discrepancies/DiscrepancyTable.vue';
 import RunDetectionButton from '@/components/Discrepancies/RunDetectionButton.vue';
+import HeadingSmall from '@/components/HeadingSmall.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 interface PortData {
@@ -114,7 +114,7 @@ interface Props {
     statusOptions: FilterOption[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -146,7 +146,9 @@ const closeDetail = () => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header - responsive layout -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Discrepancy Dashboard"
                     description="Monitor and manage detected discrepancies between expected and actual connections."
@@ -157,10 +159,7 @@ const closeDetail = () => {
             </div>
 
             <!-- Summary Stats -->
-            <DiscrepancySummaryStats
-                :summary="summary"
-                :filters="filters"
-            />
+            <DiscrepancySummaryStats :summary="summary" :filters="filters" />
 
             <!-- Filters and Table in responsive layout -->
             <div class="flex flex-col gap-4 lg:flex-row">
@@ -176,7 +175,7 @@ const closeDetail = () => {
                 </div>
 
                 <!-- Main content area -->
-                <div class="flex-1 min-w-0">
+                <div class="min-w-0 flex-1">
                     <DiscrepancyTable
                         :discrepancies="discrepancies"
                         :filters="filters"

@@ -13,7 +13,12 @@ export type EvidenceType = 'file' | 'text';
 /**
  * Finding status enum values
  */
-export type FindingStatusValue = 'open' | 'in_progress' | 'pending_review' | 'deferred' | 'resolved';
+export type FindingStatusValue =
+    | 'open'
+    | 'in_progress'
+    | 'pending_review'
+    | 'deferred'
+    | 'resolved';
 
 /**
  * Finding severity enum values

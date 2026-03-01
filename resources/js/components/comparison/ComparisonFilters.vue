@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Spinner } from '@/components/ui/spinner';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -13,23 +10,23 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import {
-    Filter,
-    ChevronDown,
-    X,
-    Search,
-    Download,
-    RefreshCw,
-} from 'lucide-vue-next';
-import {
-    useComparisonFilters,
     allDiscrepancyTypes,
+    useComparisonFilters,
     type ComparisonFiltersState,
 } from '@/composables/useComparisonFilters';
-import type {
-    DiscrepancyTypeValue,
-    ComparisonFilterOptions,
-} from '@/types/comparison';
+import type { DiscrepancyTypeValue } from '@/types/comparison';
+import {
+    ChevronDown,
+    Download,
+    Filter,
+    RefreshCw,
+    Search,
+    X,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface DeviceOption {
     id: number;
@@ -96,7 +93,7 @@ const filteredDevices = computed(() => {
     }
     const query = deviceSearchQuery.value.toLowerCase();
     return props.devices.filter((device) =>
-        device.name.toLowerCase().includes(query)
+        device.name.toLowerCase().includes(query),
     );
 });
 
@@ -125,7 +122,7 @@ const discrepancyTypeLabel = computed(() => {
     }
     if (filters.value.discrepancyTypes.length === 1) {
         const selected = allDiscrepancyTypes.find(
-            (t) => t.value === filters.value.discrepancyTypes[0]
+            (t) => t.value === filters.value.discrepancyTypes[0],
         );
         return selected?.label ?? 'Selected';
     }
@@ -133,7 +130,9 @@ const discrepancyTypeLabel = computed(() => {
 });
 
 // Combined loading state
-const isFilterLoading = computed(() => props.isLoading || isApplyingFilters.value);
+const isFilterLoading = computed(
+    () => props.isLoading || isApplyingFilters.value,
+);
 
 /**
  * Handle device selection
@@ -202,19 +201,23 @@ function getDiscrepancyTypeColorClass(type: DiscrepancyTypeValue): string {
 </script>
 
 <template>
-    <div class="flex flex-wrap items-center gap-3 rounded-lg border bg-background p-3">
+    <div
+        class="flex flex-wrap items-center gap-3 rounded-lg border bg-background p-3"
+    >
         <!-- Filter icon with active indicator -->
         <div class="flex items-center gap-2">
             <div class="relative">
                 <Filter class="size-4 text-muted-foreground" />
                 <span
                     v-if="hasActiveFilters"
-                    class="absolute -right-1 -top-1 flex size-3 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-primary-foreground"
+                    class="absolute -top-1 -right-1 flex size-3 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-primary-foreground"
                 >
                     {{ activeFilterCount }}
                 </span>
             </div>
-            <span class="text-sm font-medium text-muted-foreground">Filters:</span>
+            <span class="text-sm font-medium text-muted-foreground"
+                >Filters:</span
+            >
         </div>
 
         <!-- Discrepancy Type Multi-Select -->
@@ -286,7 +289,9 @@ function getDiscrepancyTypeColorClass(type: DiscrepancyTypeValue): string {
                 <DropdownMenuLabel>Filter by Device</DropdownMenuLabel>
                 <div class="p-2">
                     <div class="relative">
-                        <Search class="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                        <Search
+                            class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground"
+                        />
                         <Input
                             v-model="deviceSearchQuery"
                             placeholder="Search devices..."
@@ -408,7 +413,10 @@ function getDiscrepancyTypeColorClass(type: DiscrepancyTypeValue): string {
             :disabled="isFilterLoading"
             @click="handleRefresh"
         >
-            <RefreshCw class="size-3.5" :class="{ 'animate-spin': isFilterLoading }" />
+            <RefreshCw
+                class="size-3.5"
+                :class="{ 'animate-spin': isFilterLoading }"
+            />
             Refresh
         </Button>
 

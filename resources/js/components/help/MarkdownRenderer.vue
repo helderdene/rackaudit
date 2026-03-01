@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { marked } from 'marked';
 import { cn } from '@/lib/utils';
+import { marked } from 'marked';
+import { computed } from 'vue';
 
 interface Props {
     content: string;
@@ -27,7 +27,7 @@ marked.setOptions({
 const renderer = new marked.Renderer();
 
 // Enhanced heading rendering with anchor links
-renderer.heading = function({ tokens, depth, text }) {
+renderer.heading = function ({ tokens, depth, text }) {
     // Use this.parser to render child tokens
     const renderedText = this.parser.parseInline(tokens);
     const slug = text.toLowerCase().replace(/[^\w]+/g, '-');
@@ -39,21 +39,22 @@ renderer.heading = function({ tokens, depth, text }) {
     };
 
     // Add decorative element to h2
-    const h2Icon = depth === 2
-        ? '<span class="inline-flex size-1.5 rounded-full bg-primary/70"></span>'
-        : '';
+    const h2Icon =
+        depth === 2
+            ? '<span class="inline-flex size-1.5 rounded-full bg-primary/70"></span>'
+            : '';
 
     return `<h${depth} id="${slug}" class="${sizes[depth] || sizes[4]}">${h2Icon}${renderedText}</h${depth}>`;
 };
 
 // Enhanced paragraph rendering
-renderer.paragraph = function({ tokens }) {
+renderer.paragraph = function ({ tokens }) {
     const text = this.parser.parseInline(tokens);
     return `<p class="text-[15px] leading-7 text-muted-foreground mb-4 [&:last-child]:mb-0">${text}</p>`;
 };
 
 // Enhanced code rendering
-renderer.code = function({ text, lang }) {
+renderer.code = function ({ text, lang }) {
     const language = lang || '';
     return `
         <div class="relative group my-5">
@@ -64,12 +65,12 @@ renderer.code = function({ text, lang }) {
 };
 
 // Enhanced inline code
-renderer.codespan = function({ text }) {
+renderer.codespan = function ({ text }) {
     return `<code class="text-[13px] font-mono bg-muted/70 text-primary px-1.5 py-0.5 rounded-md border border-border/30">${text}</code>`;
 };
 
 // Enhanced blockquote
-renderer.blockquote = function({ tokens }) {
+renderer.blockquote = function ({ tokens }) {
     const text = this.parser.parse(tokens);
     return `
         <blockquote class="my-6 relative pl-4 border-l-2 border-primary/50">
@@ -79,26 +80,42 @@ renderer.blockquote = function({ tokens }) {
 };
 
 // Enhanced table - handles array of rows in marked v17+
-renderer.table = function({ header, rows, align }) {
+renderer.table = function ({ header, rows, align }) {
     // Render header row
-    const headerCells = header.map((cell, i) => {
-        const cellText = this.parser.parseInline(cell.tokens);
-        const cellAlign = align[i];
-        const alignClass = cellAlign === 'center' ? 'text-center' : cellAlign === 'right' ? 'text-right' : '';
-        return `<th class="px-4 py-3 text-left font-semibold text-foreground text-[13px] uppercase tracking-wider ${alignClass}">${cellText}</th>`;
-    }).join('');
+    const headerCells = header
+        .map((cell, i) => {
+            const cellText = this.parser.parseInline(cell.tokens);
+            const cellAlign = align[i];
+            const alignClass =
+                cellAlign === 'center'
+                    ? 'text-center'
+                    : cellAlign === 'right'
+                      ? 'text-right'
+                      : '';
+            return `<th class="px-4 py-3 text-left font-semibold text-foreground text-[13px] uppercase tracking-wider ${alignClass}">${cellText}</th>`;
+        })
+        .join('');
     const headerRow = `<tr>${headerCells}</tr>`;
 
     // Render body rows
-    const bodyRows = rows.map(row => {
-        const cells = row.map((cell, i) => {
-            const cellText = this.parser.parseInline(cell.tokens);
-            const cellAlign = align[i];
-            const alignClass = cellAlign === 'center' ? 'text-center' : cellAlign === 'right' ? 'text-right' : '';
-            return `<td class="px-4 py-3 text-muted-foreground ${alignClass}">${cellText}</td>`;
-        }).join('');
-        return `<tr class="hover:bg-muted/30 transition-colors">${cells}</tr>`;
-    }).join('');
+    const bodyRows = rows
+        .map((row) => {
+            const cells = row
+                .map((cell, i) => {
+                    const cellText = this.parser.parseInline(cell.tokens);
+                    const cellAlign = align[i];
+                    const alignClass =
+                        cellAlign === 'center'
+                            ? 'text-center'
+                            : cellAlign === 'right'
+                              ? 'text-right'
+                              : '';
+                    return `<td class="px-4 py-3 text-muted-foreground ${alignClass}">${cellText}</td>`;
+                })
+                .join('');
+            return `<tr class="hover:bg-muted/30 transition-colors">${cells}</tr>`;
+        })
+        .join('');
 
     return `
         <div class="my-6 overflow-hidden rounded-lg border border-border/50">
@@ -115,41 +132,43 @@ renderer.table = function({ header, rows, align }) {
 };
 
 // Enhanced link
-renderer.link = function({ href, title, tokens }) {
+renderer.link = function ({ href, title, tokens }) {
     const text = this.parser.parseInline(tokens);
     const titleAttr = title ? ` title="${title}"` : '';
     return `<a href="${href}"${titleAttr} class="text-primary font-medium hover:underline underline-offset-4 transition-colors">${text}</a>`;
 };
 
 // Enhanced strong
-renderer.strong = function({ tokens }) {
+renderer.strong = function ({ tokens }) {
     const text = this.parser.parseInline(tokens);
     return `<strong class="font-semibold text-foreground">${text}</strong>`;
 };
 
 // Enhanced emphasis
-renderer.em = function({ tokens }) {
+renderer.em = function ({ tokens }) {
     const text = this.parser.parseInline(tokens);
     return `<em class="italic">${text}</em>`;
 };
 
 // Enhanced horizontal rule
-renderer.hr = function() {
+renderer.hr = function () {
     return `<hr class="my-8 border-none h-px bg-gradient-to-r from-transparent via-border to-transparent" />`;
 };
 
 // Enhanced list
-renderer.list = function({ ordered, start, items }) {
+renderer.list = function ({ ordered, start, items }) {
     const tag = ordered ? 'ol' : 'ul';
     const startAttr = ordered && start !== 1 ? ` start="${start}"` : '';
     const listClass = ordered
         ? 'list-decimal pl-6 my-4 space-y-2'
         : 'list-none pl-0 my-4 space-y-2';
 
-    const itemsHtml = items.map(item => {
-        const itemText = this.parser.parse(item.tokens);
-        return `<li class="text-[15px] leading-7 text-muted-foreground">${itemText}</li>`;
-    }).join('');
+    const itemsHtml = items
+        .map((item) => {
+            const itemText = this.parser.parse(item.tokens);
+            return `<li class="text-[15px] leading-7 text-muted-foreground">${itemText}</li>`;
+        })
+        .join('');
 
     return `<${tag}${startAttr} class="${listClass}">${itemsHtml}</${tag}>`;
 };
@@ -169,10 +188,7 @@ const renderedContent = computed(() => {
 
 <template>
     <div
-        :class="cn(
-            'markdown-content',
-            props.class,
-        )"
+        :class="cn('markdown-content', props.class)"
         v-html="renderedContent"
     />
 </template>
@@ -252,7 +268,9 @@ const renderedContent = computed(() => {
 .markdown-content img {
     border-radius: 0.5rem;
     margin: 1.5rem 0;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow:
+        0 4px 6px -1px rgb(0 0 0 / 0.1),
+        0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 /* Smooth scroll for anchor links */
@@ -275,7 +293,7 @@ const renderedContent = computed(() => {
 }
 
 /* Task list checkboxes */
-.markdown-content input[type="checkbox"] {
+.markdown-content input[type='checkbox'] {
     appearance: none;
     width: 1rem;
     height: 1rem;
@@ -287,12 +305,12 @@ const renderedContent = computed(() => {
     cursor: pointer;
 }
 
-.markdown-content input[type="checkbox"]:checked {
+.markdown-content input[type='checkbox']:checked {
     background-color: hsl(var(--primary));
     border-color: hsl(var(--primary));
 }
 
-.markdown-content input[type="checkbox"]:checked::after {
+.markdown-content input[type='checkbox']:checked::after {
     content: '';
     position: absolute;
     left: 3px;

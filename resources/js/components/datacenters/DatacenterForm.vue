@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
@@ -8,6 +6,8 @@ import FloorPlanUpload from '@/components/datacenters/FloorPlanUpload.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Form } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 interface DatacenterData {
     id?: number;
@@ -58,7 +58,10 @@ const props = withDefaults(defineProps<Props>(), {
 // Determine form action based on mode
 const formAction = computed(() => {
     if (props.mode === 'create') {
-        return { action: DatacenterController.store.url(), method: 'post' as const };
+        return {
+            action: DatacenterController.store.url(),
+            method: 'post' as const,
+        };
     }
     return {
         action: DatacenterController.update.url(props.datacenter.id!),
@@ -92,7 +95,12 @@ const handleFloorPlanRemove = () => {
         v-slot="{ errors, processing, recentlySuccessful }"
     >
         <!-- Hidden method field for PUT request in edit mode -->
-        <input v-if="mode === 'edit'" type="hidden" name="_method" value="PUT" />
+        <input
+            v-if="mode === 'edit'"
+            type="hidden"
+            name="_method"
+            value="PUT"
+        />
 
         <!-- Hidden field to indicate floor plan removal -->
         <input
@@ -111,7 +119,9 @@ const handleFloorPlanRemove = () => {
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-2 sm:col-span-2">
-                    <Label for="name">Name <span class="text-red-500">*</span></Label>
+                    <Label for="name"
+                        >Name <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="name"
                         name="name"
@@ -146,7 +156,10 @@ const handleFloorPlanRemove = () => {
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-2 sm:col-span-2">
-                    <Label for="address_line_1">Address Line 1 <span class="text-red-500">*</span></Label>
+                    <Label for="address_line_1"
+                        >Address Line 1
+                        <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="address_line_1"
                         name="address_line_1"
@@ -171,7 +184,9 @@ const handleFloorPlanRemove = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="city">City <span class="text-red-500">*</span></Label>
+                    <Label for="city"
+                        >City <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="city"
                         name="city"
@@ -184,7 +199,10 @@ const handleFloorPlanRemove = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="state_province">State/Province <span class="text-red-500">*</span></Label>
+                    <Label for="state_province"
+                        >State/Province
+                        <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="state_province"
                         name="state_province"
@@ -197,7 +215,9 @@ const handleFloorPlanRemove = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="postal_code">Postal Code <span class="text-red-500">*</span></Label>
+                    <Label for="postal_code"
+                        >Postal Code <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="postal_code"
                         name="postal_code"
@@ -210,7 +230,9 @@ const handleFloorPlanRemove = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="country">Country <span class="text-red-500">*</span></Label>
+                    <Label for="country"
+                        >Country <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="country"
                         name="country"
@@ -233,7 +255,9 @@ const handleFloorPlanRemove = () => {
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-2 sm:col-span-2">
-                    <Label for="primary_contact_name">Name <span class="text-red-500">*</span></Label>
+                    <Label for="primary_contact_name"
+                        >Name <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="primary_contact_name"
                         name="primary_contact_name"
@@ -246,7 +270,9 @@ const handleFloorPlanRemove = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="primary_contact_email">Email <span class="text-red-500">*</span></Label>
+                    <Label for="primary_contact_email"
+                        >Email <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="primary_contact_email"
                         name="primary_contact_email"
@@ -259,7 +285,9 @@ const handleFloorPlanRemove = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="primary_contact_phone">Phone <span class="text-red-500">*</span></Label>
+                    <Label for="primary_contact_phone"
+                        >Phone <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="primary_contact_phone"
                         name="primary_contact_phone"
@@ -299,7 +327,9 @@ const handleFloorPlanRemove = () => {
                         id="secondary_contact_email"
                         name="secondary_contact_email"
                         type="email"
-                        :default-value="datacenter.secondary_contact_email ?? ''"
+                        :default-value="
+                            datacenter.secondary_contact_email ?? ''
+                        "
                         placeholder="contact@example.com (optional)"
                     />
                     <InputError :message="errors.secondary_contact_email" />
@@ -311,7 +341,9 @@ const handleFloorPlanRemove = () => {
                         id="secondary_contact_phone"
                         name="secondary_contact_phone"
                         type="tel"
-                        :default-value="datacenter.secondary_contact_phone ?? ''"
+                        :default-value="
+                            datacenter.secondary_contact_phone ?? ''
+                        "
                         placeholder="+1-555-123-4567 (optional)"
                     />
                     <InputError :message="errors.secondary_contact_phone" />
@@ -338,7 +370,13 @@ const handleFloorPlanRemove = () => {
         <!-- Submit Button -->
         <div class="flex items-center gap-4">
             <Button :disabled="processing" type="submit">
-                {{ processing ? 'Saving...' : (mode === 'create' ? 'Create Datacenter' : 'Save Changes') }}
+                {{
+                    processing
+                        ? 'Saving...'
+                        : mode === 'create'
+                          ? 'Create Datacenter'
+                          : 'Save Changes'
+                }}
             </Button>
 
             <Transition
@@ -347,7 +385,10 @@ const handleFloorPlanRemove = () => {
                 leave-active-class="transition ease-in-out"
                 leave-to-class="opacity-0"
             >
-                <p v-show="recentlySuccessful" class="text-sm text-neutral-600 dark:text-neutral-400">
+                <p
+                    v-show="recentlySuccessful"
+                    class="text-sm text-neutral-600 dark:text-neutral-400"
+                >
                     Saved.
                 </p>
             </Transition>

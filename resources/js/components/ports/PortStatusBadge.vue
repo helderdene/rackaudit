@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import type { PortStatusValue } from '@/types/ports';
+import { computed } from 'vue';
 
 interface Props {
     status: PortStatusValue;

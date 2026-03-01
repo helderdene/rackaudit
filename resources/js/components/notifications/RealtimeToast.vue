@@ -1,21 +1,37 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
-import { X, RefreshCw, AlertTriangle, Database, Server, Network, FileCheck, ClipboardList, Activity } from 'lucide-vue-next';
+import type {
+    EntityType,
+    PendingUpdate,
+} from '@/composables/useRealtimeUpdates';
 import { cn } from '@/lib/utils';
-import type { EntityType, PendingUpdate } from '@/composables/useRealtimeUpdates';
+import { router } from '@inertiajs/vue3';
+import {
+    Activity,
+    AlertTriangle,
+    ClipboardList,
+    Database,
+    FileCheck,
+    Network,
+    RefreshCw,
+    Server,
+    X,
+} from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
-const props = withDefaults(defineProps<{
-    update: PendingUpdate;
-    isConflict?: boolean;
-    autoDismiss?: boolean;
-    autoDismissDelay?: number;
-}>(), {
-    isConflict: false,
-    autoDismiss: true,
-    autoDismissDelay: 10000,
-});
+const props = withDefaults(
+    defineProps<{
+        update: PendingUpdate;
+        isConflict?: boolean;
+        autoDismiss?: boolean;
+        autoDismissDelay?: number;
+    }>(),
+    {
+        isConflict: false,
+        autoDismiss: true,
+        autoDismissDelay: 10000,
+    },
+);
 
 const emit = defineEmits<{
     dismiss: [id: string];
@@ -173,12 +189,14 @@ onUnmounted(() => {
 
 <template>
     <div
-        :class="cn(
-            'pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5',
-            isConflict
-                ? 'bg-amber-50 dark:bg-amber-950/50 ring-amber-500/30'
-                : 'bg-white dark:bg-zinc-900 ring-zinc-200 dark:ring-zinc-800'
-        )"
+        :class="
+            cn(
+                'pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5',
+                isConflict
+                    ? 'bg-amber-50 ring-amber-500/30 dark:bg-amber-950/50'
+                    : 'bg-white ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800',
+            )
+        "
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
     >
@@ -186,12 +204,14 @@ onUnmounted(() => {
             <div class="flex items-start gap-3">
                 <!-- Icon -->
                 <div
-                    :class="cn(
-                        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
-                        isConflict
-                            ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400'
-                            : 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
-                    )"
+                    :class="
+                        cn(
+                            'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
+                            isConflict
+                                ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400'
+                                : 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400',
+                        )
+                    "
                 >
                     <AlertTriangle v-if="isConflict" class="size-4" />
                     <component v-else :is="entityIcon" class="size-4" />
@@ -202,23 +222,31 @@ onUnmounted(() => {
                     <!-- Header -->
                     <div class="flex items-center justify-between gap-2">
                         <p
-                            :class="cn(
-                                'text-sm font-medium',
-                                isConflict
-                                    ? 'text-amber-900 dark:text-amber-200'
-                                    : 'text-zinc-900 dark:text-zinc-100'
-                            )"
+                            :class="
+                                cn(
+                                    'text-sm font-medium',
+                                    isConflict
+                                        ? 'text-amber-900 dark:text-amber-200'
+                                        : 'text-zinc-900 dark:text-zinc-100',
+                                )
+                            "
                         >
-                            {{ isConflict ? 'Data Conflict Warning' : 'Data Updated' }}
+                            {{
+                                isConflict
+                                    ? 'Data Conflict Warning'
+                                    : 'Data Updated'
+                            }}
                         </p>
                         <p
                             v-if="formattedTime"
-                            :class="cn(
-                                'text-xs',
-                                isConflict
-                                    ? 'text-amber-600 dark:text-amber-400'
-                                    : 'text-zinc-500 dark:text-zinc-400'
-                            )"
+                            :class="
+                                cn(
+                                    'text-xs',
+                                    isConflict
+                                        ? 'text-amber-600 dark:text-amber-400'
+                                        : 'text-zinc-500 dark:text-zinc-400',
+                                )
+                            "
                         >
                             {{ formattedTime }}
                         </p>
@@ -226,12 +254,14 @@ onUnmounted(() => {
 
                     <!-- Message -->
                     <p
-                        :class="cn(
-                            'mt-1 text-sm',
-                            isConflict
-                                ? 'text-amber-800 dark:text-amber-300'
-                                : 'text-zinc-600 dark:text-zinc-400'
-                        )"
+                        :class="
+                            cn(
+                                'mt-1 text-sm',
+                                isConflict
+                                    ? 'text-amber-800 dark:text-amber-300'
+                                    : 'text-zinc-600 dark:text-zinc-400',
+                            )
+                        "
                     >
                         {{ displayMessage }}
                     </p>
@@ -262,12 +292,14 @@ onUnmounted(() => {
                 <!-- Close button -->
                 <button
                     type="button"
-                    :class="cn(
-                        'shrink-0 rounded-md p-1 transition-colors',
-                        isConflict
-                            ? 'text-amber-600 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-900/50'
-                            : 'text-zinc-400 hover:bg-zinc-100 dark:text-zinc-500 dark:hover:bg-zinc-800'
-                    )"
+                    :class="
+                        cn(
+                            'shrink-0 rounded-md p-1 transition-colors',
+                            isConflict
+                                ? 'text-amber-600 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-900/50'
+                                : 'text-zinc-400 hover:bg-zinc-100 dark:text-zinc-500 dark:hover:bg-zinc-800',
+                        )
+                    "
                     @click="handleDismiss"
                 >
                     <span class="sr-only">Dismiss</span>

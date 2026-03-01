@@ -1,33 +1,41 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { diagramPage } from '@/actions/App/Http/Controllers/ConnectionController';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
+import DeviceController from '@/actions/App/Http/Controllers/DeviceController';
+import RackController from '@/actions/App/Http/Controllers/RackController';
 import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import RowController from '@/actions/App/Http/Controllers/RowController';
-import RackController from '@/actions/App/Http/Controllers/RackController';
-import DeviceController from '@/actions/App/Http/Controllers/DeviceController';
-import { diagramPage } from '@/actions/App/Http/Controllers/ConnectionController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import QrCodeDialog from '@/components/common/QrCodeDialog.vue';
-import DeleteRackDialog from '@/components/racks/DeleteRackDialog.vue';
 import MiniElevationPreview from '@/components/elevation/MiniElevationPreview.vue';
+import DeleteRackDialog from '@/components/racks/DeleteRackDialog.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type {
     DatacenterReference,
+    PduData,
+    PlaceholderDevice,
+    PowerMetrics,
+    RackData,
+    RackDevice,
     RoomReference,
     RowReference,
-    RackData,
-    PduData,
-    RackDevice,
     UtilizationStats,
-    PowerMetrics,
-    PlaceholderDevice,
 } from '@/types/rooms';
-import { Server, Zap, QrCode, Cable, FileText, Settings, LayoutGrid } from 'lucide-vue-next';
+import { Head, Link } from '@inertiajs/vue3';
+import {
+    Cable,
+    FileText,
+    LayoutGrid,
+    QrCode,
+    Server,
+    Settings,
+    Zap,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -59,23 +67,42 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: 'Rows',
-        href: RowController.index.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RowController.index.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: props.row.name,
-        href: RowController.show.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RowController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
     {
         title: 'Racks',
-        href: RackController.index.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id }),
+        href: RackController.index.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
     },
     {
         title: props.rack.name,
-        href: RackController.show.url({ datacenter: props.datacenter.id, room: props.room.id, row: props.row.id, rack: props.rack.id }),
+        href: RackController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+            rack: props.rack.id,
+        }),
     },
 ];
 
@@ -90,7 +117,9 @@ const rackPath = computed(() => {
 });
 
 // Get connection diagram URL for this rack
-const connectionDiagramUrl = diagramPage.url({ query: { rack_id: props.rack.id } });
+const connectionDiagramUrl = diagramPage.url({
+    query: { rack_id: props.rack.id },
+});
 
 // Format date for display
 const formatDate = (dateString: string | null | undefined): string => {
@@ -121,7 +150,9 @@ const formatDateTime = (dateString: string | undefined): string => {
 };
 
 // Get status badge variant
-const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getStatusVariant = (
+    status: string | null,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'active':
             return 'default';
@@ -135,7 +166,9 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
 };
 
 // Get lifecycle status badge variant (for devices)
-const getLifecycleStatusVariant = (status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getLifecycleStatusVariant = (
+    status: string | null,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'deployed':
             return 'default';
@@ -208,7 +241,9 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     :title="rack.name"
                     :description="rack.u_height_label || 'Rack'"
@@ -232,10 +267,29 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                             Connection Diagram
                         </Button>
                     </Link>
-                    <Link :href="RackController.elevation.url({ datacenter: datacenter.id, room: room.id, row: row.id, rack: rack.id })">
+                    <Link
+                        :href="
+                            RackController.elevation.url({
+                                datacenter: datacenter.id,
+                                room: room.id,
+                                row: row.id,
+                                rack: rack.id,
+                            })
+                        "
+                    >
                         <Button variant="secondary">View Elevation</Button>
                     </Link>
-                    <Link v-if="canEdit" :href="RackController.edit.url({ datacenter: datacenter.id, room: room.id, row: row.id, rack: rack.id })">
+                    <Link
+                        v-if="canEdit"
+                        :href="
+                            RackController.edit.url({
+                                datacenter: datacenter.id,
+                                room: room.id,
+                                row: row.id,
+                                rack: rack.id,
+                            })
+                        "
+                    >
                         <Button variant="outline">Edit</Button>
                     </Link>
                     <DeleteRackDialog
@@ -265,57 +319,126 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                            <div
+                                class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+                            >
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Name</dt>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Name
+                                    </dt>
                                     <dd class="text-sm">{{ rack.name }}</dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Position</dt>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Position
+                                    </dt>
                                     <dd class="text-sm">{{ rack.position }}</dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">U-Height</dt>
-                                    <dd class="text-sm">{{ rack.u_height_label || '-' }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        U-Height
+                                    </dt>
+                                    <dd class="text-sm">
+                                        {{ rack.u_height_label || '-' }}
+                                    </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Status</dt>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Status
+                                    </dt>
                                     <dd>
-                                        <Badge :variant="getStatusVariant(rack.status)">
+                                        <Badge
+                                            :variant="
+                                                getStatusVariant(rack.status)
+                                            "
+                                        >
                                             {{ rack.status_label || 'Unknown' }}
                                         </Badge>
                                     </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Manufacturer</dt>
-                                    <dd class="text-sm">{{ rack.manufacturer || '-' }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Manufacturer
+                                    </dt>
+                                    <dd class="text-sm">
+                                        {{ rack.manufacturer || '-' }}
+                                    </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Model</dt>
-                                    <dd class="text-sm">{{ rack.model || '-' }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Model
+                                    </dt>
+                                    <dd class="text-sm">
+                                        {{ rack.model || '-' }}
+                                    </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Depth</dt>
-                                    <dd class="text-sm">{{ rack.depth || '-' }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Depth
+                                    </dt>
+                                    <dd class="text-sm">
+                                        {{ rack.depth || '-' }}
+                                    </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Serial Number</dt>
-                                    <dd class="text-sm">{{ rack.serial_number || '-' }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Serial Number
+                                    </dt>
+                                    <dd class="text-sm">
+                                        {{ rack.serial_number || '-' }}
+                                    </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Installation Date</dt>
-                                    <dd class="text-sm">{{ formatDate(rack.installation_date) }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Installation Date
+                                    </dt>
+                                    <dd class="text-sm">
+                                        {{ formatDate(rack.installation_date) }}
+                                    </dd>
                                 </div>
                                 <div class="grid gap-2">
-                                    <dt class="text-sm font-medium text-muted-foreground">Created</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDateTime(rack.created_at) }}</dd>
+                                    <dt
+                                        class="text-sm font-medium text-muted-foreground"
+                                    >
+                                        Created
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ formatDateTime(rack.created_at) }}
+                                    </dd>
                                 </div>
                             </div>
 
                             <!-- Location Notes (full width when present) -->
-                            <div v-if="rack.location_notes" class="mt-6 border-t pt-4">
-                                <dt class="text-sm font-medium text-muted-foreground">Location Notes</dt>
-                                <dd class="mt-1 whitespace-pre-wrap text-sm">{{ rack.location_notes }}</dd>
+                            <div
+                                v-if="rack.location_notes"
+                                class="mt-6 border-t pt-4"
+                            >
+                                <dt
+                                    class="text-sm font-medium text-muted-foreground"
+                                >
+                                    Location Notes
+                                </dt>
+                                <dd class="mt-1 text-sm whitespace-pre-wrap">
+                                    {{ rack.location_notes }}
+                                </dd>
                             </div>
                         </CardContent>
                     </Card>
@@ -332,52 +455,128 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                             <div class="grid gap-6 sm:grid-cols-2">
                                 <!-- U-Space Utilization -->
                                 <div class="space-y-3">
-                                    <div class="flex items-baseline justify-between">
-                                        <span class="text-sm font-medium text-muted-foreground">U-Space Utilization</span>
-                                        <span :class="['text-lg font-semibold', getUtilizationColorClass(utilization.utilizationPercent)]">
-                                            {{ utilization.utilizationPercent }}%
+                                    <div
+                                        class="flex items-baseline justify-between"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-muted-foreground"
+                                            >U-Space Utilization</span
+                                        >
+                                        <span
+                                            :class="[
+                                                'text-lg font-semibold',
+                                                getUtilizationColorClass(
+                                                    utilization.utilizationPercent,
+                                                ),
+                                            ]"
+                                        >
+                                            {{
+                                                utilization.utilizationPercent
+                                            }}%
                                         </span>
                                     </div>
-                                    <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
+                                    <div
+                                        class="h-2 w-full overflow-hidden rounded-full bg-muted"
+                                    >
                                         <div
-                                            :class="['h-full transition-all duration-300', getUtilizationBarClass(utilization.utilizationPercent)]"
-                                            :style="{ width: `${Math.min(utilization.utilizationPercent, 100)}%` }"
+                                            :class="[
+                                                'h-full transition-all duration-300',
+                                                getUtilizationBarClass(
+                                                    utilization.utilizationPercent,
+                                                ),
+                                            ]"
+                                            :style="{
+                                                width: `${Math.min(utilization.utilizationPercent, 100)}%`,
+                                            }"
                                         />
                                     </div>
                                     <p class="text-sm text-muted-foreground">
-                                        <span class="font-medium">{{ utilization.usedU }}</span> of
-                                        <span class="font-medium">{{ utilization.totalU }}</span> U-spaces occupied
-                                        <span class="text-xs">({{ utilization.availableU }} available)</span>
+                                        <span class="font-medium">{{
+                                            utilization.usedU
+                                        }}</span>
+                                        of
+                                        <span class="font-medium">{{
+                                            utilization.totalU
+                                        }}</span>
+                                        U-spaces occupied
+                                        <span class="text-xs"
+                                            >({{
+                                                utilization.availableU
+                                            }}
+                                            available)</span
+                                        >
                                     </p>
                                 </div>
 
                                 <!-- Power Utilization -->
                                 <div class="space-y-3">
-                                    <div class="flex items-baseline justify-between">
-                                        <span class="text-sm font-medium text-muted-foreground">Power Utilization</span>
+                                    <div
+                                        class="flex items-baseline justify-between"
+                                    >
+                                        <span
+                                            class="text-sm font-medium text-muted-foreground"
+                                            >Power Utilization</span
+                                        >
                                         <span
                                             v-if="powerMetrics.pduCapacity > 0"
-                                            :class="['text-lg font-semibold', getPowerColorClass(powerMetrics.powerUtilizationPercent)]"
+                                            :class="[
+                                                'text-lg font-semibold',
+                                                getPowerColorClass(
+                                                    powerMetrics.powerUtilizationPercent,
+                                                ),
+                                            ]"
                                         >
-                                            {{ powerMetrics.powerUtilizationPercent }}%
+                                            {{
+                                                powerMetrics.powerUtilizationPercent
+                                            }}%
                                         </span>
-                                        <span v-else class="text-sm text-muted-foreground">N/A</span>
+                                        <span
+                                            v-else
+                                            class="text-sm text-muted-foreground"
+                                            >N/A</span
+                                        >
                                     </div>
-                                    <div v-if="powerMetrics.pduCapacity > 0" class="h-2 w-full overflow-hidden rounded-full bg-muted">
+                                    <div
+                                        v-if="powerMetrics.pduCapacity > 0"
+                                        class="h-2 w-full overflow-hidden rounded-full bg-muted"
+                                    >
                                         <div
                                             :class="[
                                                 'h-full transition-all duration-300',
-                                                powerMetrics.powerUtilizationPercent >= 80 ? 'bg-amber-500' : 'bg-green-500'
+                                                powerMetrics.powerUtilizationPercent >=
+                                                80
+                                                    ? 'bg-amber-500'
+                                                    : 'bg-green-500',
                                             ]"
-                                            :style="{ width: `${Math.min(powerMetrics.powerUtilizationPercent, 100)}%` }"
+                                            :style="{
+                                                width: `${Math.min(powerMetrics.powerUtilizationPercent, 100)}%`,
+                                            }"
                                         />
                                     </div>
-                                    <p v-if="powerMetrics.pduCapacity > 0" class="flex items-center gap-1 text-sm text-muted-foreground">
+                                    <p
+                                        v-if="powerMetrics.pduCapacity > 0"
+                                        class="flex items-center gap-1 text-sm text-muted-foreground"
+                                    >
                                         <Zap class="size-3.5" />
-                                        <span class="font-medium">{{ powerMetrics.totalPowerDraw.toLocaleString() }} W</span> of
-                                        <span class="font-medium">{{ powerMetrics.pduCapacity.toLocaleString() }} W</span> capacity
+                                        <span class="font-medium"
+                                            >{{
+                                                powerMetrics.totalPowerDraw.toLocaleString()
+                                            }}
+                                            W</span
+                                        >
+                                        of
+                                        <span class="font-medium"
+                                            >{{
+                                                powerMetrics.pduCapacity.toLocaleString()
+                                            }}
+                                            W</span
+                                        >
+                                        capacity
                                     </p>
-                                    <p v-else class="text-sm text-muted-foreground">
+                                    <p
+                                        v-else
+                                        class="text-sm text-muted-foreground"
+                                    >
                                         No PDUs assigned to this rack
                                     </p>
                                 </div>
@@ -394,29 +593,47 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div v-if="hasSpecs" class="overflow-hidden rounded-md border">
+                            <div
+                                v-if="hasSpecs"
+                                class="overflow-hidden rounded-md border"
+                            >
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-sm">
                                         <thead class="border-b bg-muted/50">
                                             <tr>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Key</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Value</th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Key
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Value
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr
-                                                v-for="(value, key) in rack.specs"
+                                                v-for="(
+                                                    value, key
+                                                ) in rack.specs"
                                                 :key="key"
                                                 class="border-b transition-colors hover:bg-muted/50"
                                             >
-                                                <td class="p-4 font-medium">{{ key }}</td>
+                                                <td class="p-4 font-medium">
+                                                    {{ key }}
+                                                </td>
                                                 <td class="p-4">{{ value }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div v-else class="py-4 text-center text-muted-foreground">
+                            <div
+                                v-else
+                                class="py-4 text-center text-muted-foreground"
+                            >
                                 No specifications recorded for this rack.
                             </div>
                         </CardContent>
@@ -431,15 +648,34 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div v-if="devices.length > 0" class="overflow-hidden rounded-md border">
+                            <div
+                                v-if="devices.length > 0"
+                                class="overflow-hidden rounded-md border"
+                            >
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-sm">
                                         <thead class="border-b bg-muted/50">
                                             <tr>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Type</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">U Position</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Status</th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Name
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Type
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    U Position
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Status
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -450,17 +686,34 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                                             >
                                                 <td class="p-4 font-medium">
                                                     <Link
-                                                        :href="DeviceController.show.url(device.id)"
+                                                        :href="
+                                                            DeviceController.show.url(
+                                                                device.id,
+                                                            )
+                                                        "
                                                         class="text-primary hover:underline"
                                                     >
                                                         {{ device.name }}
                                                     </Link>
                                                 </td>
-                                                <td class="p-4">{{ device.type }}</td>
-                                                <td class="p-4 font-mono">U{{ device.start_u }}</td>
                                                 <td class="p-4">
-                                                    <Badge :variant="getLifecycleStatusVariant(device.lifecycle_status)">
-                                                        {{ device.lifecycle_status_label || 'Unknown' }}
+                                                    {{ device.type }}
+                                                </td>
+                                                <td class="p-4 font-mono">
+                                                    U{{ device.start_u }}
+                                                </td>
+                                                <td class="p-4">
+                                                    <Badge
+                                                        :variant="
+                                                            getLifecycleStatusVariant(
+                                                                device.lifecycle_status,
+                                                            )
+                                                        "
+                                                    >
+                                                        {{
+                                                            device.lifecycle_status_label ||
+                                                            'Unknown'
+                                                        }}
                                                     </Badge>
                                                 </td>
                                             </tr>
@@ -468,7 +721,10 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                                     </table>
                                 </div>
                             </div>
-                            <div v-else class="py-8 text-center text-muted-foreground">
+                            <div
+                                v-else
+                                class="py-8 text-center text-muted-foreground"
+                            >
                                 No devices installed in this rack.
                             </div>
                         </CardContent>
@@ -483,15 +739,34 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div v-if="pdus.length > 0" class="overflow-hidden rounded-md border">
+                            <div
+                                v-if="pdus.length > 0"
+                                class="overflow-hidden rounded-md border"
+                            >
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-sm">
                                         <thead class="border-b bg-muted/50">
                                             <tr>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Model</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Capacity</th>
-                                                <th class="h-10 px-4 text-left font-medium text-muted-foreground">Status</th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Name
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Model
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Capacity
+                                                </th>
+                                                <th
+                                                    class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                                >
+                                                    Status
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -500,14 +775,31 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                                                 :key="pdu.id"
                                                 class="border-b transition-colors hover:bg-muted/50"
                                             >
-                                                <td class="p-4 font-medium">{{ pdu.name }}</td>
-                                                <td class="p-4">{{ pdu.model || '-' }}</td>
-                                                <td class="p-4">
-                                                    {{ pdu.total_capacity_kw ? `${pdu.total_capacity_kw} kW` : '-' }}
+                                                <td class="p-4 font-medium">
+                                                    {{ pdu.name }}
                                                 </td>
                                                 <td class="p-4">
-                                                    <Badge :variant="getStatusVariant(pdu.status)">
-                                                        {{ pdu.status_label || 'Unknown' }}
+                                                    {{ pdu.model || '-' }}
+                                                </td>
+                                                <td class="p-4">
+                                                    {{
+                                                        pdu.total_capacity_kw
+                                                            ? `${pdu.total_capacity_kw} kW`
+                                                            : '-'
+                                                    }}
+                                                </td>
+                                                <td class="p-4">
+                                                    <Badge
+                                                        :variant="
+                                                            getStatusVariant(
+                                                                pdu.status,
+                                                            )
+                                                        "
+                                                    >
+                                                        {{
+                                                            pdu.status_label ||
+                                                            'Unknown'
+                                                        }}
                                                     </Badge>
                                                 </td>
                                             </tr>
@@ -515,7 +807,10 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
                                     </table>
                                 </div>
                             </div>
-                            <div v-else class="py-8 text-center text-muted-foreground">
+                            <div
+                                v-else
+                                class="py-8 text-center text-muted-foreground"
+                            >
                                 No PDUs assigned to this rack.
                             </div>
                         </CardContent>
@@ -546,7 +841,15 @@ const elevationDevices = computed<PlaceholderDevice[]>(() => {
 
             <!-- Back to Row -->
             <div>
-                <Link :href="RowController.show.url({ datacenter: datacenter.id, room: room.id, row: row.id })">
+                <Link
+                    :href="
+                        RowController.show.url({
+                            datacenter: datacenter.id,
+                            room: room.id,
+                            row: row.id,
+                        })
+                    "
+                >
                     <Button variant="outline">Back to Row</Button>
                 </Link>
             </div>

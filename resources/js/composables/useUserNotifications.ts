@@ -1,6 +1,6 @@
-import { onUnmounted, ref, shallowRef } from 'vue';
 import type Echo from 'laravel-echo';
 import type { Channel } from 'laravel-echo';
+import { onUnmounted, ref, shallowRef } from 'vue';
 
 /**
  * Notification payload received from the broadcast event.
@@ -22,7 +22,9 @@ export interface BroadcastNotification {
 /**
  * Callback type for notification handlers.
  */
-export type NotificationCallback = (notification: BroadcastNotification) => void;
+export type NotificationCallback = (
+    notification: BroadcastNotification,
+) => void;
 
 /**
  * Composable for subscribing to user-specific notification channel via Laravel Echo.
@@ -65,7 +67,9 @@ export function useUserNotifications(userId: number | null) {
 
         const echo = getEcho();
         if (!echo) {
-            console.warn('Laravel Echo is not available. Real-time notifications will not work.');
+            console.warn(
+                'Laravel Echo is not available. Real-time notifications will not work.',
+            );
             return;
         }
 
@@ -74,11 +78,20 @@ export function useUserNotifications(userId: number | null) {
             isConnected.value = true;
 
             // Listen for notification.created events
-            channel.value.listen('.notification.created', (data: { notification: BroadcastNotification; timestamp: string }) => {
-                handleNotification(data.notification);
-            });
+            channel.value.listen(
+                '.notification.created',
+                (data: {
+                    notification: BroadcastNotification;
+                    timestamp: string;
+                }) => {
+                    handleNotification(data.notification);
+                },
+            );
         } catch (error) {
-            console.error('Failed to subscribe to user notification channel:', error);
+            console.error(
+                'Failed to subscribe to user notification channel:',
+                error,
+            );
             isConnected.value = false;
         }
     }

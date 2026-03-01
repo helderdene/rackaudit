@@ -7,21 +7,19 @@
  * manufacturer, model, device type, lifecycle status, location, and warranty.
  */
 
-import { ref, computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
 import {
-    ChevronUp,
     ChevronDown,
-    ChevronsUpDown,
-    ExternalLink,
-    Package,
     ChevronLeft,
     ChevronRight,
+    ChevronsUpDown,
+    ChevronUp,
+    Package,
 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Device {
     id: number;
@@ -65,7 +63,14 @@ const emit = defineEmits<{
     (e: 'sort', column: string, direction: 'asc' | 'desc'): void;
 }>();
 
-type SortKey = 'asset_tag' | 'name' | 'manufacturer' | 'device_type' | 'lifecycle_status' | 'location' | 'warranty_end_date';
+type SortKey =
+    | 'asset_tag'
+    | 'name'
+    | 'manufacturer'
+    | 'device_type'
+    | 'lifecycle_status'
+    | 'location'
+    | 'warranty_end_date';
 type SortDirection = 'asc' | 'desc';
 
 // Sort state
@@ -81,19 +86,27 @@ const sortedDevices = computed(() => {
 
         switch (sortKey.value) {
             case 'asset_tag':
-                comparison = (a.asset_tag || '').localeCompare(b.asset_tag || '');
+                comparison = (a.asset_tag || '').localeCompare(
+                    b.asset_tag || '',
+                );
                 break;
             case 'name':
                 comparison = (a.name || '').localeCompare(b.name || '');
                 break;
             case 'manufacturer':
-                comparison = (a.manufacturer || '').localeCompare(b.manufacturer || '');
+                comparison = (a.manufacturer || '').localeCompare(
+                    b.manufacturer || '',
+                );
                 break;
             case 'device_type':
-                comparison = (a.device_type?.name || '').localeCompare(b.device_type?.name || '');
+                comparison = (a.device_type?.name || '').localeCompare(
+                    b.device_type?.name || '',
+                );
                 break;
             case 'lifecycle_status':
-                comparison = (a.lifecycle_status_label || '').localeCompare(b.lifecycle_status_label || '');
+                comparison = (a.lifecycle_status_label || '').localeCompare(
+                    b.lifecycle_status_label || '',
+                );
                 break;
             case 'location':
                 const locA = getLocationString(a);
@@ -160,14 +173,18 @@ const formatWarrantyDate = (dateStr: string | null): string => {
 };
 
 // Get warranty status badge variant
-const getWarrantyBadgeVariant = (dateStr: string | null): 'success' | 'warning' | 'destructive' | 'secondary' => {
+const getWarrantyBadgeVariant = (
+    dateStr: string | null,
+): 'success' | 'warning' | 'destructive' | 'secondary' => {
     if (!dateStr) return 'secondary';
 
     const date = new Date(dateStr);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const daysUntilExpiry = Math.ceil((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+        (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
     if (daysUntilExpiry < 0) return 'destructive';
     if (daysUntilExpiry <= 30) return 'warning';
@@ -175,7 +192,16 @@ const getWarrantyBadgeVariant = (dateStr: string | null): 'success' | 'warning' 
 };
 
 // Get lifecycle status badge variant
-const getLifecycleBadgeVariant = (status: string): 'default' | 'secondary' | 'outline' | 'destructive' | 'success' | 'warning' | 'info' => {
+const getLifecycleBadgeVariant = (
+    status: string,
+):
+    | 'default'
+    | 'secondary'
+    | 'outline'
+    | 'destructive'
+    | 'success'
+    | 'warning'
+    | 'info' => {
     switch (status) {
         case 'deployed':
             return 'success';
@@ -206,7 +232,11 @@ const paginationRange = computed(() => {
     const range: (number | string)[] = [];
     const rangeWithDots: (number | string)[] = [];
 
-    for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
+    for (
+        let i = Math.max(2, current - delta);
+        i <= Math.min(last - 1, current + delta);
+        i++
+    ) {
         range.push(i);
     }
 
@@ -231,8 +261,12 @@ const paginationRange = computed(() => {
 
 // Calculate displayed range
 const displayedRange = computed(() => {
-    const start = (props.pagination.current_page - 1) * props.pagination.per_page + 1;
-    const end = Math.min(start + props.pagination.per_page - 1, props.pagination.total);
+    const start =
+        (props.pagination.current_page - 1) * props.pagination.per_page + 1;
+    const end = Math.min(
+        start + props.pagination.per_page - 1,
+        props.pagination.total,
+    );
     return { start, end };
 });
 </script>
@@ -263,7 +297,9 @@ const displayedRange = computed(() => {
             <template v-else>
                 <!-- Empty state -->
                 <div v-if="devices.length === 0" class="py-12 text-center">
-                    <Package class="mx-auto mb-4 size-12 text-muted-foreground/50" />
+                    <Package
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                    />
                     <h3 class="text-lg font-medium">No devices found</h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         No devices match the current filter criteria.
@@ -281,7 +317,10 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Asset Tag
-                                        <component :is="getSortIcon('asset_tag')" class="size-4" />
+                                        <component
+                                            :is="getSortIcon('asset_tag')"
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
                                 <th
@@ -290,10 +329,15 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Name
-                                        <component :is="getSortIcon('name')" class="size-4" />
+                                        <component
+                                            :is="getSortIcon('name')"
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
-                                <th class="h-10 px-3 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-10 px-3 text-left font-medium text-muted-foreground"
+                                >
                                     Serial Number
                                 </th>
                                 <th
@@ -302,10 +346,15 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Manufacturer
-                                        <component :is="getSortIcon('manufacturer')" class="size-4" />
+                                        <component
+                                            :is="getSortIcon('manufacturer')"
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
-                                <th class="h-10 px-3 text-left font-medium text-muted-foreground">
+                                <th
+                                    class="h-10 px-3 text-left font-medium text-muted-foreground"
+                                >
                                     Model
                                 </th>
                                 <th
@@ -314,7 +363,10 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Device Type
-                                        <component :is="getSortIcon('device_type')" class="size-4" />
+                                        <component
+                                            :is="getSortIcon('device_type')"
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
                                 <th
@@ -323,7 +375,12 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Status
-                                        <component :is="getSortIcon('lifecycle_status')" class="size-4" />
+                                        <component
+                                            :is="
+                                                getSortIcon('lifecycle_status')
+                                            "
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
                                 <th
@@ -332,7 +389,10 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Location
-                                        <component :is="getSortIcon('location')" class="size-4" />
+                                        <component
+                                            :is="getSortIcon('location')"
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
                                 <th
@@ -341,7 +401,12 @@ const displayedRange = computed(() => {
                                 >
                                     <div class="flex items-center gap-1">
                                         Warranty
-                                        <component :is="getSortIcon('warranty_end_date')" class="size-4" />
+                                        <component
+                                            :is="
+                                                getSortIcon('warranty_end_date')
+                                            "
+                                            class="size-4"
+                                        />
                                     </div>
                                 </th>
                             </tr>
@@ -360,7 +425,9 @@ const displayedRange = computed(() => {
                                 <td class="p-3 font-medium">
                                     {{ device.name }}
                                 </td>
-                                <td class="p-3 font-mono text-xs text-muted-foreground">
+                                <td
+                                    class="p-3 font-mono text-xs text-muted-foreground"
+                                >
                                     {{ device.serial_number || '-' }}
                                 </td>
                                 <td class="p-3">
@@ -373,19 +440,39 @@ const displayedRange = computed(() => {
                                     <span v-if="device.device_type">
                                         {{ device.device_type.name }}
                                     </span>
-                                    <span v-else class="text-muted-foreground">-</span>
+                                    <span v-else class="text-muted-foreground"
+                                        >-</span
+                                    >
                                 </td>
                                 <td class="p-3">
-                                    <Badge :variant="getLifecycleBadgeVariant(device.lifecycle_status)">
+                                    <Badge
+                                        :variant="
+                                            getLifecycleBadgeVariant(
+                                                device.lifecycle_status,
+                                            )
+                                        "
+                                    >
                                         {{ device.lifecycle_status_label }}
                                     </Badge>
                                 </td>
-                                <td class="max-w-[200px] truncate p-3 text-muted-foreground">
+                                <td
+                                    class="max-w-[200px] truncate p-3 text-muted-foreground"
+                                >
                                     {{ getLocationString(device) }}
                                 </td>
                                 <td class="p-3">
-                                    <Badge :variant="getWarrantyBadgeVariant(device.warranty_end_date)">
-                                        {{ formatWarrantyDate(device.warranty_end_date) }}
+                                    <Badge
+                                        :variant="
+                                            getWarrantyBadgeVariant(
+                                                device.warranty_end_date,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            formatWarrantyDate(
+                                                device.warranty_end_date,
+                                            )
+                                        }}
                                     </Badge>
                                 </td>
                             </tr>
@@ -399,7 +486,9 @@ const displayedRange = computed(() => {
                     class="mt-4 flex items-center justify-between border-t pt-4"
                 >
                     <div class="text-sm text-muted-foreground">
-                        Showing {{ displayedRange.start }} to {{ displayedRange.end }} of {{ pagination.total }} results
+                        Showing {{ displayedRange.start }} to
+                        {{ displayedRange.end }} of
+                        {{ pagination.total }} results
                     </div>
 
                     <div class="flex items-center gap-1">
@@ -413,7 +502,10 @@ const displayedRange = computed(() => {
                             <ChevronLeft class="size-4" />
                         </Button>
 
-                        <template v-for="(page, index) in paginationRange" :key="index">
+                        <template
+                            v-for="(page, index) in paginationRange"
+                            :key="index"
+                        >
                             <span
                                 v-if="page === '...'"
                                 class="px-2 text-muted-foreground"
@@ -425,7 +517,10 @@ const displayedRange = computed(() => {
                                 variant="outline"
                                 size="sm"
                                 class="size-8"
-                                :class="{ 'bg-primary text-primary-foreground': page === pagination.current_page }"
+                                :class="{
+                                    'bg-primary text-primary-foreground':
+                                        page === pagination.current_page,
+                                }"
                                 @click="goToPage(page as number)"
                             >
                                 {{ page }}
@@ -436,7 +531,9 @@ const displayedRange = computed(() => {
                             variant="outline"
                             size="icon"
                             class="size-8"
-                            :disabled="pagination.current_page === pagination.last_page"
+                            :disabled="
+                                pagination.current_page === pagination.last_page
+                            "
                             @click="goToPage(pagination.current_page + 1)"
                         >
                             <ChevronRight class="size-4" />

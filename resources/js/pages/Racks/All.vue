@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { show } from '@/actions/App/Http/Controllers/RackController';
-import { show as showDatacenter } from '@/actions/App/Http/Controllers/DatacenterController';
 import { create as createExport } from '@/actions/App/Http/Controllers/BulkExportController';
+import { show as showDatacenter } from '@/actions/App/Http/Controllers/DatacenterController';
+import { show } from '@/actions/App/Http/Controllers/RackController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { usePermissions } from '@/composables/usePermissions';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { debounce } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import type { SelectOption } from '@/types/rooms';
-import { debounce } from '@/lib/utils';
-import { usePermissions } from '@/composables/usePermissions';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Download } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface RackLocation {
     datacenter_id: number;
@@ -75,13 +75,17 @@ const statusFilter = ref(props.filters.status);
 
 // Debounced search function
 const debouncedSearch = debounce(() => {
-    router.get('/racks', {
-        search: searchQuery.value || undefined,
-        status: statusFilter.value || undefined,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        '/racks',
+        {
+            search: searchQuery.value || undefined,
+            status: statusFilter.value || undefined,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 }, 300);
 
 // Watch for filter changes
@@ -90,27 +94,37 @@ watch(searchQuery, () => {
 });
 
 watch(statusFilter, () => {
-    router.get('/racks', {
-        search: searchQuery.value || undefined,
-        status: statusFilter.value || undefined,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        '/racks',
+        {
+            search: searchQuery.value || undefined,
+            status: statusFilter.value || undefined,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 });
 
 // Clear all filters
 const clearFilters = () => {
     searchQuery.value = '';
     statusFilter.value = '';
-    router.get('/racks', {}, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        '/racks',
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 // Get status badge variant
-const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getStatusVariant = (
+    status: string | null,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'active':
             return 'default';
@@ -133,7 +147,9 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Rack Management"
                     description="View and manage all racks across datacenters."
@@ -161,7 +177,7 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
                 <div class="flex items-center gap-2">
                     <select
                         v-model="statusFilter"
-                        class="flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        class="flex h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                     >
                         <option value="">All Statuses</option>
                         <option
@@ -189,13 +205,41 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Location</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">U-Height</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Devices</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">PDUs</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Status</th>
-                                <th class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Location
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    U-Height
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Devices
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    PDUs
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -207,12 +251,15 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
                                 <td class="p-4 font-medium">
                                     <Link
                                         v-if="rack.location"
-                                        :href="show.url({
-                                            datacenter: rack.location.datacenter_id,
-                                            room: rack.location.room_id,
-                                            row: rack.location.row_id,
-                                            rack: rack.id
-                                        })"
+                                        :href="
+                                            show.url({
+                                                datacenter:
+                                                    rack.location.datacenter_id,
+                                                room: rack.location.room_id,
+                                                row: rack.location.row_id,
+                                                rack: rack.id,
+                                            })
+                                        "
                                         class="hover:underline"
                                     >
                                         {{ rack.name }}
@@ -222,23 +269,39 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
                                 <td class="p-4 text-muted-foreground">
                                     <template v-if="rack.location">
                                         <Link
-                                            :href="showDatacenter.url(rack.location.datacenter_id)"
+                                            :href="
+                                                showDatacenter.url(
+                                                    rack.location.datacenter_id,
+                                                )
+                                            "
                                             class="hover:underline"
                                         >
                                             {{ rack.location.datacenter_name }}
                                         </Link>
                                         <span class="mx-1">/</span>
-                                        <span>{{ rack.location.room_name }}</span>
+                                        <span>{{
+                                            rack.location.room_name
+                                        }}</span>
                                         <span class="mx-1">/</span>
-                                        <span>{{ rack.location.row_name }}</span>
+                                        <span>{{
+                                            rack.location.row_name
+                                        }}</span>
                                     </template>
                                     <span v-else class="italic">Unknown</span>
                                 </td>
-                                <td class="p-4">{{ rack.u_height_label || '-' }}</td>
-                                <td class="p-4 text-muted-foreground">{{ rack.device_count }}</td>
-                                <td class="p-4 text-muted-foreground">{{ rack.pdu_count }}</td>
                                 <td class="p-4">
-                                    <Badge :variant="getStatusVariant(rack.status)">
+                                    {{ rack.u_height_label || '-' }}
+                                </td>
+                                <td class="p-4 text-muted-foreground">
+                                    {{ rack.device_count }}
+                                </td>
+                                <td class="p-4 text-muted-foreground">
+                                    {{ rack.pdu_count }}
+                                </td>
+                                <td class="p-4">
+                                    <Badge
+                                        :variant="getStatusVariant(rack.status)"
+                                    >
                                         {{ rack.status_label || 'Unknown' }}
                                     </Badge>
                                 </td>
@@ -246,20 +309,29 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
                                     <div class="flex items-center gap-2">
                                         <Link
                                             v-if="rack.location"
-                                            :href="show.url({
-                                                datacenter: rack.location.datacenter_id,
-                                                room: rack.location.room_id,
-                                                row: rack.location.row_id,
-                                                rack: rack.id
-                                            })"
+                                            :href="
+                                                show.url({
+                                                    datacenter:
+                                                        rack.location
+                                                            .datacenter_id,
+                                                    room: rack.location.room_id,
+                                                    row: rack.location.row_id,
+                                                    rack: rack.id,
+                                                })
+                                            "
                                         >
-                                            <Button variant="outline" size="sm">View</Button>
+                                            <Button variant="outline" size="sm"
+                                                >View</Button
+                                            >
                                         </Link>
                                     </div>
                                 </td>
                             </tr>
                             <tr v-if="racks.data.length === 0">
-                                <td colspan="7" class="p-8 text-center text-muted-foreground">
+                                <td
+                                    colspan="7"
+                                    class="p-8 text-center text-muted-foreground"
+                                >
                                     No racks found.
                                 </td>
                             </tr>
@@ -269,11 +341,20 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
             </div>
 
             <!-- Pagination -->
-            <div v-if="racks.last_page > 1" class="flex items-center justify-between">
+            <div
+                v-if="racks.last_page > 1"
+                class="flex items-center justify-between"
+            >
                 <p class="text-sm text-muted-foreground">
-                    Showing {{ (racks.current_page - 1) * racks.per_page + 1 }} to
-                    {{ Math.min(racks.current_page * racks.per_page, racks.total) }} of
-                    {{ racks.total }} racks
+                    Showing
+                    {{ (racks.current_page - 1) * racks.per_page + 1 }} to
+                    {{
+                        Math.min(
+                            racks.current_page * racks.per_page,
+                            racks.total,
+                        )
+                    }}
+                    of {{ racks.total }} racks
                 </p>
                 <div class="flex gap-1">
                     <template v-for="link in racks.links" :key="link.label">
@@ -287,16 +368,12 @@ const exportUrl = createExport.url({ query: { entity_type: 'rack' } });
                                 variant="outline"
                                 size="sm"
                                 :class="{ 'bg-muted': link.active }"
-                                v-html="link.label"
-                            />
+                                ><span v-html="link.label"
+                            /></Button>
                         </Link>
-                        <Button
-                            v-else
-                            variant="outline"
-                            size="sm"
-                            disabled
-                            v-html="link.label"
-                        />
+                        <Button v-else variant="outline" size="sm" disabled
+                            ><span v-html="link.label"
+                        /></Button>
                     </template>
                 </div>
             </div>

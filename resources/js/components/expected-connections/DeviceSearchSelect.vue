@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue';
+import { index as devicesIndex } from '@/actions/App/Http/Controllers/DeviceController';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { Button } from '@/components/ui/button';
-import { Search, X } from 'lucide-vue-next';
 import axios from 'axios';
-import { index as devicesIndex } from '@/actions/App/Http/Controllers/DeviceController';
+import { Search, X } from 'lucide-vue-next';
+import { computed, onMounted, ref, watch } from 'vue';
 
 interface DeviceOption {
     id: number;
@@ -79,11 +79,17 @@ async function fetchDevices(query: string = ''): Promise<void> {
             deviceData = response.data;
         }
 
-        devices.value = deviceData.map((device: { id: number; name: string; asset_tag?: string | null }) => ({
-            id: device.id,
-            name: device.name,
-            asset_tag: device.asset_tag ?? null,
-        }));
+        devices.value = deviceData.map(
+            (device: {
+                id: number;
+                name: string;
+                asset_tag?: string | null;
+            }) => ({
+                id: device.id,
+                name: device.name,
+                asset_tag: device.asset_tag ?? null,
+            }),
+        );
     } catch (error) {
         console.error('Error fetching devices:', error);
         devices.value = [];
@@ -101,7 +107,10 @@ function handleSearch(event: Event): void {
     showDropdown.value = true;
 
     // Clear selection if user is typing
-    if (selectedDevice.value && searchQuery.value !== selectedDevice.value.name) {
+    if (
+        selectedDevice.value &&
+        searchQuery.value !== selectedDevice.value.name
+    ) {
         selectedDevice.value = null;
         emit('update:modelValue', null);
     }
@@ -169,7 +178,10 @@ async function loadInitialDevice(): Promise<void> {
                 },
             });
 
-            const device = response.data?.props?.device || response.data?.data || response.data;
+            const device =
+                response.data?.props?.device ||
+                response.data?.data ||
+                response.data;
             if (device) {
                 selectedDevice.value = {
                     id: device.id,
@@ -189,14 +201,17 @@ async function loadInitialDevice(): Promise<void> {
 }
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newValue) => {
-    if (newValue === null) {
-        selectedDevice.value = null;
-        searchQuery.value = '';
-    } else if (newValue !== selectedDevice.value?.id) {
-        loadInitialDevice();
-    }
-});
+watch(
+    () => props.modelValue,
+    (newValue) => {
+        if (newValue === null) {
+            selectedDevice.value = null;
+            searchQuery.value = '';
+        } else if (newValue !== selectedDevice.value?.id) {
+            loadInitialDevice();
+        }
+    },
+);
 
 // Load initial device on mount
 onMounted(() => {
@@ -207,12 +222,14 @@ onMounted(() => {
 <template>
     <div class="relative w-full">
         <div class="relative">
-            <Search class="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search
+                class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground"
+            />
             <Input
                 ref="inputRef"
                 :value="displayText"
                 :placeholder="placeholder"
-                class="h-8 pl-7 pr-8 text-xs"
+                class="h-8 pr-8 pl-7 text-xs"
                 @input="handleSearch"
                 @focus="handleFocus"
                 @blur="handleBlur"
@@ -222,7 +239,7 @@ onMounted(() => {
                 type="button"
                 variant="ghost"
                 size="icon"
-                class="absolute right-0 top-0 h-8 w-8"
+                class="absolute top-0 right-0 h-8 w-8"
                 @click="clearSelection"
             >
                 <X class="size-3" />
@@ -238,7 +255,10 @@ onMounted(() => {
                 <Spinner class="size-4" />
             </div>
 
-            <div v-else-if="devices.length === 0" class="px-2 py-4 text-center text-xs text-muted-foreground">
+            <div
+                v-else-if="devices.length === 0"
+                class="px-2 py-4 text-center text-xs text-muted-foreground"
+            >
                 No devices found.
             </div>
 
@@ -251,7 +271,10 @@ onMounted(() => {
                 @mousedown.prevent="selectDevice(device)"
             >
                 <span class="font-medium">{{ device.name }}</span>
-                <span v-if="device.asset_tag" class="ml-1 text-muted-foreground">
+                <span
+                    v-if="device.asset_tag"
+                    class="ml-1 text-muted-foreground"
+                >
                     ({{ device.asset_tag }})
                 </span>
             </button>

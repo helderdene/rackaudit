@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { ChevronDown, GitCompare, Loader2, AlertCircle, ZoomIn, ZoomOut } from 'lucide-vue-next';
+import {
+    AlertCircle,
+    ChevronDown,
+    GitCompare,
+    Loader2,
+    ZoomIn,
+    ZoomOut,
+} from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 import type { VersionFile } from './VersionHistoryDialog.vue';
 
 interface Props {
@@ -63,21 +69,18 @@ const dialogOpen = computed({
  * Get selected version objects based on IDs
  */
 const leftVersion = computed(() => {
-    return props.versions.find(v => v.id === leftVersionId.value) || null;
+    return props.versions.find((v) => v.id === leftVersionId.value) || null;
 });
 
 const rightVersion = computed(() => {
-    return props.versions.find(v => v.id === rightVersionId.value) || null;
+    return props.versions.find((v) => v.id === rightVersionId.value) || null;
 });
 
 /**
  * Check if file type supports comparison preview
  */
 const supportsPreview = (mimeType: string): boolean => {
-    return (
-        mimeType === 'application/pdf' ||
-        mimeType.startsWith('image/')
-    );
+    return mimeType === 'application/pdf' || mimeType.startsWith('image/');
 };
 
 /**
@@ -184,7 +187,7 @@ watch(
             rightZoomed.value = false;
         }
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 /**
@@ -205,7 +208,9 @@ watch(rightVersionId, () => {
 
 <template>
     <Dialog v-model:open="dialogOpen">
-        <DialogContent class="max-w-[95vw] lg:max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent
+            class="flex max-h-[90vh] max-w-[95vw] flex-col overflow-hidden lg:max-w-7xl"
+        >
             <DialogHeader>
                 <DialogTitle class="flex items-center gap-2">
                     <GitCompare class="size-5" />
@@ -217,64 +222,82 @@ watch(rightVersionId, () => {
             </DialogHeader>
 
             <!-- Version Selection Dropdowns -->
-            <div class="flex flex-col lg:flex-row gap-4 lg:gap-8">
+            <div class="flex flex-col gap-4 lg:flex-row lg:gap-8">
                 <!-- Left Version Selector -->
                 <div class="flex-1">
-                    <label class="text-sm font-medium text-muted-foreground mb-2 block">
+                    <label
+                        class="mb-2 block text-sm font-medium text-muted-foreground"
+                    >
                         Left Version
                     </label>
                     <div class="relative">
                         <select
                             v-model="leftVersionId"
-                            class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-none cursor-pointer pr-10"
+                            class="h-10 w-full cursor-pointer appearance-none rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
                         >
                             <option
                                 v-for="version in versions"
                                 :key="version.id"
                                 :value="version.id"
                             >
-                                Version {{ version.version_number }} - {{ formatDate(version.created_at) }}
+                                Version {{ version.version_number }} -
+                                {{ formatDate(version.created_at) }}
                             </option>
                         </select>
-                        <ChevronDown class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                        <ChevronDown
+                            class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                        />
                     </div>
                 </div>
 
                 <!-- Right Version Selector -->
                 <div class="flex-1">
-                    <label class="text-sm font-medium text-muted-foreground mb-2 block">
+                    <label
+                        class="mb-2 block text-sm font-medium text-muted-foreground"
+                    >
                         Right Version
                     </label>
                     <div class="relative">
                         <select
                             v-model="rightVersionId"
-                            class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-none cursor-pointer pr-10"
+                            class="h-10 w-full cursor-pointer appearance-none rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
                         >
                             <option
                                 v-for="version in versions"
                                 :key="version.id"
                                 :value="version.id"
                             >
-                                Version {{ version.version_number }} - {{ formatDate(version.created_at) }}
+                                Version {{ version.version_number }} -
+                                {{ formatDate(version.created_at) }}
                             </option>
                         </select>
-                        <ChevronDown class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                        <ChevronDown
+                            class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                        />
                     </div>
                 </div>
             </div>
 
             <!-- Comparison Viewers -->
-            <div class="flex-1 overflow-hidden mt-4">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+            <div class="mt-4 flex-1 overflow-hidden">
+                <div class="grid h-full grid-cols-1 gap-4 lg:grid-cols-2">
                     <!-- Left Version Viewer -->
-                    <div class="flex flex-col border rounded-lg overflow-hidden">
+                    <div
+                        class="flex flex-col overflow-hidden rounded-lg border"
+                    >
                         <!-- Version Label -->
-                        <div class="bg-muted/50 px-4 py-2 border-b flex items-center justify-between">
-                            <span class="font-medium text-sm">
+                        <div
+                            class="flex items-center justify-between border-b bg-muted/50 px-4 py-2"
+                        >
+                            <span class="text-sm font-medium">
                                 Version {{ leftVersion?.version_number }}
                             </span>
                             <Button
-                                v-if="leftVersion && isImage(leftVersion.mime_type) && !leftError"
+                                v-if="
+                                    leftVersion &&
+                                    isImage(leftVersion.mime_type) &&
+                                    !leftError
+                                "
                                 variant="ghost"
                                 size="sm"
                                 class="h-7 w-7 p-0"
@@ -286,15 +309,23 @@ watch(rightVersionId, () => {
                         </div>
 
                         <!-- Content Area -->
-                        <div class="flex-1 overflow-auto bg-muted/20 min-h-[300px] lg:min-h-[400px] relative">
+                        <div
+                            class="relative min-h-[300px] flex-1 overflow-auto bg-muted/20 lg:min-h-[400px]"
+                        >
                             <!-- Loading State -->
                             <div
                                 v-if="leftLoading && leftVersion"
                                 class="absolute inset-0 flex items-center justify-center"
                             >
                                 <div class="text-center">
-                                    <Loader2 class="size-8 animate-spin text-muted-foreground mx-auto" />
-                                    <p class="mt-2 text-sm text-muted-foreground">Loading...</p>
+                                    <Loader2
+                                        class="mx-auto size-8 animate-spin text-muted-foreground"
+                                    />
+                                    <p
+                                        class="mt-2 text-sm text-muted-foreground"
+                                    >
+                                        Loading...
+                                    </p>
                                 </div>
                             </div>
 
@@ -304,8 +335,12 @@ watch(rightVersionId, () => {
                                 class="absolute inset-0 flex items-center justify-center"
                             >
                                 <div class="text-center">
-                                    <AlertCircle class="size-8 text-destructive mx-auto" />
-                                    <p class="mt-2 text-sm text-destructive">Failed to load content</p>
+                                    <AlertCircle
+                                        class="mx-auto size-8 text-destructive"
+                                    />
+                                    <p class="mt-2 text-sm text-destructive">
+                                        Failed to load content
+                                    </p>
                                 </div>
                             </div>
 
@@ -314,33 +349,48 @@ watch(rightVersionId, () => {
                                 v-else-if="!leftVersion"
                                 class="absolute inset-0 flex items-center justify-center"
                             >
-                                <p class="text-sm text-muted-foreground">Select a version</p>
+                                <p class="text-sm text-muted-foreground">
+                                    Select a version
+                                </p>
                             </div>
 
                             <!-- PDF Viewer -->
                             <iframe
-                                v-if="leftVersion && isPdf(leftVersion.mime_type) && leftVersion.preview_url"
+                                v-if="
+                                    leftVersion &&
+                                    isPdf(leftVersion.mime_type) &&
+                                    leftVersion.preview_url
+                                "
                                 :src="leftVersion.preview_url"
-                                class="w-full h-full min-h-[300px] lg:min-h-[400px]"
-                                :class="{ 'invisible': leftLoading }"
+                                class="h-full min-h-[300px] w-full lg:min-h-[400px]"
+                                :class="{ invisible: leftLoading }"
                                 @load="handleLeftLoad"
                                 @error="handleLeftError"
                             />
 
                             <!-- Image Viewer -->
                             <div
-                                v-else-if="leftVersion && isImage(leftVersion.mime_type) && leftVersion.preview_url"
-                                class="w-full h-full flex items-center justify-center p-4"
-                                :class="{ 'overflow-auto': leftZoomed, 'overflow-hidden': !leftZoomed }"
+                                v-else-if="
+                                    leftVersion &&
+                                    isImage(leftVersion.mime_type) &&
+                                    leftVersion.preview_url
+                                "
+                                class="flex h-full w-full items-center justify-center p-4"
+                                :class="{
+                                    'overflow-auto': leftZoomed,
+                                    'overflow-hidden': !leftZoomed,
+                                }"
                             >
                                 <img
                                     :src="leftVersion.preview_url"
                                     :alt="`Version ${leftVersion.version_number}`"
                                     class="transition-all duration-200"
                                     :class="{
-                                        'max-w-full max-h-full object-contain': !leftZoomed,
-                                        'max-w-none cursor-zoom-out': leftZoomed,
-                                        'invisible': leftLoading
+                                        'max-h-full max-w-full object-contain':
+                                            !leftZoomed,
+                                        'max-w-none cursor-zoom-out':
+                                            leftZoomed,
+                                        invisible: leftLoading,
                                     }"
                                     @load="handleLeftLoad"
                                     @error="handleLeftError"
@@ -350,14 +400,19 @@ watch(rightVersionId, () => {
 
                             <!-- Unsupported Type -->
                             <div
-                                v-else-if="leftVersion && !supportsPreview(leftVersion.mime_type)"
+                                v-else-if="
+                                    leftVersion &&
+                                    !supportsPreview(leftVersion.mime_type)
+                                "
                                 class="absolute inset-0 flex items-center justify-center"
                             >
                                 <div class="text-center">
                                     <p class="text-sm text-muted-foreground">
                                         Preview not available for this file type
                                     </p>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p
+                                        class="mt-1 text-xs text-muted-foreground"
+                                    >
                                         {{ leftVersion.file_type_label }}
                                     </p>
                                 </div>
@@ -366,14 +421,22 @@ watch(rightVersionId, () => {
                     </div>
 
                     <!-- Right Version Viewer -->
-                    <div class="flex flex-col border rounded-lg overflow-hidden">
+                    <div
+                        class="flex flex-col overflow-hidden rounded-lg border"
+                    >
                         <!-- Version Label -->
-                        <div class="bg-muted/50 px-4 py-2 border-b flex items-center justify-between">
-                            <span class="font-medium text-sm">
+                        <div
+                            class="flex items-center justify-between border-b bg-muted/50 px-4 py-2"
+                        >
+                            <span class="text-sm font-medium">
                                 Version {{ rightVersion?.version_number }}
                             </span>
                             <Button
-                                v-if="rightVersion && isImage(rightVersion.mime_type) && !rightError"
+                                v-if="
+                                    rightVersion &&
+                                    isImage(rightVersion.mime_type) &&
+                                    !rightError
+                                "
                                 variant="ghost"
                                 size="sm"
                                 class="h-7 w-7 p-0"
@@ -385,15 +448,23 @@ watch(rightVersionId, () => {
                         </div>
 
                         <!-- Content Area -->
-                        <div class="flex-1 overflow-auto bg-muted/20 min-h-[300px] lg:min-h-[400px] relative">
+                        <div
+                            class="relative min-h-[300px] flex-1 overflow-auto bg-muted/20 lg:min-h-[400px]"
+                        >
                             <!-- Loading State -->
                             <div
                                 v-if="rightLoading && rightVersion"
                                 class="absolute inset-0 flex items-center justify-center"
                             >
                                 <div class="text-center">
-                                    <Loader2 class="size-8 animate-spin text-muted-foreground mx-auto" />
-                                    <p class="mt-2 text-sm text-muted-foreground">Loading...</p>
+                                    <Loader2
+                                        class="mx-auto size-8 animate-spin text-muted-foreground"
+                                    />
+                                    <p
+                                        class="mt-2 text-sm text-muted-foreground"
+                                    >
+                                        Loading...
+                                    </p>
                                 </div>
                             </div>
 
@@ -403,8 +474,12 @@ watch(rightVersionId, () => {
                                 class="absolute inset-0 flex items-center justify-center"
                             >
                                 <div class="text-center">
-                                    <AlertCircle class="size-8 text-destructive mx-auto" />
-                                    <p class="mt-2 text-sm text-destructive">Failed to load content</p>
+                                    <AlertCircle
+                                        class="mx-auto size-8 text-destructive"
+                                    />
+                                    <p class="mt-2 text-sm text-destructive">
+                                        Failed to load content
+                                    </p>
                                 </div>
                             </div>
 
@@ -413,33 +488,48 @@ watch(rightVersionId, () => {
                                 v-else-if="!rightVersion"
                                 class="absolute inset-0 flex items-center justify-center"
                             >
-                                <p class="text-sm text-muted-foreground">Select a version</p>
+                                <p class="text-sm text-muted-foreground">
+                                    Select a version
+                                </p>
                             </div>
 
                             <!-- PDF Viewer -->
                             <iframe
-                                v-if="rightVersion && isPdf(rightVersion.mime_type) && rightVersion.preview_url"
+                                v-if="
+                                    rightVersion &&
+                                    isPdf(rightVersion.mime_type) &&
+                                    rightVersion.preview_url
+                                "
                                 :src="rightVersion.preview_url"
-                                class="w-full h-full min-h-[300px] lg:min-h-[400px]"
-                                :class="{ 'invisible': rightLoading }"
+                                class="h-full min-h-[300px] w-full lg:min-h-[400px]"
+                                :class="{ invisible: rightLoading }"
                                 @load="handleRightLoad"
                                 @error="handleRightError"
                             />
 
                             <!-- Image Viewer -->
                             <div
-                                v-else-if="rightVersion && isImage(rightVersion.mime_type) && rightVersion.preview_url"
-                                class="w-full h-full flex items-center justify-center p-4"
-                                :class="{ 'overflow-auto': rightZoomed, 'overflow-hidden': !rightZoomed }"
+                                v-else-if="
+                                    rightVersion &&
+                                    isImage(rightVersion.mime_type) &&
+                                    rightVersion.preview_url
+                                "
+                                class="flex h-full w-full items-center justify-center p-4"
+                                :class="{
+                                    'overflow-auto': rightZoomed,
+                                    'overflow-hidden': !rightZoomed,
+                                }"
                             >
                                 <img
                                     :src="rightVersion.preview_url"
                                     :alt="`Version ${rightVersion.version_number}`"
                                     class="transition-all duration-200"
                                     :class="{
-                                        'max-w-full max-h-full object-contain': !rightZoomed,
-                                        'max-w-none cursor-zoom-out': rightZoomed,
-                                        'invisible': rightLoading
+                                        'max-h-full max-w-full object-contain':
+                                            !rightZoomed,
+                                        'max-w-none cursor-zoom-out':
+                                            rightZoomed,
+                                        invisible: rightLoading,
                                     }"
                                     @load="handleRightLoad"
                                     @error="handleRightError"
@@ -449,14 +539,19 @@ watch(rightVersionId, () => {
 
                             <!-- Unsupported Type -->
                             <div
-                                v-else-if="rightVersion && !supportsPreview(rightVersion.mime_type)"
+                                v-else-if="
+                                    rightVersion &&
+                                    !supportsPreview(rightVersion.mime_type)
+                                "
                                 class="absolute inset-0 flex items-center justify-center"
                             >
                                 <div class="text-center">
                                     <p class="text-sm text-muted-foreground">
                                         Preview not available for this file type
                                     </p>
-                                    <p class="text-xs text-muted-foreground mt-1">
+                                    <p
+                                        class="mt-1 text-xs text-muted-foreground"
+                                    >
                                         {{ rightVersion.file_type_label }}
                                     </p>
                                 </div>

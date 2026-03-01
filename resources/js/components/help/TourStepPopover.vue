@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { X, ChevronLeft, ChevronRight, Check } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import MarkdownRenderer from './MarkdownRenderer.vue';
 import type { HelpTourStep } from '@/composables/useHelp';
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-vue-next';
+import { computed } from 'vue';
+import MarkdownRenderer from './MarkdownRenderer.vue';
 
 interface PopoverPosition {
     top: number;
@@ -115,12 +115,16 @@ function handleSkip(): void {
         role="dialog"
         aria-label="Tour step"
     >
-        <div class="relative bg-popover text-popover-foreground rounded-lg shadow-xl border">
+        <div
+            class="relative rounded-lg border bg-popover text-popover-foreground shadow-xl"
+        >
             <!-- Arrow pointer -->
-            <div class="absolute w-0 h-0" :class="arrowClass" />
+            <div class="absolute h-0 w-0" :class="arrowClass" />
 
             <!-- Header -->
-            <div class="flex items-center justify-between gap-2 px-4 py-3 border-b bg-muted/30">
+            <div
+                class="flex items-center justify-between gap-2 border-b bg-muted/30 px-4 py-3"
+            >
                 <div class="flex items-center gap-2">
                     <!-- Progress dots -->
                     <div class="flex items-center gap-1">
@@ -135,13 +139,13 @@ function handleSkip(): void {
                             />
                         </template>
                     </div>
-                    <span class="text-xs text-muted-foreground ml-2">
+                    <span class="ml-2 text-xs text-muted-foreground">
                         {{ stepCountText }}
                     </span>
                 </div>
                 <button
                     type="button"
-                    class="text-muted-foreground hover:text-foreground transition-colors rounded-full p-1 hover:bg-muted"
+                    class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     @click="handleSkip"
                 >
                     <X class="size-4" />
@@ -151,17 +155,19 @@ function handleSkip(): void {
 
             <!-- Content -->
             <div class="px-4 py-4">
-                <h4 class="font-semibold text-sm mb-2">
+                <h4 class="mb-2 text-sm font-semibold">
                     {{ step.article.title }}
                 </h4>
                 <MarkdownRenderer
                     :content="step.article.content"
-                    class="text-sm text-muted-foreground prose-sm"
+                    class="prose-sm text-sm text-muted-foreground"
                 />
             </div>
 
             <!-- Footer -->
-            <div class="flex items-center justify-between gap-2 px-4 py-3 border-t bg-muted/30">
+            <div
+                class="flex items-center justify-between gap-2 border-t bg-muted/30 px-4 py-3"
+            >
                 <Button
                     v-if="!isFirstStep"
                     variant="ghost"
@@ -183,11 +189,7 @@ function handleSkip(): void {
                     >
                         Skip tour
                     </Button>
-                    <Button
-                        size="sm"
-                        class="gap-1"
-                        @click="handleNext"
-                    >
+                    <Button size="sm" class="gap-1" @click="handleNext">
                         <template v-if="isLastStep">
                             <Check class="size-4" />
                             Finish

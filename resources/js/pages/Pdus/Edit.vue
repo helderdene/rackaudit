@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
-import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import PduController from '@/actions/App/Http/Controllers/PduController';
+import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import PduForm from '@/components/pdus/PduForm.vue';
 import DeletePduDialog from '@/components/pdus/DeletePduDialog.vue';
+import PduForm from '@/components/pdus/PduForm.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DatacenterReference, RoomReference, PduData, RowReference, SelectOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    PduData,
+    RoomReference,
+    RowReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -37,11 +43,18 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: `Edit ${props.pdu.name}`,
-        href: PduController.edit.url({ datacenter: props.datacenter.id, room: props.room.id, pdu: props.pdu.id }),
+        href: PduController.edit.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            pdu: props.pdu.id,
+        }),
     },
 ];
 </script>
@@ -77,7 +90,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div
                     class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
                 >
-                    <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                    <div
+                        class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                    >
                         <p class="font-medium">Warning</p>
                         <p class="text-sm">
                             Once deleted, this PDU will be permanently removed.
@@ -90,9 +105,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         :pdu-id="pdu.id"
                         :pdu-name="pdu.name"
                     >
-                        <Button variant="destructive">
-                            Delete PDU
-                        </Button>
+                        <Button variant="destructive"> Delete PDU </Button>
                     </DeletePduDialog>
                 </div>
             </div>

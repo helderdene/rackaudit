@@ -6,22 +6,22 @@
  * grouped by severity (Critical, High, Medium, Low).
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, onMounted, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface FindingTrendItem {
@@ -83,8 +83,15 @@ const severityColors = {
  * Check if there is valid data to display
  */
 const hasData = computed(() => {
-    return props.data.length > 0 && props.data.some(item =>
-        item.critical > 0 || item.high > 0 || item.medium > 0 || item.low > 0
+    return (
+        props.data.length > 0 &&
+        props.data.some(
+            (item) =>
+                item.critical > 0 ||
+                item.high > 0 ||
+                item.medium > 0 ||
+                item.low > 0,
+        )
     );
 });
 
@@ -92,14 +99,14 @@ const hasData = computed(() => {
  * Prepare chart data
  */
 const chartData = computed<ChartData<'line', number[], string>>(() => {
-    const labels = props.data.map(item => item.period);
+    const labels = props.data.map((item) => item.period);
 
     return {
         labels,
         datasets: [
             {
                 label: 'Critical',
-                data: props.data.map(item => item.critical),
+                data: props.data.map((item) => item.critical),
                 borderColor: severityColors.critical.border,
                 backgroundColor: severityColors.critical.background,
                 fill: true,
@@ -113,7 +120,7 @@ const chartData = computed<ChartData<'line', number[], string>>(() => {
             },
             {
                 label: 'High',
-                data: props.data.map(item => item.high),
+                data: props.data.map((item) => item.high),
                 borderColor: severityColors.high.border,
                 backgroundColor: severityColors.high.background,
                 fill: true,
@@ -127,7 +134,7 @@ const chartData = computed<ChartData<'line', number[], string>>(() => {
             },
             {
                 label: 'Medium',
-                data: props.data.map(item => item.medium),
+                data: props.data.map((item) => item.medium),
                 borderColor: severityColors.medium.border,
                 backgroundColor: severityColors.medium.background,
                 fill: true,
@@ -141,7 +148,7 @@ const chartData = computed<ChartData<'line', number[], string>>(() => {
             },
             {
                 label: 'Low',
-                data: props.data.map(item => item.low),
+                data: props.data.map((item) => item.low),
                 borderColor: severityColors.low.border,
                 backgroundColor: severityColors.low.background,
                 fill: true,
@@ -194,7 +201,10 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
                     return `${context.dataset.label}: ${value} finding${value !== 1 ? 's' : ''}`;
                 },
                 footer: (tooltipItems) => {
-                    const total = tooltipItems.reduce((sum, item) => sum + (item.raw as number), 0);
+                    const total = tooltipItems.reduce(
+                        (sum, item) => sum + (item.raw as number),
+                        0,
+                    );
                     return `Total: ${total} findings`;
                 },
             },
@@ -242,22 +252,35 @@ const totals = computed(() => {
 });
 
 const totalFindings = computed(() => {
-    return totals.value.critical + totals.value.high + totals.value.medium + totals.value.low;
+    return (
+        totals.value.critical +
+        totals.value.high +
+        totals.value.medium +
+        totals.value.low
+    );
 });
 </script>
 
 <template>
-    <Card class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     {{ title }}
                 </CardTitle>
                 <div v-if="hasData" class="text-right">
-                    <span class="text-lg font-bold text-foreground dark:text-foreground">
+                    <span
+                        class="text-lg font-bold text-foreground dark:text-foreground"
+                    >
                         {{ totalFindings.toLocaleString() }}
                     </span>
-                    <span class="ml-1 text-sm text-muted-foreground">total</span>
+                    <span class="ml-1 text-sm text-muted-foreground"
+                        >total</span
+                    >
                 </div>
             </div>
         </CardHeader>
@@ -286,18 +309,33 @@ const totalFindings = computed(() => {
                         d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No finding data available</p>
-                <p class="mt-1 text-xs text-muted-foreground/70">Data will appear once audits have findings</p>
+                <p class="text-sm text-muted-foreground">
+                    No finding data available
+                </p>
+                <p class="mt-1 text-xs text-muted-foreground/70">
+                    Data will appear once audits have findings
+                </p>
             </div>
 
             <!-- Summary stats -->
-            <div v-if="hasData" class="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+            <div
+                v-if="hasData"
+                class="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground"
+            >
                 <span>{{ data.length }} time periods</span>
                 <div class="flex gap-3">
-                    <span class="text-red-600 dark:text-red-400">{{ totals.critical }} Critical</span>
-                    <span class="text-orange-600 dark:text-orange-400">{{ totals.high }} High</span>
-                    <span class="text-yellow-600 dark:text-yellow-400">{{ totals.medium }} Medium</span>
-                    <span class="text-blue-600 dark:text-blue-400">{{ totals.low }} Low</span>
+                    <span class="text-red-600 dark:text-red-400"
+                        >{{ totals.critical }} Critical</span
+                    >
+                    <span class="text-orange-600 dark:text-orange-400"
+                        >{{ totals.high }} High</span
+                    >
+                    <span class="text-yellow-600 dark:text-yellow-400"
+                        >{{ totals.medium }} Medium</span
+                    >
+                    <span class="text-blue-600 dark:text-blue-400"
+                        >{{ totals.low }} Low</span
+                    >
                 </div>
             </div>
         </CardContent>

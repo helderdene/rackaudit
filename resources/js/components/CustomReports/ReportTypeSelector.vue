@@ -1,7 +1,19 @@
 <script setup lang="ts">
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart3, Package, Cable, ClipboardList, Check, Loader2 } from 'lucide-vue-next';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    BarChart3,
+    Cable,
+    Check,
+    ClipboardList,
+    Loader2,
+    Package,
+} from 'lucide-vue-next';
 import type { Component } from 'vue';
 
 /**
@@ -59,7 +71,8 @@ function handleSelect(typeValue: string) {
     <div class="space-y-4">
         <h3 class="text-center text-lg font-semibold">Select a Report Type</h3>
         <p class="text-center text-sm text-muted-foreground">
-            Choose the type of report you want to create. Each type has different data fields and options.
+            Choose the type of report you want to create. Each type has
+            different data fields and options.
         </p>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -68,32 +81,46 @@ function handleSelect(typeValue: string) {
                 :key="reportType.value"
                 class="relative cursor-pointer transition-all hover:border-primary/50 hover:shadow-md"
                 :class="{
-                    'border-primary bg-primary/5 shadow-md': selectedType === reportType.value,
-                    'opacity-50 cursor-not-allowed': loading && selectedType !== reportType.value,
+                    'border-primary bg-primary/5 shadow-md':
+                        selectedType === reportType.value,
+                    'cursor-not-allowed opacity-50':
+                        loading && selectedType !== reportType.value,
                 }"
                 @click="handleSelect(reportType.value)"
             >
                 <!-- Selected indicator -->
                 <div
                     v-if="selectedType === reportType.value"
-                    class="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-primary"
+                    class="absolute top-2 right-2 flex size-6 items-center justify-center rounded-full bg-primary"
                 >
-                    <Check v-if="!loading" class="size-4 text-primary-foreground" />
-                    <Loader2 v-else class="size-4 animate-spin text-primary-foreground" />
+                    <Check
+                        v-if="!loading"
+                        class="size-4 text-primary-foreground"
+                    />
+                    <Loader2
+                        v-else
+                        class="size-4 animate-spin text-primary-foreground"
+                    />
                 </div>
 
                 <CardHeader class="pb-2">
-                    <div class="mb-2 flex size-12 items-center justify-center rounded-lg bg-muted">
+                    <div
+                        class="mb-2 flex size-12 items-center justify-center rounded-lg bg-muted"
+                    >
                         <component
                             :is="getReportTypeIcon(reportType.value)"
                             class="size-6"
                             :class="{
-                                'text-primary': selectedType === reportType.value,
-                                'text-muted-foreground': selectedType !== reportType.value,
+                                'text-primary':
+                                    selectedType === reportType.value,
+                                'text-muted-foreground':
+                                    selectedType !== reportType.value,
                             }"
                         />
                     </div>
-                    <CardTitle class="text-base">{{ reportType.label }}</CardTitle>
+                    <CardTitle class="text-base">{{
+                        reportType.label
+                    }}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <CardDescription class="text-sm">
@@ -105,7 +132,9 @@ function handleSelect(typeValue: string) {
 
         <!-- Loading State Overlay -->
         <div v-if="loading" class="text-center">
-            <div class="inline-flex items-center gap-2 rounded-md bg-muted px-4 py-2 text-sm">
+            <div
+                class="inline-flex items-center gap-2 rounded-md bg-muted px-4 py-2 text-sm"
+            >
                 <Loader2 class="size-4 animate-spin" />
                 <span>Loading configuration...</span>
             </div>

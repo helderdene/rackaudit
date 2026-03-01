@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { computed } from 'vue';
 
 interface Props {
     /** Audit name */
@@ -75,16 +75,16 @@ const minDate = computed(() => {
                     required
                     placeholder="Enter a descriptive audit name"
                     :aria-invalid="!!nameError"
-                    :aria-describedby="nameError ? 'audit-name-error' : undefined"
+                    :aria-describedby="
+                        nameError ? 'audit-name-error' : undefined
+                    "
                 />
                 <InputError id="audit-name-error" :message="nameError" />
             </div>
 
             <!-- Description field (optional) -->
             <div class="grid gap-2 sm:col-span-2">
-                <Label for="audit-description">
-                    Description
-                </Label>
+                <Label for="audit-description"> Description </Label>
                 <Textarea
                     id="audit-description"
                     v-model="descriptionValue"
@@ -92,9 +92,14 @@ const minDate = computed(() => {
                     placeholder="Add additional context, instructions, or notes for this audit (optional)"
                     rows="3"
                     :aria-invalid="!!descriptionError"
-                    :aria-describedby="descriptionError ? 'audit-description-error' : undefined"
+                    :aria-describedby="
+                        descriptionError ? 'audit-description-error' : undefined
+                    "
                 />
-                <InputError id="audit-description-error" :message="descriptionError" />
+                <InputError
+                    id="audit-description-error"
+                    :message="descriptionError"
+                />
             </div>
 
             <!-- Due date field (required) -->
@@ -110,7 +115,9 @@ const minDate = computed(() => {
                     required
                     :min="minDate"
                     :aria-invalid="!!dueDateError"
-                    :aria-describedby="dueDateError ? 'audit-due-date-error' : undefined"
+                    :aria-describedby="
+                        dueDateError ? 'audit-due-date-error' : undefined
+                    "
                 />
                 <InputError id="audit-due-date-error" :message="dueDateError" />
                 <p class="text-xs text-muted-foreground">

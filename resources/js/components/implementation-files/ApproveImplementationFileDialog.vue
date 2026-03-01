@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,7 +9,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { CheckCircle, AlertCircle } from 'lucide-vue-next';
+import axios from 'axios';
+import { AlertCircle, CheckCircle } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import type { ImplementationFile } from './ImplementationFileList.vue';
 
 interface Props {
@@ -54,7 +54,7 @@ const handleApprove = async () => {
 
     try {
         await axios.post(
-            `/datacenters/${props.datacenterId}/implementation-files/${props.file.id}/approve`
+            `/datacenters/${props.datacenterId}/implementation-files/${props.file.id}/approve`,
         );
 
         // Emit the file-approved event
@@ -64,7 +64,12 @@ const handleApprove = async () => {
         emit('update:isOpen', false);
         emit('close');
     } catch (err) {
-        const axiosError = err as { response?: { status?: number; data?: { message?: string; errors?: { file?: string[] } } } };
+        const axiosError = err as {
+            response?: {
+                status?: number;
+                data?: { message?: string; errors?: { file?: string[] } };
+            };
+        };
 
         if (axiosError.response?.status === 403) {
             error.value = 'You do not have permission to approve this file.';
@@ -74,12 +79,16 @@ const handleApprove = async () => {
             if (validationErrors?.file) {
                 error.value = validationErrors.file[0];
             } else {
-                error.value = axiosError.response?.data?.message || 'This file cannot be approved.';
+                error.value =
+                    axiosError.response?.data?.message ||
+                    'This file cannot be approved.';
             }
         } else if (axiosError.response?.status === 404) {
             error.value = 'The file could not be found.';
         } else {
-            error.value = axiosError.response?.data?.message || 'Failed to approve file. Please try again.';
+            error.value =
+                axiosError.response?.data?.message ||
+                'Failed to approve file. Please try again.';
         }
     } finally {
         isApproving.value = false;
@@ -127,24 +136,36 @@ const dialogOpen = computed({
             <div class="rounded-lg border bg-muted/50 p-4">
                 <dl class="space-y-2 text-sm">
                     <div class="flex justify-between">
-                        <dt class="font-medium text-muted-foreground">File Name</dt>
+                        <dt class="font-medium text-muted-foreground">
+                            File Name
+                        </dt>
                         <dd class="text-right">{{ file.original_name }}</dd>
                     </div>
                     <div v-if="file.uploader" class="flex justify-between">
-                        <dt class="font-medium text-muted-foreground">Uploaded By</dt>
+                        <dt class="font-medium text-muted-foreground">
+                            Uploaded By
+                        </dt>
                         <dd class="text-right">{{ file.uploader.name }}</dd>
                     </div>
                     <div class="flex justify-between">
-                        <dt class="font-medium text-muted-foreground">Date Uploaded</dt>
-                        <dd class="text-right">{{ formatDate(file.created_at) }}</dd>
+                        <dt class="font-medium text-muted-foreground">
+                            Date Uploaded
+                        </dt>
+                        <dd class="text-right">
+                            {{ formatDate(file.created_at) }}
+                        </dd>
                     </div>
                     <div class="flex justify-between">
-                        <dt class="font-medium text-muted-foreground">File Type</dt>
+                        <dt class="font-medium text-muted-foreground">
+                            File Type
+                        </dt>
                         <dd class="text-right">{{ file.file_type_label }}</dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="font-medium text-muted-foreground">Size</dt>
-                        <dd class="text-right">{{ file.formatted_file_size }}</dd>
+                        <dd class="text-right">
+                            {{ file.formatted_file_size }}
+                        </dd>
                     </div>
                 </dl>
             </div>
@@ -153,11 +174,14 @@ const dialogOpen = computed({
             <div
                 class="rounded-lg border border-green-100 bg-green-50 p-4 dark:border-green-200/10 dark:bg-green-700/10"
             >
-                <div class="relative space-y-0.5 text-green-600 dark:text-green-100">
+                <div
+                    class="relative space-y-0.5 text-green-600 dark:text-green-100"
+                >
                     <p class="font-medium">What happens when you approve</p>
                     <p class="text-sm">
-                        Approving this file marks it as reviewed and authoritative for datacenter audits.
-                        The uploader will be notified that their file has been approved.
+                        Approving this file marks it as reviewed and
+                        authoritative for datacenter audits. The uploader will
+                        be notified that their file has been approved.
                     </p>
                 </div>
             </div>
@@ -167,7 +191,9 @@ const dialogOpen = computed({
                 v-if="error"
                 class="rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
             >
-                <div class="flex items-start gap-2 text-red-600 dark:text-red-100">
+                <div
+                    class="flex items-start gap-2 text-red-600 dark:text-red-100"
+                >
                     <AlertCircle class="mt-0.5 size-4 shrink-0" />
                     <p class="text-sm">{{ error }}</p>
                 </div>

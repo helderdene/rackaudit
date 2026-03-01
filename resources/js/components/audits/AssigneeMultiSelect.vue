@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
 import { debounce } from '@/lib/utils';
+import { computed, onMounted, ref } from 'vue';
 
 interface UserOption {
     id: number;
@@ -52,9 +52,10 @@ const filteredUsers = computed(() => {
         return availableUsers.value;
     }
     const query = searchQuery.value.toLowerCase();
-    return availableUsers.value.filter(user =>
-        user.name.toLowerCase().includes(query) ||
-        user.email.toLowerCase().includes(query)
+    return availableUsers.value.filter(
+        (user) =>
+            user.name.toLowerCase().includes(query) ||
+            user.email.toLowerCase().includes(query),
     );
 });
 
@@ -79,7 +80,7 @@ const toggleUser = (userId: number): void => {
 
 // Select all visible users
 const selectAllVisible = (): void => {
-    const visibleIds = filteredUsers.value.map(user => user.id);
+    const visibleIds = filteredUsers.value.map((user) => user.id);
     const newIds = [...new Set([...selectedAssigneeIds.value, ...visibleIds])];
     selectedAssigneeIds.value = newIds;
 };
@@ -92,8 +93,8 @@ const clearSelection = (): void => {
 // Get selected user names for display
 const selectedUserInfo = computed(() => {
     return availableUsers.value
-        .filter(user => selectedAssigneeIds.value.includes(user.id))
-        .map(user => ({ name: user.name, email: user.email }));
+        .filter((user) => selectedAssigneeIds.value.includes(user.id))
+        .map((user) => ({ name: user.name, email: user.email }));
 });
 
 /**
@@ -110,7 +111,7 @@ async function fetchAssignableUsers(): Promise<void> {
     try {
         const response = await fetch('/api/audits/assignable-users', {
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             },
         });
@@ -153,7 +154,9 @@ onMounted(() => {
         />
 
         <div class="space-y-3">
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <Label>
                     Team Members <span class="text-red-500">*</span>
                 </Label>
@@ -166,7 +169,11 @@ onMounted(() => {
                     >
                         Select all
                     </button>
-                    <span v-if="selectedAssigneeIds.length > 0 && !isLoading" class="text-xs text-muted-foreground">|</span>
+                    <span
+                        v-if="selectedAssigneeIds.length > 0 && !isLoading"
+                        class="text-xs text-muted-foreground"
+                        >|</span
+                    >
                     <button
                         v-if="selectedAssigneeIds.length > 0 && !isLoading"
                         type="button"
@@ -204,10 +211,15 @@ onMounted(() => {
             </div>
 
             <!-- Loading state with skeleton -->
-            <div v-if="isLoading" class="space-y-2 rounded-md border border-input p-3">
+            <div
+                v-if="isLoading"
+                class="space-y-2 rounded-md border border-input p-3"
+            >
                 <div class="flex items-center gap-2">
                     <Spinner class="h-4 w-4" />
-                    <span class="text-sm text-muted-foreground">Loading available assignees...</span>
+                    <span class="text-sm text-muted-foreground"
+                        >Loading available assignees...</span
+                    >
                 </div>
                 <div class="space-y-2">
                     <Skeleton class="h-12 w-full" />
@@ -217,7 +229,10 @@ onMounted(() => {
             </div>
 
             <!-- Empty state -->
-            <div v-else-if="availableUsers.length === 0" class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground">
+            <div
+                v-else-if="availableUsers.length === 0"
+                class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground"
+            >
                 <svg
                     class="mx-auto mb-2 h-8 w-8 text-muted-foreground/50"
                     fill="none"
@@ -234,7 +249,10 @@ onMounted(() => {
                 No assignable users available
             </div>
 
-            <div v-else-if="filteredUsers.length === 0" class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground">
+            <div
+                v-else-if="filteredUsers.length === 0"
+                class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground"
+            >
                 No users match your search
             </div>
 
@@ -255,9 +273,13 @@ onMounted(() => {
                         class="h-5 w-5 sm:h-4 sm:w-4"
                         @update:checked="toggleUser(user.id)"
                     />
-                    <div class="flex flex-1 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2">
+                    <div
+                        class="flex flex-1 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2"
+                    >
                         <span class="text-sm font-medium">{{ user.name }}</span>
-                        <span class="text-xs text-muted-foreground">{{ user.email }}</span>
+                        <span class="text-xs text-muted-foreground">{{
+                            user.email
+                        }}</span>
                     </div>
                     <!-- Selection indicator -->
                     <svg
@@ -281,10 +303,19 @@ onMounted(() => {
             <div v-if="selectedAssigneeIds.length > 0" class="space-y-2">
                 <div class="flex items-center gap-2">
                     <Badge variant="secondary" class="font-normal">
-                        {{ selectedAssigneeIds.length }} {{ selectedAssigneeIds.length === 1 ? 'assignee' : 'assignees' }} selected
+                        {{ selectedAssigneeIds.length }}
+                        {{
+                            selectedAssigneeIds.length === 1
+                                ? 'assignee'
+                                : 'assignees'
+                        }}
+                        selected
                     </Badge>
                 </div>
-                <div v-if="selectedUserInfo.length <= 5" class="flex flex-wrap gap-1.5">
+                <div
+                    v-if="selectedUserInfo.length <= 5"
+                    class="flex flex-wrap gap-1.5"
+                >
                     <Badge
                         v-for="user in selectedUserInfo"
                         :key="user.email"

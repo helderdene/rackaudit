@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { index as auditHistoryIndex } from '@/actions/App/Http/Controllers/AuditHistoryReportController';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, Filter, X, Calendar } from 'lucide-vue-next';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Label } from '@/components/ui/label';
 import { debounce } from '@/lib/utils';
+import { router } from '@inertiajs/vue3';
+import { ChevronDown, Filter, X } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface FilterOption {
     id: number;
@@ -45,18 +49,25 @@ const emit = defineEmits<{
 const timeRangePreset = ref(props.filters.time_range_preset ?? '');
 const startDate = ref(props.filters.start_date ?? '');
 const endDate = ref(props.filters.end_date ?? '');
-const datacenterId = ref(props.filters.datacenter_id ? String(props.filters.datacenter_id) : '');
+const datacenterId = ref(
+    props.filters.datacenter_id ? String(props.filters.datacenter_id) : '',
+);
 const auditType = ref(props.filters.audit_type ?? '');
 
 // Mobile collapsible state
 const isOpen = ref(false);
 
 // Show custom date range inputs
-const showCustomDateRange = ref(timeRangePreset.value === 'custom' || (!!startDate.value && !!endDate.value));
+const showCustomDateRange = ref(
+    timeRangePreset.value === 'custom' ||
+        (!!startDate.value && !!endDate.value),
+);
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
-const inputClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const inputClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
 
 // Time range preset options
 const timeRangeOptions = [
@@ -82,17 +93,32 @@ const applyFilters = () => {
     emit('filtering', true);
 
     const params: Record<string, string | undefined> = {
-        time_range_preset: timeRangePreset.value === 'custom' ? undefined : timeRangePreset.value || undefined,
-        start_date: timeRangePreset.value === 'custom' ? startDate.value || undefined : undefined,
-        end_date: timeRangePreset.value === 'custom' ? endDate.value || undefined : undefined,
+        time_range_preset:
+            timeRangePreset.value === 'custom'
+                ? undefined
+                : timeRangePreset.value || undefined,
+        start_date:
+            timeRangePreset.value === 'custom'
+                ? startDate.value || undefined
+                : undefined,
+        end_date:
+            timeRangePreset.value === 'custom'
+                ? endDate.value || undefined
+                : undefined,
         datacenter_id: datacenterId.value || undefined,
         audit_type: auditType.value || undefined,
-        sort_by: props.filters.sort_by !== 'completion_date' ? props.filters.sort_by : undefined,
-        sort_direction: props.filters.sort_direction !== 'desc' ? props.filters.sort_direction : undefined,
+        sort_by:
+            props.filters.sort_by !== 'completion_date'
+                ? props.filters.sort_by
+                : undefined,
+        sort_direction:
+            props.filters.sort_direction !== 'desc'
+                ? props.filters.sort_direction
+                : undefined,
     };
 
     // Remove undefined values
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
         if (params[key] === undefined) {
             delete params[key];
         }
@@ -120,13 +146,17 @@ const clearFilters = () => {
     showCustomDateRange.value = false;
 
     emit('filtering', true);
-    router.get(auditHistoryIndex.url(), {}, {
-        preserveState: true,
-        preserveScroll: true,
-        onFinish: () => {
-            emit('filtering', false);
+    router.get(
+        auditHistoryIndex.url(),
+        {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+            onFinish: () => {
+                emit('filtering', false);
+            },
         },
-    });
+    );
 };
 
 // Watch for time range preset changes
@@ -144,7 +174,11 @@ watch(timeRangePreset, (newValue) => {
 
 // Watch for custom date changes
 watch([startDate, endDate], () => {
-    if (timeRangePreset.value === 'custom' && startDate.value && endDate.value) {
+    if (
+        timeRangePreset.value === 'custom' &&
+        startDate.value &&
+        endDate.value
+    ) {
         debouncedApplyFilters();
     }
 });
@@ -166,7 +200,9 @@ watch(auditType, () => {
         <Collapsible v-model:open="isOpen">
             <Card>
                 <CardHeader class="p-3">
-                    <CollapsibleTrigger class="flex w-full items-center justify-between">
+                    <CollapsibleTrigger
+                        class="flex w-full items-center justify-between"
+                    >
                         <CardTitle class="flex items-center gap-2 text-base">
                             <Filter class="size-4" />
                             Filters
@@ -177,7 +213,10 @@ watch(auditType, () => {
                                 Active
                             </span>
                         </CardTitle>
-                        <ChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': isOpen }" />
+                        <ChevronDown
+                            class="size-4 transition-transform"
+                            :class="{ 'rotate-180': isOpen }"
+                        />
                     </CollapsibleTrigger>
                 </CardHeader>
                 <CollapsibleContent>
@@ -203,7 +242,9 @@ watch(auditType, () => {
                         <!-- Custom Date Range (visible when custom is selected) -->
                         <div v-if="showCustomDateRange" class="space-y-3">
                             <div class="space-y-2">
-                                <Label for="start-date-mobile">Start Date</Label>
+                                <Label for="start-date-mobile"
+                                    >Start Date</Label
+                                >
                                 <input
                                     id="start-date-mobile"
                                     v-model="startDate"
@@ -284,7 +325,10 @@ watch(auditType, () => {
                 <div class="flex flex-row flex-wrap items-end gap-4">
                     <!-- Time Range Filter -->
                     <div class="min-w-[180px] flex-1">
-                        <Label for="time-range-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                        <Label
+                            for="time-range-desktop"
+                            class="mb-1 block text-sm font-medium text-muted-foreground"
+                        >
                             Time Range
                         </Label>
                         <select
@@ -305,7 +349,10 @@ watch(auditType, () => {
                     <!-- Custom Date Range (visible when custom is selected) -->
                     <template v-if="showCustomDateRange">
                         <div class="min-w-[150px]">
-                            <Label for="start-date-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="start-date-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 Start Date
                             </Label>
                             <input
@@ -316,7 +363,10 @@ watch(auditType, () => {
                             />
                         </div>
                         <div class="min-w-[150px]">
-                            <Label for="end-date-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                            <Label
+                                for="end-date-desktop"
+                                class="mb-1 block text-sm font-medium text-muted-foreground"
+                            >
                                 End Date
                             </Label>
                             <input
@@ -330,7 +380,10 @@ watch(auditType, () => {
 
                     <!-- Datacenter Filter -->
                     <div class="min-w-[180px] flex-1">
-                        <Label for="datacenter-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                        <Label
+                            for="datacenter-desktop"
+                            class="mb-1 block text-sm font-medium text-muted-foreground"
+                        >
                             Datacenter
                         </Label>
                         <select
@@ -351,7 +404,10 @@ watch(auditType, () => {
 
                     <!-- Audit Type Filter -->
                     <div class="min-w-[160px] flex-1">
-                        <Label for="audit-type-desktop" class="mb-1 block text-sm font-medium text-muted-foreground">
+                        <Label
+                            for="audit-type-desktop"
+                            class="mb-1 block text-sm font-medium text-muted-foreground"
+                        >
                             Audit Type
                         </Label>
                         <select
@@ -372,11 +428,7 @@ watch(auditType, () => {
 
                     <!-- Clear Filters -->
                     <div v-if="hasActiveFilters" class="shrink-0">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            @click="clearFilters"
-                        >
+                        <Button variant="ghost" size="sm" @click="clearFilters">
                             <X class="mr-1 size-4" />
                             Clear
                         </Button>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SparklineChart from '@/components/dashboard/SparklineChart.vue';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed } from 'vue';
 
 interface TrendData {
     percentage: string;
@@ -127,9 +127,13 @@ const formatValue = (value: number | string): string => {
 </script>
 
 <template>
-    <Card class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+            <CardTitle
+                class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+            >
                 {{ title }}
             </CardTitle>
         </CardHeader>
@@ -140,7 +144,11 @@ const formatValue = (value: number | string): string => {
                     <div class="flex items-baseline gap-2">
                         <div
                             class="text-3xl font-bold"
-                            :class="isPercentage ? getStatusColorClass : 'text-foreground dark:text-foreground'"
+                            :class="
+                                isPercentage
+                                    ? getStatusColorClass
+                                    : 'text-foreground dark:text-foreground'
+                            "
                         >
                             {{ formatValue(value) }}{{ unit }}
                         </div>
@@ -154,7 +162,10 @@ const formatValue = (value: number | string): string => {
                     </div>
 
                     <!-- Progress bar for percentage metrics -->
-                    <div v-if="isPercentage" class="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                        v-if="isPercentage"
+                        class="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
+                    >
                         <div
                             class="h-full transition-all duration-300"
                             :class="getProgressBarClass"
@@ -163,24 +174,42 @@ const formatValue = (value: number | string): string => {
                     </div>
 
                     <!-- Usage details -->
-                    <div v-if="total !== undefined && available !== undefined" class="mt-2 flex justify-between text-xs text-muted-foreground">
-                        <span>{{ (total - available).toLocaleString() }} used</span>
+                    <div
+                        v-if="total !== undefined && available !== undefined"
+                        class="mt-2 flex justify-between text-xs text-muted-foreground"
+                    >
+                        <span
+                            >{{
+                                (total - available).toLocaleString()
+                            }}
+                            used</span
+                        >
                         <span>{{ available.toLocaleString() }} available</span>
                     </div>
 
                     <!-- Total display -->
-                    <div v-if="total !== undefined" class="mt-1 text-xs text-muted-foreground">
-                        Total: {{ total.toLocaleString() }}{{ unit !== '%' ? unit : '' }}
+                    <div
+                        v-if="total !== undefined"
+                        class="mt-1 text-xs text-muted-foreground"
+                    >
+                        Total: {{ total.toLocaleString()
+                        }}{{ unit !== '%' ? unit : '' }}
                     </div>
 
                     <!-- Trend change text -->
-                    <p v-if="trend" class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground/80">
+                    <p
+                        v-if="trend"
+                        class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground/80"
+                    >
                         {{ trend.change }}
                     </p>
                 </div>
 
                 <!-- Right side: sparkline chart -->
-                <div v-if="sparklineData && sparklineData.length > 0" class="shrink-0">
+                <div
+                    v-if="sparklineData && sparklineData.length > 0"
+                    class="shrink-0"
+                >
                     <SparklineChart
                         :data="sparklineData"
                         :color="sparklineColor"

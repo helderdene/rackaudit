@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
+import {
+    bulkConfirm,
+    bulkSkip,
+    index as expectedConnectionsIndex,
+} from '@/actions/App/Http/Controllers/ExpectedConnectionController';
+import ConnectionReviewTable, {
+    type ExpectedConnectionData,
+} from '@/components/expected-connections/ConnectionReviewTable.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Spinner } from '@/components/ui/spinner';
 import {
     Dialog,
     DialogClose,
@@ -16,20 +20,18 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import {
-    CheckCircle,
-    FileSpreadsheet,
-    ArrowLeft,
-    AlertTriangle,
-} from 'lucide-vue-next';
-import ConnectionReviewTable, { type ExpectedConnectionData } from '@/components/expected-connections/ConnectionReviewTable.vue';
+import { Spinner } from '@/components/ui/spinner';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import {
-    index as expectedConnectionsIndex,
-    bulkConfirm,
-    bulkSkip,
-} from '@/actions/App/Http/Controllers/ExpectedConnectionController';
-import type { BreadcrumbItem } from '@/types';
+    AlertTriangle,
+    ArrowLeft,
+    CheckCircle,
+    FileSpreadsheet,
+} from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 interface Props {
     implementationFileId: number;
@@ -48,7 +50,9 @@ const statistics = ref({
     confirmed: 0,
     skipped: 0,
 });
-const implementationFile = ref<{ id: number; original_name: string } | null>(null);
+const implementationFile = ref<{ id: number; original_name: string } | null>(
+    null,
+);
 const loadError = ref<string | null>(null);
 
 // Bulk action state
@@ -59,8 +63,8 @@ const bulkActionError = ref<string | null>(null);
 const finalizeDialogOpen = ref(false);
 
 // Computed
-const allReviewed = computed(() =>
-    statistics.value.pending_review === 0 && statistics.value.total > 0
+const allReviewed = computed(
+    () => statistics.value.pending_review === 0 && statistics.value.total > 0,
 );
 
 const breadcrumbs = computed<BreadcrumbItem[]>(() => {
@@ -75,7 +79,8 @@ const breadcrumbs = computed<BreadcrumbItem[]>(() => {
 
     if (implementationFile.value) {
         items.push({
-            title: implementationFile.value.original_name || 'Implementation File',
+            title:
+                implementationFile.value.original_name || 'Implementation File',
             href: props.datacenterId
                 ? `/datacenters/${props.datacenterId}/implementation-files/${props.implementationFileId}`
                 : '#',
@@ -99,7 +104,11 @@ async function loadConnections(): Promise<void> {
 
     try {
         const response = await axios.get(
-            expectedConnectionsIndex.url({ query: { implementation_file: props.implementationFileId.toString() } })
+            expectedConnectionsIndex.url({
+                query: {
+                    implementation_file: props.implementationFileId.toString(),
+                },
+            }),
         );
 
         connections.value = response.data.data || [];
@@ -125,9 +134,12 @@ async function loadConnections(): Promise<void> {
 /**
  * Handle connection update
  */
-function handleUpdateConnection(connectionId: number, data: Partial<ExpectedConnectionData>): void {
+function handleUpdateConnection(
+    connectionId: number,
+    data: Partial<ExpectedConnectionData>,
+): void {
     // Update local state optimistically
-    const index = connections.value.findIndex(c => c.id === connectionId);
+    const index = connections.value.findIndex((c) => c.id === connectionId);
     if (index !== -1) {
         connections.value[index] = { ...connections.value[index], ...data };
     }
@@ -222,7 +234,9 @@ onMounted(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <div class="flex items-start gap-4">
                     <Link
                         v-if="datacenterId"
@@ -235,7 +249,10 @@ onMounted(() => {
                     </Link>
                     <HeadingSmall
                         title="Review Expected Connections"
-                        :description="implementationFile?.original_name ?? 'Review and confirm parsed connections'"
+                        :description="
+                            implementationFile?.original_name ??
+                            'Review and confirm parsed connections'
+                        "
                     />
                 </div>
 
@@ -262,11 +279,19 @@ onMounted(() => {
                 <CardContent>
                     <div class="flex flex-wrap gap-6">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Total Rows:</span>
-                            <Badge variant="secondary" class="text-base">{{ statistics.total }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Total Rows:</span
+                            >
+                            <Badge variant="secondary" class="text-base">{{
+                                statistics.total
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Pending Review:</span>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Pending Review:</span
+                            >
                             <Badge
                                 v-if="statistics.pending_review > 0"
                                 variant="warning"
@@ -274,36 +299,55 @@ onMounted(() => {
                             >
                                 {{ statistics.pending_review }}
                             </Badge>
-                            <Badge v-else variant="outline" class="text-base">0</Badge>
+                            <Badge v-else variant="outline" class="text-base"
+                                >0</Badge
+                            >
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Confirmed:</span>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Confirmed:</span
+                            >
                             <Badge
                                 v-if="statistics.confirmed > 0"
                                 class="bg-green-600 text-base"
                             >
                                 {{ statistics.confirmed }}
                             </Badge>
-                            <Badge v-else variant="outline" class="text-base">0</Badge>
+                            <Badge v-else variant="outline" class="text-base"
+                                >0</Badge
+                            >
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Skipped:</span>
-                            <Badge variant="secondary" class="text-base">{{ statistics.skipped }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Skipped:</span
+                            >
+                            <Badge variant="secondary" class="text-base">{{
+                                statistics.skipped
+                            }}</Badge>
                         </div>
                     </div>
 
                     <!-- Progress indicator -->
                     <div v-if="statistics.total > 0" class="mt-4">
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-muted-foreground">Review Progress</span>
+                            <span class="text-muted-foreground"
+                                >Review Progress</span
+                            >
                             <span class="font-medium">
-                                {{ statistics.confirmed + statistics.skipped }} / {{ statistics.total }}
+                                {{ statistics.confirmed + statistics.skipped }}
+                                / {{ statistics.total }}
                             </span>
                         </div>
-                        <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+                        <div
+                            class="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary"
+                        >
                             <div
                                 class="h-full bg-green-600 transition-all duration-300"
-                                :style="{ width: `${((statistics.confirmed + statistics.skipped) / statistics.total) * 100}%` }"
+                                :style="{
+                                    width: `${((statistics.confirmed + statistics.skipped) / statistics.total) * 100}%`,
+                                }"
                             />
                         </div>
                     </div>
@@ -314,16 +358,24 @@ onMounted(() => {
                         class="mt-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400"
                     >
                         <CheckCircle class="size-4 shrink-0" />
-                        <span>All connections have been reviewed! Click "Finalize Review" to complete.</span>
+                        <span
+                            >All connections have been reviewed! Click "Finalize
+                            Review" to complete.</span
+                        >
                     </div>
                 </CardContent>
             </Card>
 
             <!-- Loading State -->
-            <div v-if="isLoading" class="flex items-center justify-center py-12">
+            <div
+                v-if="isLoading"
+                class="flex items-center justify-center py-12"
+            >
                 <div class="flex flex-col items-center gap-4">
                     <Spinner class="size-8" />
-                    <p class="text-sm text-muted-foreground">Loading expected connections...</p>
+                    <p class="text-sm text-muted-foreground">
+                        Loading expected connections...
+                    </p>
                 </div>
             </div>
 
@@ -334,8 +386,12 @@ onMounted(() => {
             >
                 <AlertTriangle class="size-12 text-amber-500" />
                 <div class="text-center">
-                    <h3 class="text-lg font-medium">Failed to load connections</h3>
-                    <p class="mt-1 text-sm text-muted-foreground">{{ loadError }}</p>
+                    <h3 class="text-lg font-medium">
+                        Failed to load connections
+                    </h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        {{ loadError }}
+                    </p>
                 </div>
                 <Button variant="outline" @click="loadConnections">
                     Try Again
@@ -371,21 +427,38 @@ onMounted(() => {
                         <DialogDescription>
                             <div>
                                 <p>
-                                    You have reviewed all {{ statistics.total }} connections:
+                                    You have reviewed all
+                                    {{ statistics.total }} connections:
                                 </p>
-                                <ul class="mt-2 list-inside list-disc space-y-1">
-                                    <li><strong>{{ statistics.confirmed }}</strong> connections confirmed</li>
-                                    <li><strong>{{ statistics.skipped }}</strong> connections skipped</li>
+                                <ul
+                                    class="mt-2 list-inside list-disc space-y-1"
+                                >
+                                    <li>
+                                        <strong>{{
+                                            statistics.confirmed
+                                        }}</strong>
+                                        connections confirmed
+                                    </li>
+                                    <li>
+                                        <strong>{{
+                                            statistics.skipped
+                                        }}</strong>
+                                        connections skipped
+                                    </li>
                                 </ul>
                                 <p class="mt-2">
-                                    Only confirmed connections will be used for comparison with actual connections during audits.
+                                    Only confirmed connections will be used for
+                                    comparison with actual connections during
+                                    audits.
                                 </p>
                             </div>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter class="gap-2">
                         <DialogClose as-child>
-                            <Button variant="secondary">Continue Reviewing</Button>
+                            <Button variant="secondary"
+                                >Continue Reviewing</Button
+                            >
                         </DialogClose>
                         <Button @click="handleFinalizeReview">
                             Finalize Review

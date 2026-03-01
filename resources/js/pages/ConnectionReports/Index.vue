@@ -6,28 +6,28 @@
  * and port utilization across datacenters.
  */
 
-import { ref, computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
 import {
     index as connectionReportsIndex,
-    exportPdf,
     exportCsv,
+    exportPdf,
 } from '@/actions/App/Http/Controllers/ConnectionReportController';
-import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Cable } from 'lucide-vue-next';
 import { ExportButtons } from '@/components/CapacityReports';
 import {
+    CableTypeDistributionChart,
     ConnectionFilters,
     ConnectionMetricsCards,
-    CableTypeDistributionChart,
-    PortUtilizationChart,
-    PortStatusBreakdown,
     ConnectionsInventoryTable,
+    PortStatusBreakdown,
+    PortUtilizationChart,
 } from '@/components/ConnectionReports';
+import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
+import { Cable } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 /**
  * Type definitions for Connection Reports props
@@ -162,7 +162,9 @@ const hasConnectionData = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header with title and export buttons -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     title="Connection Reports"
                     description="View connection inventory, cable types, and port utilization across your datacenters."
@@ -189,7 +191,9 @@ const hasConnectionData = computed(() => {
                 <!-- Metrics Cards Skeleton -->
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Card v-for="i in 4" :key="i">
-                        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardHeader
+                            class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        >
                             <Skeleton class="h-4 w-20" />
                             <Skeleton class="size-8 rounded-full" />
                         </CardHeader>
@@ -227,7 +231,11 @@ const hasConnectionData = computed(() => {
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-4">
-                            <Skeleton v-for="i in 4" :key="i" class="h-8 w-full" />
+                            <Skeleton
+                                v-for="i in 4"
+                                :key="i"
+                                class="h-8 w-full"
+                            />
                         </div>
                     </CardContent>
                 </Card>
@@ -252,8 +260,12 @@ const hasConnectionData = computed(() => {
             <template v-else>
                 <!-- Empty State -->
                 <div v-if="!hasConnectionData" class="py-12 text-center">
-                    <Cable class="mx-auto mb-4 size-12 text-muted-foreground/50" />
-                    <h3 class="text-lg font-medium">No connection data available</h3>
+                    <Cable
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                    />
+                    <h3 class="text-lg font-medium">
+                        No connection data available
+                    </h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         Add connections to see connection reports.
                     </p>

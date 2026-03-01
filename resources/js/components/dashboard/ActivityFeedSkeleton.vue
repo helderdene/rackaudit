@@ -12,12 +12,10 @@ import { Skeleton } from '@/components/ui/skeleton';
         <CardContent>
             <div class="space-y-1">
                 <!-- Activity row skeletons - show 5 rows to match typical feed content -->
-                <div
-                    v-for="i in 5"
-                    :key="i"
-                    class="rounded-md px-3 py-2"
-                >
-                    <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <div v-for="i in 5" :key="i" class="rounded-md px-3 py-2">
+                    <div
+                        class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"
+                    >
                         <!-- Left side: User, action, entity -->
                         <div class="flex flex-wrap items-center gap-2">
                             <!-- User name skeleton -->

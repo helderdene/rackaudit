@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { computed, ref, watch, onUnmounted } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import ConnectionHistoryController from '@/actions/App/Http/Controllers/ConnectionHistoryController';
 import ConnectionHistoryRow from '@/components/connections/ConnectionHistoryRow.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
 import { debounce } from '@/lib/utils';
-import { Download, FileSpreadsheet, FileText, Loader2, CheckCircle, XCircle, X } from 'lucide-vue-next';
+import { type BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
+import {
+    CheckCircle,
+    Download,
+    FileSpreadsheet,
+    FileText,
+    Loader2,
+    X,
+    XCircle,
+} from 'lucide-vue-next';
+import { computed, onUnmounted, ref, watch } from 'vue';
 
 interface ActivityLogData {
     id: number;
@@ -130,7 +137,7 @@ const applyFilters = debounce(() => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 }, 300);
 
@@ -176,11 +183,14 @@ const getCurrentFilters = () => {
 // Poll for export status
 const pollExportStatus = async (exportId: number) => {
     try {
-        const response = await fetch(`/connections/history/export/${exportId}/status`, {
-            headers: {
-                'Accept': 'application/json',
+        const response = await fetch(
+            `/connections/history/export/${exportId}/status`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                },
             },
-        });
+        );
 
         if (!response.ok) {
             throw new Error('Failed to fetch export status');
@@ -222,8 +232,11 @@ const initiateExport = async (format: 'csv' | 'pdf') => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN':
+                    document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content || '',
             },
             body: JSON.stringify({
                 format,
@@ -250,7 +263,8 @@ const initiateExport = async (format: 'csv' | 'pdf') => {
     } catch (error) {
         console.error('Export error:', error);
         isExporting.value = false;
-        exportError.value = error instanceof Error ? error.message : 'An error occurred';
+        exportError.value =
+            error instanceof Error ? error.message : 'An error occurred';
     }
 };
 
@@ -284,20 +298,6 @@ onUnmounted(() => {
         clearInterval(pollInterval);
     }
 });
-
-// Export status display helpers
-const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'success' => {
-    switch (status) {
-        case 'completed':
-            return 'success';
-        case 'failed':
-            return 'destructive';
-        case 'processing':
-            return 'default';
-        default:
-            return 'secondary';
-    }
-};
 </script>
 
 <template>
@@ -306,7 +306,9 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Connection History"
                     description="View and filter all connection changes across the system."
@@ -320,7 +322,10 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                         @click="exportDropdownOpen = !exportDropdownOpen"
                         :disabled="isExporting"
                     >
-                        <Loader2 v-if="isExporting" class="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2
+                            v-if="isExporting"
+                            class="mr-2 h-4 w-4 animate-spin"
+                        />
                         <Download v-else class="mr-2 h-4 w-4" />
                         Export
                     </Button>
@@ -350,7 +355,9 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
             <!-- Filters -->
             <div class="flex flex-col gap-4">
                 <!-- First row: Search and Date filters -->
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                <div
+                    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5"
+                >
                     <!-- Search Input -->
                     <div class="lg:col-span-2">
                         <Input
@@ -383,12 +390,14 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                 </div>
 
                 <!-- Second row: Dropdown filters -->
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div
+                    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                >
                     <!-- Action Filter -->
                     <select
                         v-model="actionFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Actions</option>
                         <option
@@ -404,7 +413,7 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                     <select
                         v-model="userFilter"
                         @change="handleFilterChange"
-                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                     >
                         <option value="">All Users</option>
                         <option
@@ -423,17 +432,44 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                 <table class="w-full min-w-[800px] text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Timestamp</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">User</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Action</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Connection</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Summary</th>
-                            <th class="hidden h-12 px-4 text-left font-medium text-muted-foreground lg:table-cell">IP Address</th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Timestamp
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                User
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Action
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Connection
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Summary
+                            </th>
+                            <th
+                                class="hidden h-12 px-4 text-left font-medium text-muted-foreground lg:table-cell"
+                            >
+                                IP Address
+                            </th>
                             <th class="h-12 w-12 px-4"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-for="log in activityLogs.data" :key="log.id">
+                        <template
+                            v-for="log in activityLogs.data"
+                            :key="log.id"
+                        >
                             <ConnectionHistoryRow
                                 :id="log.id"
                                 :subject-type="log.subject_type"
@@ -450,7 +486,10 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                             />
                         </template>
                         <tr v-if="activityLogs.data.length === 0">
-                            <td colspan="7" class="p-8 text-center text-muted-foreground">
+                            <td
+                                colspan="7"
+                                class="p-8 text-center text-muted-foreground"
+                            >
                                 No connection history found.
                             </td>
                         </tr>
@@ -459,9 +498,14 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
             </div>
 
             <!-- Pagination -->
-            <div v-if="activityLogs.last_page > 1" class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div
+                v-if="activityLogs.last_page > 1"
+                class="flex flex-col items-center justify-between gap-4 sm:flex-row"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ paginationInfo.from }} to {{ paginationInfo.to }} of {{ paginationInfo.total }} results
+                    Showing {{ paginationInfo.from }} to
+                    {{ paginationInfo.to }} of
+                    {{ paginationInfo.total }} results
                 </div>
                 <div class="flex flex-wrap gap-1">
                     <Button
@@ -471,8 +515,8 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                         size="sm"
                         :disabled="!link.url || link.active"
                         @click="goToPage(link.url)"
-                        v-html="link.label"
-                    />
+                        ><span v-html="link.label"
+                    /></Button>
                 </div>
             </div>
         </div>
@@ -484,52 +528,98 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
             @click.self="closeExportModal"
         >
             <div class="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold">Export Connection History</h3>
-                    <Button variant="ghost" size="icon-sm" @click="closeExportModal">
+                <div class="mb-4 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold">
+                        Export Connection History
+                    </h3>
+                    <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        @click="closeExportModal"
+                    >
                         <X class="h-4 w-4" />
                     </Button>
                 </div>
 
                 <!-- Error state -->
-                <div v-if="exportError" class="flex flex-col items-center gap-4 py-4">
+                <div
+                    v-if="exportError"
+                    class="flex flex-col items-center gap-4 py-4"
+                >
                     <XCircle class="h-12 w-12 text-destructive" />
-                    <p class="text-center text-muted-foreground">{{ exportError }}</p>
-                    <Button variant="outline" @click="closeExportModal">Close</Button>
+                    <p class="text-center text-muted-foreground">
+                        {{ exportError }}
+                    </p>
+                    <Button variant="outline" @click="closeExportModal"
+                        >Close</Button
+                    >
                 </div>
 
                 <!-- Loading/Processing state -->
-                <div v-else-if="isExporting || (currentExport && currentExport.status === 'processing')" class="flex flex-col items-center gap-4 py-4">
+                <div
+                    v-else-if="
+                        isExporting ||
+                        (currentExport && currentExport.status === 'processing')
+                    "
+                    class="flex flex-col items-center gap-4 py-4"
+                >
                     <Loader2 class="h-12 w-12 animate-spin text-primary" />
                     <p class="text-center text-muted-foreground">
-                        {{ currentExport ? 'Processing export...' : 'Initiating export...' }}
+                        {{
+                            currentExport
+                                ? 'Processing export...'
+                                : 'Initiating export...'
+                        }}
                     </p>
                     <div v-if="currentExport" class="w-full">
-                        <div class="flex justify-between text-sm text-muted-foreground mb-1">
+                        <div
+                            class="mb-1 flex justify-between text-sm text-muted-foreground"
+                        >
                             <span>Progress</span>
-                            <span>{{ currentExport.progress_percentage?.toFixed(0) || 0 }}%</span>
+                            <span
+                                >{{
+                                    currentExport.progress_percentage?.toFixed(
+                                        0,
+                                    ) || 0
+                                }}%</span
+                            >
                         </div>
                         <div class="h-2 w-full rounded-full bg-muted">
                             <div
                                 class="h-2 rounded-full bg-primary transition-all"
-                                :style="{ width: `${currentExport.progress_percentage || 0}%` }"
+                                :style="{
+                                    width: `${currentExport.progress_percentage || 0}%`,
+                                }"
                             />
                         </div>
-                        <p class="mt-2 text-center text-xs text-muted-foreground">
-                            {{ currentExport.processed_rows || 0 }} / {{ currentExport.total_rows || 0 }} rows
+                        <p
+                            class="mt-2 text-center text-xs text-muted-foreground"
+                        >
+                            {{ currentExport.processed_rows || 0 }} /
+                            {{ currentExport.total_rows || 0 }} rows
                         </p>
                     </div>
                 </div>
 
                 <!-- Completed state -->
-                <div v-else-if="currentExport && currentExport.status === 'completed'" class="flex flex-col items-center gap-4 py-4">
+                <div
+                    v-else-if="
+                        currentExport && currentExport.status === 'completed'
+                    "
+                    class="flex flex-col items-center gap-4 py-4"
+                >
                     <CheckCircle class="h-12 w-12 text-green-500" />
-                    <p class="text-center font-medium">Export completed successfully!</p>
+                    <p class="text-center font-medium">
+                        Export completed successfully!
+                    </p>
                     <p class="text-center text-sm text-muted-foreground">
-                        {{ currentExport.total_rows }} records exported as {{ currentExport.format?.toUpperCase() }}
+                        {{ currentExport.total_rows }} records exported as
+                        {{ currentExport.format?.toUpperCase() }}
                     </p>
                     <div class="flex gap-2">
-                        <Button variant="outline" @click="closeExportModal">Close</Button>
+                        <Button variant="outline" @click="closeExportModal"
+                            >Close</Button
+                        >
                         <Button @click="downloadExport">
                             <Download class="mr-2 h-4 w-4" />
                             Download
@@ -538,13 +628,21 @@ const getExportStatusVariant = (status: string): 'default' | 'secondary' | 'dest
                 </div>
 
                 <!-- Failed state -->
-                <div v-else-if="currentExport && currentExport.status === 'failed'" class="flex flex-col items-center gap-4 py-4">
+                <div
+                    v-else-if="
+                        currentExport && currentExport.status === 'failed'
+                    "
+                    class="flex flex-col items-center gap-4 py-4"
+                >
                     <XCircle class="h-12 w-12 text-destructive" />
                     <p class="text-center font-medium">Export failed</p>
                     <p class="text-center text-sm text-muted-foreground">
-                        An error occurred while generating the export. Please try again.
+                        An error occurred while generating the export. Please
+                        try again.
                     </p>
-                    <Button variant="outline" @click="closeExportModal">Close</Button>
+                    <Button variant="outline" @click="closeExportModal"
+                        >Close</Button
+                    >
                 </div>
             </div>
         </div>

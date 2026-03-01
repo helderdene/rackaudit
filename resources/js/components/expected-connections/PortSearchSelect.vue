@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue';
+import { index as portsIndex } from '@/actions/App/Http/Controllers/PortController';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { Button } from '@/components/ui/button';
-import { Search, X } from 'lucide-vue-next';
 import axios from 'axios';
-import { index as portsIndex } from '@/actions/App/Http/Controllers/PortController';
+import { Search, X } from 'lucide-vue-next';
+import { computed, onMounted, ref, watch } from 'vue';
 
 interface PortOption {
     id: number;
@@ -68,12 +68,15 @@ async function fetchPorts(query: string = ''): Promise<void> {
     isLoading.value = true;
 
     try {
-        const response = await axios.get(portsIndex.url({ device: props.deviceId }), {
-            headers: {
-                Accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
+        const response = await axios.get(
+            portsIndex.url({ device: props.deviceId }),
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
             },
-        });
+        );
 
         // Handle different response formats
         let portData: PortOption[] = [];
@@ -86,25 +89,27 @@ async function fetchPorts(query: string = ''): Promise<void> {
             portData = response.data;
         }
 
-        ports.value = portData.map((port: {
-            id: number;
-            label: string;
-            type?: string | null;
-            type_label?: string | null;
-            status: string;
-        }) => ({
-            id: port.id,
-            label: port.label,
-            type: port.type ?? null,
-            type_label: port.type_label ?? null,
-            status: port.status,
-        }));
+        ports.value = portData.map(
+            (port: {
+                id: number;
+                label: string;
+                type?: string | null;
+                type_label?: string | null;
+                status: string;
+            }) => ({
+                id: port.id,
+                label: port.label,
+                type: port.type ?? null,
+                type_label: port.type_label ?? null,
+                status: port.status,
+            }),
+        );
 
         // Filter by search query if provided
         if (query) {
             const lowerQuery = query.toLowerCase();
-            ports.value = ports.value.filter(
-                port => port.label.toLowerCase().includes(lowerQuery)
+            ports.value = ports.value.filter((port) =>
+                port.label.toLowerCase().includes(lowerQuery),
             );
         }
     } catch (error) {
@@ -188,14 +193,20 @@ async function loadInitialPort(): Promise<void> {
     if (props.modelValue && props.deviceId) {
         isLoading.value = true;
         try {
-            const response = await axios.get(`/devices/${props.deviceId}/ports/${props.modelValue}`, {
-                headers: {
-                    Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
+            const response = await axios.get(
+                `/devices/${props.deviceId}/ports/${props.modelValue}`,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
                 },
-            });
+            );
 
-            const port = response.data?.props?.port || response.data?.data || response.data;
+            const port =
+                response.data?.props?.port ||
+                response.data?.data ||
+                response.data;
             if (port) {
                 selectedPort.value = {
                     id: port.id,
@@ -217,24 +228,30 @@ async function loadInitialPort(): Promise<void> {
 }
 
 // Watch for device changes - reset port selection
-watch(() => props.deviceId, (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-        selectedPort.value = null;
-        searchQuery.value = '';
-        ports.value = [];
-        emit('update:modelValue', null);
-    }
-});
+watch(
+    () => props.deviceId,
+    (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+            selectedPort.value = null;
+            searchQuery.value = '';
+            ports.value = [];
+            emit('update:modelValue', null);
+        }
+    },
+);
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newValue) => {
-    if (newValue === null) {
-        selectedPort.value = null;
-        searchQuery.value = '';
-    } else if (newValue !== selectedPort.value?.id && props.deviceId) {
-        loadInitialPort();
-    }
-});
+watch(
+    () => props.modelValue,
+    (newValue) => {
+        if (newValue === null) {
+            selectedPort.value = null;
+            searchQuery.value = '';
+        } else if (newValue !== selectedPort.value?.id && props.deviceId) {
+            loadInitialPort();
+        }
+    },
+);
 
 // Load initial port on mount
 onMounted(() => {
@@ -249,13 +266,15 @@ onMounted(() => {
 <template>
     <div class="relative w-full">
         <div class="relative">
-            <Search class="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search
+                class="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground"
+            />
             <Input
                 ref="inputRef"
                 :value="isDisabled ? 'Select device first' : displayText"
                 :placeholder="placeholder"
                 :disabled="isDisabled"
-                class="h-8 pl-7 pr-8 text-xs"
+                class="h-8 pr-8 pl-7 text-xs"
                 :class="{ 'text-muted-foreground': isDisabled }"
                 @input="handleSearch"
                 @focus="handleFocus"
@@ -266,7 +285,7 @@ onMounted(() => {
                 type="button"
                 variant="ghost"
                 size="icon"
-                class="absolute right-0 top-0 h-8 w-8"
+                class="absolute top-0 right-0 h-8 w-8"
                 @click="clearSelection"
             >
                 <X class="size-3" />
@@ -282,7 +301,10 @@ onMounted(() => {
                 <Spinner class="size-4" />
             </div>
 
-            <div v-else-if="ports.length === 0" class="px-2 py-4 text-center text-xs text-muted-foreground">
+            <div
+                v-else-if="ports.length === 0"
+                class="px-2 py-4 text-center text-xs text-muted-foreground"
+            >
                 No ports found.
             </div>
 

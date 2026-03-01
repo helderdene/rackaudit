@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -7,6 +6,7 @@ import RoomForm from '@/components/rooms/RoomForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { DatacenterReference, RoomTypeOption } from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;

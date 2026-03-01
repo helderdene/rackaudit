@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
-import { Check } from 'lucide-vue-next';
+import {
+    useHelp,
+    type HelpTour,
+    type HelpTourStep,
+} from '@/composables/useHelp';
+import { useHelpInteractions } from '@/composables/useHelpInteractions';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import TourSpotlight from './TourSpotlight.vue';
 import TourStepPopover from './TourStepPopover.vue';
-import { useHelp, type HelpTour, type HelpTourStep } from '@/composables/useHelp';
-import { useHelpInteractions } from '@/composables/useHelpInteractions';
 
 interface Props {
     /** Tour slug to load */
@@ -51,7 +54,10 @@ const popoverGap = 16;
 
 // Computed
 const currentStep = computed<HelpTourStep | null>(() => {
-    if (!tourData.value?.steps || !tourData.value.steps[currentStepIndex.value]) {
+    if (
+        !tourData.value?.steps ||
+        !tourData.value.steps[currentStepIndex.value]
+    ) {
         return null;
     }
     return tourData.value.steps[currentStepIndex.value];
@@ -59,7 +65,9 @@ const currentStep = computed<HelpTourStep | null>(() => {
 
 const totalSteps = computed(() => tourData.value?.steps?.length || 0);
 const isFirstStep = computed(() => currentStepIndex.value === 0);
-const isLastStep = computed(() => currentStepIndex.value === totalSteps.value - 1);
+const isLastStep = computed(
+    () => currentStepIndex.value === totalSteps.value - 1,
+);
 
 const hasCompletedTour = computed(() => {
     if (!tourData.value) return false;

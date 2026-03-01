@@ -6,22 +6,22 @@
  * responsive sizing and hover tooltips.
  */
 
-import { computed } from 'vue';
-import { Line } from 'vue-chartjs';
+import type { TrendDataPoint } from '@/types/dashboard';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import type { TrendDataPoint } from '@/types/dashboard';
+import { computed } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 const props = defineProps<{
@@ -50,18 +50,24 @@ const formatPeriodLabel = (period: string): string => {
     // YYYY-MM-DD (daily)
     if (/^\d{4}-\d{2}-\d{2}$/.test(period)) {
         const date = new Date(period);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+        });
     }
     // YYYY-Www (weekly)
     if (/^\d{4}-W\d{2}$/.test(period)) {
-        const [year, week] = period.split('-W');
+        const [, week] = period.split('-W');
         return `W${week}`;
     }
     // YYYY-MM (monthly)
     if (/^\d{4}-\d{2}$/.test(period)) {
         const [year, month] = period.split('-');
         const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-        return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            year: '2-digit',
+        });
     }
     return period;
 };
@@ -207,11 +213,17 @@ const totalCompletions = computed(() => {
         <!-- Header with total -->
         <div class="mb-4 flex items-center justify-between">
             <div>
-                <h4 class="text-sm font-medium text-muted-foreground">Audit Completions</h4>
-                <p class="text-xs text-muted-foreground/70">{{ timePeriodLabel }}</p>
+                <h4 class="text-sm font-medium text-muted-foreground">
+                    Audit Completions
+                </h4>
+                <p class="text-xs text-muted-foreground/70">
+                    {{ timePeriodLabel }}
+                </p>
             </div>
             <div class="text-right">
-                <span class="text-2xl font-bold text-green-600 dark:text-green-400">
+                <span
+                    class="text-2xl font-bold text-green-600 dark:text-green-400"
+                >
                     {{ totalCompletions }}
                 </span>
                 <span class="ml-1 text-sm text-muted-foreground">total</span>
@@ -242,7 +254,9 @@ const totalCompletions = computed(() => {
                     d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
                 />
             </svg>
-            <p class="text-sm text-muted-foreground">No completed audits in selected period</p>
+            <p class="text-sm text-muted-foreground">
+                No completed audits in selected period
+            </p>
         </div>
     </div>
 </template>

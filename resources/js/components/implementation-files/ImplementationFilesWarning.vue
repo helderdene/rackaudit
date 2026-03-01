@@ -18,8 +18,9 @@ defineProps<Props>();
         <AlertTriangle class="size-4" />
         <AlertTitle>No Approved Implementation Files</AlertTitle>
         <AlertDescription>
-            This datacenter has no approved implementation files. Audits require approved
-            implementation files as the authoritative source for expected connections.
+            This datacenter has no approved implementation files. Audits require
+            approved implementation files as the authoritative source for
+            expected connections.
         </AlertDescription>
     </Alert>
 </template>

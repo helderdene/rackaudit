@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { UtilizationStats } from '@/types/rooms';
 import { BarChart3 } from 'lucide-vue-next';
+import type { HTMLAttributes } from 'vue';
+import { computed } from 'vue';
 
 interface Props {
     /** Utilization statistics to display */
@@ -36,7 +36,10 @@ const formattedPercent = computed(() => {
  * Check if we have separate front/rear stats
  */
 const hasSeparateStats = computed(() => {
-    return props.stats.frontUsedU !== undefined && props.stats.rearUsedU !== undefined;
+    return (
+        props.stats.frontUsedU !== undefined &&
+        props.stats.rearUsedU !== undefined
+    );
 });
 </script>
 
@@ -58,7 +61,9 @@ const hasSeparateStats = computed(() => {
                     </div>
                     <div class="h-2 overflow-hidden rounded-full bg-muted">
                         <div
-                            :class="cn('h-full transition-all', utilizationColor)"
+                            :class="
+                                cn('h-full transition-all', utilizationColor)
+                            "
                             :style="{ width: `${stats.utilizationPercent}%` }"
                         />
                     </div>
@@ -71,12 +76,20 @@ const hasSeparateStats = computed(() => {
                         <div class="text-xs text-muted-foreground">Total U</div>
                     </div>
                     <div>
-                        <div class="text-2xl font-bold text-primary">{{ stats.usedU }}</div>
+                        <div class="text-2xl font-bold text-primary">
+                            {{ stats.usedU }}
+                        </div>
                         <div class="text-xs text-muted-foreground">Used</div>
                     </div>
                     <div>
-                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.availableU }}</div>
-                        <div class="text-xs text-muted-foreground">Available</div>
+                        <div
+                            class="text-2xl font-bold text-green-600 dark:text-green-400"
+                        >
+                            {{ stats.availableU }}
+                        </div>
+                        <div class="text-xs text-muted-foreground">
+                            Available
+                        </div>
                     </div>
                 </div>
 
@@ -84,12 +97,20 @@ const hasSeparateStats = computed(() => {
                 <div v-if="hasSeparateStats" class="border-t pt-4">
                     <div class="grid grid-cols-2 gap-4 text-center">
                         <div>
-                            <div class="text-lg font-semibold">{{ stats.frontUsedU }}</div>
-                            <div class="text-xs text-muted-foreground">Front Used</div>
+                            <div class="text-lg font-semibold">
+                                {{ stats.frontUsedU }}
+                            </div>
+                            <div class="text-xs text-muted-foreground">
+                                Front Used
+                            </div>
                         </div>
                         <div>
-                            <div class="text-lg font-semibold">{{ stats.rearUsedU }}</div>
-                            <div class="text-xs text-muted-foreground">Rear Used</div>
+                            <div class="text-lg font-semibold">
+                                {{ stats.rearUsedU }}
+                            </div>
+                            <div class="text-xs text-muted-foreground">
+                                Rear Used
+                            </div>
                         </div>
                     </div>
                 </div>

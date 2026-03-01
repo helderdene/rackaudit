@@ -1,5 +1,4 @@
-import { computed, ref, type Ref } from 'vue';
-import axios from 'axios';
+import DeviceController from '@/actions/App/Http/Controllers/DeviceController';
 import type {
     DevicePosition,
     DeviceWidth,
@@ -8,7 +7,8 @@ import type {
     RackFace,
     UtilizationStats,
 } from '@/types/rooms';
-import DeviceController from '@/actions/App/Http/Controllers/DeviceController';
+import axios from 'axios';
+import { computed, ref, type Ref } from 'vue';
 
 /**
  * Map frontend DeviceWidth to backend width_type format.
@@ -43,8 +43,12 @@ export function useRackElevation(
     rackId?: number,
 ) {
     // State management
-    const placedDevices: Ref<PlaceholderDevice[]> = ref([...initialPlacedDevices]);
-    const unplacedDevices: Ref<PlaceholderDevice[]> = ref([...initialUnplacedDevices]);
+    const placedDevices: Ref<PlaceholderDevice[]> = ref([
+        ...initialPlacedDevices,
+    ]);
+    const unplacedDevices: Ref<PlaceholderDevice[]> = ref([
+        ...initialUnplacedDevices,
+    ]);
     const draggedDevice: Ref<PlaceholderDevice | null> = ref(null);
     const isLoading: Ref<boolean> = ref(false);
     const error: Ref<string | null> = ref(null);
@@ -73,17 +77,30 @@ export function useRackElevation(
         face: RackFace,
         excludeDeviceId?: string,
     ): Map<number, { full: boolean; halfLeft: boolean; halfRight: boolean }> {
-        const map = new Map<number, { full: boolean; halfLeft: boolean; halfRight: boolean }>();
+        const map = new Map<
+            number,
+            { full: boolean; halfLeft: boolean; halfRight: boolean }
+        >();
 
-        const devices = getDevicesByFace(face).filter((d) => d.id !== excludeDeviceId);
+        const devices = getDevicesByFace(face).filter(
+            (d) => d.id !== excludeDeviceId,
+        );
 
         for (const device of devices) {
             if (device.start_u === undefined) {
                 continue;
             }
 
-            for (let u = device.start_u; u < device.start_u + device.u_size; u++) {
-                const current = map.get(u) || { full: false, halfLeft: false, halfRight: false };
+            for (
+                let u = device.start_u;
+                u < device.start_u + device.u_size;
+                u++
+            ) {
+                const current = map.get(u) || {
+                    full: false,
+                    halfLeft: false,
+                    halfRight: false,
+                };
 
                 if (device.width === 'full') {
                     current.full = true;
@@ -159,7 +176,9 @@ export function useRackElevation(
         device: PlaceholderDevice,
         position: Omit<DevicePosition, 'device_id'>,
     ): Promise<boolean> {
-        if (!canPlaceAt(device, position.start_u, position.face, position.width)) {
+        if (
+            !canPlaceAt(device, position.start_u, position.face, position.width)
+        ) {
             return false;
         }
 
@@ -170,15 +189,22 @@ export function useRackElevation(
 
             try {
                 const deviceId = parseInt(device.id, 10);
-                await axios.patch(DeviceController.place.url({ device: deviceId }), {
-                    rack_id: rackId,
-                    start_u: position.start_u,
-                    face: position.face,
-                    width_type: mapWidthToBackend(position.width),
-                });
+                await axios.patch(
+                    DeviceController.place.url({ device: deviceId }),
+                    {
+                        rack_id: rackId,
+                        start_u: position.start_u,
+                        face: position.face,
+                        width_type: mapWidthToBackend(position.width),
+                    },
+                );
             } catch (err: unknown) {
-                const axiosError = err as { response?: { data?: { message?: string } } };
-                error.value = axiosError.response?.data?.message || 'Failed to place device';
+                const axiosError = err as {
+                    response?: { data?: { message?: string } };
+                };
+                error.value =
+                    axiosError.response?.data?.message ||
+                    'Failed to place device';
                 isLoading.value = false;
                 return false;
             }
@@ -187,7 +213,9 @@ export function useRackElevation(
         }
 
         // Update local state
-        unplacedDevices.value = unplacedDevices.value.filter((d) => d.id !== device.id);
+        unplacedDevices.value = unplacedDevices.value.filter(
+            (d) => d.id !== device.id,
+        );
 
         const placedDevice: PlaceholderDevice = {
             ...device,
@@ -209,7 +237,14 @@ export function useRackElevation(
         device: PlaceholderDevice,
         newPosition: Omit<DevicePosition, 'device_id'>,
     ): Promise<boolean> {
-        if (!canPlaceAt(device, newPosition.start_u, newPosition.face, newPosition.width)) {
+        if (
+            !canPlaceAt(
+                device,
+                newPosition.start_u,
+                newPosition.face,
+                newPosition.width,
+            )
+        ) {
             return false;
         }
 
@@ -220,15 +255,22 @@ export function useRackElevation(
 
             try {
                 const deviceId = parseInt(device.id, 10);
-                await axios.patch(DeviceController.place.url({ device: deviceId }), {
-                    rack_id: rackId,
-                    start_u: newPosition.start_u,
-                    face: newPosition.face,
-                    width_type: mapWidthToBackend(newPosition.width),
-                });
+                await axios.patch(
+                    DeviceController.place.url({ device: deviceId }),
+                    {
+                        rack_id: rackId,
+                        start_u: newPosition.start_u,
+                        face: newPosition.face,
+                        width_type: mapWidthToBackend(newPosition.width),
+                    },
+                );
             } catch (err: unknown) {
-                const axiosError = err as { response?: { data?: { message?: string } } };
-                error.value = axiosError.response?.data?.message || 'Failed to move device';
+                const axiosError = err as {
+                    response?: { data?: { message?: string } };
+                };
+                error.value =
+                    axiosError.response?.data?.message ||
+                    'Failed to move device';
                 isLoading.value = false;
                 return false;
             }
@@ -257,7 +299,9 @@ export function useRackElevation(
      * Makes an API call to persist the removal if rackId is provided.
      */
     async function removeDevice(device: PlaceholderDevice): Promise<void> {
-        const deviceToRemove = placedDevices.value.find((d) => d.id === device.id);
+        const deviceToRemove = placedDevices.value.find(
+            (d) => d.id === device.id,
+        );
         if (!deviceToRemove) {
             return;
         }
@@ -269,10 +313,16 @@ export function useRackElevation(
 
             try {
                 const deviceId = parseInt(device.id, 10);
-                await axios.patch(DeviceController.unplace.url({ device: deviceId }));
+                await axios.patch(
+                    DeviceController.unplace.url({ device: deviceId }),
+                );
             } catch (err: unknown) {
-                const axiosError = err as { response?: { data?: { message?: string } } };
-                error.value = axiosError.response?.data?.message || 'Failed to remove device';
+                const axiosError = err as {
+                    response?: { data?: { message?: string } };
+                };
+                error.value =
+                    axiosError.response?.data?.message ||
+                    'Failed to remove device';
                 isLoading.value = false;
                 return;
             }
@@ -281,7 +331,9 @@ export function useRackElevation(
         }
 
         // Update local state
-        placedDevices.value = placedDevices.value.filter((d) => d.id !== device.id);
+        placedDevices.value = placedDevices.value.filter(
+            (d) => d.id !== device.id,
+        );
 
         const unplacedDevice: PlaceholderDevice = {
             id: deviceToRemove.id,
@@ -317,9 +369,14 @@ export function useRackElevation(
                 continue;
             }
 
-            const occupied = device.face === 'front' ? frontOccupied : rearOccupied;
+            const occupied =
+                device.face === 'front' ? frontOccupied : rearOccupied;
 
-            for (let u = device.start_u; u < device.start_u + device.u_size; u++) {
+            for (
+                let u = device.start_u;
+                u < device.start_u + device.u_size;
+                u++
+            ) {
                 if (device.width === 'full') {
                     // Full-width counts as using the whole U
                     occupied.add(`${u}-full`);
@@ -386,7 +443,11 @@ export function useRackElevation(
     /**
      * Check if a specific U slot is a valid drop target for the currently dragged device
      */
-    function isValidDropTarget(uNumber: number, face: RackFace, width?: DeviceWidth): boolean {
+    function isValidDropTarget(
+        uNumber: number,
+        face: RackFace,
+        width?: DeviceWidth,
+    ): boolean {
         if (!draggedDevice.value) {
             return false;
         }

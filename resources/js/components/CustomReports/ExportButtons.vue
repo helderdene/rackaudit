@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {
+    exportCsv,
+    exportJson,
+    exportPdf,
+} from '@/actions/App/Http/Controllers/CustomReportBuilderController';
 import { Button } from '@/components/ui/button';
-import { FileText, FileSpreadsheet, FileJson, Loader2 } from 'lucide-vue-next';
-import { exportPdf, exportCsv, exportJson } from '@/actions/App/Http/Controllers/CustomReportBuilderController';
+import { FileJson, FileSpreadsheet, FileText, Loader2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 /**
  * Report configuration structure for export requests
@@ -40,7 +44,9 @@ function submitExportForm(url: string, method: string = 'POST'): void {
     form.style.display = 'none';
 
     // Add CSRF token
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content');
     if (csrfToken) {
         const csrfInput = document.createElement('input');
         csrfInput.type = 'hidden';
@@ -85,8 +91,14 @@ function submitExportForm(url: string, method: string = 'POST'): void {
             });
         } else if (typeof value === 'object') {
             // Handle filters object
-            for (const [subKey, subValue] of Object.entries(value as Record<string, unknown>)) {
-                if (subValue !== null && subValue !== undefined && subValue !== '') {
+            for (const [subKey, subValue] of Object.entries(
+                value as Record<string, unknown>,
+            )) {
+                if (
+                    subValue !== null &&
+                    subValue !== undefined &&
+                    subValue !== ''
+                ) {
                     const input = document.createElement('input');
                     input.type = 'hidden';
                     input.name = `${key}[${subKey}]`;
@@ -147,13 +159,15 @@ async function handleJsonExport(): Promise<void> {
     jsonLoading.value = true;
 
     try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const csrfToken = document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content');
 
         const response = await fetch(exportJson.url(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-CSRF-TOKEN': csrfToken || '',
             },
             body: JSON.stringify({
@@ -172,7 +186,9 @@ async function handleJsonExport(): Promise<void> {
         const data = await response.json();
 
         // Create a download from the JSON response
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: 'application/json',
+        });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;

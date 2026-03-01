@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Badge } from '@/components/ui/badge';
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Cable, Server, Plug, ArrowRight } from 'lucide-vue-next';
 import type { ComparisonResultData } from '@/types/comparison';
+import { Link } from '@inertiajs/vue3';
+import { ArrowRight, Cable, Plug, Server } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     open: boolean;
@@ -46,17 +46,27 @@ const connection = computed(() => props.comparison?.actual_connection);
 
             <div v-if="comparison && connection" class="space-y-6">
                 <!-- Connection Flow -->
-                <div class="flex items-center justify-between gap-4 rounded-lg border bg-muted/30 p-4">
+                <div
+                    class="flex items-center justify-between gap-4 rounded-lg border bg-muted/30 p-4"
+                >
                     <!-- Source -->
                     <div class="flex-1 text-center">
-                        <div class="flex items-center justify-center gap-1 text-muted-foreground">
+                        <div
+                            class="flex items-center justify-center gap-1 text-muted-foreground"
+                        >
                             <Server class="size-4" />
                             <span class="text-xs">Source</span>
                         </div>
-                        <p class="mt-1 font-medium">{{ comparison.source_device?.name }}</p>
-                        <div class="mt-1 flex items-center justify-center gap-1">
+                        <p class="mt-1 font-medium">
+                            {{ comparison.source_device?.name }}
+                        </p>
+                        <div
+                            class="mt-1 flex items-center justify-center gap-1"
+                        >
                             <Plug class="size-3 text-muted-foreground" />
-                            <span class="text-sm">{{ comparison.source_port?.label }}</span>
+                            <span class="text-sm">{{
+                                comparison.source_port?.label
+                            }}</span>
                         </div>
                     </div>
 
@@ -65,21 +75,31 @@ const connection = computed(() => props.comparison?.actual_connection);
 
                     <!-- Destination -->
                     <div class="flex-1 text-center">
-                        <div class="flex items-center justify-center gap-1 text-muted-foreground">
+                        <div
+                            class="flex items-center justify-center gap-1 text-muted-foreground"
+                        >
                             <Server class="size-4" />
                             <span class="text-xs">Destination</span>
                         </div>
-                        <p class="mt-1 font-medium">{{ comparison.dest_device?.name }}</p>
-                        <div class="mt-1 flex items-center justify-center gap-1">
+                        <p class="mt-1 font-medium">
+                            {{ comparison.dest_device?.name }}
+                        </p>
+                        <div
+                            class="mt-1 flex items-center justify-center gap-1"
+                        >
                             <Plug class="size-3 text-muted-foreground" />
-                            <span class="text-sm">{{ comparison.dest_port?.label }}</span>
+                            <span class="text-sm">{{
+                                comparison.dest_port?.label
+                            }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Cable Details -->
                 <div class="space-y-3">
-                    <h4 class="text-sm font-medium text-muted-foreground">Cable Properties</h4>
+                    <h4 class="text-sm font-medium text-muted-foreground">
+                        Cable Properties
+                    </h4>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <p class="text-xs text-muted-foreground">Type</p>
@@ -89,22 +109,32 @@ const connection = computed(() => props.comparison?.actual_connection);
                         </div>
                         <div>
                             <p class="text-xs text-muted-foreground">Length</p>
-                            <p class="mt-1 font-medium">{{ connection.cable_length }}m</p>
+                            <p class="mt-1 font-medium">
+                                {{ connection.cable_length }}m
+                            </p>
                         </div>
                         <div>
                             <p class="text-xs text-muted-foreground">Color</p>
-                            <p class="mt-1 font-medium">{{ connection.cable_color || '-' }}</p>
+                            <p class="mt-1 font-medium">
+                                {{ connection.cable_color || '-' }}
+                            </p>
                         </div>
                         <div>
-                            <p class="text-xs text-muted-foreground">Port Type</p>
-                            <p class="mt-1 font-medium">{{ comparison.source_port?.type_label }}</p>
+                            <p class="text-xs text-muted-foreground">
+                                Port Type
+                            </p>
+                            <p class="mt-1 font-medium">
+                                {{ comparison.source_port?.type_label }}
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Device Links -->
                 <div class="space-y-3">
-                    <h4 class="text-sm font-medium text-muted-foreground">Quick Links</h4>
+                    <h4 class="text-sm font-medium text-muted-foreground">
+                        Quick Links
+                    </h4>
                     <div class="flex flex-wrap gap-2">
                         <Link
                             v-if="comparison.source_device?.id"

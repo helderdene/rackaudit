@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,6 +10,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 interface Props {
     fileId: number;
@@ -34,17 +34,20 @@ const isOpen = ref(false);
 const handleDelete = () => {
     isDeleting.value = true;
 
-    router.delete(`/datacenters/${props.datacenterId}/implementation-files/${props.fileId}`, {
-        preserveScroll: true,
-        onSuccess: () => {
-            isOpen.value = false;
-            isDeleting.value = false;
-            emit('file-deleted', props.fileId);
+    router.delete(
+        `/datacenters/${props.datacenterId}/implementation-files/${props.fileId}`,
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isOpen.value = false;
+                isDeleting.value = false;
+                emit('file-deleted', props.fileId);
+            },
+            onError: () => {
+                isDeleting.value = false;
+            },
         },
-        onError: () => {
-            isDeleting.value = false;
-        },
-    });
+    );
 };
 </script>
 
@@ -52,11 +55,7 @@ const handleDelete = () => {
     <Dialog v-model:open="isOpen">
         <DialogTrigger as-child>
             <slot>
-                <Button
-                    variant="destructive"
-                    size="sm"
-                    :disabled="disabled"
-                >
+                <Button variant="destructive" size="sm" :disabled="disabled">
                     Delete
                 </Button>
             </slot>
@@ -66,19 +65,22 @@ const handleDelete = () => {
                 <DialogTitle>Delete Implementation File</DialogTitle>
                 <DialogDescription>
                     Are you sure you want to delete
-                    <span class="font-semibold">{{ fileName }}</span>?
-                    This action cannot be undone.
+                    <span class="font-semibold">{{ fileName }}</span
+                    >? This action cannot be undone.
                 </DialogDescription>
             </DialogHeader>
 
             <div
                 class="rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
             >
-                <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                <div
+                    class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                >
                     <p class="font-medium">Warning</p>
                     <p class="text-sm">
                         The file will be permanently removed from the system.
-                        Any references to this implementation specification will no longer be accessible.
+                        Any references to this implementation specification will
+                        no longer be accessible.
                     </p>
                 </div>
             </div>

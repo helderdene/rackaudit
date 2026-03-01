@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import FindingCategoryController from '@/actions/App/Http/Controllers/FindingCategoryController';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, X, AlertCircle, Loader2 } from 'lucide-vue-next';
 import type { FilterOption } from '@/types/finding';
+import { AlertCircle, Loader2, Plus, X } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     modelValue: number | null;
@@ -30,8 +29,10 @@ const localCategories = ref<FilterOption[]>([...props.categoryOptions]);
 // Update local categories when props change
 const allCategories = computed(() => {
     // Start with props categories, then add any locally created ones that aren't in props
-    const propCategoryIds = new Set(props.categoryOptions.map(c => c.value));
-    const newCategories = localCategories.value.filter(c => !propCategoryIds.has(c.value));
+    const propCategoryIds = new Set(props.categoryOptions.map((c) => c.value));
+    const newCategories = localCategories.value.filter(
+        (c) => !propCategoryIds.has(c.value),
+    );
     return [...props.categoryOptions, ...newCategories];
 });
 
@@ -65,7 +66,7 @@ const createCategory = async () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-XSRF-TOKEN': getCsrfToken(),
             },
             credentials: 'same-origin',
@@ -78,11 +79,13 @@ const createCategory = async () => {
 
         if (!response.ok) {
             if (data.errors?.name) {
-                createError.value = data.errors.name[0] || 'Category name already exists.';
+                createError.value =
+                    data.errors.name[0] || 'Category name already exists.';
             } else if (data.message) {
                 createError.value = data.message;
             } else {
-                createError.value = 'Failed to create category. Please try again.';
+                createError.value =
+                    'Failed to create category. Please try again.';
             }
             return;
         }
@@ -100,7 +103,7 @@ const createCategory = async () => {
         // Reset form
         newCategoryName.value = '';
         showCreateForm.value = false;
-    } catch (error) {
+    } catch {
         createError.value = 'Network error. Please try again.';
     } finally {
         isCreating.value = false;
@@ -129,7 +132,8 @@ const getCsrfToken = (): string => {
 };
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 </script>
 
 <template>
@@ -154,7 +158,7 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
         </select>
 
         <!-- Inline Create Form -->
-        <div v-if="showCreateForm" class="rounded-lg border p-3 space-y-3">
+        <div v-if="showCreateForm" class="space-y-3 rounded-lg border p-3">
             <div class="flex items-center gap-2">
                 <Input
                     v-model="newCategoryName"
@@ -169,7 +173,10 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
                     @click="createCategory"
                     :disabled="isCreating || !newCategoryName.trim()"
                 >
-                    <Loader2 v-if="isCreating" class="mr-1 size-4 animate-spin" />
+                    <Loader2
+                        v-if="isCreating"
+                        class="mr-1 size-4 animate-spin"
+                    />
                     <Plus v-else class="mr-1 size-4" />
                     {{ isCreating ? 'Creating...' : 'Create' }}
                 </Button>
@@ -182,7 +189,10 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
                     <X class="size-4" />
                 </Button>
             </div>
-            <div v-if="createError" class="flex items-center gap-1 text-xs text-destructive">
+            <div
+                v-if="createError"
+                class="flex items-center gap-1 text-xs text-destructive"
+            >
                 <AlertCircle class="size-3" />
                 {{ createError }}
             </div>

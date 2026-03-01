@@ -6,22 +6,22 @@
  * Based on HistoricalTrendChart pattern for consistent styling.
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, onMounted, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface Props {
@@ -53,7 +53,10 @@ onMounted(() => {
  * Check if there is valid data to display
  */
 const hasData = computed(() => {
-    return props.data.length > 0 && props.data.some((val) => val !== null && val !== undefined);
+    return (
+        props.data.length > 0 &&
+        props.data.some((val) => val !== null && val !== undefined)
+    );
 });
 
 /**
@@ -173,11 +176,15 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
     >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     Rack Utilization Trend
                 </CardTitle>
                 <div v-if="latestValue !== null" class="text-right">
-                    <span class="text-lg font-bold text-foreground dark:text-foreground">
+                    <span
+                        class="text-lg font-bold text-foreground dark:text-foreground"
+                    >
                         {{ latestValue }}%
                     </span>
                     <span v-if="trendDirection" class="ml-2 text-xs">
@@ -217,7 +224,11 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
                                 <path d="M6 9l6 6 6-6" />
                             </svg>
                         </span>
-                        <span v-else class="text-muted-foreground" title="Stable">
+                        <span
+                            v-else
+                            class="text-muted-foreground"
+                            title="Stable"
+                        >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 class="inline-block size-4"
@@ -260,7 +271,9 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
                         d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No capacity data available</p>
+                <p class="text-sm text-muted-foreground">
+                    No capacity data available
+                </p>
                 <p class="mt-1 text-xs text-muted-foreground/70">
                     Data will appear after snapshots are captured
                 </p>

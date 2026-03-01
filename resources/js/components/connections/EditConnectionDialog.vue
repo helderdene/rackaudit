@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,8 +14,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { ConnectionWithPorts, CableTypeOption } from '@/types/connections';
+import type { CableTypeOption, ConnectionWithPorts } from '@/types/connections';
 import { getCableTypesForPortType } from '@/types/connections';
+import { Form } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     /** Connection data with source and destination port info */
@@ -35,7 +35,9 @@ const isOpen = ref(false);
 // Form field values - pre-filled with existing data
 const selectedCableType = ref<string>(props.connection.cable_type || '');
 const cableLength = ref<string>(
-    props.connection.cable_length !== null ? String(props.connection.cable_length) : '',
+    props.connection.cable_length !== null
+        ? String(props.connection.cable_length)
+        : '',
 );
 const cableColor = ref<string>(props.connection.cable_color || '');
 const pathNotes = ref<string>(props.connection.path_notes || '');
@@ -102,7 +104,8 @@ const selectClass =
             <DialogHeader>
                 <DialogTitle>Edit Connection</DialogTitle>
                 <DialogDescription>
-                    Update cable properties for this connection. Source and destination ports cannot be changed.
+                    Update cable properties for this connection. Source and
+                    destination ports cannot be changed.
                 </DialogDescription>
             </DialogHeader>
 
@@ -122,14 +125,20 @@ const selectClass =
                         <div>
                             <span class="text-muted-foreground">From:</span>
                             <span class="ml-2 font-medium">
-                                {{ connection.source_port.device?.name || 'Unknown' }}
+                                {{
+                                    connection.source_port.device?.name ||
+                                    'Unknown'
+                                }}
                                 ({{ connection.source_port.label }})
                             </span>
                         </div>
                         <div>
                             <span class="text-muted-foreground">To:</span>
                             <span class="ml-2 font-medium">
-                                {{ connection.destination_port.device?.name || 'Unknown' }}
+                                {{
+                                    connection.destination_port.device?.name ||
+                                    'Unknown'
+                                }}
                                 ({{ connection.destination_port.label }})
                             </span>
                         </div>
@@ -163,7 +172,8 @@ const selectClass =
                 <!-- Cable Length -->
                 <div class="grid gap-2">
                     <Label for="edit-cable-length">
-                        Cable Length (meters) <span class="text-red-500">*</span>
+                        Cable Length (meters)
+                        <span class="text-red-500">*</span>
                     </Label>
                     <Input
                         id="edit-cable-length"
@@ -206,7 +216,11 @@ const selectClass =
 
                 <DialogFooter class="gap-2 pt-4">
                     <DialogClose as-child>
-                        <Button type="button" variant="secondary" :disabled="processing">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            :disabled="processing"
+                        >
                             Cancel
                         </Button>
                     </DialogClose>

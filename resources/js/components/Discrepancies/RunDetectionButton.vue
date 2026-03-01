@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -10,8 +9,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Play, ChevronDown, Loader2, CheckCircle, AlertTriangle, Building2 } from 'lucide-vue-next';
+import { router } from '@inertiajs/vue3';
+import {
+    AlertTriangle,
+    Building2,
+    CheckCircle,
+    ChevronDown,
+    Loader2,
+    Play,
+} from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface DatacenterOption {
     id: number;
@@ -67,7 +74,7 @@ const runDetection = async (datacenterId: number) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-XSRF-TOKEN': getCsrfToken(),
             },
             credentials: 'same-origin',
@@ -89,7 +96,8 @@ const runDetection = async (datacenterId: number) => {
             router.reload({ preserveScroll: true });
         }, 3000);
     } catch (e) {
-        errorMessage.value = e instanceof Error ? e.message : 'An error occurred';
+        errorMessage.value =
+            e instanceof Error ? e.message : 'An error occurred';
         showError.value = true;
 
         // Auto-hide error after delay
@@ -134,7 +142,10 @@ const runDetection = async (datacenterId: number) => {
                     <Building2 class="mr-2 size-4" />
                     {{ dc.name }}
                 </DropdownMenuItem>
-                <div v-if="datacenters.length === 0" class="px-2 py-1.5 text-sm text-muted-foreground">
+                <div
+                    v-if="datacenters.length === 0"
+                    class="px-2 py-1.5 text-sm text-muted-foreground"
+                >
                     No datacenters available
                 </div>
             </DropdownMenuContent>
@@ -143,13 +154,20 @@ const runDetection = async (datacenterId: number) => {
         <!-- Success/Error Feedback -->
         <div
             v-if="showSuccess || showError"
-            class="absolute right-0 top-full z-50 mt-2 w-64"
+            class="absolute top-full right-0 z-50 mt-2 w-64"
         >
-            <Alert v-if="showSuccess" class="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
-                <CheckCircle class="size-4 text-green-600 dark:text-green-400" />
+            <Alert
+                v-if="showSuccess"
+                class="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950"
+            >
+                <CheckCircle
+                    class="size-4 text-green-600 dark:text-green-400"
+                />
                 <AlertDescription class="text-green-600 dark:text-green-400">
                     Detection started for {{ selectedScope }}.
-                    <span class="block text-xs text-green-500">Results will appear shortly...</span>
+                    <span class="block text-xs text-green-500"
+                        >Results will appear shortly...</span
+                    >
                 </AlertDescription>
             </Alert>
             <Alert v-if="showError" variant="destructive">
@@ -161,12 +179,14 @@ const runDetection = async (datacenterId: number) => {
         <!-- Loading Overlay -->
         <div
             v-if="isDetecting"
-            class="absolute right-0 top-full z-50 mt-2 flex w-64 items-center gap-2 rounded-md border bg-background p-3 shadow-lg"
+            class="absolute top-full right-0 z-50 mt-2 flex w-64 items-center gap-2 rounded-md border bg-background p-3 shadow-lg"
         >
             <Loader2 class="size-4 animate-spin text-primary" />
             <div class="text-sm">
                 <div class="font-medium">Running Detection</div>
-                <div class="text-xs text-muted-foreground">{{ selectedScope }}</div>
+                <div class="text-xs text-muted-foreground">
+                    {{ selectedScope }}
+                </div>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { FileImage, ExternalLink } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import { ExternalLink, FileImage } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     floorPlanUrl: string | null;
@@ -40,11 +40,7 @@ const openInNewTab = () => {
                     />
                 </div>
                 <div class="flex justify-end">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        @click="openInNewTab"
-                    >
+                    <Button variant="outline" size="sm" @click="openInNewTab">
                         <ExternalLink class="mr-2 size-4" />
                         Open Full Size
                     </Button>
@@ -53,10 +49,14 @@ const openInNewTab = () => {
 
             <!-- PDF display -->
             <div v-else class="space-y-3">
-                <div class="flex flex-col items-center justify-center rounded-lg border bg-muted/20 p-8">
+                <div
+                    class="flex flex-col items-center justify-center rounded-lg border bg-muted/20 p-8"
+                >
                     <FileImage class="size-16 text-muted-foreground" />
                     <p class="mt-4 font-medium">Floor Plan (PDF)</p>
-                    <p class="text-sm text-muted-foreground">Click below to view the floor plan</p>
+                    <p class="text-sm text-muted-foreground">
+                        Click below to view the floor plan
+                    </p>
                     <Button
                         variant="outline"
                         class="mt-4"
@@ -77,7 +77,9 @@ const openInNewTab = () => {
             <div class="rounded-full bg-muted p-3">
                 <FileImage class="size-6 text-muted-foreground" />
             </div>
-            <p class="mt-4 text-sm font-medium text-muted-foreground">No floor plan uploaded</p>
+            <p class="mt-4 text-sm font-medium text-muted-foreground">
+                No floor plan uploaded
+            </p>
             <p class="text-xs text-muted-foreground">
                 A floor plan can be added by editing this datacenter.
             </p>

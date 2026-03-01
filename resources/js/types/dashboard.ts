@@ -32,7 +32,11 @@ export interface DashboardFilters {
 /**
  * Audit status values
  */
-export type AuditStatusValue = 'pending' | 'in_progress' | 'completed' | 'cancelled';
+export type AuditStatusValue =
+    | 'pending'
+    | 'in_progress'
+    | 'completed'
+    | 'cancelled';
 
 /**
  * Audit progress metrics from Task 2.2

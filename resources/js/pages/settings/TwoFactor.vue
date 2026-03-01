@@ -14,8 +14,15 @@ import { onUnmounted, ref } from 'vue';
 
 // Stub for disabled 2FA feature
 const show = { url: () => '/settings/two-factor' };
-const enable = { form: () => ({ action: '/user/two-factor-authentication', method: 'post' }) };
-const disable = { form: () => ({ action: '/user/two-factor-authentication', method: 'delete' }) };
+const enable = {
+    form: () => ({ action: '/user/two-factor-authentication', method: 'post' }),
+};
+const disable = {
+    form: () => ({
+        action: '/user/two-factor-authentication',
+        method: 'delete',
+    }),
+};
 
 interface Props {
     requiresConfirmation?: boolean;

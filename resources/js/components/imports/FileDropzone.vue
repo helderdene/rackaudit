@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Upload, File, X, AlertCircle } from 'lucide-vue-next';
+import { AlertCircle, File, Upload, X } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     acceptedTypes?: string[];
@@ -43,8 +43,8 @@ const validateFile = (file: File): boolean => {
 
     // Check file extension
     const fileName = file.name.toLowerCase();
-    const hasValidExtension = props.acceptedTypes.some(ext =>
-        fileName.endsWith(ext.toLowerCase())
+    const hasValidExtension = props.acceptedTypes.some((ext) =>
+        fileName.endsWith(ext.toLowerCase()),
     );
 
     if (!hasValidExtension) {
@@ -142,8 +142,10 @@ defineExpose({
             class="relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors"
             :class="{
                 'border-primary bg-primary/5': isDragOver,
-                'border-muted-foreground/25 hover:border-muted-foreground/50 hover:bg-muted/50': !isDragOver && !disabled,
-                'cursor-not-allowed border-muted-foreground/20 bg-muted/30': disabled,
+                'border-muted-foreground/25 hover:border-muted-foreground/50 hover:bg-muted/50':
+                    !isDragOver && !disabled,
+                'cursor-not-allowed border-muted-foreground/20 bg-muted/30':
+                    disabled,
             }"
             @drop="handleDrop"
             @dragover="handleDragOver"
@@ -164,10 +166,14 @@ defineExpose({
                 <div class="space-y-1">
                     <p class="text-sm font-medium">
                         <span v-if="isDragOver">Drop file here</span>
-                        <span v-else>Drag and drop your file here, or click to browse</span>
+                        <span v-else
+                            >Drag and drop your file here, or click to
+                            browse</span
+                        >
                     </p>
                     <p class="text-xs text-muted-foreground">
-                        Accepts {{ acceptedTypes.join(', ') }} files (max {{ maxSizeMB }}MB)
+                        Accepts {{ acceptedTypes.join(', ') }} files (max
+                        {{ maxSizeMB }}MB)
                     </p>
                 </div>
 
@@ -189,12 +195,18 @@ defineExpose({
             class="flex items-center justify-between gap-4 rounded-lg border bg-muted/30 p-4"
         >
             <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                >
                     <File class="h-5 w-5" />
                 </div>
                 <div class="min-w-0">
-                    <p class="truncate text-sm font-medium">{{ selectedFile.name }}</p>
-                    <p class="text-xs text-muted-foreground">{{ formattedFileSize }}</p>
+                    <p class="truncate text-sm font-medium">
+                        {{ selectedFile.name }}
+                    </p>
+                    <p class="text-xs text-muted-foreground">
+                        {{ formattedFileSize }}
+                    </p>
                 </div>
             </div>
             <Button

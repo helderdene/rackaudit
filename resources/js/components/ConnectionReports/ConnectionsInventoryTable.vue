@@ -6,16 +6,16 @@
  * using PrimeVue DataTable with client-side processing.
  */
 
-import { ref } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FilterMatchMode } from '@primevue/core/api';
 import { Cable } from 'lucide-vue-next';
-import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
+import DataTable from 'primevue/datatable';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
-import { FilterMatchMode } from '@primevue/core/api';
+import InputText from 'primevue/inputtext';
+import { ref } from 'vue';
 
 interface Connection {
     id: number;
@@ -34,7 +34,7 @@ interface Props {
     loading?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     loading: false,
 });
 
@@ -56,41 +56,46 @@ const formatCableLength = (length: number | string | null): string => {
 };
 
 // Get color swatch style for cable color
-const getColorSwatchStyle = (color: string | null): Record<string, string> | null => {
+const getColorSwatchStyle = (
+    color: string | null,
+): Record<string, string> | null => {
     if (!color) {
         return null;
     }
 
     // Map common cable colors to CSS colors
     const colorMap: Record<string, string> = {
-        'black': '#000000',
-        'blue': '#2563eb',
-        'red': '#dc2626',
-        'green': '#16a34a',
-        'yellow': '#eab308',
-        'orange': '#ea580c',
-        'white': '#ffffff',
-        'gray': '#6b7280',
-        'grey': '#6b7280',
-        'purple': '#9333ea',
-        'pink': '#ec4899',
-        'brown': '#92400e',
-        'aqua': '#06b6d4',
-        'cyan': '#06b6d4',
+        black: '#000000',
+        blue: '#2563eb',
+        red: '#dc2626',
+        green: '#16a34a',
+        yellow: '#eab308',
+        orange: '#ea580c',
+        white: '#ffffff',
+        gray: '#6b7280',
+        grey: '#6b7280',
+        purple: '#9333ea',
+        pink: '#ec4899',
+        brown: '#92400e',
+        aqua: '#06b6d4',
+        cyan: '#06b6d4',
     };
 
     const cssColor = colorMap[color.toLowerCase()] || color;
 
     return {
         backgroundColor: cssColor,
-        border: cssColor.toLowerCase() === '#ffffff' ? '1px solid #d1d5db' : 'none',
+        border:
+            cssColor.toLowerCase() === '#ffffff' ? '1px solid #d1d5db' : 'none',
     };
 };
 </script>
 
 <template>
     <Card>
-        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader
+            class="flex flex-row items-center justify-between space-y-0 pb-4"
+        >
             <CardTitle class="flex items-center gap-2 text-base">
                 <Cable class="size-5" />
                 Connections Inventory
@@ -114,7 +119,9 @@ const getColorSwatchStyle = (color: string | null): Record<string, string> | nul
             <template v-else>
                 <!-- Empty state - no data at all -->
                 <div v-if="connections.length === 0" class="py-12 text-center">
-                    <Cable class="mx-auto mb-4 size-12 text-muted-foreground/50" />
+                    <Cable
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                    />
                     <h3 class="text-lg font-medium">No connections found</h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         No connections match the current filter criteria.
@@ -131,7 +138,14 @@ const getColorSwatchStyle = (color: string | null): Record<string, string> | nul
                     :rowsPerPageOptions="[10, 25, 50, 100]"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} connections"
-                    :globalFilterFields="['source_device_name', 'source_port_label', 'destination_device_name', 'destination_port_label', 'cable_type_label', 'cable_color']"
+                    :globalFilterFields="[
+                        'source_device_name',
+                        'source_port_label',
+                        'destination_device_name',
+                        'destination_port_label',
+                        'cable_type_label',
+                        'cable_color',
+                    ]"
                     filterDisplay="row"
                     sortMode="single"
                     removableSort
@@ -153,51 +167,93 @@ const getColorSwatchStyle = (color: string | null): Record<string, string> | nul
                     </template>
                     <template #empty>
                         <div class="py-8 text-center">
-                            <div class="pi pi-search mx-auto mb-4 text-4xl text-muted-foreground/50" />
-                            <p class="text-muted-foreground">No connections match your search.</p>
+                            <div
+                                class="pi pi-search mx-auto mb-4 text-4xl text-muted-foreground/50"
+                            />
+                            <p class="text-muted-foreground">
+                                No connections match your search.
+                            </p>
                         </div>
                     </template>
-                    <Column field="source_device_name" header="Source Device" sortable>
+                    <Column
+                        field="source_device_name"
+                        header="Source Device"
+                        sortable
+                    >
                         <template #body="{ data }">
-                            <span class="font-medium">{{ data.source_device_name || '-' }}</span>
+                            <span class="font-medium">{{
+                                data.source_device_name || '-'
+                            }}</span>
                         </template>
                     </Column>
-                    <Column field="source_port_label" header="Source Port" sortable>
+                    <Column
+                        field="source_port_label"
+                        header="Source Port"
+                        sortable
+                    >
                         <template #body="{ data }">
-                            <span class="font-mono text-xs">{{ data.source_port_label || '-' }}</span>
+                            <span class="font-mono text-xs">{{
+                                data.source_port_label || '-'
+                            }}</span>
                         </template>
                     </Column>
-                    <Column field="destination_device_name" header="Dest Device" sortable>
+                    <Column
+                        field="destination_device_name"
+                        header="Dest Device"
+                        sortable
+                    >
                         <template #body="{ data }">
-                            <span class="font-medium">{{ data.destination_device_name || '-' }}</span>
+                            <span class="font-medium">{{
+                                data.destination_device_name || '-'
+                            }}</span>
                         </template>
                     </Column>
-                    <Column field="destination_port_label" header="Dest Port" sortable>
+                    <Column
+                        field="destination_port_label"
+                        header="Dest Port"
+                        sortable
+                    >
                         <template #body="{ data }">
-                            <span class="font-mono text-xs">{{ data.destination_port_label || '-' }}</span>
+                            <span class="font-mono text-xs">{{
+                                data.destination_port_label || '-'
+                            }}</span>
                         </template>
                     </Column>
-                    <Column field="cable_type_label" header="Cable Type" sortable>
+                    <Column
+                        field="cable_type_label"
+                        header="Cable Type"
+                        sortable
+                    >
                         <template #body="{ data }">
                             {{ data.cable_type_label || '-' }}
                         </template>
                     </Column>
                     <Column field="cable_length" header="Length" sortable>
                         <template #body="{ data }">
-                            <span class="font-mono text-xs text-muted-foreground">
+                            <span
+                                class="font-mono text-xs text-muted-foreground"
+                            >
                                 {{ formatCableLength(data.cable_length) }}
                             </span>
                         </template>
                     </Column>
                     <Column field="cable_color" header="Color">
                         <template #body="{ data }">
-                            <div v-if="data.cable_color" class="flex items-center gap-2">
+                            <div
+                                v-if="data.cable_color"
+                                class="flex items-center gap-2"
+                            >
                                 <span
                                     v-if="getColorSwatchStyle(data.cable_color)"
                                     class="inline-block size-4 rounded-full"
-                                    :style="getColorSwatchStyle(data.cable_color) ?? {}"
+                                    :style="
+                                        getColorSwatchStyle(data.cable_color) ??
+                                        {}
+                                    "
                                 ></span>
-                                <span class="text-sm">{{ data.cable_color }}</span>
+                                <span class="text-sm">{{
+                                    data.cable_color
+                                }}</span>
                             </div>
                             <span v-else class="text-muted-foreground">-</span>
                         </template>

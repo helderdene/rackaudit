@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import type { FindingStatusValue } from '@/types/finding';
 import { CheckCircle, Circle, Clock, Pause, RotateCcw } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     currentStatus: FindingStatusValue;
@@ -12,14 +12,28 @@ const props = defineProps<Props>();
 // Define workflow steps in order
 const workflowSteps = [
     { status: 'open' as FindingStatusValue, label: 'Open', icon: Circle },
-    { status: 'in_progress' as FindingStatusValue, label: 'In Progress', icon: Clock },
-    { status: 'pending_review' as FindingStatusValue, label: 'Pending Review', icon: RotateCcw },
-    { status: 'resolved' as FindingStatusValue, label: 'Resolved', icon: CheckCircle },
+    {
+        status: 'in_progress' as FindingStatusValue,
+        label: 'In Progress',
+        icon: Clock,
+    },
+    {
+        status: 'pending_review' as FindingStatusValue,
+        label: 'Pending Review',
+        icon: RotateCcw,
+    },
+    {
+        status: 'resolved' as FindingStatusValue,
+        label: 'Resolved',
+        icon: CheckCircle,
+    },
 ];
 
 // Get the index of the current status in the workflow
 const currentStepIndex = computed(() => {
-    return workflowSteps.findIndex((step) => step.status === props.currentStatus);
+    return workflowSteps.findIndex(
+        (step) => step.status === props.currentStatus,
+    );
 });
 
 // Check if status is deferred (shown as side branch)
@@ -41,7 +55,9 @@ const getStepState = (index: number): 'completed' | 'current' | 'pending' => {
 };
 
 // Get status color classes
-const getStatusClasses = (state: 'completed' | 'current' | 'pending'): string => {
+const getStatusClasses = (
+    state: 'completed' | 'current' | 'pending',
+): string => {
     switch (state) {
         case 'completed':
             return 'text-green-600 dark:text-green-400';
@@ -67,7 +83,9 @@ const getConnectorClasses = (stepIndex: number): string => {
 };
 
 // Get step circle background classes
-const getCircleClasses = (state: 'completed' | 'current' | 'pending'): string => {
+const getCircleClasses = (
+    state: 'completed' | 'current' | 'pending',
+): string => {
     switch (state) {
         case 'completed':
             return 'bg-green-100 border-green-500 dark:bg-green-900/30 dark:border-green-400';
@@ -94,7 +112,10 @@ const getCircleClasses = (state: 'completed' | 'current' | 'pending'): string =>
                     >
                         <component
                             :is="step.icon"
-                            :class="['size-5', getStatusClasses(getStepState(index))]"
+                            :class="[
+                                'size-5',
+                                getStatusClasses(getStepState(index)),
+                            ]"
                         />
                     </div>
                     <span
@@ -117,9 +138,13 @@ const getCircleClasses = (state: 'completed' | 'current' | 'pending'): string =>
 
         <!-- Deferred side branch indicator -->
         <div v-if="isDeferred" class="mt-4 flex items-center justify-center">
-            <div class="flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 dark:bg-gray-800">
+            <div
+                class="flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 dark:bg-gray-800"
+            >
                 <Pause class="size-4 text-gray-600 dark:text-gray-400" />
-                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <span
+                    class="text-sm font-medium text-gray-600 dark:text-gray-400"
+                >
                     Currently Deferred
                 </span>
             </div>

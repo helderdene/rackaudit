@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Clock, User, MessageSquare } from 'lucide-vue-next';
 import type { FindingStatusValue } from '@/types/finding';
+import { ArrowRight, Clock, MessageSquare, User } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface StatusTransition {
     id: number;
@@ -51,14 +51,18 @@ const formatRelativeTime = (dateString: string | null): string => {
         return date.toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
-            year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
+            year:
+                date.getFullYear() !== now.getFullYear()
+                    ? 'numeric'
+                    : undefined,
         });
     }
 };
 
 // Get status badge classes
 const getStatusBadgeClass = (status: FindingStatusValue): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium';
     switch (status) {
         case 'open':
             return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
@@ -93,23 +97,32 @@ const getStatusBadgeClass = (status: FindingStatusValue): string => {
                 >
                     <!-- Timeline dot -->
                     <div
-                        class="absolute -left-1.5 top-1 size-3 rounded-full border-2 border-background bg-muted"
+                        class="absolute top-1 -left-1.5 size-3 rounded-full border-2 border-background bg-muted"
                     />
 
                     <!-- Status change -->
                     <div class="flex flex-wrap items-center gap-2">
-                        <span :class="getStatusBadgeClass(transition.from_status)">
+                        <span
+                            :class="getStatusBadgeClass(transition.from_status)"
+                        >
                             {{ transition.from_status_label }}
                         </span>
                         <ArrowRight class="size-4 text-muted-foreground" />
-                        <span :class="getStatusBadgeClass(transition.to_status)">
+                        <span
+                            :class="getStatusBadgeClass(transition.to_status)"
+                        >
                             {{ transition.to_status_label }}
                         </span>
                     </div>
 
                     <!-- User and time -->
-                    <div class="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        <span v-if="transition.user" class="flex items-center gap-1">
+                    <div
+                        class="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
+                    >
+                        <span
+                            v-if="transition.user"
+                            class="flex items-center gap-1"
+                        >
                             <User class="size-3" />
                             {{ transition.user.name }}
                         </span>
@@ -124,19 +137,22 @@ const getStatusBadgeClass = (status: FindingStatusValue): string => {
                         v-if="transition.notes"
                         class="mt-2 flex items-start gap-2 rounded-md bg-muted/50 p-2 text-sm"
                     >
-                        <MessageSquare class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                        <p class="whitespace-pre-line text-muted-foreground">{{ transition.notes }}</p>
+                        <MessageSquare
+                            class="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                        />
+                        <p class="whitespace-pre-line text-muted-foreground">
+                            {{ transition.notes }}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div
-                v-else
-                class="py-8 text-center text-muted-foreground"
-            >
+            <div v-else class="py-8 text-center text-muted-foreground">
                 <Clock class="mx-auto mb-2 size-8 opacity-50" />
                 <p>No status transitions yet.</p>
-                <p class="text-sm">Changes to the finding status will appear here.</p>
+                <p class="text-sm">
+                    Changes to the finding status will appear here.
+                </p>
             </div>
         </CardContent>
     </Card>

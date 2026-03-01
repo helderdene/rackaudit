@@ -6,22 +6,22 @@
  * tooltips. Used to visualize U-space and power utilization over time.
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, onMounted, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface Props {
@@ -61,7 +61,10 @@ onMounted(() => {
  * Check if there is valid data to display
  */
 const hasData = computed(() => {
-    return props.data.length > 0 && props.data.some(val => val !== null && val !== undefined);
+    return (
+        props.data.length > 0 &&
+        props.data.some((val) => val !== null && val !== undefined)
+    );
 });
 
 /**
@@ -71,7 +74,10 @@ const formatDateLabel = (dateStr: string): string => {
     // Handle YYYY-MM-DD format
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+        });
     }
     return dateStr;
 };
@@ -159,7 +165,7 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
                 font: {
                     size: 11,
                 },
-                callback: function(value) {
+                callback: function (value) {
                     return value + props.unit;
                 },
             },
@@ -172,7 +178,7 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
  */
 const averageValue = computed(() => {
     if (!hasData.value) return null;
-    const validValues = props.data.filter(v => v !== null && v !== undefined);
+    const validValues = props.data.filter((v) => v !== null && v !== undefined);
     if (validValues.length === 0) return null;
     const sum = validValues.reduce((a, b) => a + b, 0);
     return (sum / validValues.length).toFixed(1);
@@ -183,7 +189,7 @@ const averageValue = computed(() => {
  */
 const latestValue = computed(() => {
     if (!hasData.value) return null;
-    const validValues = props.data.filter(v => v !== null && v !== undefined);
+    const validValues = props.data.filter((v) => v !== null && v !== undefined);
     if (validValues.length === 0) return null;
     return validValues[validValues.length - 1].toFixed(1);
 });
@@ -193,7 +199,7 @@ const latestValue = computed(() => {
  */
 const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
     if (props.data.length < 2) return null;
-    const validValues = props.data.filter(v => v !== null && v !== undefined);
+    const validValues = props.data.filter((v) => v !== null && v !== undefined);
     if (validValues.length < 2) return null;
 
     const latest = validValues[validValues.length - 1];
@@ -206,14 +212,20 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
 </script>
 
 <template>
-    <Card class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     {{ title }}
                 </CardTitle>
                 <div v-if="latestValue !== null" class="text-right">
-                    <span class="text-lg font-bold text-foreground dark:text-foreground">
+                    <span
+                        class="text-lg font-bold text-foreground dark:text-foreground"
+                    >
                         {{ latestValue }}{{ unit }}
                     </span>
                     <span v-if="trendDirection" class="ml-2 text-xs">
@@ -222,8 +234,17 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
                             class="text-amber-600 dark:text-amber-400"
                             title="Increasing"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 15l-6-6-6 6"/>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="inline-block size-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M18 15l-6-6-6 6" />
                             </svg>
                         </span>
                         <span
@@ -231,8 +252,17 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
                             class="text-green-600 dark:text-green-400"
                             title="Decreasing"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 9l6 6 6-6"/>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="inline-block size-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M6 9l6 6 6-6" />
                             </svg>
                         </span>
                         <span
@@ -240,8 +270,17 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
                             class="text-muted-foreground"
                             title="Stable"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14"/>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="inline-block size-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M5 12h14" />
                             </svg>
                         </span>
                     </span>
@@ -273,12 +312,19 @@ const trendDirection = computed((): 'up' | 'down' | 'stable' | null => {
                         d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No historical data available</p>
-                <p class="mt-1 text-xs text-muted-foreground/70">Data will appear after snapshots are captured</p>
+                <p class="text-sm text-muted-foreground">
+                    No historical data available
+                </p>
+                <p class="mt-1 text-xs text-muted-foreground/70">
+                    Data will appear after snapshots are captured
+                </p>
             </div>
 
             <!-- Summary stats -->
-            <div v-if="hasData && averageValue !== null" class="mt-3 flex justify-between text-xs text-muted-foreground">
+            <div
+                v-if="hasData && averageValue !== null"
+                class="mt-3 flex justify-between text-xs text-muted-foreground"
+            >
                 <span>Avg: {{ averageValue }}{{ unit }}</span>
                 <span>{{ data.length }} data points</span>
             </div>

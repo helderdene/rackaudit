@@ -1,17 +1,17 @@
-import { computed, ref, type Ref } from 'vue';
-import axios from 'axios';
-import type { Node, Edge, XYPosition } from '@vue-flow/core';
 import type {
-    DiagramData,
-    DiagramNode,
-    DiagramConnectionEdge,
-    DiagramFilters,
     DiagramAggregationLevel,
-    FlowNodeData,
+    DiagramConnectionEdge,
+    DiagramData,
+    DiagramFilters,
+    DiagramNode,
     FlowEdgeData,
+    FlowNodeData,
     PortDrillDownData,
 } from '@/types/connections';
 import { isDeviceNode } from '@/types/connections';
+import type { Edge, Node, XYPosition } from '@vue-flow/core';
+import axios from 'axios';
+import { computed, ref, type Ref } from 'vue';
 
 /**
  * Default filter state
@@ -122,24 +122,31 @@ function calculateHierarchicalLayout(
     // Build adjacency information
     const outgoing = new Map<number, Set<number>>();
     const incoming = new Map<number, Set<number>>();
-    const nodeIds = new Set(nodes.map(n => n.id));
+    const nodeIds = new Set(nodes.map((n) => n.id));
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
         outgoing.set(node.id, new Set());
         incoming.set(node.id, new Set());
     });
 
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
         // Only consider edges where both nodes exist in our node set
-        if (nodeIds.has(edge.source_device_id) && nodeIds.has(edge.destination_device_id)) {
-            outgoing.get(edge.source_device_id)?.add(edge.destination_device_id);
-            incoming.get(edge.destination_device_id)?.add(edge.source_device_id);
+        if (
+            nodeIds.has(edge.source_device_id) &&
+            nodeIds.has(edge.destination_device_id)
+        ) {
+            outgoing
+                .get(edge.source_device_id)
+                ?.add(edge.destination_device_id);
+            incoming
+                .get(edge.destination_device_id)
+                ?.add(edge.source_device_id);
         }
     });
 
     // Calculate net flow for each node (positive = more outgoing = source-like)
     const netFlow = new Map<number, number>();
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
         const out = outgoing.get(node.id)?.size || 0;
         const inc = incoming.get(node.id)?.size || 0;
         netFlow.set(node.id, out - inc);
@@ -151,7 +158,7 @@ function calculateHierarchicalLayout(
     // Layer 2 = strong sinks (net flow < 0)
     const layers: number[][] = [[], [], []];
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
         const flow = netFlow.get(node.id) || 0;
         if (flow > 0) {
             layers[0].push(node.id);
@@ -163,7 +170,7 @@ function calculateHierarchicalLayout(
     });
 
     // Handle edge case: if all nodes are in one layer, split them evenly
-    const nonEmptyLayers = layers.filter(l => l.length > 0);
+    const nonEmptyLayers = layers.filter((l) => l.length > 0);
     if (nonEmptyLayers.length === 1 && nodes.length > 3) {
         const allNodes = nonEmptyLayers[0];
         layers[0] = allNodes.slice(0, Math.ceil(allNodes.length / 2));
@@ -180,15 +187,17 @@ function calculateHierarchicalLayout(
         // Get positions of neighbors in other layers
         const barycenters = new Map<number, number>();
 
-        layer.forEach(nodeId => {
+        layer.forEach((nodeId) => {
             const neighbors: number[] = [];
 
             // Check all other layers for connected nodes
             layers.forEach((otherLayer, otherIdx) => {
                 if (otherIdx === layerIndex) return;
                 otherLayer.forEach((otherNodeId, position) => {
-                    if (outgoing.get(nodeId)?.has(otherNodeId) ||
-                        incoming.get(nodeId)?.has(otherNodeId)) {
+                    if (
+                        outgoing.get(nodeId)?.has(otherNodeId) ||
+                        incoming.get(nodeId)?.has(otherNodeId)
+                    ) {
                         neighbors.push(position);
                     }
                 });
@@ -205,7 +214,9 @@ function calculateHierarchicalLayout(
         });
 
         // Sort layer by barycenter values
-        layer.sort((a, b) => (barycenters.get(a) || 0) - (barycenters.get(b) || 0));
+        layer.sort(
+            (a, b) => (barycenters.get(a) || 0) - (barycenters.get(b) || 0),
+        );
     }
 
     // Run barycenter ordering multiple times for better results
@@ -225,32 +236,35 @@ function calculateHierarchicalLayout(
     // Calculate x positions for each layer (distribute horizontally)
     const layerXPositions: number[] = [];
     let currentX = padding;
-    const usedLayers = layers.filter(l => l.length > 0);
+    const usedLayers = layers.filter((l) => l.length > 0);
 
-    usedLayers.forEach((_, idx) => {
+    usedLayers.forEach(() => {
         layerXPositions.push(currentX);
         currentX += nodeWidth + horizontalGap;
     });
 
     // Center the layout if we have fewer than 3 used layers
     if (usedLayers.length < 3) {
-        const totalWidth = usedLayers.length * (nodeWidth + horizontalGap) - horizontalGap;
+        const totalWidth =
+            usedLayers.length * (nodeWidth + horizontalGap) - horizontalGap;
         const offsetX = Math.max(0, (600 - totalWidth) / 2);
-        layerXPositions.forEach((_, idx) => {
+        layerXPositions.forEach((_val, idx) => {
             layerXPositions[idx] += offsetX;
         });
     }
 
     // Assign positions to nodes
     let usedLayerIndex = 0;
-    layers.forEach((layer, layerIdx) => {
+    layers.forEach((layer) => {
         if (layer.length === 0) return;
 
         const x = layerXPositions[usedLayerIndex];
         usedLayerIndex++;
 
         // Calculate total height needed for this layer
-        const totalHeight = layer.length * nodeHeight + (layer.length - 1) * (verticalGap - nodeHeight);
+        const totalHeight =
+            layer.length * nodeHeight +
+            (layer.length - 1) * (verticalGap - nodeHeight);
 
         // Start y position (centered vertically)
         const startY = Math.max(padding, (500 - totalHeight) / 2);
@@ -266,27 +280,29 @@ function calculateHierarchicalLayout(
     // Fine-tune with a few iterations of vertical adjustment to reduce crossings further
     for (let iteration = 0; iteration < 3; iteration++) {
         usedLayerIndex = 0;
-        layers.forEach((layer, layerIdx) => {
+        layers.forEach((layer) => {
             if (layer.length === 0) return;
             usedLayerIndex++;
 
-            layer.forEach(nodeId => {
+            layer.forEach((nodeId) => {
                 const pos = positions.get(nodeId)!;
                 const neighborYs: number[] = [];
 
                 // Collect y positions of all connected nodes
-                outgoing.get(nodeId)?.forEach(targetId => {
+                outgoing.get(nodeId)?.forEach((targetId) => {
                     const targetPos = positions.get(targetId);
                     if (targetPos) neighborYs.push(targetPos.y);
                 });
-                incoming.get(nodeId)?.forEach(sourceId => {
+                incoming.get(nodeId)?.forEach((sourceId) => {
                     const sourcePos = positions.get(sourceId);
                     if (sourcePos) neighborYs.push(sourcePos.y);
                 });
 
                 if (neighborYs.length > 0) {
                     // Move toward the average y of neighbors (with damping)
-                    const avgY = neighborYs.reduce((a, b) => a + b, 0) / neighborYs.length;
+                    const avgY =
+                        neighborYs.reduce((a, b) => a + b, 0) /
+                        neighborYs.length;
                     pos.y = pos.y * 0.6 + avgY * 0.4;
                 }
             });
@@ -299,11 +315,14 @@ function calculateHierarchicalLayout(
             usedLayerIndex++;
 
             // Sort by current y position
-            layer.sort((a, b) => (positions.get(a)?.y || 0) - (positions.get(b)?.y || 0));
+            layer.sort(
+                (a, b) =>
+                    (positions.get(a)?.y || 0) - (positions.get(b)?.y || 0),
+            );
 
             // Ensure minimum spacing
             let lastY = padding;
-            layer.forEach(nodeId => {
+            layer.forEach((nodeId) => {
                 const pos = positions.get(nodeId)!;
                 if (pos.y < lastY) {
                     pos.y = lastY;
@@ -314,15 +333,16 @@ function calculateHierarchicalLayout(
     }
 
     // Final normalization: ensure all positions start from padding
-    let minX = Infinity, minY = Infinity;
-    positions.forEach(pos => {
+    let minX = Infinity,
+        minY = Infinity;
+    positions.forEach((pos) => {
         minX = Math.min(minX, pos.x);
         minY = Math.min(minY, pos.y);
     });
 
     const offsetX = padding - minX;
     const offsetY = padding - minY;
-    positions.forEach(pos => {
+    positions.forEach((pos) => {
         pos.x += offsetX;
         pos.y += offsetY;
     });
@@ -352,7 +372,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
 
     // Port drill-down state - supports multiple expanded nodes (device nodes only)
     const expandedNodeIds: Ref<Set<number>> = ref(new Set());
-    const expandedNodePortsMap: Ref<Map<number, PortDrillDownData[]>> = ref(new Map());
+    const expandedNodePortsMap: Ref<Map<number, PortDrillDownData[]>> = ref(
+        new Map(),
+    );
     const isLoadingPorts: Ref<boolean> = ref(false);
 
     /**
@@ -361,8 +383,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
     const selectedNode = computed<DiagramNode | null>(() => {
         if (!selectedNodeId.value || !diagramData.value) return null;
         return (
-            diagramData.value.nodes.find((n) => n.id === selectedNodeId.value) ||
-            null
+            diagramData.value.nodes.find(
+                (n) => n.id === selectedNodeId.value,
+            ) || null
         );
     });
 
@@ -372,8 +395,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
     const selectedEdge = computed<DiagramConnectionEdge | null>(() => {
         if (!selectedEdgeId.value || !diagramData.value) return null;
         return (
-            diagramData.value.edges.find((e) => e.id === selectedEdgeId.value) ||
-            null
+            diagramData.value.edges.find(
+                (e) => e.id === selectedEdgeId.value,
+            ) || null
         );
     });
 
@@ -498,7 +522,8 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
                 const edgeId = `port-${port.id}-${port.connection.id}`;
 
                 // Determine if the remote device is also expanded
-                const remoteIsExpanded = expandedNodeIds.value.has(remoteDeviceId);
+                const remoteIsExpanded =
+                    expandedNodeIds.value.has(remoteDeviceId);
 
                 // Get cable color from connection
                 const cableColor = port.connection.cable_color || 'gray';
@@ -513,7 +538,8 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
                     black: '#1f2937',
                     white: '#f3f4f6',
                 };
-                const strokeColor = colorMap[cableColor.toLowerCase()] || '#6b7280';
+                const strokeColor =
+                    colorMap[cableColor.toLowerCase()] || '#6b7280';
 
                 portEdges.push({
                     id: edgeId,
@@ -521,7 +547,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
                     source: String(deviceId),
                     sourceHandle: `port-${port.id}`,
                     target: String(remoteDeviceId),
-                    targetHandle: remoteIsExpanded ? `port-${port.connection.remote_port?.id}` : undefined,
+                    targetHandle: remoteIsExpanded
+                        ? `port-${port.connection.remote_port?.id}`
+                        : undefined,
                     data: {
                         id: edgeId,
                         source_device_id: deviceId,
@@ -538,7 +566,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
                     style: {
                         stroke: strokeColor,
                         strokeWidth: 2,
-                        strokeDasharray: port.connection.verified ? undefined : '5 5',
+                        strokeDasharray: port.connection.verified
+                            ? undefined
+                            : '5 5',
                     },
                     animated: false,
                 });
@@ -559,8 +589,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
 
         // Filter out device edges where both devices are expanded (show port edges instead)
         const filteredBaseEdges = baseEdges.filter((edge) => {
-            const sourceExpanded = expandedNodeIds.value.has(edge.data?.source_device_id || 0);
-            const targetExpanded = expandedNodeIds.value.has(edge.data?.destination_device_id || 0);
+            const sourceExpanded = expandedNodeIds.value.has(
+                edge.data?.source_device_id || 0,
+            );
             // Hide device edge if source is expanded (we'll show port edges instead)
             return !sourceExpanded;
         });
@@ -600,7 +631,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
             nodes.value = transformToNodes(response.data.data);
             edges.value = transformToEdges(response.data.data);
         } catch (err: unknown) {
-            const axiosError = err as { response?: { data?: { message?: string } } };
+            const axiosError = err as {
+                response?: { data?: { message?: string } };
+            };
             error.value =
                 axiosError.response?.data?.message ||
                 'Failed to load diagram data';
@@ -639,7 +672,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
             // Update edges to show port-level connections
             updateEdgesWithPortConnections();
         } catch (err: unknown) {
-            const axiosError = err as { response?: { data?: { message?: string } } };
+            const axiosError = err as {
+                response?: { data?: { message?: string } };
+            };
             error.value =
                 axiosError.response?.data?.message ||
                 'Failed to load port data';
@@ -696,7 +731,9 @@ export function useConnectionDiagram(initialFilters?: Partial<DiagramFilters>) {
     /**
      * Update filters and refetch data
      */
-    async function setFilters(newFilters: Partial<DiagramFilters>): Promise<void> {
+    async function setFilters(
+        newFilters: Partial<DiagramFilters>,
+    ): Promise<void> {
         filters.value = { ...filters.value, ...newFilters };
         await fetchDiagramData();
     }

@@ -1,27 +1,33 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
-import { index, store } from '@/actions/App/Http/Controllers/BulkExportController';
+import { store } from '@/actions/App/Http/Controllers/BulkExportController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { SelectOption } from '@/types/rooms';
+import { Head, router } from '@inertiajs/vue3';
 import {
-    Download,
-    Building2,
-    LayoutGrid,
-    Layers,
-    Server,
-    HardDrive,
-    Cable,
-    FileSpreadsheet,
-    Loader2,
     AlertCircle,
-    Filter
+    Building2,
+    Cable,
+    Download,
+    FileSpreadsheet,
+    Filter,
+    HardDrive,
+    Layers,
+    LayoutGrid,
+    Loader2,
+    Server,
 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface FilterOption {
     value: number;
@@ -81,7 +87,7 @@ const entityTypeIcons: Record<string, typeof Building2> = {
 const filteredRooms = computed(() => {
     if (!selectedDatacenterId.value) return [];
     return props.filterOptions.rooms.filter(
-        room => room.datacenter_id === selectedDatacenterId.value
+        (room) => room.datacenter_id === selectedDatacenterId.value,
     );
 });
 
@@ -89,7 +95,7 @@ const filteredRooms = computed(() => {
 const filteredRows = computed(() => {
     if (!selectedRoomId.value) return [];
     return props.filterOptions.rows.filter(
-        row => row.room_id === selectedRoomId.value
+        (row) => row.room_id === selectedRoomId.value,
     );
 });
 
@@ -97,7 +103,7 @@ const filteredRows = computed(() => {
 const filteredRacks = computed(() => {
     if (!selectedRowId.value) return [];
     return props.filterOptions.racks.filter(
-        rack => rack.row_id === selectedRowId.value
+        (rack) => rack.row_id === selectedRowId.value,
     );
 });
 
@@ -156,7 +162,8 @@ const handleSubmit = async () => {
             if (errors.entity_type) {
                 submitError.value = errors.entity_type as string;
             } else {
-                submitError.value = 'An error occurred while creating the export.';
+                submitError.value =
+                    'An error occurred while creating the export.';
             }
         },
         onFinish: () => {
@@ -169,16 +176,24 @@ const handleSubmit = async () => {
 const activeFilterDescription = computed(() => {
     const parts: string[] = [];
     if (selectedRackId.value) {
-        const rack = filteredRacks.value.find(r => r.value === selectedRackId.value);
+        const rack = filteredRacks.value.find(
+            (r) => r.value === selectedRackId.value,
+        );
         if (rack) parts.push(`Rack: ${rack.label}`);
     } else if (selectedRowId.value) {
-        const row = filteredRows.value.find(r => r.value === selectedRowId.value);
+        const row = filteredRows.value.find(
+            (r) => r.value === selectedRowId.value,
+        );
         if (row) parts.push(`Row: ${row.label}`);
     } else if (selectedRoomId.value) {
-        const room = filteredRooms.value.find(r => r.value === selectedRoomId.value);
+        const room = filteredRooms.value.find(
+            (r) => r.value === selectedRoomId.value,
+        );
         if (room) parts.push(`Room: ${room.label}`);
     } else if (selectedDatacenterId.value) {
-        const dc = props.filterOptions.datacenters.find(d => d.value === selectedDatacenterId.value);
+        const dc = props.filterOptions.datacenters.find(
+            (d) => d.value === selectedDatacenterId.value,
+        );
         if (dc) parts.push(`Datacenter: ${dc.label}`);
     }
     return parts.length > 0 ? parts.join(' > ') : 'All data (no filter)';
@@ -220,18 +235,30 @@ const activeFilterDescription = computed(() => {
                                     :disabled="isSubmitting"
                                     class="flex items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-muted/50"
                                     :class="{
-                                        'border-primary bg-primary/5 ring-1 ring-primary': selectedEntityType === option.value,
-                                        'border-muted': selectedEntityType !== option.value,
-                                        'cursor-not-allowed opacity-50': isSubmitting,
+                                        'border-primary bg-primary/5 ring-1 ring-primary':
+                                            selectedEntityType === option.value,
+                                        'border-muted':
+                                            selectedEntityType !== option.value,
+                                        'cursor-not-allowed opacity-50':
+                                            isSubmitting,
                                     }"
                                     @click="selectedEntityType = option.value"
                                 >
                                     <component
-                                        :is="entityTypeIcons[option.value] || FileSpreadsheet"
+                                        :is="
+                                            entityTypeIcons[option.value] ||
+                                            FileSpreadsheet
+                                        "
                                         class="h-5 w-5"
-                                        :class="selectedEntityType === option.value ? 'text-primary' : 'text-muted-foreground'"
+                                        :class="
+                                            selectedEntityType === option.value
+                                                ? 'text-primary'
+                                                : 'text-muted-foreground'
+                                        "
                                     />
-                                    <span class="font-medium">{{ option.label }}</span>
+                                    <span class="font-medium">{{
+                                        option.label
+                                    }}</span>
                                 </button>
                             </div>
                         </div>
@@ -253,11 +280,14 @@ const activeFilterDescription = computed(() => {
                                         :disabled="isSubmitting"
                                         class="h-4 w-4 border-primary text-primary focus:ring-primary"
                                     />
-                                    <span class="text-sm font-medium">{{ option.label }}</span>
+                                    <span class="text-sm font-medium">{{
+                                        option.label
+                                    }}</span>
                                 </label>
                             </div>
                             <p class="text-xs text-muted-foreground">
-                                CSV is simpler, while Excel (XLSX) supports formatting and filtering.
+                                CSV is simpler, while Excel (XLSX) supports
+                                formatting and filtering.
                             </p>
                         </div>
 
@@ -276,9 +306,16 @@ const activeFilterDescription = computed(() => {
                             class="w-full"
                             @click="handleSubmit"
                         >
-                            <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2
+                                v-if="isSubmitting"
+                                class="mr-2 h-4 w-4 animate-spin"
+                            />
                             <Download v-else class="mr-2 h-4 w-4" />
-                            {{ isSubmitting ? 'Creating Export...' : 'Start Export' }}
+                            {{
+                                isSubmitting
+                                    ? 'Creating Export...'
+                                    : 'Start Export'
+                            }}
                         </Button>
                     </CardContent>
                 </Card>
@@ -291,7 +328,8 @@ const activeFilterDescription = computed(() => {
                             Filter Data (Optional)
                         </CardTitle>
                         <CardDescription>
-                            Narrow down your export to specific locations in the hierarchy.
+                            Narrow down your export to specific locations in the
+                            hierarchy.
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-4">
@@ -301,8 +339,11 @@ const activeFilterDescription = computed(() => {
                             <select
                                 id="datacenter-filter"
                                 v-model="selectedDatacenterId"
-                                :disabled="isSubmitting || filterOptions.datacenters.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    filterOptions.datacenters.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Datacenters</option>
                                 <option
@@ -321,8 +362,12 @@ const activeFilterDescription = computed(() => {
                             <select
                                 id="room-filter"
                                 v-model="selectedRoomId"
-                                :disabled="isSubmitting || !selectedDatacenterId || filteredRooms.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    !selectedDatacenterId ||
+                                    filteredRooms.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Rooms</option>
                                 <option
@@ -341,8 +386,12 @@ const activeFilterDescription = computed(() => {
                             <select
                                 id="row-filter"
                                 v-model="selectedRowId"
-                                :disabled="isSubmitting || !selectedRoomId || filteredRows.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    !selectedRoomId ||
+                                    filteredRows.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Rows</option>
                                 <option
@@ -361,8 +410,12 @@ const activeFilterDescription = computed(() => {
                             <select
                                 id="rack-filter"
                                 v-model="selectedRackId"
-                                :disabled="isSubmitting || !selectedRowId || filteredRacks.length === 0"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                :disabled="
+                                    isSubmitting ||
+                                    !selectedRowId ||
+                                    filteredRacks.length === 0
+                                "
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option :value="null">All Racks</option>
                                 <option
@@ -377,18 +430,35 @@ const activeFilterDescription = computed(() => {
 
                         <!-- Active filter summary -->
                         <div class="rounded-lg bg-muted/50 p-4 text-sm">
-                            <h4 class="mb-2 font-medium text-foreground">Export Scope</h4>
-                            <p class="text-muted-foreground">{{ activeFilterDescription }}</p>
+                            <h4 class="mb-2 font-medium text-foreground">
+                                Export Scope
+                            </h4>
+                            <p class="text-muted-foreground">
+                                {{ activeFilterDescription }}
+                            </p>
                         </div>
 
                         <!-- Help text -->
-                        <div class="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-                            <h4 class="mb-2 font-medium text-foreground">Filter Tips</h4>
+                        <div
+                            class="rounded-lg border border-dashed p-4 text-sm text-muted-foreground"
+                        >
+                            <h4 class="mb-2 font-medium text-foreground">
+                                Filter Tips
+                            </h4>
                             <ul class="list-inside list-disc space-y-1">
-                                <li>Filters cascade: selecting a datacenter filters rooms</li>
+                                <li>
+                                    Filters cascade: selecting a datacenter
+                                    filters rooms
+                                </li>
                                 <li>Leave filters empty to export all data</li>
-                                <li>Filters apply to entities within the hierarchy</li>
-                                <li>Device exports include rack relationship data</li>
+                                <li>
+                                    Filters apply to entities within the
+                                    hierarchy
+                                </li>
+                                <li>
+                                    Device exports include rack relationship
+                                    data
+                                </li>
                             </ul>
                         </div>
                     </CardContent>

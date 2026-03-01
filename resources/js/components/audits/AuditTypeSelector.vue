@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { computed } from 'vue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface TypeOption {
     value: string;
@@ -23,16 +29,10 @@ const emit = defineEmits<{
  * Type descriptions that help users understand each audit type
  */
 const typeDescriptions: Record<string, string> = {
-    connection: 'Verify physical connections match the approved implementation file',
-    inventory: 'Verify documented devices exist physically and are in correct positions',
-};
-
-/**
- * Icons for each audit type (using simple SVG paths)
- */
-const typeIcons: Record<string, string> = {
-    connection: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
-    inventory: 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z',
+    connection:
+        'Verify physical connections match the approved implementation file',
+    inventory:
+        'Verify documented devices exist physically and are in correct positions',
 };
 
 const selectedType = computed({
@@ -63,7 +63,7 @@ const selectType = (type: string): void => {
                         'relative transition-all duration-200',
                         'hover:border-primary/50 hover:shadow-md',
                         isSelected(type.value)
-                            ? 'border-primary ring-2 ring-primary/20 shadow-md'
+                            ? 'border-primary shadow-md ring-2 ring-primary/20'
                             : 'border-border',
                     ]"
                 >

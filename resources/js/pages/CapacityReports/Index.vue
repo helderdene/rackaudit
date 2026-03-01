@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
-import { index as capacityReportsIndex, exportPdf, exportCsv } from '@/actions/App/Http/Controllers/CapacityReportController';
-import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { BarChart3 } from 'lucide-vue-next';
+import {
+    index as capacityReportsIndex,
+    exportCsv,
+    exportPdf,
+} from '@/actions/App/Http/Controllers/CapacityReportController';
 import {
     CapacityFilters,
     CapacityMetricCard,
@@ -16,6 +12,14 @@ import {
     PortCapacityGrid,
     RackCapacityTable,
 } from '@/components/CapacityReports';
+import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
+import { BarChart3 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 /**
  * Type definitions for Capacity Reports props
@@ -145,18 +149,18 @@ const buildExportUrl = (format: 'pdf' | 'csv'): string => {
 
 // Extract sparkline data from historical snapshots
 const uSpaceSparklineData = computed(() => {
-    return props.historicalSnapshots.map(s => s.rack_utilization);
+    return props.historicalSnapshots.map((s) => s.rack_utilization);
 });
 
 const powerSparklineData = computed(() => {
     return props.historicalSnapshots
-        .filter(s => s.power_utilization !== null)
-        .map(s => s.power_utilization as number);
+        .filter((s) => s.power_utilization !== null)
+        .map((s) => s.power_utilization as number);
 });
 
 // Extract date labels from historical snapshots
 const historicalDateLabels = computed(() => {
-    return props.historicalSnapshots.map(s => s.date);
+    return props.historicalSnapshots.map((s) => s.date);
 });
 
 // Check if there is any capacity data
@@ -171,7 +175,7 @@ const hasHistoricalData = computed(() => {
 
 // Check if there is power historical data
 const hasPowerHistoricalData = computed(() => {
-    return props.historicalSnapshots.some(s => s.power_utilization !== null);
+    return props.historicalSnapshots.some((s) => s.power_utilization !== null);
 });
 
 // Get racks approaching capacity count by status
@@ -180,11 +184,13 @@ const racksApproachingCapacity = computed(() => {
 });
 
 const criticalRackCount = computed(() => {
-    return racksApproachingCapacity.value.filter(r => r.status === 'critical').length;
+    return racksApproachingCapacity.value.filter((r) => r.status === 'critical')
+        .length;
 });
 
 const warningRackCount = computed(() => {
-    return racksApproachingCapacity.value.filter(r => r.status === 'warning').length;
+    return racksApproachingCapacity.value.filter((r) => r.status === 'warning')
+        .length;
 });
 </script>
 
@@ -194,7 +200,9 @@ const warningRackCount = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header with title and export buttons -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     title="Capacity Planning Reports"
                     description="View rack utilization, power consumption, and available capacity metrics across your datacenters."
@@ -260,7 +268,11 @@ const warningRackCount = computed(() => {
                     </CardHeader>
                     <CardContent>
                         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            <div v-for="i in 3" :key="i" class="rounded-lg border p-4">
+                            <div
+                                v-for="i in 3"
+                                :key="i"
+                                class="rounded-lg border p-4"
+                            >
                                 <Skeleton class="mb-3 h-5 w-24" />
                                 <Skeleton class="mb-2 h-2 w-full" />
                                 <div class="space-y-2">
@@ -278,8 +290,12 @@ const warningRackCount = computed(() => {
             <template v-else>
                 <!-- Empty State -->
                 <div v-if="!hasCapacityData" class="py-12 text-center">
-                    <BarChart3 class="mx-auto mb-4 size-12 text-muted-foreground/50" />
-                    <h3 class="text-lg font-medium">No capacity data available</h3>
+                    <BarChart3
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                    />
+                    <h3 class="text-lg font-medium">
+                        No capacity data available
+                    </h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         Add racks and devices to see capacity metrics.
                     </p>
@@ -298,7 +314,8 @@ const warningRackCount = computed(() => {
                         :trend="trendData.rack_utilization_trend ?? undefined"
                     >
                         <div class="mt-2 text-xs text-muted-foreground">
-                            {{ metrics.u_space.used_u_space }}U used of {{ metrics.u_space.total_u_space }}U total
+                            {{ metrics.u_space.used_u_space }}U used of
+                            {{ metrics.u_space.total_u_space }}U total
                         </div>
                     </CapacityMetricCard>
 
@@ -309,25 +326,40 @@ const warningRackCount = computed(() => {
                         :value="metrics.power.utilization_percent"
                         unit="%"
                         :total="Math.round(metrics.power.total_capacity / 1000)"
-                        :available="Math.round(metrics.power.power_headroom / 1000)"
+                        :available="
+                            Math.round(metrics.power.power_headroom / 1000)
+                        "
                         :sparkline-data="powerSparklineData"
                         :trend="trendData.power_utilization_trend ?? undefined"
                     >
                         <div class="mt-2 text-xs text-muted-foreground">
-                            {{ (metrics.power.total_consumption / 1000).toFixed(1) }}kW used of {{ (metrics.power.total_capacity / 1000).toFixed(1) }}kW total
+                            {{
+                                (
+                                    metrics.power.total_consumption / 1000
+                                ).toFixed(1)
+                            }}kW used of
+                            {{
+                                (metrics.power.total_capacity / 1000).toFixed(
+                                    1,
+                                )
+                            }}kW total
                         </div>
                     </CapacityMetricCard>
 
                     <!-- Power Not Configured Card -->
                     <Card v-else>
                         <CardHeader class="pb-2">
-                            <CardTitle class="text-sm font-medium text-muted-foreground">
+                            <CardTitle
+                                class="text-sm font-medium text-muted-foreground"
+                            >
                                 Power Utilization
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div class="flex h-20 items-center justify-center">
-                                <span class="text-sm text-muted-foreground">Not configured</span>
+                                <span class="text-sm text-muted-foreground"
+                                    >Not configured</span
+                                >
                             </div>
                         </CardContent>
                     </Card>
@@ -335,12 +367,17 @@ const warningRackCount = computed(() => {
                     <!-- Racks Approaching Capacity Card -->
                     <Card>
                         <CardHeader class="pb-2">
-                            <CardTitle class="text-sm font-medium text-muted-foreground">
+                            <CardTitle
+                                class="text-sm font-medium text-muted-foreground"
+                            >
                                 Racks Approaching Capacity
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div v-if="racksApproachingCapacity.length > 0" class="space-y-2">
+                            <div
+                                v-if="racksApproachingCapacity.length > 0"
+                                class="space-y-2"
+                            >
                                 <!-- Summary badges -->
                                 <div class="mb-3 flex gap-2">
                                     <span
@@ -359,16 +396,23 @@ const warningRackCount = computed(() => {
 
                                 <!-- Rack list preview -->
                                 <div
-                                    v-for="rack in racksApproachingCapacity.slice(0, 5)"
+                                    v-for="rack in racksApproachingCapacity.slice(
+                                        0,
+                                        5,
+                                    )"
                                     :key="rack.id"
                                     class="flex items-center justify-between text-sm"
                                 >
-                                    <span class="truncate font-medium">{{ rack.name }}</span>
+                                    <span class="truncate font-medium">{{
+                                        rack.name
+                                    }}</span>
                                     <span
                                         class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
                                         :class="{
-                                            'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': rack.status === 'critical',
-                                            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': rack.status === 'warning',
+                                            'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400':
+                                                rack.status === 'critical',
+                                            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400':
+                                                rack.status === 'warning',
                                         }"
                                     >
                                         {{ rack.utilization_percent }}%
@@ -376,14 +420,24 @@ const warningRackCount = computed(() => {
                                 </div>
 
                                 <!-- More indicator -->
-                                <div v-if="racksApproachingCapacity.length > 5" class="pt-1 text-xs text-muted-foreground">
-                                    +{{ racksApproachingCapacity.length - 5 }} more
+                                <div
+                                    v-if="racksApproachingCapacity.length > 5"
+                                    class="pt-1 text-xs text-muted-foreground"
+                                >
+                                    +{{ racksApproachingCapacity.length - 5 }}
+                                    more
                                 </div>
                             </div>
 
                             <!-- All racks healthy -->
-                            <div v-else class="flex h-20 items-center justify-center">
-                                <span class="text-sm text-green-600 dark:text-green-400">All racks below 80%</span>
+                            <div
+                                v-else
+                                class="flex h-20 items-center justify-center"
+                            >
+                                <span
+                                    class="text-sm text-green-600 dark:text-green-400"
+                                    >All racks below 80%</span
+                                >
                             </div>
                         </CardContent>
                     </Card>
@@ -409,7 +463,12 @@ const warningRackCount = computed(() => {
                             v-if="hasPowerHistoricalData"
                             title="Power Utilization Over Time"
                             :data="powerSparklineData"
-                            :labels="historicalDateLabels.slice(0, powerSparklineData.length)"
+                            :labels="
+                                historicalDateLabels.slice(
+                                    0,
+                                    powerSparklineData.length,
+                                )
+                            "
                             unit="%"
                             color="rgb(245, 158, 11)"
                             fill-color="rgba(245, 158, 11, 0.1)"
@@ -418,7 +477,9 @@ const warningRackCount = computed(() => {
                         <!-- Power Not Available Card -->
                         <Card v-else>
                             <CardHeader class="pb-2">
-                                <CardTitle class="text-sm font-medium text-muted-foreground">
+                                <CardTitle
+                                    class="text-sm font-medium text-muted-foreground"
+                                >
                                     Power Utilization Over Time
                                 </CardTitle>
                             </CardHeader>
@@ -440,8 +501,15 @@ const warningRackCount = computed(() => {
                                             d="M13 10V3L4 14h7v7l9-11h-7z"
                                         />
                                     </svg>
-                                    <p class="text-sm text-muted-foreground">No power data available</p>
-                                    <p class="mt-1 text-xs text-muted-foreground/70">Configure power capacity on racks to track usage</p>
+                                    <p class="text-sm text-muted-foreground">
+                                        No power data available
+                                    </p>
+                                    <p
+                                        class="mt-1 text-xs text-muted-foreground/70"
+                                    >
+                                        Configure power capacity on racks to
+                                        track usage
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -466,9 +534,12 @@ const warningRackCount = computed(() => {
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        <p class="text-sm text-muted-foreground">No historical data available yet</p>
+                        <p class="text-sm text-muted-foreground">
+                            No historical data available yet
+                        </p>
                         <p class="mt-1 text-xs text-muted-foreground/70">
-                            Historical snapshots are captured weekly and will appear here once available.
+                            Historical snapshots are captured weekly and will
+                            appear here once available.
                         </p>
                     </div>
                 </div>
@@ -481,7 +552,9 @@ const warningRackCount = computed(() => {
 
                 <!-- Rack Capacity Table (for racks approaching capacity) -->
                 <RackCapacityTable
-                    v-if="hasCapacityData && racksApproachingCapacity.length > 0"
+                    v-if="
+                        hasCapacityData && racksApproachingCapacity.length > 0
+                    "
                     :racks="racksApproachingCapacity"
                 />
             </template>

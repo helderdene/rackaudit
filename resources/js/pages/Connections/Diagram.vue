@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
-import { diagramPage } from '@/actions/App/Http/Controllers/ConnectionController';
 import ConnectionDiagramCanvas from '@/components/diagram/ConnectionDiagramCanvas.vue';
-import ConnectionDetailDialog from '@/components/connections/ConnectionDetailDialog.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import RealtimeToastContainer from '@/components/notifications/RealtimeToastContainer.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
     Sheet,
     SheetContent,
@@ -24,31 +19,32 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import AppLayout from '@/layouts/AppLayout.vue';
 import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { debounce } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import type {
-    DiagramFilters,
-    HierarchicalFilterOptions,
-    FlowNodeData,
-    FlowEdgeData,
     CableTypeOption,
-    PortTypeValue,
-    DiagramDeviceNode,
     DiagramConnectionEdge,
+    DiagramDeviceNode,
+    DiagramFilters,
+    FlowEdgeData,
+    FlowNodeData,
+    HierarchicalFilterOptions,
+    PortTypeValue,
 } from '@/types/connections';
+import { Head, router } from '@inertiajs/vue3';
 import {
-    Filter,
-    Network,
-    RefreshCw,
-    X,
-    Server,
     Cable,
+    Filter,
     Info,
-    PanelLeftClose,
     PanelLeft,
+    PanelLeftClose,
+    RefreshCw,
+    Server,
+    X,
 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface DeviceTypeOption {
     value: number;
@@ -78,13 +74,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Local filter state
-const selectedDatacenterId = ref<number | null>(props.initialFilters.datacenter_id);
+const selectedDatacenterId = ref<number | null>(
+    props.initialFilters.datacenter_id,
+);
 const selectedRoomId = ref<number | null>(props.initialFilters.room_id);
 const selectedRowId = ref<number | null>(props.initialFilters.row_id);
 const selectedRackId = ref<number | null>(props.initialFilters.rack_id);
 const selectedDeviceId = ref<number | null>(props.initialFilters.device_id);
-const selectedDeviceTypeId = ref<number | null>(props.initialFilters.device_type_id);
-const selectedPortType = ref<PortTypeValue | null>(props.initialFilters.port_type);
+const selectedDeviceTypeId = ref<number | null>(
+    props.initialFilters.device_type_id,
+);
+const selectedPortType = ref<PortTypeValue | null>(
+    props.initialFilters.port_type,
+);
 const selectedVerified = ref<boolean | null>(props.initialFilters.verified);
 
 // UI state
@@ -99,15 +101,13 @@ const selectedDevice = ref<DiagramDeviceNode | null>(null);
 const selectedConnection = ref<DiagramConnectionEdge | null>(null);
 
 // Diagram canvas ref
-const diagramCanvasRef = ref<InstanceType<typeof ConnectionDiagramCanvas> | null>(null);
+const diagramCanvasRef = ref<InstanceType<
+    typeof ConnectionDiagramCanvas
+> | null>(null);
 
 // Real-time updates integration
-const {
-    pendingUpdates,
-    dismissUpdate,
-    clearUpdates,
-    onDataChange,
-} = useRealtimeUpdates(selectedDatacenterId.value);
+const { pendingUpdates, dismissUpdate, clearUpdates, onDataChange } =
+    useRealtimeUpdates(selectedDatacenterId.value);
 
 // Register handler for connection changes
 onDataChange('connection', (data) => {
@@ -252,7 +252,7 @@ function clearFilters() {
 /**
  * Handle node click - show device details modal
  */
-function handleNodeClick(nodeId: number) {
+function handleNodeClick(_nodeId: number) {
     if (diagramCanvasRef.value) {
         const nodeData = (diagramCanvasRef.value as any)?.selectedNode?.value;
         if (nodeData) {
@@ -274,7 +274,7 @@ function handleNodeSelect(node: FlowNodeData | null) {
 /**
  * Handle edge click - show connection details modal
  */
-function handleEdgeClick(edgeId: string) {
+function handleEdgeClick(_edgeId: string) {
     if (diagramCanvasRef.value) {
         const edgeData = (diagramCanvasRef.value as any)?.selectedEdge?.value;
         if (edgeData) {
@@ -311,7 +311,9 @@ const selectClass =
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-2 sm:p-4">
             <!-- Header with responsive layout -->
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Connection Diagram"
                     description="Interactive visualization of device connections across your infrastructure."
@@ -338,9 +340,14 @@ const selectClass =
                                 </Badge>
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="left" class="w-80 overflow-y-auto dark:bg-slate-900 dark:border-slate-700">
+                        <SheetContent
+                            side="left"
+                            class="w-80 overflow-y-auto dark:border-slate-700 dark:bg-slate-900"
+                        >
                             <SheetHeader>
-                                <SheetTitle class="flex items-center justify-between dark:text-slate-100">
+                                <SheetTitle
+                                    class="flex items-center justify-between dark:text-slate-100"
+                                >
                                     <span class="flex items-center gap-2">
                                         <Filter class="size-4" />
                                         Filters
@@ -361,16 +368,26 @@ const selectClass =
                             <div class="mt-6 space-y-4">
                                 <!-- Location Filters -->
                                 <div class="space-y-3">
-                                    <h4 class="text-sm font-medium text-muted-foreground dark:text-slate-400">Location</h4>
+                                    <h4
+                                        class="text-sm font-medium text-muted-foreground dark:text-slate-400"
+                                    >
+                                        Location
+                                    </h4>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-datacenter" class="text-xs dark:text-slate-300">Datacenter</Label>
+                                        <Label
+                                            for="mobile-filter-datacenter"
+                                            class="text-xs dark:text-slate-300"
+                                            >Datacenter</Label
+                                        >
                                         <select
                                             id="mobile-filter-datacenter"
                                             v-model="selectedDatacenterId"
                                             :class="selectClass"
                                         >
-                                            <option :value="null">All Datacenters</option>
+                                            <option :value="null">
+                                                All Datacenters
+                                            </option>
                                             <option
                                                 v-for="dc in filterOptions.datacenters"
                                                 :key="dc.value"
@@ -382,15 +399,29 @@ const selectClass =
                                     </div>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-room" class="text-xs dark:text-slate-300">Room</Label>
+                                        <Label
+                                            for="mobile-filter-room"
+                                            class="text-xs dark:text-slate-300"
+                                            >Room</Label
+                                        >
                                         <select
                                             id="mobile-filter-room"
                                             v-model="selectedRoomId"
-                                            :disabled="!selectedDatacenterId || filteredRooms.length === 0"
+                                            :disabled="
+                                                !selectedDatacenterId ||
+                                                filteredRooms.length === 0
+                                            "
                                             :class="selectClass"
                                         >
                                             <option :value="null">
-                                                {{ selectedDatacenterId ? (filteredRooms.length > 0 ? 'All Rooms' : 'No rooms') : 'Select datacenter' }}
+                                                {{
+                                                    selectedDatacenterId
+                                                        ? filteredRooms.length >
+                                                          0
+                                                            ? 'All Rooms'
+                                                            : 'No rooms'
+                                                        : 'Select datacenter'
+                                                }}
                                             </option>
                                             <option
                                                 v-for="room in filteredRooms"
@@ -403,15 +434,29 @@ const selectClass =
                                     </div>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-row" class="text-xs dark:text-slate-300">Row</Label>
+                                        <Label
+                                            for="mobile-filter-row"
+                                            class="text-xs dark:text-slate-300"
+                                            >Row</Label
+                                        >
                                         <select
                                             id="mobile-filter-row"
                                             v-model="selectedRowId"
-                                            :disabled="!selectedRoomId || filteredRows.length === 0"
+                                            :disabled="
+                                                !selectedRoomId ||
+                                                filteredRows.length === 0
+                                            "
                                             :class="selectClass"
                                         >
                                             <option :value="null">
-                                                {{ selectedRoomId ? (filteredRows.length > 0 ? 'All Rows' : 'No rows') : 'Select room' }}
+                                                {{
+                                                    selectedRoomId
+                                                        ? filteredRows.length >
+                                                          0
+                                                            ? 'All Rows'
+                                                            : 'No rows'
+                                                        : 'Select room'
+                                                }}
                                             </option>
                                             <option
                                                 v-for="row in filteredRows"
@@ -424,15 +469,29 @@ const selectClass =
                                     </div>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-rack" class="text-xs dark:text-slate-300">Rack</Label>
+                                        <Label
+                                            for="mobile-filter-rack"
+                                            class="text-xs dark:text-slate-300"
+                                            >Rack</Label
+                                        >
                                         <select
                                             id="mobile-filter-rack"
                                             v-model="selectedRackId"
-                                            :disabled="!selectedRowId || filteredRacks.length === 0"
+                                            :disabled="
+                                                !selectedRowId ||
+                                                filteredRacks.length === 0
+                                            "
                                             :class="selectClass"
                                         >
                                             <option :value="null">
-                                                {{ selectedRowId ? (filteredRacks.length > 0 ? 'All Racks' : 'No racks') : 'Select row' }}
+                                                {{
+                                                    selectedRowId
+                                                        ? filteredRacks.length >
+                                                          0
+                                                            ? 'All Racks'
+                                                            : 'No racks'
+                                                        : 'Select row'
+                                                }}
                                             </option>
                                             <option
                                                 v-for="rack in filteredRacks"
@@ -446,17 +505,29 @@ const selectClass =
                                 </div>
 
                                 <!-- Connection Filters -->
-                                <div class="space-y-3 border-t pt-4 dark:border-slate-700">
-                                    <h4 class="text-sm font-medium text-muted-foreground dark:text-slate-400">Connection Type</h4>
+                                <div
+                                    class="space-y-3 border-t pt-4 dark:border-slate-700"
+                                >
+                                    <h4
+                                        class="text-sm font-medium text-muted-foreground dark:text-slate-400"
+                                    >
+                                        Connection Type
+                                    </h4>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-port-type" class="text-xs dark:text-slate-300">Port Type</Label>
+                                        <Label
+                                            for="mobile-filter-port-type"
+                                            class="text-xs dark:text-slate-300"
+                                            >Port Type</Label
+                                        >
                                         <select
                                             id="mobile-filter-port-type"
                                             v-model="selectedPortType"
                                             :class="selectClass"
                                         >
-                                            <option :value="null">All Types</option>
+                                            <option :value="null">
+                                                All Types
+                                            </option>
                                             <option
                                                 v-for="type in portTypeOptions"
                                                 :key="type.value"
@@ -468,13 +539,19 @@ const selectClass =
                                     </div>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-device-type" class="text-xs dark:text-slate-300">Device Type</Label>
+                                        <Label
+                                            for="mobile-filter-device-type"
+                                            class="text-xs dark:text-slate-300"
+                                            >Device Type</Label
+                                        >
                                         <select
                                             id="mobile-filter-device-type"
                                             v-model="selectedDeviceTypeId"
                                             :class="selectClass"
                                         >
-                                            <option :value="null">All Device Types</option>
+                                            <option :value="null">
+                                                All Device Types
+                                            </option>
                                             <option
                                                 v-for="type in deviceTypes"
                                                 :key="type.value"
@@ -486,15 +563,25 @@ const selectClass =
                                     </div>
 
                                     <div class="grid gap-2">
-                                        <Label for="mobile-filter-verified" class="text-xs dark:text-slate-300">Status</Label>
+                                        <Label
+                                            for="mobile-filter-verified"
+                                            class="text-xs dark:text-slate-300"
+                                            >Status</Label
+                                        >
                                         <select
                                             id="mobile-filter-verified"
                                             v-model="selectedVerified"
                                             :class="selectClass"
                                         >
-                                            <option :value="null">All Statuses</option>
-                                            <option :value="true">Verified</option>
-                                            <option :value="false">Unverified</option>
+                                            <option :value="null">
+                                                All Statuses
+                                            </option>
+                                            <option :value="true">
+                                                Verified
+                                            </option>
+                                            <option :value="false">
+                                                Unverified
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -517,14 +604,19 @@ const selectClass =
             </div>
 
             <!-- Main content area with responsive layout -->
-            <div class="flex flex-1 gap-4" :class="{ 'lg:flex-row': showFilters }">
+            <div
+                class="flex flex-1 gap-4"
+                :class="{ 'lg:flex-row': showFilters }"
+            >
                 <!-- Desktop filter sidebar (hidden on mobile, shown via Sheet) -->
                 <Card
                     v-if="showFilters"
-                    class="hidden w-64 shrink-0 lg:block xl:w-72 dark:bg-slate-800 dark:border-slate-700"
+                    class="hidden w-64 shrink-0 lg:block xl:w-72 dark:border-slate-700 dark:bg-slate-800"
                 >
                     <CardHeader class="pb-4">
-                        <CardTitle class="flex items-center justify-between text-base dark:text-slate-100">
+                        <CardTitle
+                            class="flex items-center justify-between text-base dark:text-slate-100"
+                        >
                             <span class="flex items-center gap-2">
                                 <Filter class="size-4" />
                                 Filters
@@ -544,17 +636,27 @@ const selectClass =
                     <CardContent class="space-y-4">
                         <!-- Location Filters -->
                         <div class="space-y-3">
-                            <h4 class="text-sm font-medium text-muted-foreground dark:text-slate-400">Location</h4>
+                            <h4
+                                class="text-sm font-medium text-muted-foreground dark:text-slate-400"
+                            >
+                                Location
+                            </h4>
 
                             <!-- Datacenter -->
                             <div class="grid gap-2">
-                                <Label for="filter-datacenter" class="text-xs dark:text-slate-300">Datacenter</Label>
+                                <Label
+                                    for="filter-datacenter"
+                                    class="text-xs dark:text-slate-300"
+                                    >Datacenter</Label
+                                >
                                 <select
                                     id="filter-datacenter"
                                     v-model="selectedDatacenterId"
                                     :class="selectClass"
                                 >
-                                    <option :value="null">All Datacenters</option>
+                                    <option :value="null">
+                                        All Datacenters
+                                    </option>
                                     <option
                                         v-for="dc in filterOptions.datacenters"
                                         :key="dc.value"
@@ -567,15 +669,28 @@ const selectClass =
 
                             <!-- Room -->
                             <div class="grid gap-2">
-                                <Label for="filter-room" class="text-xs dark:text-slate-300">Room</Label>
+                                <Label
+                                    for="filter-room"
+                                    class="text-xs dark:text-slate-300"
+                                    >Room</Label
+                                >
                                 <select
                                     id="filter-room"
                                     v-model="selectedRoomId"
-                                    :disabled="!selectedDatacenterId || filteredRooms.length === 0"
+                                    :disabled="
+                                        !selectedDatacenterId ||
+                                        filteredRooms.length === 0
+                                    "
                                     :class="selectClass"
                                 >
                                     <option :value="null">
-                                        {{ selectedDatacenterId ? (filteredRooms.length > 0 ? 'All Rooms' : 'No rooms') : 'Select datacenter' }}
+                                        {{
+                                            selectedDatacenterId
+                                                ? filteredRooms.length > 0
+                                                    ? 'All Rooms'
+                                                    : 'No rooms'
+                                                : 'Select datacenter'
+                                        }}
                                     </option>
                                     <option
                                         v-for="room in filteredRooms"
@@ -589,15 +704,28 @@ const selectClass =
 
                             <!-- Row -->
                             <div class="grid gap-2">
-                                <Label for="filter-row" class="text-xs dark:text-slate-300">Row</Label>
+                                <Label
+                                    for="filter-row"
+                                    class="text-xs dark:text-slate-300"
+                                    >Row</Label
+                                >
                                 <select
                                     id="filter-row"
                                     v-model="selectedRowId"
-                                    :disabled="!selectedRoomId || filteredRows.length === 0"
+                                    :disabled="
+                                        !selectedRoomId ||
+                                        filteredRows.length === 0
+                                    "
                                     :class="selectClass"
                                 >
                                     <option :value="null">
-                                        {{ selectedRoomId ? (filteredRows.length > 0 ? 'All Rows' : 'No rows') : 'Select room' }}
+                                        {{
+                                            selectedRoomId
+                                                ? filteredRows.length > 0
+                                                    ? 'All Rows'
+                                                    : 'No rows'
+                                                : 'Select room'
+                                        }}
                                     </option>
                                     <option
                                         v-for="row in filteredRows"
@@ -611,15 +739,28 @@ const selectClass =
 
                             <!-- Rack -->
                             <div class="grid gap-2">
-                                <Label for="filter-rack" class="text-xs dark:text-slate-300">Rack</Label>
+                                <Label
+                                    for="filter-rack"
+                                    class="text-xs dark:text-slate-300"
+                                    >Rack</Label
+                                >
                                 <select
                                     id="filter-rack"
                                     v-model="selectedRackId"
-                                    :disabled="!selectedRowId || filteredRacks.length === 0"
+                                    :disabled="
+                                        !selectedRowId ||
+                                        filteredRacks.length === 0
+                                    "
                                     :class="selectClass"
                                 >
                                     <option :value="null">
-                                        {{ selectedRowId ? (filteredRacks.length > 0 ? 'All Racks' : 'No racks') : 'Select row' }}
+                                        {{
+                                            selectedRowId
+                                                ? filteredRacks.length > 0
+                                                    ? 'All Racks'
+                                                    : 'No racks'
+                                                : 'Select row'
+                                        }}
                                     </option>
                                     <option
                                         v-for="rack in filteredRacks"
@@ -633,12 +774,22 @@ const selectClass =
                         </div>
 
                         <!-- Connection Filters -->
-                        <div class="space-y-3 border-t pt-4 dark:border-slate-700">
-                            <h4 class="text-sm font-medium text-muted-foreground dark:text-slate-400">Connection Type</h4>
+                        <div
+                            class="space-y-3 border-t pt-4 dark:border-slate-700"
+                        >
+                            <h4
+                                class="text-sm font-medium text-muted-foreground dark:text-slate-400"
+                            >
+                                Connection Type
+                            </h4>
 
                             <!-- Port Type -->
                             <div class="grid gap-2">
-                                <Label for="filter-port-type" class="text-xs dark:text-slate-300">Port Type</Label>
+                                <Label
+                                    for="filter-port-type"
+                                    class="text-xs dark:text-slate-300"
+                                    >Port Type</Label
+                                >
                                 <select
                                     id="filter-port-type"
                                     v-model="selectedPortType"
@@ -657,13 +808,19 @@ const selectClass =
 
                             <!-- Device Type -->
                             <div class="grid gap-2">
-                                <Label for="filter-device-type" class="text-xs dark:text-slate-300">Device Type</Label>
+                                <Label
+                                    for="filter-device-type"
+                                    class="text-xs dark:text-slate-300"
+                                    >Device Type</Label
+                                >
                                 <select
                                     id="filter-device-type"
                                     v-model="selectedDeviceTypeId"
                                     :class="selectClass"
                                 >
-                                    <option :value="null">All Device Types</option>
+                                    <option :value="null">
+                                        All Device Types
+                                    </option>
                                     <option
                                         v-for="type in deviceTypes"
                                         :key="type.value"
@@ -676,7 +833,11 @@ const selectClass =
 
                             <!-- Verified Status -->
                             <div class="grid gap-2">
-                                <Label for="filter-verified" class="text-xs dark:text-slate-300">Status</Label>
+                                <Label
+                                    for="filter-verified"
+                                    class="text-xs dark:text-slate-300"
+                                    >Status</Label
+                                >
                                 <select
                                     id="filter-verified"
                                     v-model="selectedVerified"
@@ -690,28 +851,48 @@ const selectClass =
                         </div>
 
                         <!-- Active Filters Summary -->
-                        <div v-if="hasActiveFilters" class="border-t pt-4 dark:border-slate-700">
+                        <div
+                            v-if="hasActiveFilters"
+                            class="border-t pt-4 dark:border-slate-700"
+                        >
                             <div class="flex flex-wrap gap-1">
                                 <Badge
                                     v-if="selectedDatacenterId"
                                     variant="secondary"
                                     class="text-xs"
                                 >
-                                    DC: {{ filterOptions.datacenters.find(d => d.value === selectedDatacenterId)?.label }}
+                                    DC:
+                                    {{
+                                        filterOptions.datacenters.find(
+                                            (d) =>
+                                                d.value ===
+                                                selectedDatacenterId,
+                                        )?.label
+                                    }}
                                 </Badge>
                                 <Badge
                                     v-if="selectedPortType"
                                     variant="secondary"
                                     class="text-xs"
                                 >
-                                    {{ portTypeOptions.find(p => p.value === selectedPortType)?.label }}
+                                    {{
+                                        portTypeOptions.find(
+                                            (p) => p.value === selectedPortType,
+                                        )?.label
+                                    }}
                                 </Badge>
                                 <Badge
                                     v-if="selectedDeviceTypeId"
                                     variant="secondary"
                                     class="text-xs"
                                 >
-                                    {{ deviceTypes.find(d => d.value === selectedDeviceTypeId)?.label }}
+                                    {{
+                                        deviceTypes.find(
+                                            (d) =>
+                                                d.value ===
+                                                selectedDeviceTypeId,
+                                        )?.label
+                                    }}
                                 </Badge>
                             </div>
                         </div>
@@ -719,13 +900,15 @@ const selectClass =
                 </Card>
 
                 <!-- Diagram canvas with responsive min-height -->
-                <div class="relative flex-1 min-h-[400px] sm:min-h-[500px]">
+                <div class="relative min-h-[400px] flex-1 sm:min-h-[500px]">
                     <!-- Loading overlay for filter changes -->
                     <div
                         v-if="isFilterChanging"
-                        class="absolute inset-0 z-20 flex items-center justify-center bg-background/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg"
+                        class="absolute inset-0 z-20 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-sm dark:bg-slate-900/60"
                     >
-                        <div class="flex items-center gap-2 text-sm text-muted-foreground dark:text-slate-400">
+                        <div
+                            class="flex items-center gap-2 text-sm text-muted-foreground dark:text-slate-400"
+                        >
                             <RefreshCw class="size-4 animate-spin" />
                             Updating diagram...
                         </div>
@@ -748,9 +931,13 @@ const selectClass =
 
         <!-- Device Detail Modal with dark mode -->
         <Dialog v-model:open="showDeviceModal">
-            <DialogContent class="sm:max-w-md dark:bg-slate-800 dark:border-slate-700">
+            <DialogContent
+                class="sm:max-w-md dark:border-slate-700 dark:bg-slate-800"
+            >
                 <DialogHeader>
-                    <DialogTitle class="flex items-center gap-2 dark:text-slate-100">
+                    <DialogTitle
+                        class="flex items-center gap-2 dark:text-slate-100"
+                    >
                         <Server class="size-5" />
                         Device Details
                     </DialogTitle>
@@ -759,28 +946,65 @@ const selectClass =
                 <div v-if="selectedDevice" class="space-y-4">
                     <div class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Name</span>
-                            <span class="text-sm font-medium dark:text-slate-100">{{ selectedDevice.name }}</span>
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Name</span
+                            >
+                            <span
+                                class="text-sm font-medium dark:text-slate-100"
+                                >{{ selectedDevice.name }}</span
+                            >
                         </div>
-                        <div v-if="selectedDevice.asset_tag" class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Asset Tag</span>
-                            <span class="text-sm font-mono dark:text-slate-100">{{ selectedDevice.asset_tag }}</span>
+                        <div
+                            v-if="selectedDevice.asset_tag"
+                            class="flex justify-between"
+                        >
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Asset Tag</span
+                            >
+                            <span
+                                class="font-mono text-sm dark:text-slate-100"
+                                >{{ selectedDevice.asset_tag }}</span
+                            >
                         </div>
-                        <div v-if="selectedDevice.device_type" class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Type</span>
-                            <Badge variant="secondary">{{ selectedDevice.device_type }}</Badge>
+                        <div
+                            v-if="selectedDevice.device_type"
+                            class="flex justify-between"
+                        >
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Type</span
+                            >
+                            <Badge variant="secondary">{{
+                                selectedDevice.device_type
+                            }}</Badge>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Ports</span>
-                            <span class="text-sm font-medium dark:text-slate-100">{{ selectedDevice.port_count }}</span>
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Ports</span
+                            >
+                            <span
+                                class="text-sm font-medium dark:text-slate-100"
+                                >{{ selectedDevice.port_count }}</span
+                            >
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Connections</span>
-                            <span class="text-sm font-medium dark:text-slate-100">{{ selectedDevice.connection_count }}</span>
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Connections</span
+                            >
+                            <span
+                                class="text-sm font-medium dark:text-slate-100"
+                                >{{ selectedDevice.connection_count }}</span
+                            >
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-2 border-t pt-4 dark:border-slate-700">
+                    <div
+                        class="flex justify-end gap-2 border-t pt-4 dark:border-slate-700"
+                    >
                         <Button
                             variant="outline"
                             class="dark:border-slate-600 dark:hover:bg-slate-700"
@@ -798,9 +1022,13 @@ const selectClass =
 
         <!-- Connection Detail Modal with dark mode -->
         <Dialog v-model:open="showConnectionModal">
-            <DialogContent class="sm:max-w-md dark:bg-slate-800 dark:border-slate-700">
+            <DialogContent
+                class="sm:max-w-md dark:border-slate-700 dark:bg-slate-800"
+            >
                 <DialogHeader>
-                    <DialogTitle class="flex items-center gap-2 dark:text-slate-100">
+                    <DialogTitle
+                        class="flex items-center gap-2 dark:text-slate-100"
+                    >
                         <Cable class="size-5" />
                         Connection Details
                     </DialogTitle>
@@ -809,40 +1037,83 @@ const selectClass =
                 <div v-if="selectedConnection" class="space-y-4">
                     <div class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Cable Type</span>
-                            <span class="text-sm font-medium dark:text-slate-100">
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Cable Type</span
+                            >
+                            <span
+                                class="text-sm font-medium dark:text-slate-100"
+                            >
                                 {{ selectedConnection.cable_type || 'Unknown' }}
                             </span>
                         </div>
-                        <div v-if="selectedConnection.cable_color" class="flex justify-between items-center">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Cable Color</span>
+                        <div
+                            v-if="selectedConnection.cable_color"
+                            class="flex items-center justify-between"
+                        >
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Cable Color</span
+                            >
                             <div class="flex items-center gap-2">
                                 <span
                                     class="size-4 rounded-full border dark:border-slate-500"
-                                    :style="{ backgroundColor: selectedConnection.cable_color }"
+                                    :style="{
+                                        backgroundColor:
+                                            selectedConnection.cable_color,
+                                    }"
                                 />
-                                <span class="text-sm font-medium capitalize dark:text-slate-100">
+                                <span
+                                    class="text-sm font-medium capitalize dark:text-slate-100"
+                                >
                                     {{ selectedConnection.cable_color }}
                                 </span>
                             </div>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Status</span>
-                            <Badge :variant="selectedConnection.verified ? 'default' : 'secondary'">
-                                {{ selectedConnection.verified ? 'Verified' : 'Unverified' }}
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Status</span
+                            >
+                            <Badge
+                                :variant="
+                                    selectedConnection.verified
+                                        ? 'default'
+                                        : 'secondary'
+                                "
+                            >
+                                {{
+                                    selectedConnection.verified
+                                        ? 'Verified'
+                                        : 'Unverified'
+                                }}
                             </Badge>
                         </div>
-                        <div v-if="selectedConnection.connection_count > 1" class="flex justify-between">
-                            <span class="text-sm text-muted-foreground dark:text-slate-400">Connections</span>
-                            <span class="text-sm font-medium dark:text-slate-100">{{ selectedConnection.connection_count }}</span>
+                        <div
+                            v-if="selectedConnection.connection_count > 1"
+                            class="flex justify-between"
+                        >
+                            <span
+                                class="text-sm text-muted-foreground dark:text-slate-400"
+                                >Connections</span
+                            >
+                            <span
+                                class="text-sm font-medium dark:text-slate-100"
+                                >{{ selectedConnection.connection_count }}</span
+                            >
                         </div>
-                        <div v-if="selectedConnection.has_discrepancy" class="rounded-md bg-yellow-50 p-3 text-sm text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-200">
+                        <div
+                            v-if="selectedConnection.has_discrepancy"
+                            class="rounded-md bg-yellow-50 p-3 text-sm text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-200"
+                        >
                             <Info class="mr-2 inline size-4" />
                             This connection has audit discrepancies
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-2 border-t pt-4 dark:border-slate-700">
+                    <div
+                        class="flex justify-end gap-2 border-t pt-4 dark:border-slate-700"
+                    >
                         <Button
                             variant="outline"
                             class="dark:border-slate-600 dark:hover:bg-slate-700"

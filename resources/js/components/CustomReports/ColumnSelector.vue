@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, nextTick, watchEffect } from 'vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Calculator } from 'lucide-vue-next';
+import { computed, nextTick, ref, watchEffect } from 'vue';
 
 // Store refs to category checkboxes for indeterminate state
 const categoryCheckboxRefs = ref<Record<string, HTMLInputElement | null>>({});
@@ -42,7 +42,7 @@ const focusedFieldIndex = ref<number>(-1);
  * Get the set of calculated field keys for quick lookup
  */
 const calculatedFieldKeys = computed(() => {
-    return new Set(props.calculatedFields.map(f => f.key));
+    return new Set(props.calculatedFields.map((f) => f.key));
 });
 
 /**
@@ -66,7 +66,10 @@ const selectedCount = computed(() => props.selectedColumns.length);
  * Total available columns count
  */
 const totalColumnsCount = computed(() => {
-    return Object.values(props.availableColumns).reduce((sum, fields) => sum + fields.length, 0);
+    return Object.values(props.availableColumns).reduce(
+        (sum, fields) => sum + fields.length,
+        0,
+    );
 });
 
 /**
@@ -74,7 +77,12 @@ const totalColumnsCount = computed(() => {
  */
 function isCategoryAllSelected(category: string): boolean {
     const categoryFields = props.availableColumns[category] || [];
-    return categoryFields.length > 0 && categoryFields.every(field => props.selectedColumns.includes(field.key));
+    return (
+        categoryFields.length > 0 &&
+        categoryFields.every((field) =>
+            props.selectedColumns.includes(field.key),
+        )
+    );
 }
 
 /**
@@ -82,8 +90,13 @@ function isCategoryAllSelected(category: string): boolean {
  */
 function isCategorySomeSelected(category: string): boolean {
     const categoryFields = props.availableColumns[category] || [];
-    const selectedInCategory = categoryFields.filter(field => props.selectedColumns.includes(field.key));
-    return selectedInCategory.length > 0 && selectedInCategory.length < categoryFields.length;
+    const selectedInCategory = categoryFields.filter((field) =>
+        props.selectedColumns.includes(field.key),
+    );
+    return (
+        selectedInCategory.length > 0 &&
+        selectedInCategory.length < categoryFields.length
+    );
 }
 
 /**
@@ -107,7 +120,7 @@ function toggleColumn(fieldKey: string) {
  */
 function selectAllInCategory(category: string) {
     const categoryFields = props.availableColumns[category] || [];
-    const categoryKeys = categoryFields.map(f => f.key);
+    const categoryKeys = categoryFields.map((f) => f.key);
     const newSelected = new Set([...props.selectedColumns, ...categoryKeys]);
     emit('update:selectedColumns', Array.from(newSelected));
 }
@@ -117,8 +130,10 @@ function selectAllInCategory(category: string) {
  */
 function deselectAllInCategory(category: string) {
     const categoryFields = props.availableColumns[category] || [];
-    const categoryKeys = new Set(categoryFields.map(f => f.key));
-    const newSelected = props.selectedColumns.filter(key => !categoryKeys.has(key));
+    const categoryKeys = new Set(categoryFields.map((f) => f.key));
+    const newSelected = props.selectedColumns.filter(
+        (key) => !categoryKeys.has(key),
+    );
     emit('update:selectedColumns', newSelected);
 }
 
@@ -137,7 +152,9 @@ function toggleCategory(category: string) {
  * Select all columns
  */
 function selectAll() {
-    const allKeys = Object.values(props.availableColumns).flatMap(fields => fields.map(f => f.key));
+    const allKeys = Object.values(props.availableColumns).flatMap((fields) =>
+        fields.map((f) => f.key),
+    );
     emit('update:selectedColumns', allKeys);
 }
 
@@ -151,7 +168,11 @@ function deselectAll() {
 /**
  * Handle keyboard navigation within field list
  */
-function handleFieldKeydown(event: KeyboardEvent, category: string, currentIndex: number) {
+function handleFieldKeydown(
+    event: KeyboardEvent,
+    category: string,
+    currentIndex: number,
+) {
     const categoryFields = props.availableColumns[category] || [];
 
     switch (event.key) {
@@ -189,7 +210,8 @@ function focusFieldInCategory(category: string, index: number) {
             const checkbox = document.getElementById(`field-${fieldKey}`);
             if (checkbox) {
                 // Focus the checkbox trigger within the component
-                const trigger = checkbox.closest('[role="checkbox"]') || checkbox;
+                const trigger =
+                    checkbox.closest('[role="checkbox"]') || checkbox;
                 (trigger as HTMLElement)?.focus();
             }
         }
@@ -199,7 +221,7 @@ function focusFieldInCategory(category: string, index: number) {
 /**
  * Get aria description for a field
  */
-function getFieldAriaDescription(field: ReportField): string {
+function _getFieldAriaDescription(field: ReportField): string {
     const isCalculated = calculatedFieldKeys.value.has(field.key);
     const isSelected = props.selectedColumns.includes(field.key);
     let description = `${field.display_name} column`;
@@ -234,13 +256,12 @@ watchEffect(() => {
 
 <template>
     <Card>
-        <CardHeader class="flex flex-col gap-2 space-y-0 pb-2 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader
+            class="flex flex-col gap-2 space-y-0 pb-2 sm:flex-row sm:items-center sm:justify-between"
+        >
             <CardTitle class="text-base">Select Columns</CardTitle>
             <div class="flex flex-wrap items-center gap-2">
-                <span
-                    class="text-sm text-muted-foreground"
-                    aria-live="polite"
-                >
+                <span class="text-sm text-muted-foreground" aria-live="polite">
                     {{ selectedCount }} of {{ totalColumnsCount }} selected
                 </span>
                 <div class="flex gap-1">
@@ -274,12 +295,20 @@ watchEffect(() => {
                     class="space-y-3"
                 >
                     <!-- Category header with select all toggle -->
-                    <div class="flex items-center justify-between border-b pb-2">
+                    <div
+                        class="flex items-center justify-between border-b pb-2"
+                    >
                         <legend class="flex items-center gap-2">
                             <input
                                 type="checkbox"
                                 :id="`category-${category}`"
-                                :ref="(el) => setCategoryCheckboxRef(category, el as HTMLInputElement)"
+                                :ref="
+                                    (el) =>
+                                        setCategoryCheckboxRef(
+                                            category,
+                                            el as HTMLInputElement,
+                                        )
+                                "
                                 :checked="isCategoryAllSelected(category)"
                                 :aria-label="`Select all ${category} columns`"
                                 class="size-4 cursor-pointer rounded border-input accent-primary"
@@ -299,7 +328,11 @@ watchEffect(() => {
                                 {{ availableColumns[category]?.length || 0 }}
                             </Badge>
                         </legend>
-                        <div class="flex gap-1" role="group" :aria-label="`${category} category actions`">
+                        <div
+                            class="flex gap-1"
+                            role="group"
+                            :aria-label="`${category} category actions`"
+                        >
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -328,7 +361,9 @@ watchEffect(() => {
                         :aria-label="`${category} column options`"
                     >
                         <div
-                            v-for="(field, fieldIndex) in availableColumns[category]"
+                            v-for="(field, fieldIndex) in availableColumns[
+                                category
+                            ]"
                             :key="field.key"
                             class="flex items-center gap-2"
                         >
@@ -336,10 +371,21 @@ watchEffect(() => {
                                 type="checkbox"
                                 :id="`field-${field.key}`"
                                 :checked="selectedColumns.includes(field.key)"
-                                :aria-describedby="calculatedFieldKeys.has(field.key) ? `field-${field.key}-calc` : undefined"
+                                :aria-describedby="
+                                    calculatedFieldKeys.has(field.key)
+                                        ? `field-${field.key}-calc`
+                                        : undefined
+                                "
                                 class="size-4 cursor-pointer rounded border-input accent-primary"
                                 @change="toggleColumn(field.key)"
-                                @keydown="(e: KeyboardEvent) => handleFieldKeydown(e, category, fieldIndex)"
+                                @keydown="
+                                    (e: KeyboardEvent) =>
+                                        handleFieldKeydown(
+                                            e,
+                                            category,
+                                            fieldIndex,
+                                        )
+                                "
                             />
                             <Label
                                 :for="`field-${field.key}`"
@@ -371,7 +417,10 @@ watchEffect(() => {
                     aria-hidden="true"
                 >
                     <Calculator class="size-4 text-amber-500" />
-                    <span>Indicates a calculated field (value computed from other data)</span>
+                    <span
+                        >Indicates a calculated field (value computed from other
+                        data)</span
+                    >
                 </div>
 
                 <!-- Validation message -->

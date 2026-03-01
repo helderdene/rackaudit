@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import AuditForm from '@/components/audits/AuditForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
 
 interface DatacenterOption {
     id: number;

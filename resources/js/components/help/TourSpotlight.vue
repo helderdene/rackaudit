@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 interface SpotlightRect {
     top: number;
@@ -132,16 +132,16 @@ defineExpose({
 
         <!-- Spotlight cutout layer using clip-path -->
         <div
-            class="fixed inset-0 z-[9999] pointer-events-none"
+            class="pointer-events-none fixed inset-0 z-[9999]"
             :class="{ 'transition-all duration-300': animate }"
             :style="{ clipPath }"
         >
-            <div class="w-full h-full bg-black/50" />
+            <div class="h-full w-full bg-black/50" />
         </div>
 
         <!-- Spotlight border/highlight around target -->
         <div
-            class="fixed z-[10000] pointer-events-none border-2 border-primary rounded-lg shadow-[0_0_0_4px_rgba(var(--primary)/0.2)]"
+            class="pointer-events-none fixed z-[10000] rounded-lg border-2 border-primary shadow-[0_0_0_4px_rgba(var(--primary)/0.2)]"
             :class="{ 'transition-all duration-300': animate }"
             :style="{
                 top: `${spotlightRect.top}px`,
@@ -152,7 +152,7 @@ defineExpose({
         >
             <!-- Pulsing animation ring -->
             <div
-                class="absolute inset-0 rounded-lg border-2 border-primary/50 animate-pulse"
+                class="absolute inset-0 animate-pulse rounded-lg border-2 border-primary/50"
             />
         </div>
     </div>

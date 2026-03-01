@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Tooltip,
@@ -10,14 +9,15 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
-    CheckCircle,
-    XCircle,
     AlertTriangle,
-    Lock,
+    CheckCircle,
     ClipboardCheck,
-    Server,
     HardDrive,
+    Lock,
+    Server,
+    XCircle,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface DeviceData {
     id: number;
@@ -76,23 +76,34 @@ const emit = defineEmits<{
 
 // Computed
 const selectableVerifications = computed(() =>
-    props.verifications.filter((v) => v.verification_status === 'pending' && !v.is_locked)
+    props.verifications.filter(
+        (v) => v.verification_status === 'pending' && !v.is_locked,
+    ),
 );
 
 const allSelected = computed(() => {
     if (selectableVerifications.value.length === 0) return false;
-    return selectableVerifications.value.every((v) => props.selectedIds.has(v.id));
+    return selectableVerifications.value.every((v) =>
+        props.selectedIds.has(v.id),
+    );
 });
 
 const someSelected = computed(
-    () => props.selectedIds.size > 0 && !allSelected.value
+    () => props.selectedIds.size > 0 && !allSelected.value,
 );
 
 // Group verifications by rack
 const groupedByRack = computed(() => {
-    const groups = new Map<string, { rack: RackData | null; room: RoomData | null; verifications: VerificationData[] }>();
+    const groups = new Map<
+        string,
+        {
+            rack: RackData | null;
+            room: RoomData | null;
+            verifications: VerificationData[];
+        }
+    >();
 
-    props.verifications.forEach(v => {
+    props.verifications.forEach((v) => {
         const key = v.rack ? `${v.rack.id}` : 'no-rack';
         if (!groups.has(key)) {
             groups.set(key, {
@@ -191,7 +202,9 @@ function getStatusColorClass(status: string): string {
 /**
  * Get verification status badge variant
  */
-function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' | 'warning' {
+function getStatusBadgeVariant(
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' | 'warning' {
     switch (status) {
         case 'verified':
             return 'default';
@@ -231,14 +244,22 @@ function formatDate(dateString: string | null): string {
  * Check if verification can be acted upon
  */
 function canAct(verification: VerificationData): boolean {
-    return verification.verification_status === 'pending' && !verification.is_locked;
+    return (
+        verification.verification_status === 'pending' &&
+        !verification.is_locked
+    );
 }
 
 /**
  * Get rack progress stats
  */
-function getRackProgress(verifications: VerificationData[]): { verified: number; total: number } {
-    const verified = verifications.filter(v => v.verification_status === 'verified').length;
+function getRackProgress(verifications: VerificationData[]): {
+    verified: number;
+    total: number;
+} {
+    const verified = verifications.filter(
+        (v) => v.verification_status === 'verified',
+    ).length;
     return { verified, total: verifications.length };
 }
 </script>
@@ -252,24 +273,40 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
             class="overflow-hidden rounded-lg border"
         >
             <!-- Rack Header -->
-            <div class="flex items-center justify-between bg-muted/50 px-4 py-2">
+            <div
+                class="flex items-center justify-between bg-muted/50 px-4 py-2"
+            >
                 <div class="flex items-center gap-3">
                     <Server class="size-4 text-muted-foreground" />
                     <div>
                         <span class="font-medium">
                             {{ group.rack?.name || 'Unassigned' }}
                         </span>
-                        <span v-if="group.room" class="ml-2 text-sm text-muted-foreground">
+                        <span
+                            v-if="group.room"
+                            class="ml-2 text-sm text-muted-foreground"
+                        >
                             ({{ group.room.name }})
                         </span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>{{ getRackProgress(group.verifications).verified }}/{{ getRackProgress(group.verifications).total }} verified</span>
-                    <div class="h-2 w-16 overflow-hidden rounded-full bg-secondary">
+                <div
+                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                    <span
+                        >{{ getRackProgress(group.verifications).verified }}/{{
+                            getRackProgress(group.verifications).total
+                        }}
+                        verified</span
+                    >
+                    <div
+                        class="h-2 w-16 overflow-hidden rounded-full bg-secondary"
+                    >
                         <div
                             class="h-full bg-green-600 transition-all duration-300"
-                            :style="{ width: `${(getRackProgress(group.verifications).verified / getRackProgress(group.verifications).total) * 100}%` }"
+                            :style="{
+                                width: `${(getRackProgress(group.verifications).verified / getRackProgress(group.verifications).total) * 100}%`,
+                            }"
                         />
                     </div>
                 </div>
@@ -293,50 +330,96 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                                     :checked="selectedIds.has(verification.id)"
                                     :disabled="!canAct(verification)"
                                     class="size-5"
-                                    @update:checked="emit('toggle-selection', verification.id)"
+                                    @update:checked="
+                                        emit(
+                                            'toggle-selection',
+                                            verification.id,
+                                        )
+                                    "
                                 />
                             </div>
                             <!-- Device Info -->
-                            <div class="flex-1 min-w-0">
-                                <p v-if="verification.device?.name" class="font-medium text-sm truncate">
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    v-if="verification.device?.name"
+                                    class="truncate text-sm font-medium"
+                                >
                                     {{ verification.device.name }}
                                 </p>
-                                <p v-else class="text-sm text-muted-foreground">-</p>
+                                <p v-else class="text-sm text-muted-foreground">
+                                    -
+                                </p>
                                 <p
-                                    v-if="verification.device?.manufacturer || verification.device?.model"
-                                    class="text-xs text-muted-foreground truncate"
+                                    v-if="
+                                        verification.device?.manufacturer ||
+                                        verification.device?.model
+                                    "
+                                    class="truncate text-xs text-muted-foreground"
                                 >
-                                    {{ [verification.device.manufacturer, verification.device.model].filter(Boolean).join(' ') }}
+                                    {{
+                                        [
+                                            verification.device.manufacturer,
+                                            verification.device.model,
+                                        ]
+                                            .filter(Boolean)
+                                            .join(' ')
+                                    }}
                                 </p>
                             </div>
                         </div>
                         <!-- Status Badge -->
-                        <div class="flex items-center gap-1.5 shrink-0">
+                        <div class="flex shrink-0 items-center gap-1.5">
                             <component
-                                :is="getStatusIcon(verification.verification_status)"
+                                :is="
+                                    getStatusIcon(
+                                        verification.verification_status,
+                                    )
+                                "
                                 class="size-4"
-                                :class="getStatusColorClass(verification.verification_status)"
+                                :class="
+                                    getStatusColorClass(
+                                        verification.verification_status,
+                                    )
+                                "
                             />
-                            <Badge :variant="getStatusBadgeVariant(verification.verification_status)" class="text-xs">
+                            <Badge
+                                :variant="
+                                    getStatusBadgeVariant(
+                                        verification.verification_status,
+                                    )
+                                "
+                                class="text-xs"
+                            >
                                 {{ verification.verification_status_label }}
                             </Badge>
                         </div>
                     </div>
 
                     <!-- Card Body: Details Grid -->
-                    <div class="grid grid-cols-2 gap-2 text-sm mb-3">
+                    <div class="mb-3 grid grid-cols-2 gap-2 text-sm">
                         <!-- Asset Tag -->
                         <div>
-                            <span class="text-xs text-muted-foreground">Asset Tag</span>
-                            <p class="font-medium truncate">
+                            <span class="text-xs text-muted-foreground"
+                                >Asset Tag</span
+                            >
+                            <p class="truncate font-medium">
                                 {{ verification.device?.asset_tag || '-' }}
                             </p>
                         </div>
                         <!-- Position -->
                         <div>
-                            <span class="text-xs text-muted-foreground">Position</span>
+                            <span class="text-xs text-muted-foreground"
+                                >Position</span
+                            >
                             <p class="font-medium">
-                                {{ verification.device ? formatUPosition(verification.device.start_u, verification.device.u_height) : '-' }}
+                                {{
+                                    verification.device
+                                        ? formatUPosition(
+                                              verification.device.start_u,
+                                              verification.device.u_height,
+                                          )
+                                        : '-'
+                                }}
                             </p>
                         </div>
                     </div>
@@ -347,7 +430,9 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                         class="mb-3 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
                     >
                         <Lock class="size-3" />
-                        <span>Locked by {{ verification.locked_by?.name }}</span>
+                        <span
+                            >Locked by {{ verification.locked_by?.name }}</span
+                        >
                     </div>
 
                     <!-- Verified by info -->
@@ -355,7 +440,8 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                         v-else-if="verification.verified_by"
                         class="mb-3 text-xs text-muted-foreground"
                     >
-                        Verified by {{ verification.verified_by.name }} on {{ formatDate(verification.verified_at) }}
+                        Verified by {{ verification.verified_by.name }} on
+                        {{ formatDate(verification.verified_at) }}
                     </div>
 
                     <!-- Card Footer: Action Button -->
@@ -376,7 +462,9 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                             Wait for lock to expire
                         </span>
                         <span
-                            v-else-if="verification.verification_status !== 'pending'"
+                            v-else-if="
+                                verification.verification_status !== 'pending'
+                            "
                             class="flex items-center gap-1 text-xs text-muted-foreground"
                         >
                             <CheckCircle class="size-3" />
@@ -398,12 +486,36 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                                     @update:checked="emit('toggle-all')"
                                 />
                             </th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Device Name</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Asset Tag</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Serial Number</th>
-                            <th class="h-10 w-20 px-3 text-left font-medium text-muted-foreground">Position</th>
-                            <th class="h-10 w-32 px-3 text-left font-medium text-muted-foreground">Status</th>
-                            <th class="h-10 w-28 px-3 text-left font-medium text-muted-foreground">Actions</th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Device Name
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Asset Tag
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Serial Number
+                            </th>
+                            <th
+                                class="h-10 w-20 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Position
+                            </th>
+                            <th
+                                class="h-10 w-32 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="h-10 w-28 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -411,7 +523,7 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                             v-for="verification in group.verifications"
                             :id="`verification-${verification.id}`"
                             :key="verification.id"
-                            class="border-b transition-colors hover:bg-muted/50 last:border-b-0"
+                            class="border-b transition-colors last:border-b-0 hover:bg-muted/50"
                             :class="getRowClasses(verification)"
                         >
                             <!-- Checkbox -->
@@ -419,22 +531,43 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                                 <Checkbox
                                     :checked="selectedIds.has(verification.id)"
                                     :disabled="!canAct(verification)"
-                                    @update:checked="emit('toggle-selection', verification.id)"
+                                    @update:checked="
+                                        emit(
+                                            'toggle-selection',
+                                            verification.id,
+                                        )
+                                    "
                                 />
                             </td>
 
                             <!-- Device Name -->
                             <td class="px-3 py-3">
                                 <div class="flex flex-col">
-                                    <span v-if="verification.device?.name" class="font-medium">
+                                    <span
+                                        v-if="verification.device?.name"
+                                        class="font-medium"
+                                    >
                                         {{ verification.device.name }}
                                     </span>
-                                    <span v-else class="text-muted-foreground">-</span>
+                                    <span v-else class="text-muted-foreground"
+                                        >-</span
+                                    >
                                     <span
-                                        v-if="verification.device?.manufacturer || verification.device?.model"
+                                        v-if="
+                                            verification.device?.manufacturer ||
+                                            verification.device?.model
+                                        "
                                         class="text-xs text-muted-foreground"
                                     >
-                                        {{ [verification.device.manufacturer, verification.device.model].filter(Boolean).join(' ') }}
+                                        {{
+                                            [
+                                                verification.device
+                                                    .manufacturer,
+                                                verification.device.model,
+                                            ]
+                                                .filter(Boolean)
+                                                .join(' ')
+                                        }}
                                     </span>
                                 </div>
                             </td>
@@ -444,23 +577,37 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                                 <span v-if="verification.device?.asset_tag">
                                     {{ verification.device.asset_tag }}
                                 </span>
-                                <span v-else class="text-muted-foreground">-</span>
+                                <span v-else class="text-muted-foreground"
+                                    >-</span
+                                >
                             </td>
 
                             <!-- Serial Number -->
                             <td class="px-3 py-3">
-                                <span v-if="verification.device?.serial_number" class="font-mono text-xs">
+                                <span
+                                    v-if="verification.device?.serial_number"
+                                    class="font-mono text-xs"
+                                >
                                     {{ verification.device.serial_number }}
                                 </span>
-                                <span v-else class="text-muted-foreground">-</span>
+                                <span v-else class="text-muted-foreground"
+                                    >-</span
+                                >
                             </td>
 
                             <!-- U Position -->
                             <td class="px-3 py-3">
                                 <span v-if="verification.device">
-                                    {{ formatUPosition(verification.device.start_u, verification.device.u_height) }}
+                                    {{
+                                        formatUPosition(
+                                            verification.device.start_u,
+                                            verification.device.u_height,
+                                        )
+                                    }}
                                 </span>
-                                <span v-else class="text-muted-foreground">-</span>
+                                <span v-else class="text-muted-foreground"
+                                    >-</span
+                                >
                             </td>
 
                             <!-- Verification Status -->
@@ -468,25 +615,52 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5">
                                         <component
-                                            :is="getStatusIcon(verification.verification_status)"
+                                            :is="
+                                                getStatusIcon(
+                                                    verification.verification_status,
+                                                )
+                                            "
                                             class="size-4"
-                                            :class="getStatusColorClass(verification.verification_status)"
+                                            :class="
+                                                getStatusColorClass(
+                                                    verification.verification_status,
+                                                )
+                                            "
                                         />
-                                        <Badge :variant="getStatusBadgeVariant(verification.verification_status)">
-                                            {{ verification.verification_status_label }}
+                                        <Badge
+                                            :variant="
+                                                getStatusBadgeVariant(
+                                                    verification.verification_status,
+                                                )
+                                            "
+                                        >
+                                            {{
+                                                verification.verification_status_label
+                                            }}
                                         </Badge>
                                     </div>
                                     <!-- Show lock indicator -->
-                                    <TooltipProvider v-if="verification.is_locked" :delay-duration="0">
+                                    <TooltipProvider
+                                        v-if="verification.is_locked"
+                                        :delay-duration="0"
+                                    >
                                         <Tooltip>
                                             <TooltipTrigger as-child>
-                                                <span class="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+                                                <span
+                                                    class="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+                                                >
                                                     <Lock class="size-3" />
                                                     Locked
                                                 </span>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>Locked by {{ verification.locked_by?.name }}</p>
+                                                <p>
+                                                    Locked by
+                                                    {{
+                                                        verification.locked_by
+                                                            ?.name
+                                                    }}
+                                                </p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -507,34 +681,65 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
                                         size="sm"
                                         variant="outline"
                                         class="w-full sm:w-auto"
-                                        @click="emit('open-action', verification)"
+                                        @click="
+                                            emit('open-action', verification)
+                                        "
                                     >
                                         <ClipboardCheck class="mr-1 size-3.5" />
-                                        <span class="hidden sm:inline">Verify</span>
+                                        <span class="hidden sm:inline"
+                                            >Verify</span
+                                        >
                                     </Button>
                                 </div>
-                                <TooltipProvider v-else-if="verification.is_locked" :delay-duration="0">
+                                <TooltipProvider
+                                    v-else-if="verification.is_locked"
+                                    :delay-duration="0"
+                                >
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <span class="text-xs text-muted-foreground">
-                                                Locked by {{ verification.locked_by?.name }}
+                                            <span
+                                                class="text-xs text-muted-foreground"
+                                            >
+                                                Locked by
+                                                {{
+                                                    verification.locked_by?.name
+                                                }}
                                             </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>Wait for this user to finish or for the lock to expire (5 min)</p>
+                                            <p>
+                                                Wait for this user to finish or
+                                                for the lock to expire (5 min)
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
-                                <TooltipProvider v-else-if="verification.verification_status !== 'pending'" :delay-duration="0">
+                                <TooltipProvider
+                                    v-else-if="
+                                        verification.verification_status !==
+                                        'pending'
+                                    "
+                                    :delay-duration="0"
+                                >
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <span class="flex items-center gap-1 text-xs text-muted-foreground">
+                                            <span
+                                                class="flex items-center gap-1 text-xs text-muted-foreground"
+                                            >
                                                 <CheckCircle class="size-3" />
-                                                {{ formatDate(verification.verified_at) }}
+                                                {{
+                                                    formatDate(
+                                                        verification.verified_at,
+                                                    )
+                                                }}
                                             </span>
                                         </TooltipTrigger>
-                                        <TooltipContent v-if="verification.notes">
-                                            <p class="max-w-xs">{{ verification.notes }}</p>
+                                        <TooltipContent
+                                            v-if="verification.notes"
+                                        >
+                                            <p class="max-w-xs">
+                                                {{ verification.notes }}
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
@@ -546,7 +751,10 @@ function getRackProgress(verifications: VerificationData[]): { verified: number;
         </div>
 
         <!-- Empty state when no groups -->
-        <div v-if="groupedByRack.length === 0" class="text-center text-muted-foreground py-8">
+        <div
+            v-if="groupedByRack.length === 0"
+            class="py-8 text-center text-muted-foreground"
+        >
             No devices to display
         </div>
     </div>

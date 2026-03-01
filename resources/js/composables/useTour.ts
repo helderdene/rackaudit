@@ -1,6 +1,10 @@
-import { ref, computed, readonly, onMounted, onUnmounted, nextTick } from 'vue';
-import { useHelp, type HelpTour, type HelpTourStep } from '@/composables/useHelp';
+import {
+    useHelp,
+    type HelpTour,
+    type HelpTourStep,
+} from '@/composables/useHelp';
 import { useHelpInteractions } from '@/composables/useHelpInteractions';
+import { computed, nextTick, onUnmounted, readonly, ref } from 'vue';
 
 /**
  * Position coordinates for popover
@@ -76,7 +80,12 @@ export function useTour(options: UseTourOptions = {}) {
     const tourData = ref<HelpTour | null>(initialTour || null);
     const targetElement = ref<HTMLElement | null>(null);
     const popoverPosition = ref<PopoverPosition>({ top: 0, left: 0 });
-    const spotlightRect = ref<SpotlightRect>({ top: 0, left: 0, width: 0, height: 0 });
+    const spotlightRect = ref<SpotlightRect>({
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0,
+    });
 
     // Event handlers storage for cleanup
     const boundHandleResize = handleResize.bind(null);
@@ -84,7 +93,10 @@ export function useTour(options: UseTourOptions = {}) {
 
     // Computed properties
     const currentStep = computed<HelpTourStep | null>(() => {
-        if (!tourData.value?.steps || !tourData.value.steps[currentStepIndex.value]) {
+        if (
+            !tourData.value?.steps ||
+            !tourData.value.steps[currentStepIndex.value]
+        ) {
             return null;
         }
         return tourData.value.steps[currentStepIndex.value];
@@ -92,7 +104,9 @@ export function useTour(options: UseTourOptions = {}) {
 
     const totalSteps = computed(() => tourData.value?.steps?.length || 0);
     const isFirstStep = computed(() => currentStepIndex.value === 0);
-    const isLastStep = computed(() => currentStepIndex.value === totalSteps.value - 1);
+    const isLastStep = computed(
+        () => currentStepIndex.value === totalSteps.value - 1,
+    );
     const hasCompletedTour = computed(() => {
         if (!tourData.value) return false;
         return isTourCompleted(tourData.value.slug);
@@ -341,7 +355,7 @@ export function useTour(options: UseTourOptions = {}) {
             await loadTour();
         }
 
-        if (tourData.value && await shouldAutoStart()) {
+        if (tourData.value && (await shouldAutoStart())) {
             await start();
         }
     }

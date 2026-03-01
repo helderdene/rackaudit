@@ -6,23 +6,30 @@
  * Entity types: Devices, Racks, Connections, Audits, Findings
  */
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    Title,
+    Tooltip,
+    type ChartData,
+    type ChartOptions,
+} from 'chart.js';
 import { computed, onMounted, ref } from 'vue';
 import { Bar } from 'vue-chartjs';
-import {
-    Chart as ChartJS,
+
+// Register Chart.js components
+ChartJS.register(
     CategoryScale,
     LinearScale,
     BarElement,
     Title,
     Tooltip,
     Legend,
-    type ChartOptions,
-    type ChartData,
-} from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+);
 
 interface Props {
     data: number[];
@@ -136,14 +143,20 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
     >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     Activity by Entity Type
                 </CardTitle>
                 <div v-if="hasData" class="text-right">
-                    <span class="text-lg font-bold text-foreground dark:text-foreground">
+                    <span
+                        class="text-lg font-bold text-foreground dark:text-foreground"
+                    >
                         {{ totalActivity.toLocaleString() }}
                     </span>
-                    <span class="ml-1 text-xs text-muted-foreground">total</span>
+                    <span class="ml-1 text-xs text-muted-foreground"
+                        >total</span
+                    >
                 </div>
             </div>
         </CardHeader>
@@ -172,7 +185,9 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No activity in selected period</p>
+                <p class="text-sm text-muted-foreground">
+                    No activity in selected period
+                </p>
                 <p class="mt-1 text-xs text-muted-foreground/70">
                     Activity will appear as changes are made
                 </p>

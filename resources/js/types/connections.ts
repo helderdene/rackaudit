@@ -360,14 +360,18 @@ export interface FlowNodeData extends DiagramNode {
 /**
  * Type guard to check if a node is a rack node
  */
-export function isRackNode(node: DiagramNode | FlowNodeData): node is DiagramRackNode {
+export function isRackNode(
+    node: DiagramNode | FlowNodeData,
+): node is DiagramRackNode {
     return node.node_type === 'rack';
 }
 
 /**
  * Type guard to check if a node is a device node
  */
-export function isDeviceNode(node: DiagramNode | FlowNodeData): node is DiagramDeviceNode {
+export function isDeviceNode(
+    node: DiagramNode | FlowNodeData,
+): node is DiagramDeviceNode {
     return node.node_type === 'device';
 }
 

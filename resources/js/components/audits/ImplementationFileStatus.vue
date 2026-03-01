@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Spinner } from '@/components/ui/spinner';
 import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
+import { Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface ImplementationFile {
     id: number;
@@ -43,25 +43,36 @@ const shouldShow = computed(() => {
 });
 
 // Computed properties for display
-const hasApprovedFile = computed(() => status.value?.has_approved_file ?? false);
-const implementationFile = computed(() => status.value?.implementation_file ?? null);
+const hasApprovedFile = computed(
+    () => status.value?.has_approved_file ?? false,
+);
+const implementationFile = computed(
+    () => status.value?.implementation_file ?? null,
+);
 const errorMessage = computed(() => status.value?.error_message ?? null);
-const implementationFilesUrl = computed(() => status.value?.implementation_files_url ?? '#');
+const implementationFilesUrl = computed(
+    () => status.value?.implementation_files_url ?? '#',
+);
 
 /**
  * Fetch the implementation file status for the selected datacenter
  */
-async function fetchImplementationFileStatus(datacenterId: number): Promise<void> {
+async function fetchImplementationFileStatus(
+    datacenterId: number,
+): Promise<void> {
     isLoading.value = true;
     error.value = null;
 
     try {
-        const response = await fetch(`/api/audits/datacenters/${datacenterId}/implementation-file-status`, {
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
+        const response = await fetch(
+            `/api/audits/datacenters/${datacenterId}/implementation-file-status`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
             },
-        });
+        );
 
         if (!response.ok) {
             throw new Error('Failed to fetch implementation file status');
@@ -71,7 +82,8 @@ async function fetchImplementationFileStatus(datacenterId: number): Promise<void
         emit('status-changed', status.value?.has_approved_file ?? false);
     } catch (err) {
         console.error('Error fetching implementation file status:', err);
-        error.value = 'Failed to check implementation file status. Please try again.';
+        error.value =
+            'Failed to check implementation file status. Please try again.';
         status.value = null;
         emit('status-changed', false);
     } finally {
@@ -94,14 +106,17 @@ watch(
             }
         }
     },
-    { immediate: true }
+    { immediate: true },
 );
 </script>
 
 <template>
     <div v-if="shouldShow" class="space-y-3">
         <!-- Loading State -->
-        <div v-if="isLoading" class="flex items-center gap-2 text-sm text-muted-foreground">
+        <div
+            v-if="isLoading"
+            class="flex items-center gap-2 text-sm text-muted-foreground"
+        >
             <Spinner class="h-4 w-4" />
             <span>Checking for approved implementation file...</span>
         </div>
@@ -126,7 +141,11 @@ watch(
         </Alert>
 
         <!-- Success State: Approved file exists -->
-        <Alert v-else-if="hasApprovedFile && implementationFile" variant="default" class="border-green-500/50 bg-green-50 dark:bg-green-950/50">
+        <Alert
+            v-else-if="hasApprovedFile && implementationFile"
+            variant="default"
+            class="border-green-500/50 bg-green-50 dark:bg-green-950/50"
+        >
             <svg
                 class="h-4 w-4 text-green-600 dark:text-green-400"
                 fill="none"
@@ -140,7 +159,9 @@ watch(
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
             </svg>
-            <AlertTitle class="text-green-900 dark:text-green-200">Implementation File Found</AlertTitle>
+            <AlertTitle class="text-green-900 dark:text-green-200"
+                >Implementation File Found</AlertTitle
+            >
             <AlertDescription class="text-green-800 dark:text-green-300">
                 <div class="flex flex-wrap items-center gap-2">
                     <span>This audit will use:</span>
@@ -155,7 +176,10 @@ watch(
         </Alert>
 
         <!-- Error State: No approved file -->
-        <Alert v-else-if="!hasApprovedFile && status !== null" variant="destructive">
+        <Alert
+            v-else-if="!hasApprovedFile && status !== null"
+            variant="destructive"
+        >
             <svg
                 class="h-4 w-4"
                 fill="none"

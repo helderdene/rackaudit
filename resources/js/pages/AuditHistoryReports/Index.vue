@@ -5,23 +5,27 @@
  * Displays historical audit trends, finding counts by severity,
  * and resolution time metrics across datacenters.
  */
-import { ref, computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
-import { index as auditHistoryIndex, exportPdf, exportCsv } from '@/actions/App/Http/Controllers/AuditHistoryReportController';
-import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { ClipboardList } from 'lucide-vue-next';
-import { ExportButtons } from '@/components/CapacityReports';
+import {
+    index as auditHistoryIndex,
+    exportCsv,
+    exportPdf,
+} from '@/actions/App/Http/Controllers/AuditHistoryReportController';
 import {
     AuditHistoryFilters,
     AuditHistoryMetricCard,
+    AuditHistoryTable,
     FindingTrendChart,
     ResolutionTimeTrendChart,
-    AuditHistoryTable,
 } from '@/components/AuditHistoryReports';
+import { ExportButtons } from '@/components/CapacityReports';
+import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
+import { ClipboardList } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 /**
  * Type definitions for Audit History Reports props
@@ -171,14 +175,26 @@ const hasAuditData = computed(() => {
 
 // Check if there is trend data
 const hasFindingTrendData = computed(() => {
-    return props.findingTrendData.length > 0 && props.findingTrendData.some(
-        item => item.critical > 0 || item.high > 0 || item.medium > 0 || item.low > 0
+    return (
+        props.findingTrendData.length > 0 &&
+        props.findingTrendData.some(
+            (item) =>
+                item.critical > 0 ||
+                item.high > 0 ||
+                item.medium > 0 ||
+                item.low > 0,
+        )
     );
 });
 
 const hasResolutionTimeTrendData = computed(() => {
-    return props.resolutionTimeTrendData.length > 0 && props.resolutionTimeTrendData.some(
-        item => item.avg_resolution_time !== null || item.avg_first_response !== null
+    return (
+        props.resolutionTimeTrendData.length > 0 &&
+        props.resolutionTimeTrendData.some(
+            (item) =>
+                item.avg_resolution_time !== null ||
+                item.avg_first_response !== null,
+        )
     );
 });
 
@@ -194,7 +210,9 @@ const auditSparklineData = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:p-6">
             <!-- Header with title and export buttons -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     title="Audit History Reports"
                     description="View historical audit trends, finding counts by severity, and resolution time metrics."
@@ -258,7 +276,11 @@ const auditSparklineData = computed(() => {
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-3">
-                            <Skeleton v-for="i in 5" :key="i" class="h-12 w-full" />
+                            <Skeleton
+                                v-for="i in 5"
+                                :key="i"
+                                class="h-12 w-full"
+                            />
                         </div>
                     </CardContent>
                 </Card>
@@ -268,8 +290,12 @@ const auditSparklineData = computed(() => {
             <template v-else>
                 <!-- Empty State -->
                 <div v-if="!hasAuditData" class="py-12 text-center">
-                    <ClipboardList class="mx-auto mb-4 size-12 text-muted-foreground/50" />
-                    <h3 class="text-lg font-medium">No audit history available</h3>
+                    <ClipboardList
+                        class="mx-auto mb-4 size-12 text-muted-foreground/50"
+                    />
+                    <h3 class="text-lg font-medium">
+                        No audit history available
+                    </h3>
                     <p class="mt-1 text-sm text-muted-foreground">
                         Complete audits to see historical trends and metrics.
                     </p>
@@ -331,7 +357,9 @@ const auditSparklineData = computed(() => {
 
                     <!-- No Trend Data Message -->
                     <div
-                        v-if="!hasFindingTrendData && !hasResolutionTimeTrendData"
+                        v-if="
+                            !hasFindingTrendData && !hasResolutionTimeTrendData
+                        "
                         class="rounded-lg border border-dashed border-muted-foreground/30 p-6 text-center"
                     >
                         <svg
@@ -348,9 +376,12 @@ const auditSparklineData = computed(() => {
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        <p class="text-sm text-muted-foreground">No trend data available yet</p>
+                        <p class="text-sm text-muted-foreground">
+                            No trend data available yet
+                        </p>
                         <p class="mt-1 text-xs text-muted-foreground/70">
-                            Trend data will appear once audits have findings over multiple time periods.
+                            Trend data will appear once audits have findings
+                            over multiple time periods.
                         </p>
                     </div>
                 </div>

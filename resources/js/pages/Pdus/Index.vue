@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
-import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import PduController from '@/actions/App/Http/Controllers/PduController';
+import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import DeletePduDialog from '@/components/pdus/DeletePduDialog.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DatacenterReference, RoomReference, PduData, RowReference, SelectOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    PduData,
+    RoomReference,
+    RowReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -38,16 +44,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: 'PDUs',
-        href: PduController.index.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: PduController.index.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
 ];
 
 // Get status badge variant
-const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getStatusVariant = (
+    status: string | null,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'active':
             return 'default';
@@ -67,12 +81,22 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="PDU Management"
                     :description="`Manage PDUs within ${room.name}.`"
                 />
-                <Link v-if="canCreate" :href="PduController.create.url({ datacenter: datacenter.id, room: room.id })">
+                <Link
+                    v-if="canCreate"
+                    :href="
+                        PduController.create.url({
+                            datacenter: datacenter.id,
+                            room: room.id,
+                        })
+                    "
+                >
                     <Button>Add PDU</Button>
                 </Link>
             </div>
@@ -83,13 +107,41 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Model</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Capacity</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Circuits</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Status</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Assignment</th>
-                                <th class="h-12 w-[140px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Model
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Capacity
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Circuits
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Assignment
+                                </th>
+                                <th
+                                    class="h-12 w-[140px] px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,11 +153,19 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
                                 <td class="p-4 font-medium">{{ pdu.name }}</td>
                                 <td class="p-4">{{ pdu.model || '-' }}</td>
                                 <td class="p-4">
-                                    {{ pdu.total_capacity_kw ? `${pdu.total_capacity_kw} kW` : '-' }}
+                                    {{
+                                        pdu.total_capacity_kw
+                                            ? `${pdu.total_capacity_kw} kW`
+                                            : '-'
+                                    }}
                                 </td>
-                                <td class="p-4 text-muted-foreground">{{ pdu.circuit_count }}</td>
+                                <td class="p-4 text-muted-foreground">
+                                    {{ pdu.circuit_count }}
+                                </td>
                                 <td class="p-4">
-                                    <Badge :variant="getStatusVariant(pdu.status)">
+                                    <Badge
+                                        :variant="getStatusVariant(pdu.status)"
+                                    >
                                         {{ pdu.status_label || 'Unknown' }}
                                     </Badge>
                                 </td>
@@ -116,8 +176,18 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
                                 </td>
                                 <td class="p-4">
                                     <div class="flex items-center gap-2">
-                                        <Link :href="PduController.edit.url({ datacenter: datacenter.id, room: room.id, pdu: pdu.id })">
-                                            <Button variant="outline" size="sm">Edit</Button>
+                                        <Link
+                                            :href="
+                                                PduController.edit.url({
+                                                    datacenter: datacenter.id,
+                                                    room: room.id,
+                                                    pdu: pdu.id,
+                                                })
+                                            "
+                                        >
+                                            <Button variant="outline" size="sm"
+                                                >Edit</Button
+                                            >
                                         </Link>
                                         <DeletePduDialog
                                             :datacenter-id="datacenter.id"
@@ -129,7 +199,10 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
                                 </td>
                             </tr>
                             <tr v-if="pdus.length === 0">
-                                <td colspan="7" class="p-8 text-center text-muted-foreground">
+                                <td
+                                    colspan="7"
+                                    class="p-8 text-center text-muted-foreground"
+                                >
                                     No PDUs found.
                                 </td>
                             </tr>
@@ -140,7 +213,14 @@ const getStatusVariant = (status: string | null): 'default' | 'secondary' | 'des
 
             <!-- Back to Room -->
             <div>
-                <Link :href="RoomController.show.url({ datacenter: datacenter.id, room: room.id })">
+                <Link
+                    :href="
+                        RoomController.show.url({
+                            datacenter: datacenter.id,
+                            room: room.id,
+                        })
+                    "
+                >
                     <Button variant="outline">Back to Room</Button>
                 </Link>
             </div>

@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue';
-import {
-    BaseEdge,
-    EdgeLabelRenderer,
-    getBezierPath,
-    type EdgeProps,
-} from '@vue-flow/core';
-import type { FlowEdgeData, CableTypeValue, PortTypeValue } from '@/types/connections';
 import { Badge } from '@/components/ui/badge';
 import {
     Tooltip,
@@ -14,7 +6,19 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import type {
+    CableTypeValue,
+    FlowEdgeData,
+    PortTypeValue,
+} from '@/types/connections';
+import {
+    BaseEdge,
+    EdgeLabelRenderer,
+    getBezierPath,
+    type EdgeProps,
+} from '@vue-flow/core';
 import { AlertTriangle, Cable, Network, Zap } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props extends EdgeProps<FlowEdgeData> {
     data: FlowEdgeData;
@@ -62,7 +66,9 @@ const strokeColor = computed(() => {
         if (colorMap[normalizedColor]) {
             // Check if we're in dark mode by checking CSS variable
             const isDark = document.documentElement.classList.contains('dark');
-            return isDark ? colorMap[normalizedColor].dark : colorMap[normalizedColor].light;
+            return isDark
+                ? colorMap[normalizedColor].dark
+                : colorMap[normalizedColor].light;
         }
     }
 
@@ -173,7 +179,7 @@ function handleClick() {
             strokeDasharray: strokeDasharray,
         }"
         :class="[
-            'transition-all duration-200 cursor-pointer',
+            'cursor-pointer transition-all duration-200',
             data.selected ? 'opacity-100' : 'opacity-80 hover:opacity-100',
         ]"
         @click="handleClick"
@@ -192,13 +198,13 @@ function handleClick() {
                 <Tooltip>
                     <TooltipTrigger as-child>
                         <div
-                            class="flex items-center gap-1 rounded-full px-2 py-1 shadow-md border cursor-pointer transition-all duration-200 bg-background/95 dark:bg-slate-800/95"
+                            class="flex cursor-pointer items-center gap-1 rounded-full border bg-background/95 px-2 py-1 shadow-md transition-all duration-200 dark:bg-slate-800/95"
                             :class="[
                                 data.selected
                                     ? 'border-primary ring-1 ring-primary/30 dark:border-sky-400 dark:ring-sky-400/30'
-                                    : 'border-border dark:border-slate-600 hover:border-primary/50 dark:hover:border-sky-400/50',
+                                    : 'border-border hover:border-primary/50 dark:border-slate-600 dark:hover:border-sky-400/50',
                                 data.has_discrepancy
-                                    ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/50 dark:border-yellow-500'
+                                    ? 'border-yellow-500 bg-yellow-50 dark:border-yellow-500 dark:bg-yellow-950/50'
                                     : '',
                             ]"
                             @click="handleClick"
@@ -225,9 +231,14 @@ function handleClick() {
                             </span>
                         </div>
                     </TooltipTrigger>
-                    <TooltipContent side="top" class="max-w-[200px] dark:bg-slate-800 dark:border-slate-600">
+                    <TooltipContent
+                        side="top"
+                        class="max-w-[200px] dark:border-slate-600 dark:bg-slate-800"
+                    >
                         <div class="space-y-2">
-                            <div class="font-medium flex items-center gap-2 dark:text-slate-100">
+                            <div
+                                class="flex items-center gap-2 font-medium dark:text-slate-100"
+                            >
                                 <component
                                     :is="iconComponent"
                                     class="size-4"
@@ -235,30 +246,59 @@ function handleClick() {
                                 />
                                 {{ cableTypeLabel }}
                             </div>
-                            <div class="text-xs text-muted-foreground dark:text-slate-400 space-y-1">
+                            <div
+                                class="space-y-1 text-xs text-muted-foreground dark:text-slate-400"
+                            >
                                 <div v-if="data.cable_color">
-                                    <span class="font-medium dark:text-slate-300">Color:</span>
+                                    <span
+                                        class="font-medium dark:text-slate-300"
+                                        >Color:</span
+                                    >
                                     <span
                                         class="ml-1 inline-block size-3 rounded-full border align-middle dark:border-slate-500"
-                                        :style="{ backgroundColor: strokeColor }"
+                                        :style="{
+                                            backgroundColor: strokeColor,
+                                        }"
                                     />
-                                    <span class="ml-1 capitalize dark:text-slate-300">{{ data.cable_color }}</span>
+                                    <span
+                                        class="ml-1 capitalize dark:text-slate-300"
+                                        >{{ data.cable_color }}</span
+                                    >
                                 </div>
                                 <div>
-                                    <span class="font-medium dark:text-slate-300">Status:</span>
-                                    <Badge
-                                        :variant="data.verified ? 'default' : 'secondary'"
-                                        class="ml-1 text-[10px] px-1 py-0"
+                                    <span
+                                        class="font-medium dark:text-slate-300"
+                                        >Status:</span
                                     >
-                                        {{ data.verified ? 'Verified' : 'Unverified' }}
+                                    <Badge
+                                        :variant="
+                                            data.verified
+                                                ? 'default'
+                                                : 'secondary'
+                                        "
+                                        class="ml-1 px-1 py-0 text-[10px]"
+                                    >
+                                        {{
+                                            data.verified
+                                                ? 'Verified'
+                                                : 'Unverified'
+                                        }}
                                     </Badge>
                                 </div>
                                 <div v-if="data.connection_count > 1">
-                                    <span class="font-medium dark:text-slate-300">Connections:</span>
-                                    <span class="dark:text-slate-300"> {{ data.connection_count }}</span>
+                                    <span
+                                        class="font-medium dark:text-slate-300"
+                                        >Connections:</span
+                                    >
+                                    <span class="dark:text-slate-300">
+                                        {{ data.connection_count }}</span
+                                    >
                                 </div>
-                                <div v-if="data.has_discrepancy" class="text-yellow-600 dark:text-yellow-400">
-                                    <AlertTriangle class="inline size-3 mr-1" />
+                                <div
+                                    v-if="data.has_discrepancy"
+                                    class="text-yellow-600 dark:text-yellow-400"
+                                >
+                                    <AlertTriangle class="mr-1 inline size-3" />
                                     Has audit discrepancy
                                 </div>
                             </div>

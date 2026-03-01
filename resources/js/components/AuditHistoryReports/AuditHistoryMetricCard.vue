@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import SparklineChart from '@/components/dashboard/SparklineChart.vue';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed } from 'vue';
 
 interface SeverityBreakdown {
     critical: number;
@@ -39,25 +39,25 @@ const formatValue = (value: number | string): string => {
 };
 
 /**
- * Check if value is numeric for display purposes
- */
-const isNumericValue = computed(() => {
-    return typeof props.value === 'number';
-});
-
-/**
  * Calculate total findings from severity breakdown
  */
 const totalFromSeverity = computed(() => {
     if (!props.severityBreakdown) return null;
-    return Object.values(props.severityBreakdown).reduce((sum, count) => sum + count, 0);
+    return Object.values(props.severityBreakdown).reduce(
+        (sum, count) => sum + count,
+        0,
+    );
 });
 </script>
 
 <template>
-    <Card class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60">
+    <Card
+        class="relative transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
+    >
         <CardHeader class="pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+            <CardTitle
+                class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+            >
                 {{ title }}
             </CardTitle>
         </CardHeader>
@@ -66,7 +66,9 @@ const totalFromSeverity = computed(() => {
                 <!-- Left side: metric value and details -->
                 <div class="min-w-0 flex-1">
                     <div class="flex items-baseline gap-2">
-                        <div class="text-3xl font-bold text-foreground dark:text-foreground">
+                        <div
+                            class="text-3xl font-bold text-foreground dark:text-foreground"
+                        >
                             {{ formatValue(value) }}
                         </div>
                         <div v-if="unit" class="text-lg text-muted-foreground">
@@ -75,12 +77,18 @@ const totalFromSeverity = computed(() => {
                     </div>
 
                     <!-- Description text -->
-                    <p v-if="description" class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground/80">
+                    <p
+                        v-if="description"
+                        class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground/80"
+                    >
                         {{ description }}
                     </p>
 
                     <!-- Severity breakdown badges -->
-                    <div v-if="severityBreakdown" class="mt-3 flex flex-wrap gap-2">
+                    <div
+                        v-if="severityBreakdown"
+                        class="mt-3 flex flex-wrap gap-2"
+                    >
                         <span
                             v-if="severityBreakdown.critical > 0"
                             class="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
@@ -119,11 +127,11 @@ const totalFromSeverity = computed(() => {
                 </div>
 
                 <!-- Right side: sparkline chart -->
-                <div v-if="sparklineData && sparklineData.length > 0" class="shrink-0">
-                    <SparklineChart
-                        :data="sparklineData"
-                        :color="color"
-                    />
+                <div
+                    v-if="sparklineData && sparklineData.length > 0"
+                    class="shrink-0"
+                >
+                    <SparklineChart :data="sparklineData" :color="color" />
                 </div>
             </div>
         </CardContent>

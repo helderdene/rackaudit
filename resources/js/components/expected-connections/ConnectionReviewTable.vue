@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Spinner } from '@/components/ui/spinner';
 import {
-    CheckCircle,
-    XCircle,
     AlertTriangle,
+    Check,
+    CheckCircle,
     Edit2,
     Plus,
-    Check,
     X,
+    XCircle,
 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import ConnectionRowEditor from './ConnectionRowEditor.vue';
 import CreateDevicePortDialog from './CreateDevicePortDialog.vue';
 
@@ -53,10 +53,26 @@ export interface ExpectedConnectionData {
     status: 'pending_review' | 'confirmed' | 'skipped';
     status_label: string;
     match?: {
-        source_device?: { original: string; confidence: number; match_type: string };
-        source_port?: { original: string; confidence: number; match_type: string };
-        dest_device?: { original: string; confidence: number; match_type: string };
-        dest_port?: { original: string; confidence: number; match_type: string };
+        source_device?: {
+            original: string;
+            confidence: number;
+            match_type: string;
+        };
+        source_port?: {
+            original: string;
+            confidence: number;
+            match_type: string;
+        };
+        dest_device?: {
+            original: string;
+            confidence: number;
+            match_type: string;
+        };
+        dest_port?: {
+            original: string;
+            confidence: number;
+            match_type: string;
+        };
         overall_match_type?: string;
     };
 }
@@ -78,10 +94,18 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-    (e: 'update-connection', connectionId: number, data: Partial<ExpectedConnectionData>): void;
+    (
+        e: 'update-connection',
+        connectionId: number,
+        data: Partial<ExpectedConnectionData>,
+    ): void;
     (e: 'bulk-confirm', connectionIds: number[]): void;
     (e: 'bulk-skip', connectionIds: number[]): void;
-    (e: 'create-device-port', connectionId: number, target: 'source' | 'dest'): void;
+    (
+        e: 'create-device-port',
+        connectionId: number,
+        target: 'source' | 'dest',
+    ): void;
     (e: 'refresh'): void;
 }>();
 
@@ -96,20 +120,34 @@ const createDevicePortTarget = ref<'source' | 'dest'>('source');
 
 // Computed properties
 const allSelected = computed(() => {
-    const pendingConnections = props.connections.filter(c => c.status === 'pending_review');
-    return pendingConnections.length > 0 && pendingConnections.every(c => selectedIds.value.has(c.id));
+    const pendingConnections = props.connections.filter(
+        (c) => c.status === 'pending_review',
+    );
+    return (
+        pendingConnections.length > 0 &&
+        pendingConnections.every((c) => selectedIds.value.has(c.id))
+    );
 });
 
-const someSelected = computed(() => selectedIds.value.size > 0 && !allSelected.value);
+const someSelected = computed(
+    () => selectedIds.value.size > 0 && !allSelected.value,
+);
 
 const selectedCount = computed(() => selectedIds.value.size);
 
 const exactMatchConnections = computed(() =>
-    props.connections.filter(c => getOverallMatchType(c) === 'exact' && c.status === 'pending_review')
+    props.connections.filter(
+        (c) =>
+            getOverallMatchType(c) === 'exact' && c.status === 'pending_review',
+    ),
 );
 
 const unmatchedConnections = computed(() =>
-    props.connections.filter(c => getOverallMatchType(c) === 'unrecognized' && c.status === 'pending_review')
+    props.connections.filter(
+        (c) =>
+            getOverallMatchType(c) === 'unrecognized' &&
+            c.status === 'pending_review',
+    ),
 );
 
 /**
@@ -121,7 +159,8 @@ function getOverallMatchType(connection: ExpectedConnectionData): string {
     }
 
     // Determine based on whether all IDs are present
-    const hasAllIds = connection.source_device?.id &&
+    const hasAllIds =
+        connection.source_device?.id &&
         connection.source_port?.id &&
         connection.dest_device?.id &&
         connection.dest_port?.id;
@@ -142,8 +181,10 @@ function getOverallMatchType(connection: ExpectedConnectionData): string {
         return 'exact'; // No match data means it was already matched
     }
 
-    const hasSuggested = matches.some(m => m?.match_type === 'suggested');
-    const hasUnrecognized = matches.some(m => m?.match_type === 'unrecognized');
+    const hasSuggested = matches.some((m) => m?.match_type === 'suggested');
+    const hasUnrecognized = matches.some(
+        (m) => m?.match_type === 'unrecognized',
+    );
 
     if (hasUnrecognized) return 'unrecognized';
     if (hasSuggested) return 'suggested';
@@ -177,7 +218,10 @@ function getRowClasses(connection: ExpectedConnectionData): string {
 /**
  * Get the match type badge for a cell
  */
-function getCellMatchType(match?: { match_type: string; confidence: number }): string | null {
+function getCellMatchType(match?: {
+    match_type: string;
+    confidence: number;
+}): string | null {
     return match?.match_type ?? null;
 }
 
@@ -200,8 +244,8 @@ function toggleAllSelection(): void {
         selectedIds.value.clear();
     } else {
         props.connections
-            .filter(c => c.status === 'pending_review')
-            .forEach(c => selectedIds.value.add(c.id));
+            .filter((c) => c.status === 'pending_review')
+            .forEach((c) => selectedIds.value.add(c.id));
     }
 }
 
@@ -227,7 +271,7 @@ function handleBulkSkip(): void {
  * Handle confirm all exact matches
  */
 function handleConfirmAllMatched(): void {
-    const ids = exactMatchConnections.value.map(c => c.id);
+    const ids = exactMatchConnections.value.map((c) => c.id);
     emit('bulk-confirm', ids);
 }
 
@@ -235,7 +279,7 @@ function handleConfirmAllMatched(): void {
  * Handle skip all unmatched
  */
 function handleSkipAllUnmatched(): void {
-    const ids = unmatchedConnections.value.map(c => c.id);
+    const ids = unmatchedConnections.value.map((c) => c.id);
     emit('bulk-skip', ids);
 }
 
@@ -256,7 +300,10 @@ function cancelEditing(): void {
 /**
  * Handle row update from editor
  */
-function handleRowUpdate(connectionId: number, data: Partial<ExpectedConnectionData>): void {
+function handleRowUpdate(
+    connectionId: number,
+    data: Partial<ExpectedConnectionData>,
+): void {
     emit('update-connection', connectionId, data);
     editingRowId.value = null;
 }
@@ -264,7 +311,10 @@ function handleRowUpdate(connectionId: number, data: Partial<ExpectedConnectionD
 /**
  * Open create device port dialog
  */
-function openCreateDevicePortDialog(connectionId: number, target: 'source' | 'dest'): void {
+function openCreateDevicePortDialog(
+    connectionId: number,
+    target: 'source' | 'dest',
+): void {
     createDevicePortConnectionId.value = connectionId;
     createDevicePortTarget.value = target;
     createDevicePortDialogOpen.value = true;
@@ -282,7 +332,9 @@ function handleDevicePortCreated(): void {
 <template>
     <div class="space-y-4">
         <!-- Summary Statistics -->
-        <div class="flex flex-wrap items-center gap-4 rounded-lg border bg-muted/30 p-4">
+        <div
+            class="flex flex-wrap items-center gap-4 rounded-lg border bg-muted/30 p-4"
+        >
             <div class="flex items-center gap-2">
                 <span class="text-sm font-medium">Total:</span>
                 <Badge variant="secondary">{{ statistics.total }}</Badge>
@@ -290,21 +342,34 @@ function handleDevicePortCreated(): void {
             <div class="flex items-center gap-2">
                 <CheckCircle class="size-4 text-green-600" />
                 <span class="text-sm">Exact Matches:</span>
-                <Badge variant="outline" class="border-green-500 text-green-700 dark:text-green-400">
+                <Badge
+                    variant="outline"
+                    class="border-green-500 text-green-700 dark:text-green-400"
+                >
                     {{ exactMatchConnections.length }}
                 </Badge>
             </div>
             <div class="flex items-center gap-2">
                 <AlertTriangle class="size-4 text-amber-600" />
                 <span class="text-sm">Suggested:</span>
-                <Badge variant="outline" class="border-amber-500 text-amber-700 dark:text-amber-400">
-                    {{ connections.filter(c => getOverallMatchType(c) === 'suggested').length }}
+                <Badge
+                    variant="outline"
+                    class="border-amber-500 text-amber-700 dark:text-amber-400"
+                >
+                    {{
+                        connections.filter(
+                            (c) => getOverallMatchType(c) === 'suggested',
+                        ).length
+                    }}
                 </Badge>
             </div>
             <div class="flex items-center gap-2">
                 <XCircle class="size-4 text-red-600" />
                 <span class="text-sm">Unrecognized:</span>
-                <Badge variant="outline" class="border-red-500 text-red-700 dark:text-red-400">
+                <Badge
+                    variant="outline"
+                    class="border-red-500 text-red-700 dark:text-red-400"
+                >
                     {{ unmatchedConnections.length }}
                 </Badge>
             </div>
@@ -373,18 +438,53 @@ function handleDevicePortCreated(): void {
                                     @update:checked="toggleAllSelection"
                                 />
                             </th>
-                            <th class="h-10 w-16 px-3 text-left font-medium text-muted-foreground">Row</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Source Device</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Source Port</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Dest Device</th>
-                            <th class="h-10 px-3 text-left font-medium text-muted-foreground">Dest Port</th>
-                            <th class="h-10 w-24 px-3 text-left font-medium text-muted-foreground">Cable</th>
-                            <th class="h-10 w-24 px-3 text-left font-medium text-muted-foreground">Status</th>
-                            <th class="h-10 w-28 px-3 text-left font-medium text-muted-foreground">Actions</th>
+                            <th
+                                class="h-10 w-16 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Row
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Source Device
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Source Port
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Dest Device
+                            </th>
+                            <th
+                                class="h-10 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Dest Port
+                            </th>
+                            <th
+                                class="h-10 w-24 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Cable
+                            </th>
+                            <th
+                                class="h-10 w-24 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="h-10 w-28 px-3 text-left font-medium text-muted-foreground"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-for="connection in connections" :key="connection.id">
+                        <template
+                            v-for="connection in connections"
+                            :key="connection.id"
+                        >
                             <!-- Editing Row -->
                             <ConnectionRowEditor
                                 v-if="editingRowId === connection.id"
@@ -396,15 +496,22 @@ function handleDevicePortCreated(): void {
                             <!-- Display Row -->
                             <tr
                                 v-else
-                                class="border-b transition-colors hover:bg-muted/50 last:border-b-0"
+                                class="border-b transition-colors last:border-b-0 hover:bg-muted/50"
                                 :class="getRowClasses(connection)"
                             >
                                 <!-- Checkbox -->
                                 <td class="px-2 py-3">
                                     <Checkbox
-                                        :checked="selectedIds.has(connection.id)"
-                                        :disabled="connection.status !== 'pending_review'"
-                                        @update:checked="toggleSelection(connection.id)"
+                                        :checked="
+                                            selectedIds.has(connection.id)
+                                        "
+                                        :disabled="
+                                            connection.status !==
+                                            'pending_review'
+                                        "
+                                        @update:checked="
+                                            toggleSelection(connection.id)
+                                        "
                                     />
                                 </td>
 
@@ -416,150 +523,325 @@ function handleDevicePortCreated(): void {
                                 <!-- Source Device -->
                                 <td class="px-3 py-3">
                                     <div class="flex items-center gap-2">
-                                        <span v-if="connection.source_device?.name" class="font-medium">
+                                        <span
+                                            v-if="
+                                                connection.source_device?.name
+                                            "
+                                            class="font-medium"
+                                        >
                                             {{ connection.source_device.name }}
                                         </span>
-                                        <span v-else class="text-red-600 dark:text-red-400">
-                                            <TooltipProvider :delay-duration="0">
+                                        <span
+                                            v-else
+                                            class="text-red-600 dark:text-red-400"
+                                        >
+                                            <TooltipProvider
+                                                :delay-duration="0"
+                                            >
                                                 <Tooltip>
                                                     <TooltipTrigger as-child>
-                                                        <span class="flex cursor-help items-center gap-1">
-                                                            <XCircle class="size-3.5" />
+                                                        <span
+                                                            class="flex cursor-help items-center gap-1"
+                                                        >
+                                                            <XCircle
+                                                                class="size-3.5"
+                                                            />
                                                             Unrecognized
                                                         </span>
                                                     </TooltipTrigger>
-                                                    <TooltipContent v-if="connection.match?.source_device?.original">
-                                                        <p>Original: {{ connection.match.source_device.original }}</p>
+                                                    <TooltipContent
+                                                        v-if="
+                                                            connection.match
+                                                                ?.source_device
+                                                                ?.original
+                                                        "
+                                                    >
+                                                        <p>
+                                                            Original:
+                                                            {{
+                                                                connection.match
+                                                                    .source_device
+                                                                    .original
+                                                            }}
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </span>
                                         <Button
-                                            v-if="!connection.source_device?.id && connection.status === 'pending_review'"
+                                            v-if="
+                                                !connection.source_device?.id &&
+                                                connection.status ===
+                                                    'pending_review'
+                                            "
                                             size="icon"
                                             variant="ghost"
                                             class="size-6"
-                                            @click="openCreateDevicePortDialog(connection.id, 'source')"
+                                            @click="
+                                                openCreateDevicePortDialog(
+                                                    connection.id,
+                                                    'source',
+                                                )
+                                            "
                                         >
                                             <Plus class="size-3" />
                                         </Button>
                                     </div>
                                     <div
-                                        v-if="connection.match?.source_device?.original && connection.source_device?.name && getCellMatchType(connection.match?.source_device) === 'suggested'"
+                                        v-if="
+                                            connection.match?.source_device
+                                                ?.original &&
+                                            connection.source_device?.name &&
+                                            getCellMatchType(
+                                                connection.match?.source_device,
+                                            ) === 'suggested'
+                                        "
                                         class="mt-0.5 text-xs text-amber-600 dark:text-amber-400"
                                     >
-                                        Original: {{ connection.match.source_device.original }}
-                                        ({{ connection.match.source_device.confidence }}% match)
+                                        Original:
+                                        {{
+                                            connection.match.source_device
+                                                .original
+                                        }}
+                                        ({{
+                                            connection.match.source_device
+                                                .confidence
+                                        }}% match)
                                     </div>
                                 </td>
 
                                 <!-- Source Port -->
                                 <td class="px-3 py-3">
                                     <div class="flex items-center gap-2">
-                                        <span v-if="connection.source_port?.label">
+                                        <span
+                                            v-if="connection.source_port?.label"
+                                        >
                                             {{ connection.source_port.label }}
                                         </span>
-                                        <span v-else class="text-red-600 dark:text-red-400">
-                                            <TooltipProvider :delay-duration="0">
+                                        <span
+                                            v-else
+                                            class="text-red-600 dark:text-red-400"
+                                        >
+                                            <TooltipProvider
+                                                :delay-duration="0"
+                                            >
                                                 <Tooltip>
                                                     <TooltipTrigger as-child>
-                                                        <span class="flex cursor-help items-center gap-1">
-                                                            <XCircle class="size-3.5" />
+                                                        <span
+                                                            class="flex cursor-help items-center gap-1"
+                                                        >
+                                                            <XCircle
+                                                                class="size-3.5"
+                                                            />
                                                             Unrecognized
                                                         </span>
                                                     </TooltipTrigger>
-                                                    <TooltipContent v-if="connection.match?.source_port?.original">
-                                                        <p>Original: {{ connection.match.source_port.original }}</p>
+                                                    <TooltipContent
+                                                        v-if="
+                                                            connection.match
+                                                                ?.source_port
+                                                                ?.original
+                                                        "
+                                                    >
+                                                        <p>
+                                                            Original:
+                                                            {{
+                                                                connection.match
+                                                                    .source_port
+                                                                    .original
+                                                            }}
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </span>
                                     </div>
                                     <div
-                                        v-if="connection.match?.source_port?.original && connection.source_port?.label && getCellMatchType(connection.match?.source_port) === 'suggested'"
+                                        v-if="
+                                            connection.match?.source_port
+                                                ?.original &&
+                                            connection.source_port?.label &&
+                                            getCellMatchType(
+                                                connection.match?.source_port,
+                                            ) === 'suggested'
+                                        "
                                         class="mt-0.5 text-xs text-amber-600 dark:text-amber-400"
                                     >
-                                        Original: {{ connection.match.source_port.original }}
+                                        Original:
+                                        {{
+                                            connection.match.source_port
+                                                .original
+                                        }}
                                     </div>
                                 </td>
 
                                 <!-- Dest Device -->
                                 <td class="px-3 py-3">
                                     <div class="flex items-center gap-2">
-                                        <span v-if="connection.dest_device?.name" class="font-medium">
+                                        <span
+                                            v-if="connection.dest_device?.name"
+                                            class="font-medium"
+                                        >
                                             {{ connection.dest_device.name }}
                                         </span>
-                                        <span v-else class="text-red-600 dark:text-red-400">
-                                            <TooltipProvider :delay-duration="0">
+                                        <span
+                                            v-else
+                                            class="text-red-600 dark:text-red-400"
+                                        >
+                                            <TooltipProvider
+                                                :delay-duration="0"
+                                            >
                                                 <Tooltip>
                                                     <TooltipTrigger as-child>
-                                                        <span class="flex cursor-help items-center gap-1">
-                                                            <XCircle class="size-3.5" />
+                                                        <span
+                                                            class="flex cursor-help items-center gap-1"
+                                                        >
+                                                            <XCircle
+                                                                class="size-3.5"
+                                                            />
                                                             Unrecognized
                                                         </span>
                                                     </TooltipTrigger>
-                                                    <TooltipContent v-if="connection.match?.dest_device?.original">
-                                                        <p>Original: {{ connection.match.dest_device.original }}</p>
+                                                    <TooltipContent
+                                                        v-if="
+                                                            connection.match
+                                                                ?.dest_device
+                                                                ?.original
+                                                        "
+                                                    >
+                                                        <p>
+                                                            Original:
+                                                            {{
+                                                                connection.match
+                                                                    .dest_device
+                                                                    .original
+                                                            }}
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </span>
                                         <Button
-                                            v-if="!connection.dest_device?.id && connection.status === 'pending_review'"
+                                            v-if="
+                                                !connection.dest_device?.id &&
+                                                connection.status ===
+                                                    'pending_review'
+                                            "
                                             size="icon"
                                             variant="ghost"
                                             class="size-6"
-                                            @click="openCreateDevicePortDialog(connection.id, 'dest')"
+                                            @click="
+                                                openCreateDevicePortDialog(
+                                                    connection.id,
+                                                    'dest',
+                                                )
+                                            "
                                         >
                                             <Plus class="size-3" />
                                         </Button>
                                     </div>
                                     <div
-                                        v-if="connection.match?.dest_device?.original && connection.dest_device?.name && getCellMatchType(connection.match?.dest_device) === 'suggested'"
+                                        v-if="
+                                            connection.match?.dest_device
+                                                ?.original &&
+                                            connection.dest_device?.name &&
+                                            getCellMatchType(
+                                                connection.match?.dest_device,
+                                            ) === 'suggested'
+                                        "
                                         class="mt-0.5 text-xs text-amber-600 dark:text-amber-400"
                                     >
-                                        Original: {{ connection.match.dest_device.original }}
-                                        ({{ connection.match.dest_device.confidence }}% match)
+                                        Original:
+                                        {{
+                                            connection.match.dest_device
+                                                .original
+                                        }}
+                                        ({{
+                                            connection.match.dest_device
+                                                .confidence
+                                        }}% match)
                                     </div>
                                 </td>
 
                                 <!-- Dest Port -->
                                 <td class="px-3 py-3">
                                     <div class="flex items-center gap-2">
-                                        <span v-if="connection.dest_port?.label">
+                                        <span
+                                            v-if="connection.dest_port?.label"
+                                        >
                                             {{ connection.dest_port.label }}
                                         </span>
-                                        <span v-else class="text-red-600 dark:text-red-400">
-                                            <TooltipProvider :delay-duration="0">
+                                        <span
+                                            v-else
+                                            class="text-red-600 dark:text-red-400"
+                                        >
+                                            <TooltipProvider
+                                                :delay-duration="0"
+                                            >
                                                 <Tooltip>
                                                     <TooltipTrigger as-child>
-                                                        <span class="flex cursor-help items-center gap-1">
-                                                            <XCircle class="size-3.5" />
+                                                        <span
+                                                            class="flex cursor-help items-center gap-1"
+                                                        >
+                                                            <XCircle
+                                                                class="size-3.5"
+                                                            />
                                                             Unrecognized
                                                         </span>
                                                     </TooltipTrigger>
-                                                    <TooltipContent v-if="connection.match?.dest_port?.original">
-                                                        <p>Original: {{ connection.match.dest_port.original }}</p>
+                                                    <TooltipContent
+                                                        v-if="
+                                                            connection.match
+                                                                ?.dest_port
+                                                                ?.original
+                                                        "
+                                                    >
+                                                        <p>
+                                                            Original:
+                                                            {{
+                                                                connection.match
+                                                                    .dest_port
+                                                                    .original
+                                                            }}
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </span>
                                     </div>
                                     <div
-                                        v-if="connection.match?.dest_port?.original && connection.dest_port?.label && getCellMatchType(connection.match?.dest_port) === 'suggested'"
+                                        v-if="
+                                            connection.match?.dest_port
+                                                ?.original &&
+                                            connection.dest_port?.label &&
+                                            getCellMatchType(
+                                                connection.match?.dest_port,
+                                            ) === 'suggested'
+                                        "
                                         class="mt-0.5 text-xs text-amber-600 dark:text-amber-400"
                                     >
-                                        Original: {{ connection.match.dest_port.original }}
+                                        Original:
+                                        {{
+                                            connection.match.dest_port.original
+                                        }}
                                     </div>
                                 </td>
 
                                 <!-- Cable Info -->
                                 <td class="px-3 py-3 text-muted-foreground">
                                     <div>
-                                        <span v-if="connection.cable_type_label">{{ connection.cable_type_label }}</span>
+                                        <span
+                                            v-if="connection.cable_type_label"
+                                            >{{
+                                                connection.cable_type_label
+                                            }}</span
+                                        >
                                         <span v-else>-</span>
                                     </div>
-                                    <div v-if="connection.cable_length" class="text-xs">
+                                    <div
+                                        v-if="connection.cable_length"
+                                        class="text-xs"
+                                    >
                                         {{ connection.cable_length }}m
                                     </div>
                                 </td>
@@ -574,22 +856,27 @@ function handleDevicePortCreated(): void {
                                         Confirmed
                                     </Badge>
                                     <Badge
-                                        v-else-if="connection.status === 'skipped'"
+                                        v-else-if="
+                                            connection.status === 'skipped'
+                                        "
                                         variant="secondary"
                                     >
                                         Skipped
                                     </Badge>
-                                    <Badge
-                                        v-else
-                                        variant="outline"
-                                    >
+                                    <Badge v-else variant="outline">
                                         Pending
                                     </Badge>
                                 </td>
 
                                 <!-- Actions -->
                                 <td class="px-3 py-3">
-                                    <div v-if="connection.status === 'pending_review'" class="flex gap-1">
+                                    <div
+                                        v-if="
+                                            connection.status ===
+                                            'pending_review'
+                                        "
+                                        class="flex gap-1"
+                                    >
                                         <TooltipProvider :delay-duration="0">
                                             <Tooltip>
                                                 <TooltipTrigger as-child>
@@ -597,16 +884,29 @@ function handleDevicePortCreated(): void {
                                                         size="icon"
                                                         variant="ghost"
                                                         class="size-7"
-                                                        @click="startEditing(connection.id)"
+                                                        @click="
+                                                            startEditing(
+                                                                connection.id,
+                                                            )
+                                                        "
                                                     >
-                                                        <Edit2 class="size-3.5" />
+                                                        <Edit2
+                                                            class="size-3.5"
+                                                        />
                                                     </Button>
                                                 </TooltipTrigger>
-                                                <TooltipContent>Edit mapping</TooltipContent>
+                                                <TooltipContent
+                                                    >Edit
+                                                    mapping</TooltipContent
+                                                >
                                             </Tooltip>
                                         </TooltipProvider>
                                     </div>
-                                    <span v-else class="text-xs text-muted-foreground">-</span>
+                                    <span
+                                        v-else
+                                        class="text-xs text-muted-foreground"
+                                        >-</span
+                                    >
                                 </td>
                             </tr>
                         </template>
@@ -616,7 +916,10 @@ function handleDevicePortCreated(): void {
         </div>
 
         <!-- Empty State -->
-        <div v-if="!isLoading && connections.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+        <div
+            v-if="!isLoading && connections.length === 0"
+            class="flex flex-col items-center justify-center py-12 text-center"
+        >
             <XCircle class="mb-4 size-12 text-muted-foreground/50" />
             <h3 class="text-lg font-medium">No connections found</h3>
             <p class="mt-1 text-sm text-muted-foreground">

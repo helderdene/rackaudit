@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
-import { computed, ref } from 'vue';
 import { cn } from '@/lib/utils';
 import type { DeviceWidth, PlaceholderDevice, RackFace } from '@/types/rooms';
-import USlot from './USlot.vue';
+import type { HTMLAttributes } from 'vue';
+import { computed, ref } from 'vue';
 import DeviceBlock from './DeviceBlock.vue';
+import USlot from './USlot.vue';
 
 interface Props {
     /** Which face of the rack to display */
@@ -18,7 +18,12 @@ interface Props {
     /** The device currently being dragged (from sidebar or elsewhere) */
     draggedDevice?: PlaceholderDevice | null;
     /** Function to check if a device can be placed at a specific position */
-    canPlaceAt?: (device: PlaceholderDevice, startU: number, face: RackFace, width?: DeviceWidth) => boolean;
+    canPlaceAt?: (
+        device: PlaceholderDevice,
+        startU: number,
+        face: RackFace,
+        width?: DeviceWidth,
+    ) => boolean;
     /** Additional CSS classes */
     class?: HTMLAttributes['class'];
 }
@@ -32,8 +37,19 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     (e: 'slotClick', uNumber: number, face: RackFace): void;
     (e: 'deviceClick', device: PlaceholderDevice): void;
-    (e: 'deviceDrop', device: PlaceholderDevice, startU: number, face: RackFace, width: DeviceWidth): void;
-    (e: 'deviceMove', device: PlaceholderDevice, startU: number, face: RackFace): void;
+    (
+        e: 'deviceDrop',
+        device: PlaceholderDevice,
+        startU: number,
+        face: RackFace,
+        width: DeviceWidth,
+    ): void;
+    (
+        e: 'deviceMove',
+        device: PlaceholderDevice,
+        startU: number,
+        face: RackFace,
+    ): void;
     (e: 'dragEnter', uNumber: number, face: RackFace): void;
     (e: 'dragLeave', uNumber: number, face: RackFace): void;
     (e: 'deviceDragStart', device: PlaceholderDevice): void;
@@ -71,7 +87,11 @@ const deviceMap = computed(() => {
     for (const device of faceDevices.value) {
         if (device.start_u !== undefined) {
             // Mark all U positions this device occupies
-            for (let u = device.start_u; u < device.start_u + device.u_size; u++) {
+            for (
+                let u = device.start_u;
+                u < device.start_u + device.u_size;
+                u++
+            ) {
                 map.set(u, device);
             }
         }
@@ -88,7 +108,9 @@ function getDevicesAtU(uNumber: number): {
     halfLeft: PlaceholderDevice | undefined;
     halfRight: PlaceholderDevice | undefined;
 } {
-    const devicesStartingHere = faceDevices.value.filter((d) => d.start_u === uNumber);
+    const devicesStartingHere = faceDevices.value.filter(
+        (d) => d.start_u === uNumber,
+    );
 
     return {
         full: devicesStartingHere.find((d) => d.width === 'full'),
@@ -124,7 +146,12 @@ function isValidDropTarget(uNumber: number, width?: DeviceWidth): boolean {
     if (!props.draggedDevice) {
         return false;
     }
-    return props.canPlaceAt(props.draggedDevice, uNumber, props.face, width || props.draggedDevice.width);
+    return props.canPlaceAt(
+        props.draggedDevice,
+        uNumber,
+        props.face,
+        width || props.draggedDevice.width,
+    );
 }
 
 /**
@@ -165,7 +192,7 @@ function handleDragLeave(uNumber: number, event?: DragEvent) {
 /**
  * Handle drop on a slot
  */
-function handleDrop(uNumber: number, width: DeviceWidth) {
+function handleDrop(uNumber: number, _width: DeviceWidth) {
     if (!props.draggedDevice) {
         hoveredUSlot.value = null;
         return;
@@ -176,7 +203,13 @@ function handleDrop(uNumber: number, width: DeviceWidth) {
     const isValid = isValidDropTarget(uNumber, effectiveWidth);
 
     if (isValid) {
-        emit('deviceDrop', props.draggedDevice, uNumber, props.face, effectiveWidth);
+        emit(
+            'deviceDrop',
+            props.draggedDevice,
+            uNumber,
+            props.face,
+            effectiveWidth,
+        );
     }
     hoveredUSlot.value = null;
 }
@@ -219,7 +252,10 @@ function handleContainerDrop(event: DragEvent) {
     const target = event.target as HTMLElement;
     const uSlotElement = target.closest('[data-u-number]');
     if (uSlotElement) {
-        const uNumber = parseInt(uSlotElement.getAttribute('data-u-number') || '0', 10);
+        const uNumber = parseInt(
+            uSlotElement.getAttribute('data-u-number') || '0',
+            10,
+        );
         if (uNumber > 0 && props.draggedDevice) {
             handleDrop(uNumber, props.draggedDevice.width);
         }
@@ -246,10 +282,17 @@ function handleContainerDrop(event: DragEvent) {
                         @dragover.prevent="handleDragEnter(uNumber)"
                         @dragenter.prevent="handleDragEnter(uNumber)"
                         @dragleave="handleDragLeave(uNumber, $event)"
-                        @drop.prevent="handleDrop(uNumber, props.draggedDevice?.width || 'full')"
+                        @drop.prevent="
+                            handleDrop(
+                                uNumber,
+                                props.draggedDevice?.width || 'full',
+                            )
+                        "
                     >
                         <!-- U label for reference -->
-                        <span class="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                        <span
+                            class="absolute top-1/2 left-2 z-10 -translate-y-1/2 text-xs font-medium text-muted-foreground"
+                        >
                             U{{ uNumber }}
                         </span>
 
@@ -264,7 +307,12 @@ function handleContainerDrop(event: DragEvent) {
                                     class="cursor-grab active:cursor-grabbing"
                                     draggable="true"
                                     @device-click="$emit('deviceClick', $event)"
-                                    @dragstart="handleDeviceDragStart($event, getDevicesAtU(uNumber).full!)"
+                                    @dragstart="
+                                        handleDeviceDragStart(
+                                            $event,
+                                            getDevicesAtU(uNumber).full!,
+                                        )
+                                    "
                                     @dragend="handleDeviceDragEnd"
                                 />
                             </template>
@@ -274,52 +322,120 @@ function handleContainerDrop(event: DragEvent) {
                                 <div class="flex flex-1 gap-1">
                                     <div class="flex-1">
                                         <DeviceBlock
-                                            v-if="getDevicesAtU(uNumber).halfLeft"
-                                            :device="getDevicesAtU(uNumber).halfLeft!"
+                                            v-if="
+                                                getDevicesAtU(uNumber).halfLeft
+                                            "
+                                            :device="
+                                                getDevicesAtU(uNumber).halfLeft!
+                                            "
                                             :is-placed="true"
                                             :slot-height="slotHeight"
                                             class="w-full cursor-grab active:cursor-grabbing"
                                             draggable="true"
-                                            @device-click="$emit('deviceClick', $event)"
-                                            @dragstart="handleDeviceDragStart($event, getDevicesAtU(uNumber).halfLeft!)"
+                                            @device-click="
+                                                $emit('deviceClick', $event)
+                                            "
+                                            @dragstart="
+                                                handleDeviceDragStart(
+                                                    $event,
+                                                    getDevicesAtU(uNumber)
+                                                        .halfLeft!,
+                                                )
+                                            "
                                             @dragend="handleDeviceDragEnd"
                                         />
                                         <div
                                             v-else
-                                            :class="cn(
-                                                'h-7 rounded border border-dashed border-muted-foreground/30 bg-muted/20',
-                                                isDropTarget(uNumber) && isValidDropTarget(uNumber, 'half-left') && 'border-green-500 bg-green-50 dark:bg-green-950/30',
-                                                isDropTarget(uNumber) && !isValidDropTarget(uNumber, 'half-left') && 'border-red-500 bg-red-50 dark:bg-red-950/30'
-                                            )"
-                                            @drop.stop="handleDrop(uNumber, 'half-left')"
-                                            @dragover.prevent="handleDragEnter(uNumber)"
-                                            @dragenter="handleDragEnter(uNumber)"
-                                            @dragleave="handleDragLeave(uNumber, $event)"
+                                            :class="
+                                                cn(
+                                                    'h-7 rounded border border-dashed border-muted-foreground/30 bg-muted/20',
+                                                    isDropTarget(uNumber) &&
+                                                        isValidDropTarget(
+                                                            uNumber,
+                                                            'half-left',
+                                                        ) &&
+                                                        'border-green-500 bg-green-50 dark:bg-green-950/30',
+                                                    isDropTarget(uNumber) &&
+                                                        !isValidDropTarget(
+                                                            uNumber,
+                                                            'half-left',
+                                                        ) &&
+                                                        'border-red-500 bg-red-50 dark:bg-red-950/30',
+                                                )
+                                            "
+                                            @drop.stop="
+                                                handleDrop(uNumber, 'half-left')
+                                            "
+                                            @dragover.prevent="
+                                                handleDragEnter(uNumber)
+                                            "
+                                            @dragenter="
+                                                handleDragEnter(uNumber)
+                                            "
+                                            @dragleave="
+                                                handleDragLeave(uNumber, $event)
+                                            "
                                         />
                                     </div>
                                     <div class="flex-1">
                                         <DeviceBlock
-                                            v-if="getDevicesAtU(uNumber).halfRight"
-                                            :device="getDevicesAtU(uNumber).halfRight!"
+                                            v-if="
+                                                getDevicesAtU(uNumber).halfRight
+                                            "
+                                            :device="
+                                                getDevicesAtU(uNumber)
+                                                    .halfRight!
+                                            "
                                             :is-placed="true"
                                             :slot-height="slotHeight"
                                             class="w-full cursor-grab active:cursor-grabbing"
                                             draggable="true"
-                                            @device-click="$emit('deviceClick', $event)"
-                                            @dragstart="handleDeviceDragStart($event, getDevicesAtU(uNumber).halfRight!)"
+                                            @device-click="
+                                                $emit('deviceClick', $event)
+                                            "
+                                            @dragstart="
+                                                handleDeviceDragStart(
+                                                    $event,
+                                                    getDevicesAtU(uNumber)
+                                                        .halfRight!,
+                                                )
+                                            "
                                             @dragend="handleDeviceDragEnd"
                                         />
                                         <div
                                             v-else
-                                            :class="cn(
-                                                'h-7 rounded border border-dashed border-muted-foreground/30 bg-muted/20',
-                                                isDropTarget(uNumber) && isValidDropTarget(uNumber, 'half-right') && 'border-green-500 bg-green-50 dark:bg-green-950/30',
-                                                isDropTarget(uNumber) && !isValidDropTarget(uNumber, 'half-right') && 'border-red-500 bg-red-50 dark:bg-red-950/30'
-                                            )"
-                                            @drop.stop="handleDrop(uNumber, 'half-right')"
-                                            @dragover.prevent="handleDragEnter(uNumber)"
-                                            @dragenter="handleDragEnter(uNumber)"
-                                            @dragleave="handleDragLeave(uNumber, $event)"
+                                            :class="
+                                                cn(
+                                                    'h-7 rounded border border-dashed border-muted-foreground/30 bg-muted/20',
+                                                    isDropTarget(uNumber) &&
+                                                        isValidDropTarget(
+                                                            uNumber,
+                                                            'half-right',
+                                                        ) &&
+                                                        'border-green-500 bg-green-50 dark:bg-green-950/30',
+                                                    isDropTarget(uNumber) &&
+                                                        !isValidDropTarget(
+                                                            uNumber,
+                                                            'half-right',
+                                                        ) &&
+                                                        'border-red-500 bg-red-50 dark:bg-red-950/30',
+                                                )
+                                            "
+                                            @drop.stop="
+                                                handleDrop(
+                                                    uNumber,
+                                                    'half-right',
+                                                )
+                                            "
+                                            @dragover.prevent="
+                                                handleDragEnter(uNumber)
+                                            "
+                                            @dragenter="
+                                                handleDragEnter(uNumber)
+                                            "
+                                            @dragleave="
+                                                handleDragLeave(uNumber, $event)
+                                            "
                                         />
                                     </div>
                                 </div>
@@ -335,9 +451,15 @@ function handleContainerDrop(event: DragEvent) {
                         :is-occupied="false"
                         :is-drop-target="isDropTarget(uNumber)"
                         :is-valid-drop="isValidDropTarget(uNumber)"
-                        :is-left-half-valid="isValidDropTarget(uNumber, 'half-left')"
-                        :is-right-half-valid="isValidDropTarget(uNumber, 'half-right')"
-                        :show-drag-preview="isDropTarget(uNumber) && draggedDevice !== null"
+                        :is-left-half-valid="
+                            isValidDropTarget(uNumber, 'half-left')
+                        "
+                        :is-right-half-valid="
+                            isValidDropTarget(uNumber, 'half-right')
+                        "
+                        :show-drag-preview="
+                            isDropTarget(uNumber) && draggedDevice !== null
+                        "
                         :drag-preview-height="draggedDevice?.u_size ?? 1"
                         @slot-click="$emit('slotClick', uNumber, face)"
                         @drop="handleDrop"
@@ -345,7 +467,9 @@ function handleContainerDrop(event: DragEvent) {
                         @drag-leave="handleDragLeave"
                     >
                         <template #default>
-                            <span class="ml-12 text-xs text-muted-foreground/50">Empty</span>
+                            <span class="ml-12 text-xs text-muted-foreground/50"
+                                >Empty</span
+                            >
                         </template>
                     </USlot>
                 </template>

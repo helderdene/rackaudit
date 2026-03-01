@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import QRCode from 'qrcode';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -13,6 +11,8 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Download, Printer, QrCode } from 'lucide-vue-next';
+import QRCode from 'qrcode';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     entityType: 'rack' | 'device';
@@ -85,7 +85,10 @@ const generateQrCodes = async () => {
 };
 
 // Create a canvas with QR code and label text for PNG download
-const createLabelCanvas = async (width: number, height: number): Promise<HTMLCanvasElement> => {
+const createLabelCanvas = async (
+    width: number,
+    height: number,
+): Promise<HTMLCanvasElement> => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
 
@@ -127,7 +130,11 @@ const createLabelCanvas = async (width: number, height: number): Promise<HTMLCan
     // Draw secondary label if present
     if (props.secondaryLabel) {
         ctx.font = '12px Arial';
-        ctx.fillText(truncateText(props.secondaryLabel, 35), width / 2, nameY + 18);
+        ctx.fillText(
+            truncateText(props.secondaryLabel, 35),
+            width / 2,
+            nameY + 18,
+        );
     }
 
     return canvas;
@@ -159,7 +166,10 @@ const downloadSvg = async () => {
 <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
     <rect width="300" height="300" fill="white"/>
     <g transform="translate(50, 20)">
-        ${qrCodeSvg.value.replace(/<\?xml[^>]*\?>/, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
+        ${qrCodeSvg.value
+            .replace(/<\?xml[^>]*\?>/, '')
+            .replace(/<svg[^>]*>/, '')
+            .replace(/<\/svg>/, '')}
     </g>
     <text x="150" y="260" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="black">${escapeXml(truncateText(props.entityName, 30))}</text>
     ${props.secondaryLabel ? `<text x="150" y="280" text-anchor="middle" font-family="Arial" font-size="12" fill="black">${escapeXml(truncateText(props.secondaryLabel, 35))}</text>` : ''}
@@ -281,7 +291,8 @@ const entityTypeLabel = computed(() => {
             <DialogHeader class="space-y-3">
                 <DialogTitle>{{ entityTypeLabel }} QR Code</DialogTitle>
                 <DialogDescription>
-                    Scan this QR code to access the {{ entityTypeLabel.toLowerCase() }} details page.
+                    Scan this QR code to access the
+                    {{ entityTypeLabel.toLowerCase() }} details page.
                 </DialogDescription>
             </DialogHeader>
 
@@ -319,7 +330,9 @@ const entityTypeLabel = computed(() => {
 
                 <!-- URL Preview -->
                 <div class="w-full rounded-md bg-muted p-2">
-                    <p class="break-all text-center font-mono text-xs text-muted-foreground">
+                    <p
+                        class="text-center font-mono text-xs break-all text-muted-foreground"
+                    >
                         {{ entityUrl }}
                     </p>
                 </div>
@@ -356,9 +369,7 @@ const entityTypeLabel = computed(() => {
                     </Button>
                 </div>
                 <DialogClose as-child>
-                    <Button variant="secondary">
-                        Close
-                    </Button>
+                    <Button variant="secondary"> Close </Button>
                 </DialogClose>
             </DialogFooter>
         </DialogContent>

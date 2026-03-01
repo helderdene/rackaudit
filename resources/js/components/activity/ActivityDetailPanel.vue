@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Card, CardContent } from '@/components/ui/card';
+import { computed } from 'vue';
 
 interface Props {
     oldValues: Record<string, unknown> | null;
@@ -33,8 +33,10 @@ const changes = computed<ChangeItem[]>(() => {
         const oldVal = props.oldValues?.[key];
         const newVal = props.newValues?.[key];
 
-        const hasOld = props.oldValues !== null && key in (props.oldValues || {});
-        const hasNew = props.newValues !== null && key in (props.newValues || {});
+        const hasOld =
+            props.oldValues !== null && key in (props.oldValues || {});
+        const hasNew =
+            props.newValues !== null && key in (props.newValues || {});
 
         let type: ChangeType;
 
@@ -57,7 +59,12 @@ const changes = computed<ChangeItem[]>(() => {
     });
 
     return result.sort((a, b) => {
-        const order: Record<ChangeType, number> = { added: 0, removed: 1, changed: 2, unchanged: 3 };
+        const order: Record<ChangeType, number> = {
+            added: 0,
+            removed: 1,
+            changed: 2,
+            unchanged: 3,
+        };
         return order[a.type] - order[b.type];
     });
 });
@@ -118,29 +125,41 @@ const isDeleted = computed(() => {
 <template>
     <Card class="mt-2">
         <CardContent class="py-4">
-            <div v-if="isEmpty" class="text-muted-foreground text-sm">
+            <div v-if="isEmpty" class="text-sm text-muted-foreground">
                 No change data available
             </div>
             <div v-else>
                 <div class="mb-3 flex items-center gap-4 text-xs">
                     <div class="flex items-center gap-1.5">
-                        <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
+                        <span
+                            class="h-2.5 w-2.5 rounded-full bg-green-500"
+                        ></span>
                         <span class="text-muted-foreground">Added</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="h-2.5 w-2.5 rounded-full bg-red-500"></span>
+                        <span
+                            class="h-2.5 w-2.5 rounded-full bg-red-500"
+                        ></span>
                         <span class="text-muted-foreground">Removed</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="h-2.5 w-2.5 rounded-full bg-yellow-500"></span>
+                        <span
+                            class="h-2.5 w-2.5 rounded-full bg-yellow-500"
+                        ></span>
                         <span class="text-muted-foreground">Modified</span>
                     </div>
                 </div>
 
-                <div v-if="isCreated" class="mb-2 text-sm text-green-700 dark:text-green-400">
+                <div
+                    v-if="isCreated"
+                    class="mb-2 text-sm text-green-700 dark:text-green-400"
+                >
                     Record created with the following values:
                 </div>
-                <div v-else-if="isDeleted" class="mb-2 text-sm text-red-700 dark:text-red-400">
+                <div
+                    v-else-if="isDeleted"
+                    class="mb-2 text-sm text-red-700 dark:text-red-400"
+                >
                     Record deleted with the following values:
                 </div>
 
@@ -148,10 +167,24 @@ const isDeleted = computed(() => {
                     <table class="w-full text-sm">
                         <thead class="bg-muted/50">
                             <tr>
-                                <th class="px-3 py-2 text-left font-medium">Field</th>
-                                <th class="px-3 py-2 text-left font-medium">Status</th>
-                                <th v-if="!isCreated" class="px-3 py-2 text-left font-medium">Old Value</th>
-                                <th v-if="!isDeleted" class="px-3 py-2 text-left font-medium">New Value</th>
+                                <th class="px-3 py-2 text-left font-medium">
+                                    Field
+                                </th>
+                                <th class="px-3 py-2 text-left font-medium">
+                                    Status
+                                </th>
+                                <th
+                                    v-if="!isCreated"
+                                    class="px-3 py-2 text-left font-medium"
+                                >
+                                    Old Value
+                                </th>
+                                <th
+                                    v-if="!isDeleted"
+                                    class="px-3 py-2 text-left font-medium"
+                                >
+                                    New Value
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y">
@@ -160,21 +193,41 @@ const isDeleted = computed(() => {
                                 :key="change.key"
                                 :class="getRowClass(change.type)"
                             >
-                                <td class="px-3 py-2 font-mono text-xs">{{ change.key }}</td>
+                                <td class="px-3 py-2 font-mono text-xs">
+                                    {{ change.key }}
+                                </td>
                                 <td class="px-3 py-2">
-                                    <span class="inline-flex items-center gap-1.5">
+                                    <span
+                                        class="inline-flex items-center gap-1.5"
+                                    >
                                         <span
                                             class="h-2 w-2 rounded-full"
-                                            :class="getIndicatorClass(change.type)"
+                                            :class="
+                                                getIndicatorClass(change.type)
+                                            "
                                         ></span>
-                                        <span class="text-xs">{{ getTypeLabel(change.type) }}</span>
+                                        <span class="text-xs">{{
+                                            getTypeLabel(change.type)
+                                        }}</span>
                                     </span>
                                 </td>
-                                <td v-if="!isCreated" class="px-3 py-2 font-mono text-xs">
-                                    <pre class="whitespace-pre-wrap break-all">{{ formatValue(change.oldValue) }}</pre>
+                                <td
+                                    v-if="!isCreated"
+                                    class="px-3 py-2 font-mono text-xs"
+                                >
+                                    <pre
+                                        class="break-all whitespace-pre-wrap"
+                                        >{{ formatValue(change.oldValue) }}</pre
+                                    >
                                 </td>
-                                <td v-if="!isDeleted" class="px-3 py-2 font-mono text-xs">
-                                    <pre class="whitespace-pre-wrap break-all">{{ formatValue(change.newValue) }}</pre>
+                                <td
+                                    v-if="!isDeleted"
+                                    class="px-3 py-2 font-mono text-xs"
+                                >
+                                    <pre
+                                        class="break-all whitespace-pre-wrap"
+                                        >{{ formatValue(change.newValue) }}</pre
+                                    >
                                 </td>
                             </tr>
                         </tbody>

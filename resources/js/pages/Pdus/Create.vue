@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
-import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import PduController from '@/actions/App/Http/Controllers/PduController';
+import RoomController from '@/actions/App/Http/Controllers/RoomController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import PduForm from '@/components/pdus/PduForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import type { DatacenterReference, RoomReference, RowReference, SelectOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    RoomReference,
+    RowReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Head } from '@inertiajs/vue3';
 
 interface Props {
     datacenter: DatacenterReference;
@@ -34,11 +39,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: props.room.name,
-        href: RoomController.show.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: RoomController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
     {
         title: 'Create PDU',
-        href: PduController.create.url({ datacenter: props.datacenter.id, room: props.room.id }),
+        href: PduController.create.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+        }),
     },
 ];
 </script>

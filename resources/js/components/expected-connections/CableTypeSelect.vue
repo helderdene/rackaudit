@@ -36,14 +36,12 @@ const selectedValue = computed({
     set: (value: string) => emit('update:modelValue', value || null),
 });
 
-const selectClass = 'flex h-8 w-full rounded-md border border-input bg-transparent px-2 py-1 text-xs shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-8 w-full rounded-md border border-input bg-transparent px-2 py-1 text-xs shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
 <template>
-    <select
-        v-model="selectedValue"
-        :class="selectClass"
-    >
+    <select v-model="selectedValue" :class="selectClass">
         <option value="">Cable type</option>
         <option
             v-for="type in cableTypes"

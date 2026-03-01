@@ -1,26 +1,36 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { index, show, download } from '@/actions/App/Http/Controllers/BulkExportController';
+import {
+    download,
+    index,
+    show,
+} from '@/actions/App/Http/Controllers/BulkExportController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head, Link } from '@inertiajs/vue3';
 import {
     ArrowLeft,
-    FileSpreadsheet,
     Calendar,
-    User,
-    Download,
     CheckCircle,
-    XCircle,
-    Loader2,
     Clock,
-    Filter
+    Download,
+    FileSpreadsheet,
+    Filter,
+    Loader2,
+    User,
+    XCircle,
 } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 interface BulkExportData {
     id: number;
@@ -71,12 +81,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 const POLL_INTERVAL = 5000;
 
 // Computed properties
-const isProcessing = computed(() =>
-    bulkExport.value.status === 'pending' || bulkExport.value.status === 'processing'
+const isProcessing = computed(
+    () =>
+        bulkExport.value.status === 'pending' ||
+        bulkExport.value.status === 'processing',
 );
 
-const isCompleted = computed(() =>
-    bulkExport.value.status === 'completed' || bulkExport.value.status === 'failed'
+const isCompleted = computed(
+    () =>
+        bulkExport.value.status === 'completed' ||
+        bulkExport.value.status === 'failed',
 );
 
 const progressPercent = computed(() => {
@@ -97,18 +111,20 @@ const statusIcon = computed(() => {
     }
 });
 
-const statusVariant = computed((): 'default' | 'secondary' | 'destructive' | 'success' | 'warning' => {
-    switch (bulkExport.value.status) {
-        case 'completed':
-            return 'success';
-        case 'failed':
-            return 'destructive';
-        case 'processing':
-            return 'default';
-        default:
-            return 'secondary';
-    }
-});
+const statusVariant = computed(
+    (): 'default' | 'secondary' | 'destructive' | 'success' | 'warning' => {
+        switch (bulkExport.value.status) {
+            case 'completed':
+                return 'success';
+            case 'failed':
+                return 'destructive';
+            case 'processing':
+                return 'default';
+            default:
+                return 'secondary';
+        }
+    },
+);
 
 // Format date for display
 const formatDate = (dateString: string | null): string => {
@@ -125,13 +141,16 @@ const formatDate = (dateString: string | null): string => {
 };
 
 // Format filter for display
-const formatFilters = (filters: Record<string, number | string> | null): string => {
+const formatFilters = (
+    filters: Record<string, number | string> | null,
+): string => {
     if (!filters || Object.keys(filters).length === 0) {
         return 'None (all data)';
     }
 
     const parts: string[] = [];
-    if (filters.datacenter_id) parts.push(`Datacenter ID: ${filters.datacenter_id}`);
+    if (filters.datacenter_id)
+        parts.push(`Datacenter ID: ${filters.datacenter_id}`);
     if (filters.room_id) parts.push(`Room ID: ${filters.room_id}`);
     if (filters.row_id) parts.push(`Row ID: ${filters.row_id}`);
     if (filters.rack_id) parts.push(`Rack ID: ${filters.rack_id}`);
@@ -148,7 +167,7 @@ const fetchStatus = async () => {
     try {
         const response = await fetch(show.url(bulkExport.value.id), {
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             },
         });
@@ -183,9 +202,12 @@ const stopPolling = () => {
 };
 
 // Watch for prop changes
-watch(() => props.export, (newExport) => {
-    bulkExport.value = newExport;
-});
+watch(
+    () => props.export,
+    (newExport) => {
+        bulkExport.value = newExport;
+    },
+);
 
 // Watch for status changes to manage polling
 watch(isProcessing, (processing) => {
@@ -213,7 +235,9 @@ onUnmounted(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Export Details"
                     :description="`Viewing export: ${bulkExport.file_name}`"
@@ -239,16 +263,27 @@ onUnmounted(() => {
                         <div class="space-y-4">
                             <!-- Status badge and icon -->
                             <div class="flex items-center gap-3">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-full" :class="{
-                                    'bg-primary/10 text-primary': bulkExport.status === 'processing',
-                                    'bg-muted text-muted-foreground': bulkExport.status === 'pending',
-                                    'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400': bulkExport.status === 'completed',
-                                    'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400': bulkExport.status === 'failed',
-                                }">
+                                <div
+                                    class="flex h-10 w-10 items-center justify-center rounded-full"
+                                    :class="{
+                                        'bg-primary/10 text-primary':
+                                            bulkExport.status === 'processing',
+                                        'bg-muted text-muted-foreground':
+                                            bulkExport.status === 'pending',
+                                        'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400':
+                                            bulkExport.status === 'completed',
+                                        'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400':
+                                            bulkExport.status === 'failed',
+                                    }"
+                                >
                                     <component
                                         :is="statusIcon"
                                         class="h-5 w-5"
-                                        :class="{ 'animate-spin': bulkExport.status === 'processing' }"
+                                        :class="{
+                                            'animate-spin':
+                                                bulkExport.status ===
+                                                'processing',
+                                        }"
                                     />
                                 </div>
                                 <div class="flex-1">
@@ -256,12 +291,20 @@ onUnmounted(() => {
                                         <Badge :variant="statusVariant">
                                             {{ bulkExport.status_label }}
                                         </Badge>
-                                        <span v-if="isProcessing" class="text-xs text-muted-foreground">
+                                        <span
+                                            v-if="isProcessing"
+                                            class="text-xs text-muted-foreground"
+                                        >
                                             Updating every 5 seconds...
                                         </span>
                                     </div>
-                                    <p v-if="bulkExport.total_rows" class="mt-1 text-sm text-muted-foreground">
-                                        {{ bulkExport.processed_rows ?? 0 }} of {{ bulkExport.total_rows }} rows processed
+                                    <p
+                                        v-if="bulkExport.total_rows"
+                                        class="mt-1 text-sm text-muted-foreground"
+                                    >
+                                        {{ bulkExport.processed_rows ?? 0 }} of
+                                        {{ bulkExport.total_rows }} rows
+                                        processed
                                     </p>
                                 </div>
                             </div>
@@ -269,30 +312,47 @@ onUnmounted(() => {
                             <!-- Progress bar -->
                             <div v-if="bulkExport.total_rows" class="space-y-2">
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-muted-foreground">Progress</span>
-                                    <span class="font-medium">{{ progressPercent.toFixed(0) }}%</span>
+                                    <span class="text-muted-foreground"
+                                        >Progress</span
+                                    >
+                                    <span class="font-medium"
+                                        >{{ progressPercent.toFixed(0) }}%</span
+                                    >
                                 </div>
-                                <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
+                                <div
+                                    class="h-2 w-full overflow-hidden rounded-full bg-muted"
+                                >
                                     <div
                                         class="h-full rounded-full transition-all duration-300"
                                         :class="{
                                             'bg-primary': !isCompleted,
-                                            'bg-green-500': bulkExport.status === 'completed',
-                                            'bg-red-500': bulkExport.status === 'failed',
+                                            'bg-green-500':
+                                                bulkExport.status ===
+                                                'completed',
+                                            'bg-red-500':
+                                                bulkExport.status === 'failed',
                                         }"
-                                        :style="{ width: `${progressPercent}%` }"
+                                        :style="{
+                                            width: `${progressPercent}%`,
+                                        }"
                                     />
                                 </div>
                             </div>
 
                             <!-- Loading skeleton when pending without row count -->
-                            <div v-else-if="bulkExport.status === 'pending'" class="space-y-2">
+                            <div
+                                v-else-if="bulkExport.status === 'pending'"
+                                class="space-y-2"
+                            >
                                 <Skeleton class="h-4 w-24" />
                                 <Skeleton class="h-2 w-full" />
                             </div>
 
                             <!-- Download button when completed -->
-                            <div v-if="bulkExport.status === 'completed'" class="pt-4">
+                            <div
+                                v-if="bulkExport.status === 'completed'"
+                                class="pt-4"
+                            >
                                 <a
                                     v-if="bulkExport.download_url"
                                     :href="download.url(bulkExport.id)"
@@ -311,17 +371,27 @@ onUnmounted(() => {
                                 v-if="bulkExport.status === 'failed'"
                                 class="rounded-lg bg-red-50 p-4 dark:bg-red-900/20"
                             >
-                                <p class="text-sm font-medium text-red-600 dark:text-red-400">
+                                <p
+                                    class="text-sm font-medium text-red-600 dark:text-red-400"
+                                >
                                     Export Failed
                                 </p>
-                                <p class="mt-1 text-sm text-red-600/80 dark:text-red-400/80">
-                                    An error occurred while generating the export. Please try again.
+                                <p
+                                    class="mt-1 text-sm text-red-600/80 dark:text-red-400/80"
+                                >
+                                    An error occurred while generating the
+                                    export. Please try again.
                                 </p>
                             </div>
 
                             <!-- Row count on completion -->
-                            <div v-if="isCompleted && bulkExport.total_rows" class="rounded-lg bg-muted/50 p-4">
-                                <p class="text-sm font-medium">Total Rows Exported</p>
+                            <div
+                                v-if="isCompleted && bulkExport.total_rows"
+                                class="rounded-lg bg-muted/50 p-4"
+                            >
+                                <p class="text-sm font-medium">
+                                    Total Rows Exported
+                                </p>
                                 <p class="mt-1 text-2xl font-semibold">
                                     {{ bulkExport.total_rows }}
                                 </p>
@@ -341,74 +411,127 @@ onUnmounted(() => {
                     <CardContent>
                         <dl class="space-y-4">
                             <div class="flex items-start gap-3">
-                                <FileSpreadsheet class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <FileSpreadsheet
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
-                                    <dt class="text-sm font-medium">File Name</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ bulkExport.file_name }}</dd>
+                                    <dt class="text-sm font-medium">
+                                        File Name
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ bulkExport.file_name }}
+                                    </dd>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <div class="mt-0.5 h-4 w-4 flex items-center justify-center text-xs font-bold text-muted-foreground">
+                                <div
+                                    class="mt-0.5 flex h-4 w-4 items-center justify-center text-xs font-bold text-muted-foreground"
+                                >
                                     T
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium">Entity Type</dt>
+                                    <dt class="text-sm font-medium">
+                                        Entity Type
+                                    </dt>
                                     <dd class="text-sm text-muted-foreground">
-                                        {{ bulkExport.entity_type_label || 'Unknown' }}
+                                        {{
+                                            bulkExport.entity_type_label ||
+                                            'Unknown'
+                                        }}
                                     </dd>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <FileSpreadsheet class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <FileSpreadsheet
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
                                     <dt class="text-sm font-medium">Format</dt>
                                     <dd class="text-sm text-muted-foreground">
-                                        {{ bulkExport.format?.toUpperCase() || 'Unknown' }}
+                                        {{
+                                            bulkExport.format?.toUpperCase() ||
+                                            'Unknown'
+                                        }}
                                     </dd>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <Filter class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <Filter
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
-                                    <dt class="text-sm font-medium">Applied Filters</dt>
+                                    <dt class="text-sm font-medium">
+                                        Applied Filters
+                                    </dt>
                                     <dd class="text-sm text-muted-foreground">
                                         {{ formatFilters(bulkExport.filters) }}
                                     </dd>
                                 </div>
                             </div>
 
-                            <div v-if="bulkExport.user" class="flex items-start gap-3">
-                                <User class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                            <div
+                                v-if="bulkExport.user"
+                                class="flex items-start gap-3"
+                            >
+                                <User
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
-                                    <dt class="text-sm font-medium">Exported By</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ bulkExport.user.name }}</dd>
+                                    <dt class="text-sm font-medium">
+                                        Exported By
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ bulkExport.user.name }}
+                                    </dd>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3">
-                                <Calendar class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                                <Calendar
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
                                     <dt class="text-sm font-medium">Created</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDate(bulkExport.created_at) }}</dd>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ formatDate(bulkExport.created_at) }}
+                                    </dd>
                                 </div>
                             </div>
 
-                            <div v-if="bulkExport.started_at" class="flex items-start gap-3">
-                                <Calendar class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                            <div
+                                v-if="bulkExport.started_at"
+                                class="flex items-start gap-3"
+                            >
+                                <Calendar
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
                                     <dt class="text-sm font-medium">Started</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDate(bulkExport.started_at) }}</dd>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{ formatDate(bulkExport.started_at) }}
+                                    </dd>
                                 </div>
                             </div>
 
-                            <div v-if="bulkExport.completed_at" class="flex items-start gap-3">
-                                <Calendar class="mt-0.5 h-4 w-4 text-muted-foreground" />
+                            <div
+                                v-if="bulkExport.completed_at"
+                                class="flex items-start gap-3"
+                            >
+                                <Calendar
+                                    class="mt-0.5 h-4 w-4 text-muted-foreground"
+                                />
                                 <div>
-                                    <dt class="text-sm font-medium">Completed</dt>
-                                    <dd class="text-sm text-muted-foreground">{{ formatDate(bulkExport.completed_at) }}</dd>
+                                    <dt class="text-sm font-medium">
+                                        Completed
+                                    </dt>
+                                    <dd class="text-sm text-muted-foreground">
+                                        {{
+                                            formatDate(bulkExport.completed_at)
+                                        }}
+                                    </dd>
                                 </div>
                             </div>
                         </dl>

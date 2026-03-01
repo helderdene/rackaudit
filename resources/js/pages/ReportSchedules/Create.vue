@@ -1,36 +1,45 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { index, store } from '@/actions/App/Http/Controllers/ReportScheduleController';
 import { configure } from '@/actions/App/Http/Controllers/CustomReportBuilderController';
+import {
+    index,
+    store,
+} from '@/actions/App/Http/Controllers/ReportScheduleController';
+import ColumnSelector from '@/components/CustomReports/ColumnSelector.vue';
+import CustomReportFilters from '@/components/CustomReports/CustomReportFilters.vue';
+import GroupBySelector from '@/components/CustomReports/GroupBySelector.vue';
+import ReportTypeSelector from '@/components/CustomReports/ReportTypeSelector.vue';
+import SortConfiguration from '@/components/CustomReports/SortConfiguration.vue';
+import TypeSpecificFilters from '@/components/CustomReports/TypeSpecificFilters.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
 import ScheduleFrequencySelector from '@/components/ReportSchedules/ScheduleFrequencySelector.vue';
-import ReportTypeSelector from '@/components/CustomReports/ReportTypeSelector.vue';
-import ColumnSelector from '@/components/CustomReports/ColumnSelector.vue';
-import CustomReportFilters from '@/components/CustomReports/CustomReportFilters.vue';
-import TypeSpecificFilters from '@/components/CustomReports/TypeSpecificFilters.vue';
-import SortConfiguration from '@/components/CustomReports/SortConfiguration.vue';
-import GroupBySelector from '@/components/CustomReports/GroupBySelector.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     ArrowRight,
+    Calendar,
     Check,
     ChevronRight,
     FileBarChart,
-    Calendar,
-    Send,
-    Mail,
     FileText,
+    Mail,
+    Send,
 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface DistributionListOption {
     id: number;
@@ -142,7 +151,8 @@ const rowOptions = ref<Array<{ id: number; name: string }>>([]);
 /**
  * Select input class for styled selects
  */
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 
 /**
  * Step labels
@@ -175,7 +185,7 @@ const fieldsByCategory = computed(() => {
  */
 const selectedColumnsAsFields = computed(() => {
     return selectedColumns.value
-        .map(key => availableFields.value.find(f => f.key === key))
+        .map((key) => availableFields.value.find((f) => f.key === key))
         .filter((f): f is ReportField => f !== undefined);
 });
 
@@ -184,7 +194,9 @@ const selectedColumnsAsFields = computed(() => {
  */
 const selectedReportTypeLabel = computed(() => {
     if (!selectedReportType.value) return '';
-    const type = props.reportTypes.find(t => t.value === selectedReportType.value);
+    const type = props.reportTypes.find(
+        (t) => t.value === selectedReportType.value,
+    );
     return type?.label || selectedReportType.value;
 });
 
@@ -192,7 +204,9 @@ const selectedReportTypeLabel = computed(() => {
  * Selected distribution list
  */
 const selectedDistributionList = computed(() => {
-    return props.distributionLists.find(l => l.id === distributionListId.value);
+    return props.distributionLists.find(
+        (l) => l.id === distributionListId.value,
+    );
 });
 
 /**
@@ -217,7 +231,9 @@ const canProceedToStep3 = computed(() => {
  * Can submit form
  */
 const canSubmit = computed(() => {
-    return scheduleName.value.trim() && distributionListId.value && format.value;
+    return (
+        scheduleName.value.trim() && distributionListId.value && format.value
+    );
 });
 
 /**
@@ -228,7 +244,15 @@ const schedulePreviewDisplay = computed(() => {
     if (frequency.value === 'daily') {
         display = `Daily at ${timeOfDay.value}`;
     } else if (frequency.value === 'weekly' && dayOfWeek.value !== null) {
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const days = [
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+        ];
         display = `Weekly on ${days[dayOfWeek.value]} at ${timeOfDay.value}`;
     } else if (frequency.value === 'monthly' && dayOfMonth.value) {
         if (dayOfMonth.value === 'last') {
@@ -248,10 +272,14 @@ const schedulePreviewDisplay = computed(() => {
 function getOrdinalSuffix(n: number): string {
     if (n >= 11 && n <= 13) return 'th';
     switch (n % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
+        case 1:
+            return 'st';
+        case 2:
+            return 'nd';
+        case 3:
+            return 'rd';
+        default:
+            return 'th';
     }
 }
 
@@ -269,7 +297,9 @@ async function handleReportTypeSelect(reportType: string) {
     isLoadingConfig.value = true;
 
     try {
-        const response = await fetch(configure.url({ query: { report_type: reportType } }));
+        const response = await fetch(
+            configure.url({ query: { report_type: reportType } }),
+        );
 
         if (!response.ok) {
             throw new Error('Failed to load report configuration');
@@ -304,14 +334,19 @@ function handleFiltersUpdate(filters: Record<string, unknown>) {
 /**
  * Handle location filter change for cascading behavior
  */
-async function handleLocationChange(location: { type: 'datacenter' | 'room' | 'row'; id: number | null }) {
+async function handleLocationChange(location: {
+    type: 'datacenter' | 'room' | 'row';
+    id: number | null;
+}) {
     if (location.type === 'datacenter') {
         roomOptions.value = [];
         rowOptions.value = [];
 
         if (location.id) {
             try {
-                const response = await fetch(`/api/datacenters/${location.id}/rooms`);
+                const response = await fetch(
+                    `/api/datacenters/${location.id}/rooms`,
+                );
                 if (response.ok) {
                     roomOptions.value = await response.json();
                 }
@@ -410,7 +445,13 @@ async function handleSubmit() {
             // Navigate back to appropriate step if there are errors
             if (errors.name || errors.distribution_list_id || errors.format) {
                 currentStep.value = 3;
-            } else if (errors.frequency || errors.day_of_week || errors.day_of_month || errors.time_of_day || errors.timezone) {
+            } else if (
+                errors.frequency ||
+                errors.day_of_week ||
+                errors.day_of_month ||
+                errors.time_of_day ||
+                errors.timezone
+            ) {
                 currentStep.value = 2;
             } else if (errors.report_type || errors.report_configuration) {
                 currentStep.value = 1;
@@ -442,7 +483,10 @@ async function handleSubmit() {
             </div>
 
             <!-- Step Indicator -->
-            <nav class="flex items-center justify-center gap-2 py-2" aria-label="Schedule creation steps">
+            <nav
+                class="flex items-center justify-center gap-2 py-2"
+                aria-label="Schedule creation steps"
+            >
                 <ol class="flex items-center gap-2">
                     <template v-for="(step, idx) in steps" :key="step.number">
                         <li class="flex items-center gap-2">
@@ -450,27 +494,38 @@ async function handleSubmit() {
                                 class="flex items-center gap-2"
                                 :class="{
                                     'text-primary': currentStep >= step.number,
-                                    'text-muted-foreground': currentStep < step.number,
+                                    'text-muted-foreground':
+                                        currentStep < step.number,
                                 }"
                             >
                                 <div
                                     class="flex size-8 items-center justify-center rounded-full border-2 text-sm font-medium transition-colors"
                                     :class="{
-                                        'border-primary bg-primary text-primary-foreground': currentStep === step.number,
-                                        'border-primary bg-primary/10 text-primary': currentStep > step.number,
-                                        'border-muted-foreground/30': currentStep < step.number,
+                                        'border-primary bg-primary text-primary-foreground':
+                                            currentStep === step.number,
+                                        'border-primary bg-primary/10 text-primary':
+                                            currentStep > step.number,
+                                        'border-muted-foreground/30':
+                                            currentStep < step.number,
                                     }"
                                 >
-                                    <Check v-if="currentStep > step.number" class="size-4" />
+                                    <Check
+                                        v-if="currentStep > step.number"
+                                        class="size-4"
+                                    />
                                     <span v-else>{{ step.number }}</span>
                                 </div>
-                                <span class="hidden text-sm font-medium sm:inline">
+                                <span
+                                    class="hidden text-sm font-medium sm:inline"
+                                >
                                     {{ step.label }}
                                 </span>
                             </div>
                         </li>
                         <li v-if="idx < steps.length - 1" aria-hidden="true">
-                            <ChevronRight class="size-4 text-muted-foreground/50" />
+                            <ChevronRight
+                                class="size-4 text-muted-foreground/50"
+                            />
                         </li>
                     </template>
                 </ol>
@@ -493,8 +548,12 @@ async function handleSubmit() {
                         <div class="space-y-4">
                             <!-- Report Type Badge -->
                             <div class="flex items-center gap-2">
-                                <span class="text-sm text-muted-foreground">Report Type:</span>
-                                <span class="rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary">
+                                <span class="text-sm text-muted-foreground"
+                                    >Report Type:</span
+                                >
+                                <span
+                                    class="rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+                                >
                                     {{ selectedReportTypeLabel }}
                                 </span>
                             </div>
@@ -521,7 +580,10 @@ async function handleSubmit() {
 
                             <!-- Type-Specific Filters -->
                             <TypeSpecificFilters
-                                v-if="selectedReportType && Object.keys(availableFilters).length > 0"
+                                v-if="
+                                    selectedReportType &&
+                                    Object.keys(availableFilters).length > 0
+                                "
                                 :report-type="selectedReportType"
                                 :filter-options="availableFilters"
                                 :filters="selectedFilters"
@@ -554,10 +616,20 @@ async function handleSubmit() {
                             </CardHeader>
                             <CardContent>
                                 <div class="space-y-4">
-                                    <div v-for="i in 3" :key="i" class="space-y-2">
+                                    <div
+                                        v-for="i in 3"
+                                        :key="i"
+                                        class="space-y-2"
+                                    >
                                         <Skeleton class="h-4 w-24" />
-                                        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                                            <Skeleton v-for="j in 4" :key="j" class="h-6 w-full" />
+                                        <div
+                                            class="grid grid-cols-2 gap-2 sm:grid-cols-3"
+                                        >
+                                            <Skeleton
+                                                v-for="j in 4"
+                                                :key="j"
+                                                class="h-6 w-full"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -568,11 +640,12 @@ async function handleSubmit() {
                     <!-- Step 1 Navigation -->
                     <div class="flex justify-between pt-4">
                         <Link :href="index.url()">
-                            <Button variant="outline">
-                                Cancel
-                            </Button>
+                            <Button variant="outline"> Cancel </Button>
                         </Link>
-                        <Button :disabled="!canProceedToStep2" @click="nextStep">
+                        <Button
+                            :disabled="!canProceedToStep2"
+                            @click="nextStep"
+                        >
                             Next: Schedule
                             <ArrowRight class="ml-2 h-4 w-4" />
                         </Button>
@@ -603,7 +676,10 @@ async function handleSubmit() {
                             <ArrowLeft class="mr-2 h-4 w-4" />
                             Back
                         </Button>
-                        <Button :disabled="!canProceedToStep3" @click="nextStep">
+                        <Button
+                            :disabled="!canProceedToStep3"
+                            @click="nextStep"
+                        >
                             Next: Distribution
                             <ArrowRight class="ml-2 h-4 w-4" />
                         </Button>
@@ -620,12 +696,18 @@ async function handleSubmit() {
                                 Schedule Details
                             </CardTitle>
                             <CardDescription>
-                                Give your schedule a name and choose the output format.
+                                Give your schedule a name and choose the output
+                                format.
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="space-y-2">
-                                <Label for="schedule-name">Schedule Name <span class="text-destructive">*</span></Label>
+                                <Label for="schedule-name"
+                                    >Schedule Name
+                                    <span class="text-destructive"
+                                        >*</span
+                                    ></Label
+                                >
                                 <Input
                                     id="schedule-name"
                                     v-model="scheduleName"
@@ -637,12 +719,17 @@ async function handleSubmit() {
                             </div>
 
                             <div class="space-y-2">
-                                <Label>Report Format <span class="text-destructive">*</span></Label>
+                                <Label
+                                    >Report Format
+                                    <span class="text-destructive"
+                                        >*</span
+                                    ></Label
+                                >
                                 <div class="flex gap-4">
                                     <label
                                         v-for="formatOption in formats"
                                         :key="formatOption.value"
-                                        class="flex items-center space-x-2 cursor-pointer"
+                                        class="flex cursor-pointer items-center space-x-2"
                                     >
                                         <input
                                             type="radio"
@@ -651,7 +738,9 @@ async function handleSubmit() {
                                             name="format"
                                             class="h-4 w-4 text-primary focus:ring-primary"
                                         />
-                                        <span class="text-sm">{{ formatOption.label }}</span>
+                                        <span class="text-sm">{{
+                                            formatOption.label
+                                        }}</span>
                                     </label>
                                 </div>
                                 <InputError :message="formErrors.format" />
@@ -667,16 +756,26 @@ async function handleSubmit() {
                                 Distribution List
                             </CardTitle>
                             <CardDescription>
-                                Select the recipient group who will receive this report.
+                                Select the recipient group who will receive this
+                                report.
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="space-y-4">
-                            <div v-if="distributionLists.length === 0" class="rounded-lg border border-dashed p-6 text-center">
-                                <Mail class="mx-auto h-8 w-8 text-muted-foreground" />
+                            <div
+                                v-if="distributionLists.length === 0"
+                                class="rounded-lg border border-dashed p-6 text-center"
+                            >
+                                <Mail
+                                    class="mx-auto h-8 w-8 text-muted-foreground"
+                                />
                                 <p class="mt-2 text-sm text-muted-foreground">
-                                    No distribution lists available. Please create one first.
+                                    No distribution lists available. Please
+                                    create one first.
                                 </p>
-                                <Link href="/distribution-lists/create" class="mt-4 inline-block">
+                                <Link
+                                    href="/distribution-lists/create"
+                                    class="mt-4 inline-block"
+                                >
                                     <Button variant="outline" size="sm">
                                         Create Distribution List
                                     </Button>
@@ -684,23 +783,39 @@ async function handleSubmit() {
                             </div>
 
                             <div v-else class="space-y-2">
-                                <Label for="distribution-list">Select Distribution List <span class="text-destructive">*</span></Label>
+                                <Label for="distribution-list"
+                                    >Select Distribution List
+                                    <span class="text-destructive"
+                                        >*</span
+                                    ></Label
+                                >
                                 <select
                                     id="distribution-list"
                                     :value="distributionListId ?? ''"
                                     :class="selectClass"
                                     @change="handleDistributionListChange"
                                 >
-                                    <option value="" disabled>Choose a distribution list</option>
+                                    <option value="" disabled>
+                                        Choose a distribution list
+                                    </option>
                                     <option
                                         v-for="list in distributionLists"
                                         :key="list.id"
                                         :value="list.id"
                                     >
-                                        {{ list.name }} ({{ list.members_count }} {{ list.members_count === 1 ? 'recipient' : 'recipients' }})
+                                        {{ list.name }} ({{
+                                            list.members_count
+                                        }}
+                                        {{
+                                            list.members_count === 1
+                                                ? 'recipient'
+                                                : 'recipients'
+                                        }})
                                     </option>
                                 </select>
-                                <InputError :message="formErrors.distribution_list_id" />
+                                <InputError
+                                    :message="formErrors.distribution_list_id"
+                                />
                             </div>
                         </CardContent>
                     </Card>
@@ -710,32 +825,63 @@ async function handleSubmit() {
                         <CardHeader>
                             <CardTitle>Schedule Summary</CardTitle>
                             <CardDescription>
-                                Review your schedule configuration before creating.
+                                Review your schedule configuration before
+                                creating.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <dl class="grid gap-3 text-sm sm:grid-cols-2">
                                 <div>
-                                    <dt class="font-medium text-muted-foreground">Report Type</dt>
-                                    <dd class="mt-1">{{ selectedReportTypeLabel }}</dd>
+                                    <dt
+                                        class="font-medium text-muted-foreground"
+                                    >
+                                        Report Type
+                                    </dt>
+                                    <dd class="mt-1">
+                                        {{ selectedReportTypeLabel }}
+                                    </dd>
                                 </div>
                                 <div>
-                                    <dt class="font-medium text-muted-foreground">Columns</dt>
-                                    <dd class="mt-1">{{ selectedColumns.length }} selected</dd>
+                                    <dt
+                                        class="font-medium text-muted-foreground"
+                                    >
+                                        Columns
+                                    </dt>
+                                    <dd class="mt-1">
+                                        {{ selectedColumns.length }} selected
+                                    </dd>
                                 </div>
                                 <div>
-                                    <dt class="font-medium text-muted-foreground">Schedule</dt>
-                                    <dd class="mt-1">{{ schedulePreviewDisplay }}</dd>
+                                    <dt
+                                        class="font-medium text-muted-foreground"
+                                    >
+                                        Schedule
+                                    </dt>
+                                    <dd class="mt-1">
+                                        {{ schedulePreviewDisplay }}
+                                    </dd>
                                 </div>
                                 <div>
-                                    <dt class="font-medium text-muted-foreground">Format</dt>
-                                    <dd class="mt-1">{{ format.toUpperCase() }}</dd>
+                                    <dt
+                                        class="font-medium text-muted-foreground"
+                                    >
+                                        Format
+                                    </dt>
+                                    <dd class="mt-1">
+                                        {{ format.toUpperCase() }}
+                                    </dd>
                                 </div>
                                 <div v-if="selectedDistributionList">
-                                    <dt class="font-medium text-muted-foreground">Recipients</dt>
+                                    <dt
+                                        class="font-medium text-muted-foreground"
+                                    >
+                                        Recipients
+                                    </dt>
                                     <dd class="mt-1">
                                         {{ selectedDistributionList.name }}
-                                        ({{ selectedDistributionList.members_count }})
+                                        ({{
+                                            selectedDistributionList.members_count
+                                        }})
                                     </dd>
                                 </div>
                             </dl>
@@ -753,7 +899,9 @@ async function handleSubmit() {
                             @click="handleSubmit"
                         >
                             <Spinner v-if="isSubmitting" class="mr-2 h-4 w-4" />
-                            {{ isSubmitting ? 'Creating...' : 'Create Schedule' }}
+                            {{
+                                isSubmitting ? 'Creating...' : 'Create Schedule'
+                            }}
                         </Button>
                     </div>
                 </div>

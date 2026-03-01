@@ -1,9 +1,9 @@
-import { ref, readonly, onMounted } from 'vue';
 import {
-    dismissed as fetchDismissed,
     completedTours as fetchCompletedTours,
+    dismissed as fetchDismissed,
     store as storeInteraction,
 } from '@/actions/App/Http/Controllers/Api/Help/UserHelpInteractionController';
+import { readonly, ref } from 'vue';
 
 /**
  * Interaction type enum matching backend

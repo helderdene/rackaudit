@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { TransitionGroup } from 'vue';
-import RealtimeToast from './RealtimeToast.vue';
 import type { PendingUpdate } from '@/composables/useRealtimeUpdates';
+import { computed } from 'vue';
+import RealtimeToast from './RealtimeToast.vue';
 
-const props = withDefaults(defineProps<{
-    updates: PendingUpdate[];
-    editingEntityId?: number | null;
-    editingEntityType?: string | null;
-    maxVisible?: number;
-}>(), {
-    editingEntityId: null,
-    editingEntityType: null,
-    maxVisible: 5,
-});
+const props = withDefaults(
+    defineProps<{
+        updates: PendingUpdate[];
+        editingEntityId?: number | null;
+        editingEntityType?: string | null;
+        maxVisible?: number;
+    }>(),
+    {
+        editingEntityId: null,
+        editingEntityType: null,
+        maxVisible: 5,
+    },
+);
 
 const emit = defineEmits<{
     dismiss: [id: string];
@@ -30,9 +32,10 @@ const conflictUpdates = computed((): PendingUpdate[] => {
         return [];
     }
 
-    return props.updates.filter((update) =>
-        update.entityType === props.editingEntityType &&
-        update.entityId === props.editingEntityId
+    return props.updates.filter(
+        (update) =>
+            update.entityType === props.editingEntityType &&
+            update.entityId === props.editingEntityId,
     );
 });
 
@@ -44,9 +47,10 @@ const regularUpdates = computed((): PendingUpdate[] => {
         return props.updates;
     }
 
-    return props.updates.filter((update) =>
-        update.entityType !== props.editingEntityType ||
-        update.entityId !== props.editingEntityId
+    return props.updates.filter(
+        (update) =>
+            update.entityType !== props.editingEntityType ||
+            update.entityId !== props.editingEntityId,
     );
 });
 
@@ -132,7 +136,11 @@ function handleClearAll(): void {
                     v-if="hiddenCount > 0"
                     class="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm text-zinc-600 shadow-lg ring-1 ring-black/5 dark:bg-zinc-900 dark:text-zinc-400 dark:ring-zinc-800"
                 >
-                    <span>+{{ hiddenCount }} more update{{ hiddenCount > 1 ? 's' : '' }}</span>
+                    <span
+                        >+{{ hiddenCount }} more update{{
+                            hiddenCount > 1 ? 's' : ''
+                        }}</span
+                    >
                     <button
                         type="button"
                         class="text-primary hover:underline"

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Layers } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 /**
  * TypeScript interfaces
@@ -24,7 +24,8 @@ const emit = defineEmits<{
 }>();
 
 // Common select styling
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-input dark:bg-transparent dark:text-foreground';
 
 // Local state
 const localGroupBy = ref<string>(props.groupBy || '');
@@ -39,7 +40,9 @@ const isGrouped = computed(() => !!localGroupBy.value);
  */
 const selectedGroupDisplayName = computed(() => {
     if (!localGroupBy.value) return null;
-    const column = props.availableColumns.find(c => c.key === localGroupBy.value);
+    const column = props.availableColumns.find(
+        (c) => c.key === localGroupBy.value,
+    );
     return column?.display_name || localGroupBy.value;
 });
 
@@ -53,18 +56,25 @@ function handleGroupByChange(event: Event) {
 }
 
 // Sync with external changes
-watch(() => props.groupBy, (newValue) => {
-    localGroupBy.value = newValue || '';
-});
+watch(
+    () => props.groupBy,
+    (newValue) => {
+        localGroupBy.value = newValue || '';
+    },
+);
 
 // Reset group by when available columns change (column no longer available)
-watch(() => props.availableColumns, (newColumns) => {
-    const availableKeys = newColumns.map(c => c.key);
-    if (localGroupBy.value && !availableKeys.includes(localGroupBy.value)) {
-        localGroupBy.value = '';
-        emit('update:groupBy', null);
-    }
-}, { deep: true });
+watch(
+    () => props.availableColumns,
+    (newColumns) => {
+        const availableKeys = newColumns.map((c) => c.key);
+        if (localGroupBy.value && !availableKeys.includes(localGroupBy.value)) {
+            localGroupBy.value = '';
+            emit('update:groupBy', null);
+        }
+    },
+    { deep: true },
+);
 </script>
 
 <template>
@@ -106,10 +116,13 @@ watch(() => props.availableColumns, (newColumns) => {
                 </select>
                 <p class="text-xs text-muted-foreground">
                     <template v-if="isGrouped">
-                        Results will be grouped by <strong>{{ selectedGroupDisplayName }}</strong> with subtotals for numeric fields.
+                        Results will be grouped by
+                        <strong>{{ selectedGroupDisplayName }}</strong> with
+                        subtotals for numeric fields.
                     </template>
                     <template v-else>
-                        Results will be displayed in a flat list without grouping.
+                        Results will be displayed in a flat list without
+                        grouping.
                     </template>
                 </p>
             </div>

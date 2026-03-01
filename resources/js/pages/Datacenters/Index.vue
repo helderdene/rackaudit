@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import { create as createExport } from '@/actions/App/Http/Controllers/BulkExportController';
+import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import DeleteDatacenterDialog from '@/components/datacenters/DeleteDatacenterDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { debounce } from '@/lib/utils';
 import { usePermissions } from '@/composables/usePermissions';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { debounce } from '@/lib/utils';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Download } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface DatacenterData {
     id: number;
@@ -75,7 +75,7 @@ const applyFilters = debounce(() => {
         {
             preserveState: true,
             preserveScroll: true,
-        }
+        },
     );
 }, 300);
 
@@ -100,7 +100,9 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <HeadingSmall
                     title="Datacenter Management"
                     description="Manage datacenter locations, contacts, and floor plans."
@@ -112,7 +114,10 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
                             Export
                         </Button>
                     </Link>
-                    <Link v-if="canCreate" :href="DatacenterController.create.url()">
+                    <Link
+                        v-if="canCreate"
+                        :href="DatacenterController.create.url()"
+                    >
                         <Button>Create Datacenter</Button>
                     </Link>
                 </div>
@@ -136,12 +141,36 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
                     <table class="w-full text-sm">
                         <thead class="border-b bg-muted/50">
                             <tr>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Location</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Primary Contact</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Rooms</th>
-                                <th class="h-12 px-4 text-left font-medium text-muted-foreground">Racks</th>
-                                <th class="h-12 w-[180px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Location
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Primary Contact
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Rooms
+                                </th>
+                                <th
+                                    class="h-12 px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Racks
+                                </th>
+                                <th
+                                    class="h-12 w-[180px] px-4 text-left font-medium text-muted-foreground"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -156,24 +185,50 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
                                 <td class="p-4">
                                     <div class="flex flex-col">
                                         <span>{{ datacenter.city }}</span>
-                                        <span class="text-xs text-muted-foreground">{{ datacenter.country }}</span>
+                                        <span
+                                            class="text-xs text-muted-foreground"
+                                            >{{ datacenter.country }}</span
+                                        >
                                     </div>
                                 </td>
                                 <td class="p-4">
                                     <div class="flex flex-col">
-                                        <span>{{ datacenter.primary_contact_name }}</span>
-                                        <span class="text-xs text-muted-foreground">{{ datacenter.primary_contact_email }}</span>
+                                        <span>{{
+                                            datacenter.primary_contact_name
+                                        }}</span>
+                                        <span
+                                            class="text-xs text-muted-foreground"
+                                            >{{
+                                                datacenter.primary_contact_email
+                                            }}</span
+                                        >
                                     </div>
                                 </td>
                                 <td class="p-4 text-muted-foreground">-</td>
                                 <td class="p-4 text-muted-foreground">-</td>
                                 <td class="p-4">
                                     <div class="flex items-center gap-2">
-                                        <Link :href="DatacenterController.show.url(datacenter.id)">
-                                            <Button variant="outline" size="sm">View</Button>
+                                        <Link
+                                            :href="
+                                                DatacenterController.show.url(
+                                                    datacenter.id,
+                                                )
+                                            "
+                                        >
+                                            <Button variant="outline" size="sm"
+                                                >View</Button
+                                            >
                                         </Link>
-                                        <Link :href="DatacenterController.edit.url(datacenter.id)">
-                                            <Button variant="outline" size="sm">Edit</Button>
+                                        <Link
+                                            :href="
+                                                DatacenterController.edit.url(
+                                                    datacenter.id,
+                                                )
+                                            "
+                                        >
+                                            <Button variant="outline" size="sm"
+                                                >Edit</Button
+                                            >
                                         </Link>
                                         <DeleteDatacenterDialog
                                             :datacenter-id="datacenter.id"
@@ -183,7 +238,10 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
                                 </td>
                             </tr>
                             <tr v-if="datacenters.data.length === 0">
-                                <td colspan="6" class="p-8 text-center text-muted-foreground">
+                                <td
+                                    colspan="6"
+                                    class="p-8 text-center text-muted-foreground"
+                                >
                                     No datacenters found.
                                 </td>
                             </tr>
@@ -193,11 +251,24 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
             </div>
 
             <!-- Pagination -->
-            <div v-if="datacenters.last_page > 1" class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div
+                v-if="datacenters.last_page > 1"
+                class="flex flex-col items-center justify-between gap-4 sm:flex-row"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ (datacenters.current_page - 1) * datacenters.per_page + 1 }} to
-                    {{ Math.min(datacenters.current_page * datacenters.per_page, datacenters.total) }} of
-                    {{ datacenters.total }} datacenters
+                    Showing
+                    {{
+                        (datacenters.current_page - 1) * datacenters.per_page +
+                        1
+                    }}
+                    to
+                    {{
+                        Math.min(
+                            datacenters.current_page * datacenters.per_page,
+                            datacenters.total,
+                        )
+                    }}
+                    of {{ datacenters.total }} datacenters
                 </div>
                 <div class="flex flex-wrap gap-1">
                     <Button
@@ -207,8 +278,8 @@ const exportUrl = createExport.url({ query: { entity_type: 'datacenter' } });
                         size="sm"
                         :disabled="!link.url || link.active"
                         @click="goToPage(link.url)"
-                        v-html="link.label"
-                    />
+                        ><span v-html="link.label"
+                    /></Button>
                 </div>
             </div>
         </div>

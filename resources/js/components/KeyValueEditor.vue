@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 
 interface Props {
     modelValue: Record<string, string>;
@@ -48,13 +48,17 @@ onMounted(() => {
 });
 
 // Watch for external changes to modelValue (skip if we caused the change)
-watch(() => props.modelValue, () => {
-    if (isEmitting) {
-        isEmitting = false;
-        return;
-    }
-    initializePairs();
-}, { deep: true });
+watch(
+    () => props.modelValue,
+    () => {
+        if (isEmitting) {
+            isEmitting = false;
+            return;
+        }
+        initializePairs();
+    },
+    { deep: true },
+);
 
 // Convert pairs back to object and emit
 const updateModelValue = () => {
@@ -79,7 +83,7 @@ const addPair = () => {
 
 // Remove pair
 const removePair = (id: number) => {
-    const index = pairs.value.findIndex(p => p.id === id);
+    const index = pairs.value.findIndex((p) => p.id === id);
     if (index !== -1) {
         pairs.value.splice(index, 1);
         updateModelValue();
@@ -88,7 +92,7 @@ const removePair = (id: number) => {
 
 // Update key
 const updateKey = (id: number, newKey: string) => {
-    const pair = pairs.value.find(p => p.id === id);
+    const pair = pairs.value.find((p) => p.id === id);
     if (pair) {
         pair.key = newKey;
         updateModelValue();
@@ -97,7 +101,7 @@ const updateKey = (id: number, newKey: string) => {
 
 // Update value
 const updateValue = (id: number, newValue: string) => {
-    const pair = pairs.value.find(p => p.id === id);
+    const pair = pairs.value.find((p) => p.id === id);
     if (pair) {
         pair.value = newValue;
         updateModelValue();
@@ -147,12 +151,7 @@ const updateValue = (id: number, newValue: string) => {
         </div>
 
         <!-- Add button -->
-        <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            @click="addPair"
-        >
+        <Button type="button" variant="outline" size="sm" @click="addPair">
             <Plus class="mr-2 size-4" />
             Add Specification
         </Button>

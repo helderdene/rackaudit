@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
 import { debounce } from '@/lib/utils';
+import { computed, ref, watch } from 'vue';
 
 interface RackOption {
     id: number;
@@ -49,10 +49,11 @@ const filteredRacks = computed(() => {
         return racks.value;
     }
     const query = searchQuery.value.toLowerCase();
-    return racks.value.filter(rack =>
-        rack.name.toLowerCase().includes(query) ||
-        rack.row_name?.toLowerCase().includes(query) ||
-        rack.position?.toLowerCase().includes(query)
+    return racks.value.filter(
+        (rack) =>
+            rack.name.toLowerCase().includes(query) ||
+            rack.row_name?.toLowerCase().includes(query) ||
+            rack.position?.toLowerCase().includes(query),
     );
 });
 
@@ -77,7 +78,7 @@ const toggleRack = (rackId: number): void => {
 
 // Select all visible racks
 const selectAllVisible = (): void => {
-    const visibleIds = filteredRacks.value.map(rack => rack.id);
+    const visibleIds = filteredRacks.value.map((rack) => rack.id);
     const newIds = [...new Set([...selectedRackIds.value, ...visibleIds])];
     selectedRackIds.value = newIds;
 };
@@ -90,29 +91,35 @@ const clearSelection = (): void => {
 // Get selected rack names for display
 const selectedRackNames = computed(() => {
     return racks.value
-        .filter(rack => selectedRackIds.value.includes(rack.id))
-        .map(rack => rack.name);
+        .filter((rack) => selectedRackIds.value.includes(rack.id))
+        .map((rack) => rack.name);
 });
 
 // Watch for room changes and fetch racks
-watch(() => props.roomId, async (newRoomId) => {
-    if (newRoomId) {
-        await fetchRacksForRoom(newRoomId);
-    } else if (props.datacenterId) {
-        // If no room selected but datacenter is, clear racks
-        // The parent component should handle showing all racks when needed
-        racks.value = [];
-        emit('update:modelValue', []);
-    }
-});
+watch(
+    () => props.roomId,
+    async (newRoomId) => {
+        if (newRoomId) {
+            await fetchRacksForRoom(newRoomId);
+        } else if (props.datacenterId) {
+            // If no room selected but datacenter is, clear racks
+            // The parent component should handle showing all racks when needed
+            racks.value = [];
+            emit('update:modelValue', []);
+        }
+    },
+);
 
 // Also watch datacenter changes
-watch(() => props.datacenterId, () => {
-    if (!props.roomId) {
-        racks.value = [];
-        emit('update:modelValue', []);
-    }
-});
+watch(
+    () => props.datacenterId,
+    () => {
+        if (!props.roomId) {
+            racks.value = [];
+            emit('update:modelValue', []);
+        }
+    },
+);
 
 /**
  * Fetch racks for the selected room
@@ -122,7 +129,7 @@ async function fetchRacksForRoom(roomId: number): Promise<void> {
     try {
         const response = await fetch(`/api/audits/rooms/${roomId}/racks`, {
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             },
         });
@@ -135,8 +142,10 @@ async function fetchRacksForRoom(roomId: number): Promise<void> {
         racks.value = data.data || [];
 
         // Clear any previously selected racks that are not in the new room
-        const validIds = racks.value.map(r => r.id);
-        const newSelection = selectedRackIds.value.filter(id => validIds.includes(id));
+        const validIds = racks.value.map((r) => r.id);
+        const newSelection = selectedRackIds.value.filter((id) =>
+            validIds.includes(id),
+        );
         if (newSelection.length !== selectedRackIds.value.length) {
             emit('update:modelValue', newSelection);
         }
@@ -156,10 +165,10 @@ const handleSearchInput = debounce((value: string) => {
 
 <template>
     <div class="space-y-3">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <Label>
-                Racks <span class="text-red-500">*</span>
-            </Label>
+        <div
+            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+        >
+            <Label> Racks <span class="text-red-500">*</span> </Label>
             <div class="flex items-center gap-2">
                 <button
                     v-if="filteredRacks.length > 0 && !isLoading"
@@ -169,7 +178,11 @@ const handleSearchInput = debounce((value: string) => {
                 >
                     Select all
                 </button>
-                <span v-if="selectedRackIds.length > 0 && !isLoading" class="text-xs text-muted-foreground">|</span>
+                <span
+                    v-if="selectedRackIds.length > 0 && !isLoading"
+                    class="text-xs text-muted-foreground"
+                    >|</span
+                >
                 <button
                     v-if="selectedRackIds.length > 0 && !isLoading"
                     type="button"
@@ -207,10 +220,15 @@ const handleSearchInput = debounce((value: string) => {
         </div>
 
         <!-- Loading state with skeleton -->
-        <div v-if="isLoading" class="space-y-2 rounded-md border border-input p-3">
+        <div
+            v-if="isLoading"
+            class="space-y-2 rounded-md border border-input p-3"
+        >
             <div class="flex items-center gap-2">
                 <Spinner class="h-4 w-4" />
-                <span class="text-sm text-muted-foreground">Loading racks...</span>
+                <span class="text-sm text-muted-foreground"
+                    >Loading racks...</span
+                >
             </div>
             <div class="space-y-2">
                 <Skeleton class="h-8 w-full" />
@@ -220,15 +238,24 @@ const handleSearchInput = debounce((value: string) => {
         </div>
 
         <!-- Empty state -->
-        <div v-else-if="!props.roomId && !props.datacenterId" class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground">
+        <div
+            v-else-if="!props.roomId && !props.datacenterId"
+            class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground"
+        >
             Select a room to view available racks
         </div>
 
-        <div v-else-if="racks.length === 0" class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground">
+        <div
+            v-else-if="racks.length === 0"
+            class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground"
+        >
             No racks available in the selected room
         </div>
 
-        <div v-else-if="filteredRacks.length === 0" class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground">
+        <div
+            v-else-if="filteredRacks.length === 0"
+            class="rounded-md border border-dashed border-input py-8 text-center text-sm text-muted-foreground"
+        >
             No racks match your search
         </div>
 
@@ -249,9 +276,14 @@ const handleSearchInput = debounce((value: string) => {
                     class="h-5 w-5 sm:h-4 sm:w-4"
                     @update:checked="toggleRack(rack.id)"
                 />
-                <div class="flex flex-1 flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                <div
+                    class="flex flex-1 flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
+                >
                     <span class="text-sm font-medium">{{ rack.name }}</span>
-                    <span v-if="rack.row_name" class="text-xs text-muted-foreground">
+                    <span
+                        v-if="rack.row_name"
+                        class="text-xs text-muted-foreground"
+                    >
                         Row: {{ rack.row_name }}
                     </span>
                 </div>
@@ -259,11 +291,18 @@ const handleSearchInput = debounce((value: string) => {
         </div>
 
         <!-- Selection summary - responsive wrapping -->
-        <div v-if="selectedRackIds.length > 0" class="flex flex-wrap items-center gap-2">
+        <div
+            v-if="selectedRackIds.length > 0"
+            class="flex flex-wrap items-center gap-2"
+        >
             <Badge variant="secondary" class="font-normal">
-                {{ selectedRackIds.length }} {{ selectedRackIds.length === 1 ? 'rack' : 'racks' }} selected
+                {{ selectedRackIds.length }}
+                {{ selectedRackIds.length === 1 ? 'rack' : 'racks' }} selected
             </Badge>
-            <span v-if="selectedRackNames.length <= 3" class="hidden text-xs text-muted-foreground sm:inline">
+            <span
+                v-if="selectedRackNames.length <= 3"
+                class="hidden text-xs text-muted-foreground sm:inline"
+            >
                 ({{ selectedRackNames.join(', ') }})
             </span>
         </div>

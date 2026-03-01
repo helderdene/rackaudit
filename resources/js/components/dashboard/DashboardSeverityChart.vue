@@ -6,13 +6,20 @@
  * Displays finding severity distribution as a donut chart with click-to-navigate.
  */
 
-import { computed, ref } from 'vue';
-import { Doughnut } from 'vue-chartjs';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, type ChartOptions, type ChartData } from 'chart.js';
-import { router } from '@inertiajs/vue3';
 import FindingController from '@/actions/App/Http/Controllers/FindingController';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { SeverityMetrics, FindingSeverityValue } from '@/types/dashboard';
+import type { FindingSeverityValue, SeverityMetrics } from '@/types/dashboard';
+import { router } from '@inertiajs/vue3';
+import {
+    ArcElement,
+    Chart as ChartJS,
+    Legend,
+    Tooltip,
+    type ChartData,
+    type ChartOptions,
+} from 'chart.js';
+import { computed } from 'vue';
+import { Doughnut } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -38,7 +45,12 @@ const severityHoverColors: Record<FindingSeverityValue, string> = {
 };
 
 // Severity order for consistent display
-const severityOrder: FindingSeverityValue[] = ['critical', 'high', 'medium', 'low'];
+const severityOrder: FindingSeverityValue[] = [
+    'critical',
+    'high',
+    'medium',
+    'low',
+];
 
 // Check if there is any data to display
 const hasData = computed(() => props.severityMetrics.total > 0);
@@ -95,7 +107,9 @@ const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
                     const value = context.raw as number;
                     const percentage =
                         props.severityMetrics.total > 0
-                            ? Math.round((value / props.severityMetrics.total) * 100)
+                            ? Math.round(
+                                  (value / props.severityMetrics.total) * 100,
+                              )
                             : 0;
                     return `${label}: ${value} (${percentage}%)`;
                 },
@@ -129,7 +143,9 @@ const navigateToFindingsBySeverity = (severity: FindingSeverityValue) => {
         class="transition-all duration-200 hover:border-border/80 hover:shadow-md dark:hover:border-border/60"
     >
         <CardHeader class="pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+            <CardTitle
+                class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+            >
                 Open Findings by Severity
             </CardTitle>
         </CardHeader>
@@ -141,9 +157,13 @@ const navigateToFindingsBySeverity = (severity: FindingSeverityValue) => {
                 <div
                     class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
                 >
-                    <span class="text-2xl font-bold">{{ severityMetrics.total }}</span>
+                    <span class="text-2xl font-bold">{{
+                        severityMetrics.total
+                    }}</span>
                     <span class="text-xs text-muted-foreground">
-                        {{ severityMetrics.total === 1 ? 'Finding' : 'Findings' }}
+                        {{
+                            severityMetrics.total === 1 ? 'Finding' : 'Findings'
+                        }}
                     </span>
                 </div>
             </div>
@@ -168,11 +188,16 @@ const navigateToFindingsBySeverity = (severity: FindingSeverityValue) => {
                     />
                 </svg>
                 <p class="text-sm text-muted-foreground">No open findings</p>
-                <p class="mt-1 text-xs text-muted-foreground/70">All findings have been resolved</p>
+                <p class="mt-1 text-xs text-muted-foreground/70">
+                    All findings have been resolved
+                </p>
             </div>
 
             <!-- Click hint -->
-            <p v-if="hasData" class="mt-3 text-center text-xs text-muted-foreground">
+            <p
+                v-if="hasData"
+                class="mt-3 text-center text-xs text-muted-foreground"
+            >
                 Click a segment to view findings
             </p>
         </CardContent>

@@ -6,21 +6,21 @@
  * using Chart.js.
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Bar } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
     BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
     Title,
     Tooltip,
-    Legend,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity } from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
+import { Bar } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -29,7 +29,7 @@ ChartJS.register(
     BarElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
 );
 
 interface PortUtilizationByType {
@@ -61,46 +61,57 @@ onMounted(() => {
 });
 
 // Port type colors - consistent color coding
-const portTypeColors: Record<string, { connected: string; available: string }> = {
-    ethernet: {
-        connected: 'rgba(59, 130, 246, 0.8)',  // blue-500
-        available: 'rgba(59, 130, 246, 0.2)',
-    },
-    fiber: {
-        connected: 'rgba(168, 85, 247, 0.8)',  // purple-500
-        available: 'rgba(168, 85, 247, 0.2)',
-    },
-    power: {
-        connected: 'rgba(245, 158, 11, 0.8)',  // amber-500
-        available: 'rgba(245, 158, 11, 0.2)',
-    },
-};
+const portTypeColors: Record<string, { connected: string; available: string }> =
+    {
+        ethernet: {
+            connected: 'rgba(59, 130, 246, 0.8)', // blue-500
+            available: 'rgba(59, 130, 246, 0.2)',
+        },
+        fiber: {
+            connected: 'rgba(168, 85, 247, 0.8)', // purple-500
+            available: 'rgba(168, 85, 247, 0.2)',
+        },
+        power: {
+            connected: 'rgba(245, 158, 11, 0.8)', // amber-500
+            available: 'rgba(245, 158, 11, 0.2)',
+        },
+    };
 
 // Get color for port type with fallback
 const getColors = (type: string) => {
-    return portTypeColors[type.toLowerCase()] ?? {
-        connected: 'rgba(107, 114, 128, 0.8)', // gray-500
-        available: 'rgba(107, 114, 128, 0.2)',
-    };
+    return (
+        portTypeColors[type.toLowerCase()] ?? {
+            connected: 'rgba(107, 114, 128, 0.8)', // gray-500
+            available: 'rgba(107, 114, 128, 0.2)',
+        }
+    );
 };
 
 // Check if there is valid data to display
 const hasData = computed(() => {
-    return props.byType.length > 0 && props.byType.some(item => item.total > 0);
+    return (
+        props.byType.length > 0 && props.byType.some((item) => item.total > 0)
+    );
 });
 
 // Filter to only show types with ports
 const activeTypes = computed(() => {
-    return props.byType.filter(item => item.total > 0);
+    return props.byType.filter((item) => item.total > 0);
 });
 
 // Prepare chart data for stacked horizontal bar
 const chartData = computed<ChartData<'bar', number[], string>>(() => {
-    const labels = activeTypes.value.map(item => item.label);
-    const connectedData = activeTypes.value.map(item => item.connected);
-    const availableData = activeTypes.value.map(item => item.total - item.connected);
-    const backgroundColors = activeTypes.value.map(item => getColors(item.type).connected);
-    const availableColors = activeTypes.value.map(item => getColors(item.type).available);
+    const labels = activeTypes.value.map((item) => item.label);
+    const connectedData = activeTypes.value.map((item) => item.connected);
+    const availableData = activeTypes.value.map(
+        (item) => item.total - item.connected,
+    );
+    const backgroundColors = activeTypes.value.map(
+        (item) => getColors(item.type).connected,
+    );
+    const availableColors = activeTypes.value.map(
+        (item) => getColors(item.type).available,
+    );
 
     return {
         labels,
@@ -185,9 +196,10 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
                     const datasetLabel = context.dataset.label;
                     const index = context.dataIndex;
                     const item = activeTypes.value[index];
-                    const percentage = item.total > 0
-                        ? ((value / item.total) * 100).toFixed(1)
-                        : '0';
+                    const percentage =
+                        item.total > 0
+                            ? ((value / item.total) * 100).toFixed(1)
+                            : '0';
                     return `${datasetLabel}: ${value} (${percentage}%)`;
                 },
             },
@@ -210,7 +222,9 @@ const formatPercentage = (value: number): string => {
                 </CardTitle>
                 <div v-if="hasData" class="flex items-center gap-2 text-sm">
                     <Activity class="size-4 text-muted-foreground" />
-                    <span class="font-medium">{{ formatPercentage(overall.percentage) }}</span>
+                    <span class="font-medium">{{
+                        formatPercentage(overall.percentage)
+                    }}</span>
                     <span class="text-muted-foreground">overall</span>
                 </div>
             </div>
@@ -227,13 +241,23 @@ const formatPercentage = (value: number): string => {
                 class="flex h-48 flex-col items-center justify-center rounded-lg border border-dashed border-muted-foreground/30"
             >
                 <Activity class="mb-2 size-12 text-muted-foreground/50" />
-                <p class="text-sm text-muted-foreground">No port data available</p>
-                <p class="mt-1 text-xs text-muted-foreground/70">Add devices with ports to see utilization</p>
+                <p class="text-sm text-muted-foreground">
+                    No port data available
+                </p>
+                <p class="mt-1 text-xs text-muted-foreground/70">
+                    Add devices with ports to see utilization
+                </p>
             </div>
 
             <!-- Summary stats -->
-            <div v-if="hasData" class="mt-4 flex justify-between border-t pt-3 text-xs text-muted-foreground">
-                <span>{{ overall.connected }} / {{ overall.total }} ports connected</span>
+            <div
+                v-if="hasData"
+                class="mt-4 flex justify-between border-t pt-3 text-xs text-muted-foreground"
+            >
+                <span
+                    >{{ overall.connected }} / {{ overall.total }} ports
+                    connected</span
+                >
                 <span>{{ activeTypes.length }} port types</span>
             </div>
         </CardContent>

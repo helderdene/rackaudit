@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Spinner } from '@/components/ui/spinner';
-import { Input } from '@/components/ui/input';
 import {
-    ArrowLeft,
-    AlertTriangle,
-    CheckCircle,
-    XCircle,
-    ClipboardCheck,
-    RefreshCw,
-} from 'lucide-vue-next';
-import ConnectionVerificationTable from '@/components/audits/ConnectionVerificationTable.vue';
-import VerificationActionDialog from '@/components/audits/VerificationActionDialog.vue';
-import BulkVerifyButton from '@/components/audits/BulkVerifyButton.vue';
-import { FeatureTour } from '@/components/help';
-import axios from 'axios';
-import {
+    bulkVerify as bulkVerifyAction,
+    discrepant as discrepantAction,
     index as verificationsIndex,
     stats as verificationsStats,
     verify as verifyAction,
-    discrepant as discrepantAction,
-    bulkVerify as bulkVerifyAction,
 } from '@/actions/App/Http/Controllers/Api/AuditConnectionVerificationController';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
+import BulkVerifyButton from '@/components/audits/BulkVerifyButton.vue';
+import ConnectionVerificationTable from '@/components/audits/ConnectionVerificationTable.vue';
+import VerificationActionDialog from '@/components/audits/VerificationActionDialog.vue';
+import HeadingSmall from '@/components/HeadingSmall.vue';
+import { FeatureTour } from '@/components/help';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import axios from 'axios';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    CheckCircle,
+    ClipboardCheck,
+    RefreshCw,
+    XCircle,
+} from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 interface ProgressStats {
     total: number;
@@ -129,7 +129,8 @@ interface Props {
 const props = defineProps<Props>();
 
 // Shared select styles with touch-friendly sizing
-const selectClass = 'flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 
 // State
 const isLoading = ref(true);
@@ -177,7 +178,8 @@ const breadcrumbs = computed<BreadcrumbItem[]>(() => [
 
 // Get status badge class
 const getStatusBadgeClass = (status: string): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (status) {
         case 'pending':
             return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200`;
@@ -199,13 +201,17 @@ const matchedSelectedCount = computed(() => {
             selectedIds.value.has(v.id) &&
             v.comparison_status === 'matched' &&
             v.verification_status === 'pending' &&
-            !v.is_locked
+            !v.is_locked,
     ).length;
 });
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-    return comparisonStatusFilter.value || verificationStatusFilter.value || searchQuery.value;
+    return (
+        comparisonStatusFilter.value ||
+        verificationStatusFilter.value ||
+        searchQuery.value
+    );
 });
 
 /**
@@ -232,7 +238,7 @@ async function loadVerifications(): Promise<void> {
         }
 
         const response = await axios.get(
-            verificationsIndex.url(props.audit.id, { query: queryParams })
+            verificationsIndex.url(props.audit.id, { query: queryParams }),
         );
 
         verifications.value = response.data.data || [];
@@ -256,7 +262,9 @@ async function loadVerifications(): Promise<void> {
  */
 async function loadStats(): Promise<void> {
     try {
-        const response = await axios.get(verificationsStats.url(props.audit.id));
+        const response = await axios.get(
+            verificationsStats.url(props.audit.id),
+        );
         stats.value = response.data.data;
     } catch (error) {
         console.error('Error loading stats:', error);
@@ -322,7 +330,7 @@ async function handleVerificationAction(data: {
                     audit: props.audit.id,
                     verification: actionDialogVerification.value.id,
                 }),
-                { notes: data.notes || null }
+                { notes: data.notes || null },
             );
         } else {
             await axios.post(
@@ -333,7 +341,7 @@ async function handleVerificationAction(data: {
                 {
                     discrepancy_type: data.discrepancyType,
                     notes: data.notes,
-                }
+                },
             );
         }
 
@@ -360,14 +368,17 @@ async function handleVerificationAction(data: {
 /**
  * Handle bulk verify action
  */
-async function handleBulkVerify(): Promise<{ verified: number; skipped: number }> {
+async function handleBulkVerify(): Promise<{
+    verified: number;
+    skipped: number;
+}> {
     const selectedMatchedIds = verifications.value
         .filter(
             (v) =>
                 selectedIds.value.has(v.id) &&
                 v.comparison_status === 'matched' &&
                 v.verification_status === 'pending' &&
-                !v.is_locked
+                !v.is_locked,
         )
         .map((v) => v.id);
 
@@ -411,7 +422,7 @@ function toggleSelection(id: number): void {
  */
 function toggleAllSelection(): void {
     const pendingVerifications = verifications.value.filter(
-        (v) => v.verification_status === 'pending' && !v.is_locked
+        (v) => v.verification_status === 'pending' && !v.is_locked,
     );
 
     if (pendingVerifications.every((v) => selectedIds.value.has(v.id))) {
@@ -434,7 +445,9 @@ function setupEchoChannel(): void {
         // Handle verification completed events
         echoChannel.listen('.verification.completed', (data: any) => {
             // Update the verification in the list
-            const index = verifications.value.findIndex((v) => v.id === data.verification.id);
+            const index = verifications.value.findIndex(
+                (v) => v.id === data.verification.id,
+            );
             if (index !== -1) {
                 verifications.value[index] = data.verification;
             }
@@ -444,7 +457,9 @@ function setupEchoChannel(): void {
 
         // Handle connection locked events
         echoChannel.listen('.connection.locked', (data: any) => {
-            const index = verifications.value.findIndex((v) => v.id === data.verification_id);
+            const index = verifications.value.findIndex(
+                (v) => v.id === data.verification_id,
+            );
             if (index !== -1) {
                 verifications.value[index].is_locked = true;
                 verifications.value[index].locked_by = data.locked_by;
@@ -454,7 +469,9 @@ function setupEchoChannel(): void {
 
         // Handle connection unlocked events
         echoChannel.listen('.connection.unlocked', (data: any) => {
-            const index = verifications.value.findIndex((v) => v.id === data.verification_id);
+            const index = verifications.value.findIndex(
+                (v) => v.id === data.verification_id,
+            );
             if (index !== -1) {
                 verifications.value[index].is_locked = false;
                 verifications.value[index].locked_by = null;
@@ -494,10 +511,20 @@ onUnmounted(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:gap-6">
             <!-- Header -->
-            <div data-tour="audit-header" class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                data-tour="audit-header"
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <div class="flex items-start gap-4">
-                    <Link :href="AuditController.show.url(audit.id)" class="mt-1">
-                        <Button variant="ghost" size="icon" class="size-8 min-h-11 min-w-11 md:size-8 md:min-h-8 md:min-w-8 lg:size-8">
+                    <Link
+                        :href="AuditController.show.url(audit.id)"
+                        class="mt-1"
+                    >
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="size-8 min-h-11 min-w-11 md:size-8 md:min-h-8 md:min-w-8 lg:size-8"
+                        >
                             <ArrowLeft class="size-4" />
                         </Button>
                     </Link>
@@ -510,7 +537,9 @@ onUnmounted(() => {
                             <span :class="getStatusBadgeClass(audit.status)">
                                 {{ audit.status_label }}
                             </span>
-                            <Badge variant="outline">{{ audit.type_label }}</Badge>
+                            <Badge variant="outline">{{
+                                audit.type_label
+                            }}</Badge>
                         </div>
                     </div>
                 </div>
@@ -539,36 +568,66 @@ onUnmounted(() => {
                 <CardContent>
                     <div class="flex flex-wrap gap-4 md:gap-6">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Total:</span>
-                            <Badge variant="secondary" class="text-base">{{ stats.total }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Total:</span
+                            >
+                            <Badge variant="secondary" class="text-base">{{
+                                stats.total
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <CheckCircle class="size-4 text-green-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Verified:</span>
-                            <Badge class="bg-green-600 text-base">{{ stats.verified }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Verified:</span
+                            >
+                            <Badge class="bg-green-600 text-base">{{
+                                stats.verified
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <XCircle class="size-4 text-red-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Discrepant:</span>
-                            <Badge variant="destructive" class="text-base">{{ stats.discrepant }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Discrepant:</span
+                            >
+                            <Badge variant="destructive" class="text-base">{{
+                                stats.discrepant
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <AlertTriangle class="size-4 text-yellow-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Pending:</span>
-                            <Badge variant="warning" class="text-base">{{ stats.pending }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Pending:</span
+                            >
+                            <Badge variant="warning" class="text-base">{{
+                                stats.pending
+                            }}</Badge>
                         </div>
                     </div>
 
                     <!-- Progress bar -->
                     <div v-if="stats.total > 0" class="mt-4">
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-muted-foreground">Completion</span>
-                            <span class="font-medium">{{ stats.progress_percentage.toFixed(1) }}%</span>
+                            <span class="text-muted-foreground"
+                                >Completion</span
+                            >
+                            <span class="font-medium"
+                                >{{
+                                    stats.progress_percentage.toFixed(1)
+                                }}%</span
+                            >
                         </div>
-                        <div class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+                        <div
+                            class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary"
+                        >
                             <div
                                 class="h-full bg-green-600 transition-all duration-300"
-                                :style="{ width: `${stats.progress_percentage}%` }"
+                                :style="{
+                                    width: `${stats.progress_percentage}%`,
+                                }"
                             />
                         </div>
                     </div>
@@ -579,16 +638,26 @@ onUnmounted(() => {
                         class="mt-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400"
                     >
                         <CheckCircle class="size-4 shrink-0" />
-                        <span>All connections have been verified! The audit is now complete.</span>
+                        <span
+                            >All connections have been verified! The audit is
+                            now complete.</span
+                        >
                     </div>
                 </CardContent>
             </Card>
 
             <!-- Filter Controls - Stacked on tablet, inline on desktop -->
-            <div id="filter-controls" data-tour="filters" class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:flex-wrap lg:items-center">
+            <div
+                id="filter-controls"
+                data-tour="filters"
+                class="flex flex-col gap-3 md:gap-4 lg:flex-row lg:flex-wrap lg:items-center"
+            >
                 <!-- Comparison Filter -->
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-muted-foreground whitespace-nowrap">Comparison:</span>
+                    <span
+                        class="text-sm font-medium whitespace-nowrap text-muted-foreground"
+                        >Comparison:</span
+                    >
                     <select
                         v-model="comparisonStatusFilter"
                         :class="selectClass"
@@ -608,7 +677,10 @@ onUnmounted(() => {
 
                 <!-- Status Filter -->
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-muted-foreground whitespace-nowrap">Status:</span>
+                    <span
+                        class="text-sm font-medium whitespace-nowrap text-muted-foreground"
+                        >Status:</span
+                    >
                     <select
                         v-model="verificationStatusFilter"
                         :class="selectClass"
@@ -655,7 +727,10 @@ onUnmounted(() => {
                 </Button>
 
                 <!-- Bulk Actions -->
-                <div data-tour="bulk-verify" class="flex items-center gap-2 lg:ml-auto">
+                <div
+                    data-tour="bulk-verify"
+                    class="flex items-center gap-2 lg:ml-auto"
+                >
                     <BulkVerifyButton
                         v-if="selectedIds.size > 0"
                         :selected-count="selectedIds.size"
@@ -666,10 +741,15 @@ onUnmounted(() => {
             </div>
 
             <!-- Loading State -->
-            <div v-if="isLoading" class="flex items-center justify-center py-12">
+            <div
+                v-if="isLoading"
+                class="flex items-center justify-center py-12"
+            >
                 <div class="flex flex-col items-center gap-4">
                     <Spinner class="size-8" />
-                    <p class="text-sm text-muted-foreground">Loading verification items...</p>
+                    <p class="text-sm text-muted-foreground">
+                        Loading verification items...
+                    </p>
                 </div>
             </div>
 
@@ -680,10 +760,19 @@ onUnmounted(() => {
             >
                 <AlertTriangle class="size-12 text-amber-500" />
                 <div class="text-center">
-                    <h3 class="text-lg font-medium">Failed to load verifications</h3>
-                    <p class="mt-1 text-sm text-muted-foreground">{{ loadError }}</p>
+                    <h3 class="text-lg font-medium">
+                        Failed to load verifications
+                    </h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        {{ loadError }}
+                    </p>
                 </div>
-                <Button variant="outline" class="min-h-11 lg:min-h-9" @click="loadVerifications">Try Again</Button>
+                <Button
+                    variant="outline"
+                    class="min-h-11 lg:min-h-9"
+                    @click="loadVerifications"
+                    >Try Again</Button
+                >
             </div>
 
             <!-- Verification Table -->
@@ -707,9 +796,11 @@ onUnmounted(() => {
                 <ClipboardCheck class="mb-4 size-12 text-muted-foreground/50" />
                 <h3 class="text-lg font-medium">No verification items found</h3>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    {{ hasActiveFilters
-                        ? 'Try adjusting your filters.'
-                        : 'No connections to verify for this audit.' }}
+                    {{
+                        hasActiveFilters
+                            ? 'Try adjusting your filters.'
+                            : 'No connections to verify for this audit.'
+                    }}
                 </p>
             </div>
 
@@ -719,14 +810,20 @@ onUnmounted(() => {
                 class="flex flex-col items-center justify-between gap-4 sm:flex-row"
             >
                 <p class="text-sm text-muted-foreground">
-                    Showing page {{ currentPage }} of {{ lastPage }} ({{ total }} items)
+                    Showing page {{ currentPage }} of {{ lastPage }} ({{
+                        total
+                    }}
+                    items)
                 </p>
                 <div class="flex gap-3">
                     <Button
                         variant="outline"
                         class="min-h-11 min-w-20 lg:min-h-9"
                         :disabled="currentPage <= 1"
-                        @click="currentPage--; loadVerifications()"
+                        @click="
+                            currentPage--;
+                            loadVerifications();
+                        "
                     >
                         Previous
                     </Button>
@@ -734,7 +831,10 @@ onUnmounted(() => {
                         variant="outline"
                         class="min-h-11 min-w-20 lg:min-h-9"
                         :disabled="currentPage >= lastPage"
-                        @click="currentPage++; loadVerifications()"
+                        @click="
+                            currentPage++;
+                            loadVerifications();
+                        "
                     >
                         Next
                     </Button>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,12 +15,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type {
     PortData,
-    PortTypeOption,
-    PortSubtypeOption,
-    PortStatusOption,
     PortDirectionOption,
+    PortStatusOption,
+    PortSubtypeOption,
+    PortTypeOption,
     PortTypeValue,
 } from '@/types/ports';
+import { Form } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     deviceId: number;
@@ -39,9 +39,13 @@ const isOpen = ref(false);
 const selectedType = ref<PortTypeValue>(props.port.type);
 
 // Watch for port prop changes to update selectedType
-watch(() => props.port, (newPort) => {
-    selectedType.value = newPort.type;
-}, { immediate: true });
+watch(
+    () => props.port,
+    (newPort) => {
+        selectedType.value = newPort.type;
+    },
+    { immediate: true },
+);
 
 // Reset selected type when dialog opens
 watch(isOpen, (newVal) => {
@@ -55,7 +59,9 @@ const filteredSubtypeOptions = computed(() => {
     if (!selectedType.value) {
         return [];
     }
-    return props.subtypeOptions.filter(opt => opt.type === selectedType.value);
+    return props.subtypeOptions.filter(
+        (opt) => opt.type === selectedType.value,
+    );
 });
 
 // Filter directions based on selected type
@@ -63,7 +69,9 @@ const filteredDirectionOptions = computed(() => {
     if (!selectedType.value) {
         return [];
     }
-    return props.directionOptions.filter(opt => opt.types.includes(selectedType.value as PortTypeValue));
+    return props.directionOptions.filter((opt) =>
+        opt.types.includes(selectedType.value as PortTypeValue),
+    );
 });
 
 // Form action URL
@@ -88,7 +96,8 @@ const handleSuccess = () => {
             <DialogHeader>
                 <DialogTitle>Edit Port</DialogTitle>
                 <DialogDescription>
-                    Update the port configuration. Changing the type will reset subtype and direction options.
+                    Update the port configuration. Changing the type will reset
+                    subtype and direction options.
                 </DialogDescription>
             </DialogHeader>
 
@@ -104,7 +113,9 @@ const handleSuccess = () => {
 
                 <!-- Label -->
                 <div class="grid gap-2">
-                    <Label for="edit-port-label">Label <span class="text-red-500">*</span></Label>
+                    <Label for="edit-port-label"
+                        >Label <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="edit-port-label"
                         name="label"
@@ -118,13 +129,15 @@ const handleSuccess = () => {
 
                 <!-- Type -->
                 <div class="grid gap-2">
-                    <Label for="edit-port-type">Type <span class="text-red-500">*</span></Label>
+                    <Label for="edit-port-type"
+                        >Type <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="edit-port-type"
                         name="type"
                         v-model="selectedType"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="" disabled>Select type</option>
                         <option
@@ -140,16 +153,24 @@ const handleSuccess = () => {
 
                 <!-- Subtype (filtered by type) -->
                 <div class="grid gap-2">
-                    <Label for="edit-port-subtype">Subtype <span class="text-red-500">*</span></Label>
+                    <Label for="edit-port-subtype"
+                        >Subtype <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="edit-port-subtype"
                         name="subtype"
                         :value="selectedType === port.type ? port.subtype : ''"
                         required
                         :disabled="!selectedType"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <option value="" disabled>{{ selectedType ? 'Select subtype' : 'Select type first' }}</option>
+                        <option value="" disabled>
+                            {{
+                                selectedType
+                                    ? 'Select subtype'
+                                    : 'Select type first'
+                            }}
+                        </option>
                         <option
                             v-for="option in filteredSubtypeOptions"
                             :key="option.value"
@@ -167,9 +188,11 @@ const handleSuccess = () => {
                     <select
                         id="edit-port-direction"
                         name="direction"
-                        :value="selectedType === port.type ? port.direction : ''"
+                        :value="
+                            selectedType === port.type ? port.direction : ''
+                        "
                         :disabled="!selectedType"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="">Default direction</option>
                         <option
@@ -190,7 +213,7 @@ const handleSuccess = () => {
                         id="edit-port-status"
                         name="status"
                         :value="port.status"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option
                             v-for="option in statusOptions"
@@ -205,7 +228,11 @@ const handleSuccess = () => {
 
                 <DialogFooter class="gap-2 pt-4">
                     <DialogClose as-child>
-                        <Button type="button" variant="secondary" :disabled="processing">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            :disabled="processing"
+                        >
                             Cancel
                         </Button>
                     </DialogClose>

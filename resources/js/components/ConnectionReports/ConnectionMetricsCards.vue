@@ -8,9 +8,9 @@
  * - Cable length statistics (mean, min, max)
  */
 
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Cable, Network, Zap, Waves, Ruler } from 'lucide-vue-next';
+import { Cable, Network, Ruler, Waves, Zap } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface PortTypeDistributionItem {
     type: string;
@@ -35,7 +35,10 @@ interface Props {
 const props = defineProps<Props>();
 
 // Port type icon and color mapping
-const portTypeConfig: Record<string, { icon: typeof Cable; colorClass: string; bgClass: string }> = {
+const portTypeConfig: Record<
+    string,
+    { icon: typeof Cable; colorClass: string; bgClass: string }
+> = {
     ethernet: {
         icon: Network,
         colorClass: 'text-blue-600 dark:text-blue-400',
@@ -55,18 +58,20 @@ const portTypeConfig: Record<string, { icon: typeof Cable; colorClass: string; b
 
 // Get config for port type, with fallback
 const getPortTypeConfig = (type: string) => {
-    return portTypeConfig[type.toLowerCase()] ?? {
-        icon: Cable,
-        colorClass: 'text-gray-600 dark:text-gray-400',
-        bgClass: 'bg-gray-50 dark:bg-gray-900/20',
-    };
+    return (
+        portTypeConfig[type.toLowerCase()] ?? {
+            icon: Cable,
+            colorClass: 'text-gray-600 dark:text-gray-400',
+            bgClass: 'bg-gray-50 dark:bg-gray-900/20',
+        }
+    );
 };
 
 // Get port type items with icons
 const portTypeItems = computed(() => {
     return props.portTypeDistribution
-        .filter(item => item.count > 0)
-        .map(item => ({
+        .filter((item) => item.count > 0)
+        .map((item) => ({
             ...item,
             config: getPortTypeConfig(item.type),
         }));
@@ -88,7 +93,9 @@ const hasCableLengthData = computed(() => {
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Total Connections Card -->
         <Card class="transition-all duration-200 hover:shadow-md">
-            <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader
+                class="flex flex-row items-center justify-between space-y-0 pb-2"
+            >
                 <CardTitle class="text-sm font-medium text-muted-foreground">
                     Total Connections
                 </CardTitle>
@@ -110,7 +117,9 @@ const hasCableLengthData = computed(() => {
             :key="item.type"
             class="transition-all duration-200 hover:shadow-md"
         >
-            <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader
+                class="flex flex-row items-center justify-between space-y-0 pb-2"
+            >
                 <CardTitle class="text-sm font-medium text-muted-foreground">
                     {{ item.label }}
                 </CardTitle>
@@ -136,29 +145,41 @@ const hasCableLengthData = computed(() => {
     </div>
 
     <!-- Cable Length Statistics Card -->
-    <Card v-if="hasCableLengthData" class="mt-4 transition-all duration-200 hover:shadow-md">
-        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card
+        v-if="hasCableLengthData"
+        class="mt-4 transition-all duration-200 hover:shadow-md"
+    >
+        <CardHeader
+            class="flex flex-row items-center justify-between space-y-0 pb-2"
+        >
             <CardTitle class="flex items-center gap-2 text-base font-medium">
                 <Ruler class="size-4 text-muted-foreground" />
                 Cable Length Statistics
             </CardTitle>
             <span class="text-xs text-muted-foreground">
-                Based on {{ cableLengthStats.count }} connections with length data
+                Based on {{ cableLengthStats.count }} connections with length
+                data
             </span>
         </CardHeader>
         <CardContent>
             <div class="grid gap-4 sm:grid-cols-3">
                 <div class="text-center">
                     <p class="text-sm text-muted-foreground">Average</p>
-                    <p class="text-xl font-semibold">{{ formatLength(cableLengthStats.mean) }}</p>
+                    <p class="text-xl font-semibold">
+                        {{ formatLength(cableLengthStats.mean) }}
+                    </p>
                 </div>
                 <div class="text-center">
                     <p class="text-sm text-muted-foreground">Minimum</p>
-                    <p class="text-xl font-semibold">{{ formatLength(cableLengthStats.min) }}</p>
+                    <p class="text-xl font-semibold">
+                        {{ formatLength(cableLengthStats.min) }}
+                    </p>
                 </div>
                 <div class="text-center">
                     <p class="text-sm text-muted-foreground">Maximum</p>
-                    <p class="text-xl font-semibold">{{ formatLength(cableLengthStats.max) }}</p>
+                    <p class="text-xl font-semibold">
+                        {{ formatLength(cableLengthStats.max) }}
+                    </p>
                 </div>
             </div>
         </CardContent>

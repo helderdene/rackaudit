@@ -40,9 +40,13 @@ props.users.forEach((user) => {
 
 const updateRole = (userId: number) => {
     const role = selectedRoles.value[userId];
-    router.put(`/users/${userId}/role`, { role }, {
-        preserveScroll: true,
-    });
+    router.put(
+        `/users/${userId}/role`,
+        { role },
+        {
+            preserveScroll: true,
+        },
+    );
 };
 </script>
 
@@ -60,10 +64,26 @@ const updateRole = (userId: number) => {
                 <table class="w-full text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Name</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Email</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Role</th>
-                            <th class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Name
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Email
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Role
+                            </th>
+                            <th
+                                class="h-12 w-[100px] px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +97,7 @@ const updateRole = (userId: number) => {
                             <td class="p-4">
                                 <select
                                     v-model="selectedRoles[user.id]"
-                                    class="h-9 w-[180px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                                    class="h-9 w-[180px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                                 >
                                     <option
                                         v-for="role in availableRoles"
@@ -91,7 +111,9 @@ const updateRole = (userId: number) => {
                             <td class="p-4">
                                 <Button
                                     size="sm"
-                                    :disabled="selectedRoles[user.id] === user.role"
+                                    :disabled="
+                                        selectedRoles[user.id] === user.role
+                                    "
                                     @click="updateRole(user.id)"
                                 >
                                     Update

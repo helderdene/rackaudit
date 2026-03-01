@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
-import AuditTypeSelector from '@/components/audits/AuditTypeSelector.vue';
-import ScopeTypeSelector from '@/components/audits/ScopeTypeSelector.vue';
-import CascadingLocationSelect from '@/components/audits/CascadingLocationSelect.vue';
-import RackMultiSelect from '@/components/audits/RackMultiSelect.vue';
-import DeviceMultiSelect from '@/components/audits/DeviceMultiSelect.vue';
-import AuditMetadataForm from '@/components/audits/AuditMetadataForm.vue';
 import AssigneeMultiSelect from '@/components/audits/AssigneeMultiSelect.vue';
+import AuditMetadataForm from '@/components/audits/AuditMetadataForm.vue';
+import AuditTypeSelector from '@/components/audits/AuditTypeSelector.vue';
+import CascadingLocationSelect from '@/components/audits/CascadingLocationSelect.vue';
+import DeviceMultiSelect from '@/components/audits/DeviceMultiSelect.vue';
 import ImplementationFileStatus from '@/components/audits/ImplementationFileStatus.vue';
+import RackMultiSelect from '@/components/audits/RackMultiSelect.vue';
+import ScopeTypeSelector from '@/components/audits/ScopeTypeSelector.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { Form } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface DatacenterOption {
     id: number;
@@ -51,7 +51,7 @@ interface Props {
     scopeTypes: ScopeTypeOption[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 // Form state
 const selectedAuditType = ref<string>('');
@@ -79,7 +79,9 @@ const handleRoomsLoaded = (rooms: RoomOption[]): void => {
 };
 
 // Handle implementation file status change
-const handleImplementationFileStatusChanged = (hasApprovedFile: boolean): void => {
+const handleImplementationFileStatusChanged = (
+    hasApprovedFile: boolean,
+): void => {
     hasApprovedImplementationFile.value = hasApprovedFile;
 };
 
@@ -90,12 +92,17 @@ const showRackSelection = computed(() => {
 
 // Show device selection only when racks scope and racks are selected
 const showDeviceSelection = computed(() => {
-    return selectedScopeType.value === 'racks' && selectedRackIds.value.length > 0;
+    return (
+        selectedScopeType.value === 'racks' && selectedRackIds.value.length > 0
+    );
 });
 
 // Check if form can be submitted (blocked if connection audit without approved file)
 const canSubmit = computed(() => {
-    if (selectedAuditType.value === 'connection' && !hasApprovedImplementationFile.value) {
+    if (
+        selectedAuditType.value === 'connection' &&
+        !hasApprovedImplementationFile.value
+    ) {
         return false;
     }
     return true;
@@ -138,21 +145,47 @@ watch(selectedRackIds, (newRackIds) => {
         #default="{ errors, processing }"
     >
         <!-- Hidden form fields for array values -->
-        <template v-for="assigneeId in selectedAssigneeIds" :key="`assignee-${assigneeId}`">
+        <template
+            v-for="assigneeId in selectedAssigneeIds"
+            :key="`assignee-${assigneeId}`"
+        >
             <input type="hidden" name="assignee_ids[]" :value="assigneeId" />
         </template>
         <template v-for="rackId in selectedRackIds" :key="`rack-${rackId}`">
             <input type="hidden" name="rack_ids[]" :value="rackId" />
         </template>
-        <template v-for="deviceId in selectedDeviceIds" :key="`device-${deviceId}`">
+        <template
+            v-for="deviceId in selectedDeviceIds"
+            :key="`device-${deviceId}`"
+        >
             <input type="hidden" name="device_ids[]" :value="deviceId" />
         </template>
 
         <!-- Hidden fields for select values -->
-        <input v-if="selectedDatacenterId" type="hidden" name="datacenter_id" :value="selectedDatacenterId" />
-        <input v-if="selectedRoomId" type="hidden" name="room_id" :value="selectedRoomId" />
-        <input v-if="selectedAuditType" type="hidden" name="type" :value="selectedAuditType" />
-        <input v-if="selectedScopeType" type="hidden" name="scope_type" :value="selectedScopeType" />
+        <input
+            v-if="selectedDatacenterId"
+            type="hidden"
+            name="datacenter_id"
+            :value="selectedDatacenterId"
+        />
+        <input
+            v-if="selectedRoomId"
+            type="hidden"
+            name="room_id"
+            :value="selectedRoomId"
+        />
+        <input
+            v-if="selectedAuditType"
+            type="hidden"
+            name="type"
+            :value="selectedAuditType"
+        />
+        <input
+            v-if="selectedScopeType"
+            type="hidden"
+            name="scope_type"
+            :value="selectedScopeType"
+        />
 
         <!-- Section 1: Audit Type Selection -->
         <div class="space-y-3 sm:space-y-4">
@@ -197,7 +230,12 @@ watch(selectedRackIds, (newRackIds) => {
             </div>
 
             <!-- Implementation File Status (only for connection audits) -->
-            <div v-if="selectedAuditType === 'connection' && selectedDatacenterId" class="mt-4 sm:mt-6">
+            <div
+                v-if="
+                    selectedAuditType === 'connection' && selectedDatacenterId
+                "
+                class="mt-4 sm:mt-6"
+            >
                 <ImplementationFileStatus
                     :datacenter-id="selectedDatacenterId"
                     :audit-type="selectedAuditType"
@@ -247,7 +285,9 @@ watch(selectedRackIds, (newRackIds) => {
         </div>
 
         <!-- Submit Button - Responsive layout -->
-        <div class="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:gap-4 sm:pt-6">
+        <div
+            class="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:gap-4 sm:pt-6"
+        >
             <Button
                 type="submit"
                 :disabled="processing || !canSubmit"
@@ -257,8 +297,12 @@ watch(selectedRackIds, (newRackIds) => {
                 {{ processing ? 'Creating Audit...' : 'Create Audit' }}
             </Button>
 
-            <p v-if="!canSubmit && selectedAuditType === 'connection'" class="text-sm text-destructive">
-                Cannot create connection audit without an approved implementation file.
+            <p
+                v-if="!canSubmit && selectedAuditType === 'connection'"
+                class="text-sm text-destructive"
+            >
+                Cannot create connection audit without an approved
+                implementation file.
             </p>
         </div>
     </Form>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import HierarchicalPortSelector from '@/components/connections/HierarchicalPortSelector.vue';
 import { Button } from '@/components/ui/button';
@@ -17,13 +15,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { PortData } from '@/types/ports';
 import type {
     AvailablePortOption,
     CableTypeOption,
     HierarchicalFilterOptions,
 } from '@/types/connections';
 import { getCableTypesForPortType } from '@/types/connections';
+import type { PortData } from '@/types/ports';
+import { Form } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     /** Source port that will be connected from */
@@ -112,11 +112,13 @@ const selectClass =
                 </Button>
             </slot>
         </DialogTrigger>
-        <DialogContent class="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+        <DialogContent class="max-h-[90vh] overflow-y-auto sm:max-w-xl">
             <DialogHeader>
                 <DialogTitle>Create Connection</DialogTitle>
                 <DialogDescription>
-                    Connect this port to a destination port. Select the destination from the hierarchy and configure cable properties.
+                    Connect this port to a destination port. Select the
+                    destination from the hierarchy and configure cable
+                    properties.
                 </DialogDescription>
             </DialogHeader>
 
@@ -128,7 +130,11 @@ const selectClass =
                 v-slot="{ errors, processing }"
             >
                 <!-- Hidden source port ID -->
-                <input type="hidden" name="source_port_id" :value="sourcePort.id" />
+                <input
+                    type="hidden"
+                    name="source_port_id"
+                    :value="sourcePort.id"
+                />
                 <!-- Hidden destination port ID -->
                 <input
                     type="hidden"
@@ -142,9 +148,12 @@ const selectClass =
                         Source Port
                     </h4>
                     <div class="space-y-1">
-                        <p class="text-sm font-medium">{{ sourcePort.label }}</p>
+                        <p class="text-sm font-medium">
+                            {{ sourcePort.label }}
+                        </p>
                         <p class="text-xs text-muted-foreground">
-                            {{ sourcePort.type_label }} - {{ sourcePort.subtype_label }}
+                            {{ sourcePort.type_label }} -
+                            {{ sourcePort.subtype_label }}
                         </p>
                     </div>
                 </div>
@@ -168,16 +177,24 @@ const selectClass =
                     v-if="selectedDestinationPort"
                     class="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20"
                 >
-                    <h4 class="mb-2 text-sm font-medium text-green-800 dark:text-green-200">
+                    <h4
+                        class="mb-2 text-sm font-medium text-green-800 dark:text-green-200"
+                    >
                         Selected Destination
                     </h4>
                     <div class="space-y-1">
-                        <p class="text-sm font-medium text-green-900 dark:text-green-100">
+                        <p
+                            class="text-sm font-medium text-green-900 dark:text-green-100"
+                        >
                             {{ selectedDestinationPort.device_name }}
                         </p>
                         <p class="text-xs text-green-700 dark:text-green-300">
                             Port: {{ selectedDestinationPort.label }}
-                            {{ selectedDestinationPort.subtype_label ? `(${selectedDestinationPort.subtype_label})` : '' }}
+                            {{
+                                selectedDestinationPort.subtype_label
+                                    ? `(${selectedDestinationPort.subtype_label})`
+                                    : ''
+                            }}
                         </p>
                     </div>
                 </div>
@@ -213,7 +230,8 @@ const selectClass =
                     <!-- Cable Length -->
                     <div class="grid gap-2">
                         <Label for="create-cable-length">
-                            Cable Length (meters) <span class="text-red-500">*</span>
+                            Cable Length (meters)
+                            <span class="text-red-500">*</span>
                         </Label>
                         <Input
                             id="create-cable-length"
@@ -257,7 +275,11 @@ const selectClass =
 
                 <DialogFooter class="gap-2 pt-4">
                     <DialogClose as-child>
-                        <Button type="button" variant="secondary" :disabled="processing">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            :disabled="processing"
+                        >
                             Cancel
                         </Button>
                     </DialogClose>

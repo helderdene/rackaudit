@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +11,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 interface Props {
     userId: number;
@@ -47,11 +47,7 @@ const handleDelete = () => {
     <Dialog v-model:open="isOpen">
         <DialogTrigger as-child>
             <slot>
-                <Button
-                    variant="destructive"
-                    size="sm"
-                    :disabled="disabled"
-                >
+                <Button variant="destructive" size="sm" :disabled="disabled">
                     Delete
                 </Button>
             </slot>
@@ -61,15 +57,17 @@ const handleDelete = () => {
                 <DialogTitle>Delete User</DialogTitle>
                 <DialogDescription>
                     Are you sure you want to delete
-                    <span class="font-semibold">{{ userName }}</span>?
-                    This action cannot be undone.
+                    <span class="font-semibold">{{ userName }}</span
+                    >? This action cannot be undone.
                 </DialogDescription>
             </DialogHeader>
 
             <div
                 class="rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
             >
-                <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                <div
+                    class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                >
                     <p class="font-medium">Warning</p>
                     <p class="text-sm">
                         The user will be permanently removed from the system.

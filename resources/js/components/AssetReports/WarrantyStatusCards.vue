@@ -9,9 +9,9 @@
  * - Unknown (gray): Devices without warranty tracking
  */
 
-import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, AlertTriangle, XCircle, HelpCircle } from 'lucide-vue-next';
+import { AlertTriangle, HelpCircle, Shield, XCircle } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface WarrantyStatus {
     active: number;
@@ -100,15 +100,22 @@ const cards = computed(() => [
             :class="[
                 'relative overflow-hidden transition-all duration-200 hover:shadow-md',
                 card.borderClass,
-                card.highlight ? 'ring-2 ring-amber-300 dark:ring-amber-600' : '',
+                card.highlight
+                    ? 'ring-2 ring-amber-300 dark:ring-amber-600'
+                    : '',
             ]"
         >
-            <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader
+                class="flex flex-row items-center justify-between space-y-0 pb-2"
+            >
                 <CardTitle class="text-sm font-medium text-muted-foreground">
                     {{ card.title }}
                 </CardTitle>
                 <div :class="['rounded-full p-2', card.bgClass]">
-                    <component :is="card.icon" :class="['size-4', card.iconClass]" />
+                    <component
+                        :is="card.icon"
+                        :class="['size-4', card.iconClass]"
+                    />
                 </div>
             </CardHeader>
             <CardContent>
@@ -127,7 +134,7 @@ const cards = computed(() => [
                 <!-- Highlight indicator for expiring soon -->
                 <div
                     v-if="card.highlight && card.count > 0"
-                    class="absolute right-0 top-0 rounded-bl-lg bg-amber-500 px-2 py-0.5 text-xs font-medium text-white"
+                    class="absolute top-0 right-0 rounded-bl-lg bg-amber-500 px-2 py-0.5 text-xs font-medium text-white"
                 >
                     Action Needed
                 </div>

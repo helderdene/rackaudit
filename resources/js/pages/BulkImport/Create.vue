@@ -1,36 +1,45 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
-import { index, store } from '@/actions/App/Http/Controllers/BulkImportController';
-import { download, downloadCombined } from '@/actions/App/Http/Controllers/TemplateDownloadController';
-import FileDropzone from '@/components/imports/FileDropzone.vue';
+import { store } from '@/actions/App/Http/Controllers/BulkImportController';
+import {
+    download,
+    downloadCombined,
+} from '@/actions/App/Http/Controllers/TemplateDownloadController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import FileDropzone from '@/components/imports/FileDropzone.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { SelectOption } from '@/types/rooms';
+import { Head, router } from '@inertiajs/vue3';
 import {
-    Download,
-    Upload,
+    AlertCircle,
     Building2,
-    LayoutGrid,
-    Layers,
-    Server,
-    HardDrive,
     Cable,
+    Download,
     FileSpreadsheet,
+    HardDrive,
+    Layers,
+    LayoutGrid,
     Loader2,
-    AlertCircle
+    Server,
+    Upload,
 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface Props {
     entityTypeOptions: SelectOption[];
     maxFileSizeMB: number;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -94,7 +103,8 @@ const handleSubmit = async () => {
             if (errors.file) {
                 submitError.value = errors.file as string;
             } else {
-                submitError.value = 'An error occurred while uploading the file.';
+                submitError.value =
+                    'An error occurred while uploading the file.';
             }
         },
         onFinish: () => {
@@ -132,7 +142,8 @@ const handleDownloadCombinedTemplate = () => {
                             Upload File
                         </CardTitle>
                         <CardDescription>
-                            Select a CSV or XLSX file containing your import data. Maximum file size: {{ maxFileSizeMB }}MB.
+                            Select a CSV or XLSX file containing your import
+                            data. Maximum file size: {{ maxFileSizeMB }}MB.
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-6">
@@ -148,12 +159,14 @@ const handleDownloadCombinedTemplate = () => {
 
                         <!-- Entity type selector -->
                         <div class="space-y-2">
-                            <Label for="entity-type">Entity Type (Optional)</Label>
+                            <Label for="entity-type"
+                                >Entity Type (Optional)</Label
+                            >
                             <select
                                 id="entity-type"
                                 v-model="selectedEntityType"
                                 :disabled="isSubmitting"
-                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option value="">Auto-detect from file</option>
                                 <option
@@ -165,7 +178,8 @@ const handleDownloadCombinedTemplate = () => {
                                 </option>
                             </select>
                             <p class="text-xs text-muted-foreground">
-                                If not specified, the entity type will be detected based on the file columns.
+                                If not specified, the entity type will be
+                                detected based on the file columns.
                             </p>
                         </div>
 
@@ -184,7 +198,10 @@ const handleDownloadCombinedTemplate = () => {
                             class="w-full"
                             @click="handleSubmit"
                         >
-                            <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2
+                                v-if="isSubmitting"
+                                class="mr-2 h-4 w-4 animate-spin"
+                            />
                             <Upload v-else class="mr-2 h-4 w-4" />
                             {{ isSubmitting ? 'Uploading...' : 'Start Import' }}
                         </Button>
@@ -199,7 +216,8 @@ const handleDownloadCombinedTemplate = () => {
                             Download Templates
                         </CardTitle>
                         <CardDescription>
-                            Download pre-formatted templates with example data and dropdown validation for each entity type.
+                            Download pre-formatted templates with example data
+                            and dropdown validation for each entity type.
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-4">
@@ -217,8 +235,12 @@ const handleDownloadCombinedTemplate = () => {
                             <div class="absolute inset-0 flex items-center">
                                 <span class="w-full border-t" />
                             </div>
-                            <div class="relative flex justify-center text-xs uppercase">
-                                <span class="bg-card px-2 text-muted-foreground">Or download individual templates</span>
+                            <div
+                                class="relative flex justify-center text-xs uppercase"
+                            >
+                                <span class="bg-card px-2 text-muted-foreground"
+                                    >Or download individual templates</span
+                                >
                             </div>
                         </div>
 
@@ -231,19 +253,38 @@ const handleDownloadCombinedTemplate = () => {
                                 class="justify-start"
                                 @click="handleDownloadTemplate(template.value)"
                             >
-                                <component :is="template.icon" class="mr-2 h-4 w-4" />
+                                <component
+                                    :is="template.icon"
+                                    class="mr-2 h-4 w-4"
+                                />
                                 {{ template.label }}
                             </Button>
                         </div>
 
                         <!-- Help text -->
-                        <div class="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-                            <h4 class="mb-2 font-medium text-foreground">Template Tips</h4>
+                        <div
+                            class="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground"
+                        >
+                            <h4 class="mb-2 font-medium text-foreground">
+                                Template Tips
+                            </h4>
                             <ul class="list-inside list-disc space-y-1">
-                                <li>Templates include example data and required field markers</li>
-                                <li>Dropdown fields have pre-populated valid values</li>
-                                <li>Parent entities are referenced by name (e.g., datacenter_name)</li>
-                                <li>Delete example rows before importing your data</li>
+                                <li>
+                                    Templates include example data and required
+                                    field markers
+                                </li>
+                                <li>
+                                    Dropdown fields have pre-populated valid
+                                    values
+                                </li>
+                                <li>
+                                    Parent entities are referenced by name
+                                    (e.g., datacenter_name)
+                                </li>
+                                <li>
+                                    Delete example rows before importing your
+                                    data
+                                </li>
                             </ul>
                         </div>
                     </CardContent>

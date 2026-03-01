@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ImplementationFileList, { type ImplementationFile } from './ImplementationFileList.vue';
-import UploadImplementationFileDialog from './UploadImplementationFileDialog.vue';
+import { router } from '@inertiajs/vue3';
 import { FileText } from 'lucide-vue-next';
+import ImplementationFileList, {
+    type ImplementationFile,
+} from './ImplementationFileList.vue';
+import UploadImplementationFileDialog from './UploadImplementationFileDialog.vue';
 
 interface Props {
     files: ImplementationFile[];
@@ -12,7 +14,7 @@ interface Props {
     datacenterId: number;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 /**
  * Refresh the page to get updated file list after upload

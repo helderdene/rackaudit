@@ -6,22 +6,22 @@
  * Uses green color for visual distinction from capacity chart.
  */
 
-import { computed, onMounted, ref } from 'vue';
-import { Line } from 'vue-chartjs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    Filler,
-    type ChartOptions,
     type ChartData,
+    type ChartOptions,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { computed, onMounted, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,7 +32,7 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    Filler
+    Filler,
 );
 
 interface Props {
@@ -53,7 +53,10 @@ onMounted(() => {
  * Check if there is valid data to display
  */
 const hasData = computed(() => {
-    return props.data.length > 0 && props.data.some((val) => val !== null && val !== undefined);
+    return (
+        props.data.length > 0 &&
+        props.data.some((val) => val !== null && val !== undefined)
+    );
 });
 
 /**
@@ -61,7 +64,9 @@ const hasData = computed(() => {
  */
 const yAxisMax = computed(() => {
     if (!hasData.value) return 100;
-    const maxValue = Math.max(...props.data.filter((v) => v !== null && v !== undefined));
+    const maxValue = Math.max(
+        ...props.data.filter((v) => v !== null && v !== undefined),
+    );
     // Add 20% padding and round to a nice number
     const padded = maxValue * 1.2;
     if (padded <= 50) return Math.ceil(padded / 10) * 10;
@@ -197,14 +202,21 @@ const trendChange = computed(() => {
     >
         <CardHeader class="pb-2">
             <div class="flex items-center justify-between">
-                <CardTitle class="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                <CardTitle
+                    class="text-sm font-medium text-muted-foreground dark:text-muted-foreground"
+                >
                     Device Count Trend
                 </CardTitle>
                 <div v-if="latestValue !== null" class="text-right">
-                    <span class="text-lg font-bold text-foreground dark:text-foreground">
+                    <span
+                        class="text-lg font-bold text-foreground dark:text-foreground"
+                    >
                         {{ latestValue.toLocaleString() }}
                     </span>
-                    <span v-if="trendDirection && trendChange !== null" class="ml-2 text-xs">
+                    <span
+                        v-if="trendDirection && trendChange !== null"
+                        class="ml-2 text-xs"
+                    >
                         <span
                             v-if="trendDirection === 'up'"
                             class="text-green-600 dark:text-green-400"
@@ -241,7 +253,11 @@ const trendChange = computed(() => {
                                 <path d="M6 9l6 6 6-6" />
                             </svg>
                         </span>
-                        <span v-else class="text-muted-foreground" title="No change">
+                        <span
+                            v-else
+                            class="text-muted-foreground"
+                            title="No change"
+                        >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 class="inline-block size-4"
@@ -284,7 +300,9 @@ const trendChange = computed(() => {
                         d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
                     />
                 </svg>
-                <p class="text-sm text-muted-foreground">No device data available</p>
+                <p class="text-sm text-muted-foreground">
+                    No device data available
+                </p>
                 <p class="mt-1 text-xs text-muted-foreground/70">
                     Data will appear after snapshots are captured
                 </p>

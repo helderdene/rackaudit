@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import RackController from '@/actions/App/Http/Controllers/RackController';
 import { cn } from '@/lib/utils';
 import type { PlaceholderDevice, RackData } from '@/types/rooms';
+import { router } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 interface Props {
     /** The rack data containing u_height */
@@ -76,7 +76,11 @@ const occupiedSlots = computed(() => {
     const occupied = new Set<number>();
     for (const device of props.devices) {
         if (device.start_u !== undefined) {
-            for (let u = device.start_u; u < device.start_u + device.u_size; u++) {
+            for (
+                let u = device.start_u;
+                u < device.start_u + device.u_size;
+                u++
+            ) {
                 occupied.add(u);
             }
         }
@@ -95,7 +99,9 @@ function isDeviceStart(uNumber: number): boolean {
  * Check if a U position is occupied but not a device start (middle of multi-U device)
  */
 function isPartOfDevice(uNumber: number): boolean {
-    return occupiedSlots.value.has(uNumber) && !deviceStartMap.value.has(uNumber);
+    return (
+        occupiedSlots.value.has(uNumber) && !deviceStartMap.value.has(uNumber)
+    );
 }
 
 /**
@@ -170,10 +176,12 @@ function shouldShowULabel(uNumber: number): boolean {
 <template>
     <div
         data-testid="mini-elevation-preview"
-        :class="cn(
-            'relative w-[300px] cursor-pointer rounded-lg border bg-card p-2 shadow-sm',
-            'transition-all duration-200 hover:shadow-md hover:ring-2 hover:ring-primary/30'
-        )"
+        :class="
+            cn(
+                'relative w-[300px] cursor-pointer rounded-lg border bg-card p-2 shadow-sm',
+                'transition-all duration-200 hover:shadow-md hover:ring-2 hover:ring-primary/30',
+            )
+        "
         role="button"
         tabindex="0"
         aria-label="Click to view full elevation diagram"
@@ -187,7 +195,9 @@ function shouldShowULabel(uNumber: number): boolean {
             :style="{ height: `${previewHeight}px` }"
         >
             <!-- U labels column -->
-            <div class="flex w-8 flex-col justify-between py-1 text-[9px] text-muted-foreground">
+            <div
+                class="flex w-8 flex-col justify-between py-1 text-[9px] text-muted-foreground"
+            >
                 <template v-for="uNumber in uSlots" :key="`label-${uNumber}`">
                     <div
                         v-if="shouldShowULabel(uNumber)"
@@ -196,10 +206,7 @@ function shouldShowULabel(uNumber: number): boolean {
                     >
                         U{{ uNumber }}
                     </div>
-                    <div
-                        v-else
-                        :style="{ height: `${slotHeight}px` }"
-                    />
+                    <div v-else :style="{ height: `${slotHeight}px` }" />
                 </template>
             </div>
 
@@ -211,14 +218,20 @@ function shouldShowULabel(uNumber: number): boolean {
                         <!-- Device block -->
                         <div
                             v-if="isDeviceStart(uNumber)"
-                            :class="cn(
-                                'flex items-center justify-center rounded-sm px-1 text-[9px] font-medium',
-                                getDeviceColorClass(getDeviceAt(uNumber)!)
-                            )"
-                            :style="{ height: `${getDeviceHeight(getDeviceAt(uNumber)!)}px` }"
+                            :class="
+                                cn(
+                                    'flex items-center justify-center rounded-sm px-1 text-[9px] font-medium',
+                                    getDeviceColorClass(getDeviceAt(uNumber)!),
+                                )
+                            "
+                            :style="{
+                                height: `${getDeviceHeight(getDeviceAt(uNumber)!)}px`,
+                            }"
                             :title="`${getDeviceAt(uNumber)!.name} (${getDeviceAt(uNumber)!.u_size}U at U${uNumber})`"
                         >
-                            <span class="truncate">{{ getDeviceAt(uNumber)!.name }}</span>
+                            <span class="truncate">{{
+                                getDeviceAt(uNumber)!.name
+                            }}</span>
                         </div>
 
                         <!-- Empty slot -->

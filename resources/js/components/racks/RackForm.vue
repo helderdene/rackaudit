@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { Form, router } from '@inertiajs/vue3';
 import RackController from '@/actions/App/Http/Controllers/RackController';
 import RowController from '@/actions/App/Http/Controllers/RowController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -9,7 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { DatacenterReference, RoomReference, RowReference, RackData, SelectOption, PduOption } from '@/types/rooms';
+import type {
+    DatacenterReference,
+    PduOption,
+    RackData,
+    RoomReference,
+    RowReference,
+    SelectOption,
+} from '@/types/rooms';
+import { Form, router } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     mode: 'create' | 'edit';
@@ -43,14 +50,20 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // Track selected PDUs for multi-select
-const selectedPdus = ref<number[]>(props.selectedPduIds || props.rack?.pdu_ids || []);
+const selectedPdus = ref<number[]>(
+    props.selectedPduIds || props.rack?.pdu_ids || [],
+);
 
 // Watch for prop changes in edit mode
-watch(() => props.selectedPduIds, (newVal) => {
-    if (newVal) {
-        selectedPdus.value = newVal;
-    }
-}, { immediate: true });
+watch(
+    () => props.selectedPduIds,
+    (newVal) => {
+        if (newVal) {
+            selectedPdus.value = newVal;
+        }
+    },
+    { immediate: true },
+);
 
 // Determine form action based on mode
 const formAction = computed(() => {
@@ -77,11 +90,13 @@ const formAction = computed(() => {
 
 // Cancel navigation - go back to Row show page
 const handleCancel = () => {
-    router.get(RowController.show.url({
-        datacenter: props.datacenter.id,
-        room: props.room.id,
-        row: props.row.id,
-    }));
+    router.get(
+        RowController.show.url({
+            datacenter: props.datacenter.id,
+            room: props.room.id,
+            row: props.row.id,
+        }),
+    );
 };
 
 // Default position for new racks
@@ -136,7 +151,12 @@ const specsJson = computed(() => {
         v-slot="{ errors, processing, recentlySuccessful }"
     >
         <!-- Hidden method field for PUT request in edit mode -->
-        <input v-if="mode === 'edit'" type="hidden" name="_method" value="PUT" />
+        <input
+            v-if="mode === 'edit'"
+            type="hidden"
+            name="_method"
+            value="PUT"
+        />
 
         <!-- Hidden fields for selected PDU IDs -->
         <input
@@ -156,7 +176,9 @@ const specsJson = computed(() => {
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-2">
-                    <Label for="name">Name <span class="text-red-500">*</span></Label>
+                    <Label for="name"
+                        >Name <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="name"
                         name="name"
@@ -169,7 +191,9 @@ const specsJson = computed(() => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="position">Position <span class="text-red-500">*</span></Label>
+                    <Label for="position"
+                        >Position <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="position"
                         name="position"
@@ -183,13 +207,15 @@ const specsJson = computed(() => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="u_height">U-Height <span class="text-red-500">*</span></Label>
+                    <Label for="u_height"
+                        >U-Height <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="u_height"
                         name="u_height"
                         :value="defaultUHeight"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="" disabled>Select U-Height</option>
                         <option
@@ -204,13 +230,15 @@ const specsJson = computed(() => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="status">Status <span class="text-red-500">*</span></Label>
+                    <Label for="status"
+                        >Status <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="status"
                         name="status"
                         :value="rack.status ?? ''"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="" disabled>Select status</option>
                         <option
@@ -316,7 +344,8 @@ const specsJson = computed(() => {
                         class="font-mono text-sm"
                     />
                     <p class="text-xs text-muted-foreground">
-                        Enter custom key-value pairs as valid JSON. Leave empty if not needed.
+                        Enter custom key-value pairs as valid JSON. Leave empty
+                        if not needed.
                     </p>
                     <InputError :message="errors.specs" />
                 </div>
@@ -332,8 +361,12 @@ const specsJson = computed(() => {
 
             <div class="grid gap-2">
                 <Label>Available PDUs</Label>
-                <div v-if="pduOptions.length === 0" class="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
-                    No PDUs available for assignment. PDUs must be assigned to this room or row first.
+                <div
+                    v-if="pduOptions.length === 0"
+                    class="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground"
+                >
+                    No PDUs available for assignment. PDUs must be assigned to
+                    this room or row first.
                 </div>
                 <div v-else class="max-h-48 overflow-y-auto rounded-md border">
                     <div
@@ -351,12 +384,23 @@ const specsJson = computed(() => {
                         />
                         <div class="flex-1">
                             <p class="text-sm font-medium">{{ pdu.name }}</p>
-                            <p v-if="pdu.model" class="text-xs text-muted-foreground">{{ pdu.model }}</p>
+                            <p
+                                v-if="pdu.model"
+                                class="text-xs text-muted-foreground"
+                            >
+                                {{ pdu.model }}
+                            </p>
                         </div>
                     </div>
                 </div>
-                <p v-if="selectedPdus.length > 0" class="text-xs text-muted-foreground">
-                    {{ selectedPdus.length }} PDU{{ selectedPdus.length === 1 ? '' : 's' }} selected
+                <p
+                    v-if="selectedPdus.length > 0"
+                    class="text-xs text-muted-foreground"
+                >
+                    {{ selectedPdus.length }} PDU{{
+                        selectedPdus.length === 1 ? '' : 's'
+                    }}
+                    selected
                 </p>
                 <InputError :message="errors['pdu_ids']" />
                 <InputError :message="errors['pdu_ids.0']" />
@@ -366,7 +410,13 @@ const specsJson = computed(() => {
         <!-- Submit Buttons -->
         <div class="flex items-center gap-4">
             <Button :disabled="processing" type="submit">
-                {{ processing ? 'Saving...' : (mode === 'create' ? 'Create Rack' : 'Save Changes') }}
+                {{
+                    processing
+                        ? 'Saving...'
+                        : mode === 'create'
+                          ? 'Create Rack'
+                          : 'Save Changes'
+                }}
             </Button>
             <Button
                 type="button"
@@ -383,7 +433,10 @@ const specsJson = computed(() => {
                 leave-active-class="transition ease-in-out"
                 leave-to-class="opacity-0"
             >
-                <p v-show="recentlySuccessful" class="text-sm text-neutral-600 dark:text-neutral-400">
+                <p
+                    v-show="recentlySuccessful"
+                    class="text-sm text-neutral-600 dark:text-neutral-400"
+                >
                     Saved.
                 </p>
             </Transition>

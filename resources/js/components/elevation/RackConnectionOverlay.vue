@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import axios from 'axios';
 import { diagramPage } from '@/actions/App/Http/Controllers/ConnectionController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,12 +9,15 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Cable, ExternalLink, Loader2 } from 'lucide-vue-next';
-import type { PlaceholderDevice, RackFace } from '@/types/rooms';
 import type {
-    DiagramConnectionEdge,
     CableTypeValue,
+    DiagramConnectionEdge,
 } from '@/types/connections';
+import type { PlaceholderDevice, RackFace } from '@/types/rooms';
+import { Link } from '@inertiajs/vue3';
+import axios from 'axios';
+import { Cable, ExternalLink, Loader2 } from 'lucide-vue-next';
+import { computed, onMounted, ref, watch } from 'vue';
 
 interface ConnectionData {
     id: string;
@@ -85,7 +85,9 @@ const devicePositionMap = computed(() => {
 const faceConnections = computed(() => {
     return connections.value.filter((conn) => {
         const sourceOnFace = devicePositionMap.value.has(conn.source_device_id);
-        const destOnFace = devicePositionMap.value.has(conn.destination_device_id);
+        const destOnFace = devicePositionMap.value.has(
+            conn.destination_device_id,
+        );
         // Include connection if at least one device is on this face
         return sourceOnFace || destOnFace;
     });
@@ -103,12 +105,11 @@ function getDeviceCenterY(deviceId: number): number | null {
     // startU is the bottom U position of the device
     // We need to account for: total height, slot height, and device height
     const slotGap = 4; // gap-1 = 0.25rem = 4px
-    const totalHeight = props.uHeight * (props.slotHeight + slotGap);
 
     // Device center Y from the top of the container
     const deviceTopU = position.startU + position.height - 1;
     const deviceBottomFromTop = props.uHeight - deviceTopU;
-    const deviceCenterFromTop = deviceBottomFromTop + (position.height / 2);
+    const deviceCenterFromTop = deviceBottomFromTop + position.height / 2;
 
     return deviceCenterFromTop * (props.slotHeight + slotGap);
 }
@@ -135,7 +136,9 @@ function getConnectionColor(conn: ConnectionData): string {
         };
         const normalizedColor = conn.cable_color.toLowerCase();
         if (colorMap[normalizedColor]) {
-            return isDark ? colorMap[normalizedColor].dark : colorMap[normalizedColor].light;
+            return isDark
+                ? colorMap[normalizedColor].dark
+                : colorMap[normalizedColor].light;
         }
         return isDark ? '#9ca3af' : '#6b7280';
     }
@@ -163,10 +166,9 @@ async function fetchConnections() {
     error.value = null;
 
     try {
-        const response = await axios.get<{ data: { edges: DiagramConnectionEdge[] } }>(
-            '/connections/diagram',
-            { params: { rack_id: props.rackId } },
-        );
+        const response = await axios.get<{
+            data: { edges: DiagramConnectionEdge[] };
+        }>('/connections/diagram', { params: { rack_id: props.rackId } });
 
         connections.value = response.data.data.edges.map((edge) => ({
             id: edge.id,
@@ -206,7 +208,9 @@ function handleConnectionLeave() {
 }
 
 // Connection diagram URL for this rack
-const connectionDiagramUrl = computed(() => diagramPage.url({ query: { rack_id: props.rackId } }));
+const connectionDiagramUrl = computed(() =>
+    diagramPage.url({ query: { rack_id: props.rackId } }),
+);
 
 // Fetch on mount and when rack ID changes
 onMounted(fetchConnections);
@@ -216,15 +220,28 @@ watch(() => props.rackId, fetchConnections);
 <template>
     <div class="flex gap-2">
         <!-- Connection lines overlay -->
-        <div class="relative shrink-0" :style="{ width: `${svgWidth}px`, height: `${totalHeight}px` }">
+        <div
+            class="relative shrink-0"
+            :style="{ width: `${svgWidth}px`, height: `${totalHeight}px` }"
+        >
             <!-- Loading state -->
-            <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
-                <Loader2 class="size-4 animate-spin text-muted-foreground dark:text-slate-400" />
+            <div
+                v-if="isLoading"
+                class="absolute inset-0 flex items-center justify-center"
+            >
+                <Loader2
+                    class="size-4 animate-spin text-muted-foreground dark:text-slate-400"
+                />
             </div>
 
             <!-- Error state -->
-            <div v-else-if="error" class="absolute inset-0 flex items-center justify-center">
-                <span class="text-xs text-destructive dark:text-red-400">!</span>
+            <div
+                v-else-if="error"
+                class="absolute inset-0 flex items-center justify-center"
+            >
+                <span class="text-xs text-destructive dark:text-red-400"
+                    >!</span
+                >
             </div>
 
             <!-- SVG Connection lines -->
@@ -236,30 +253,77 @@ watch(() => props.rackId, fetchConnections);
             >
                 <template v-for="conn in faceConnections" :key="conn.id">
                     <!-- Only draw lines for connections where both devices are on this face -->
-                    <template v-if="getDeviceCenterY(conn.source_device_id) !== null && getDeviceCenterY(conn.destination_device_id) !== null">
+                    <template
+                        v-if="
+                            getDeviceCenterY(conn.source_device_id) !== null &&
+                            getDeviceCenterY(conn.destination_device_id) !==
+                                null
+                        "
+                    >
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger as-child>
                                     <line
                                         :x1="4"
-                                        :y1="getDeviceCenterY(conn.source_device_id)!"
+                                        :y1="
+                                            getDeviceCenterY(
+                                                conn.source_device_id,
+                                            )!
+                                        "
                                         :x2="4"
-                                        :y2="getDeviceCenterY(conn.destination_device_id)!"
+                                        :y2="
+                                            getDeviceCenterY(
+                                                conn.destination_device_id,
+                                            )!
+                                        "
                                         :stroke="getConnectionColor(conn)"
-                                        :stroke-width="hoveredConnection === conn.id ? 4 : 2"
+                                        :stroke-width="
+                                            hoveredConnection === conn.id
+                                                ? 4
+                                                : 2
+                                        "
                                         stroke-linecap="round"
                                         class="cursor-pointer transition-all"
-                                        @mouseenter="handleConnectionHover(conn.id)"
+                                        @mouseenter="
+                                            handleConnectionHover(conn.id)
+                                        "
                                         @mouseleave="handleConnectionLeave"
                                     />
                                 </TooltipTrigger>
-                                <TooltipContent side="left" class="max-w-[200px] dark:bg-slate-800 dark:border-slate-600">
+                                <TooltipContent
+                                    side="left"
+                                    class="max-w-[200px] dark:border-slate-600 dark:bg-slate-800"
+                                >
                                     <div class="space-y-1 text-xs">
-                                        <div class="font-medium dark:text-slate-100">Connection</div>
-                                        <div class="dark:text-slate-300">{{ getDeviceName(conn.source_device_id) }}</div>
-                                        <div class="text-muted-foreground dark:text-slate-400">to</div>
-                                        <div class="dark:text-slate-300">{{ getDeviceName(conn.destination_device_id) }}</div>
-                                        <Badge v-if="conn.connection_count > 1" variant="secondary" class="text-[10px]">
+                                        <div
+                                            class="font-medium dark:text-slate-100"
+                                        >
+                                            Connection
+                                        </div>
+                                        <div class="dark:text-slate-300">
+                                            {{
+                                                getDeviceName(
+                                                    conn.source_device_id,
+                                                )
+                                            }}
+                                        </div>
+                                        <div
+                                            class="text-muted-foreground dark:text-slate-400"
+                                        >
+                                            to
+                                        </div>
+                                        <div class="dark:text-slate-300">
+                                            {{
+                                                getDeviceName(
+                                                    conn.destination_device_id,
+                                                )
+                                            }}
+                                        </div>
+                                        <Badge
+                                            v-if="conn.connection_count > 1"
+                                            variant="secondary"
+                                            class="text-[10px]"
+                                        >
                                             {{ conn.connection_count }} links
                                         </Badge>
                                     </div>
@@ -286,7 +350,11 @@ watch(() => props.rackId, fetchConnections);
 
                     <!-- Show indicator for external connections (device not on this face) -->
                     <template v-else>
-                        <template v-if="getDeviceCenterY(conn.source_device_id) !== null">
+                        <template
+                            v-if="
+                                getDeviceCenterY(conn.source_device_id) !== null
+                            "
+                        >
                             <circle
                                 :cx="4"
                                 :cy="getDeviceCenterY(conn.source_device_id)!"
@@ -299,19 +367,32 @@ watch(() => props.rackId, fetchConnections);
                             />
                             <line
                                 :x1="4"
-                                :y1="getDeviceCenterY(conn.source_device_id)! - 4"
+                                :y1="
+                                    getDeviceCenterY(conn.source_device_id)! - 4
+                                "
                                 :x2="svgWidth - 4"
-                                :y2="getDeviceCenterY(conn.source_device_id)! - 8"
+                                :y2="
+                                    getDeviceCenterY(conn.source_device_id)! - 8
+                                "
                                 :stroke="getConnectionColor(conn)"
                                 stroke-width="1"
                                 stroke-dasharray="2 2"
                                 class="pointer-events-none"
                             />
                         </template>
-                        <template v-if="getDeviceCenterY(conn.destination_device_id) !== null">
+                        <template
+                            v-if="
+                                getDeviceCenterY(conn.destination_device_id) !==
+                                null
+                            "
+                        >
                             <circle
                                 :cx="4"
-                                :cy="getDeviceCenterY(conn.destination_device_id)!"
+                                :cy="
+                                    getDeviceCenterY(
+                                        conn.destination_device_id,
+                                    )!
+                                "
                                 r="4"
                                 :fill="getConnectionColor(conn)"
                                 fill-opacity="0.5"
@@ -321,9 +402,17 @@ watch(() => props.rackId, fetchConnections);
                             />
                             <line
                                 :x1="4"
-                                :y1="getDeviceCenterY(conn.destination_device_id)! - 4"
+                                :y1="
+                                    getDeviceCenterY(
+                                        conn.destination_device_id,
+                                    )! - 4
+                                "
                                 :x2="svgWidth - 4"
-                                :y2="getDeviceCenterY(conn.destination_device_id)! - 8"
+                                :y2="
+                                    getDeviceCenterY(
+                                        conn.destination_device_id,
+                                    )! - 8
+                                "
                                 :stroke="getConnectionColor(conn)"
                                 stroke-width="1"
                                 stroke-dasharray="2 2"
@@ -338,7 +427,11 @@ watch(() => props.rackId, fetchConnections);
         <!-- Connection legend/info with dark mode -->
         <div v-if="faceConnections.length > 0" class="flex flex-col gap-1 pt-1">
             <Link :href="connectionDiagramUrl">
-                <Button variant="ghost" size="sm" class="h-6 gap-1 text-xs dark:hover:bg-slate-700">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    class="h-6 gap-1 text-xs dark:hover:bg-slate-700"
+                >
                     <Cable class="size-3" />
                     {{ faceConnections.length }}
                     <ExternalLink class="size-3" />

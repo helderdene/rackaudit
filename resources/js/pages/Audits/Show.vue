@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
 import AuditReportController from '@/actions/App/Http/Controllers/AuditReportController';
 import DatacenterController from '@/actions/App/Http/Controllers/DatacenterController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Building2, Calendar, Users, FileText, ClipboardCheck, Play, ArrowRight, CheckCircle, XCircle, AlertTriangle, HelpCircle, Download, FileBarChart, Loader2 } from 'lucide-vue-next';
-import { ref, computed } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import {
+    AlertTriangle,
+    ArrowRight,
+    Building2,
+    Calendar,
+    CheckCircle,
+    ClipboardCheck,
+    Download,
+    FileBarChart,
+    FileText,
+    HelpCircle,
+    Loader2,
+    Play,
+    Users,
+    XCircle,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface ProgressStats {
     total: number;
@@ -116,7 +131,8 @@ const continueAuditUrl = computed(() => {
 
 // Get status badge classes
 const getStatusBadgeClass = (status: string): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (status) {
         case 'pending':
             return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200`;
@@ -133,7 +149,8 @@ const getStatusBadgeClass = (status: string): string => {
 
 // Get type badge classes
 const getTypeBadgeClass = (type: string): string => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
+    const baseClasses =
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium';
     switch (type) {
         case 'connection':
             return `${baseClasses} bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200`;
@@ -172,11 +189,15 @@ const formatDateTime = (dateString: string | null): string => {
  */
 function startAudit(): void {
     isStarting.value = true;
-    router.post(AuditController.startExecution.url(props.audit.id), {}, {
-        onFinish: () => {
-            isStarting.value = false;
+    router.post(
+        AuditController.startExecution.url(props.audit.id),
+        {},
+        {
+            onFinish: () => {
+                isStarting.value = false;
+            },
         },
-    });
+    );
 }
 
 /**
@@ -184,16 +205,24 @@ function startAudit(): void {
  */
 function generateReport(): void {
     isGeneratingReport.value = true;
-    router.post(AuditReportController.generate.url(props.audit.id), {}, {
-        onFinish: () => {
-            isGeneratingReport.value = false;
+    router.post(
+        AuditReportController.generate.url(props.audit.id),
+        {},
+        {
+            onFinish: () => {
+                isGeneratingReport.value = false;
+            },
         },
-    });
+    );
 }
 
 // Check if we should show start button (for either audit type)
-const canStartAnyAudit = computed(() => props.can_start_audit || props.can_start_inventory_audit);
-const canContinueAnyAudit = computed(() => props.can_continue_audit || props.can_continue_inventory_audit);
+const canStartAnyAudit = computed(
+    () => props.can_start_audit || props.can_start_inventory_audit,
+);
+const canContinueAnyAudit = computed(
+    () => props.can_continue_audit || props.can_continue_inventory_audit,
+);
 
 // Get completion message based on audit type
 const completionMessage = computed(() => {
@@ -210,11 +239,15 @@ const completionMessage = computed(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <div>
                     <HeadingSmall
                         :title="audit.name"
-                        :description="audit.description || 'No description provided.'"
+                        :description="
+                            audit.description || 'No description provided.'
+                        "
                     />
                     <div class="mt-2 flex gap-2">
                         <span :class="getTypeBadgeClass(audit.type)">
@@ -233,9 +266,16 @@ const completionMessage = computed(() => {
                         variant="outline"
                         @click="generateReport"
                     >
-                        <Loader2 v-if="isGeneratingReport" class="mr-1 size-4 animate-spin" />
+                        <Loader2
+                            v-if="isGeneratingReport"
+                            class="mr-1 size-4 animate-spin"
+                        />
                         <FileBarChart v-else class="mr-1 size-4" />
-                        {{ isGeneratingReport ? 'Generating...' : 'Generate Report' }}
+                        {{
+                            isGeneratingReport
+                                ? 'Generating...'
+                                : 'Generate Report'
+                        }}
                     </Button>
 
                     <!-- Start Audit Button (works for both audit types) -->
@@ -274,52 +314,101 @@ const completionMessage = computed(() => {
                 <CardContent>
                     <div class="flex flex-wrap gap-4 md:gap-6">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium text-muted-foreground">Total:</span>
-                            <Badge variant="secondary" class="text-base">{{ progress_stats.total }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Total:</span
+                            >
+                            <Badge variant="secondary" class="text-base">{{
+                                progress_stats.total
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <CheckCircle class="size-4 text-green-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Verified:</span>
-                            <Badge class="bg-green-600 text-base">{{ progress_stats.verified }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Verified:</span
+                            >
+                            <Badge class="bg-green-600 text-base">{{
+                                progress_stats.verified
+                            }}</Badge>
                         </div>
                         <!-- Not Found (inventory audits only) -->
-                        <div v-if="isInventoryAudit && progress_stats.not_found !== undefined" class="flex items-center gap-2">
+                        <div
+                            v-if="
+                                isInventoryAudit &&
+                                progress_stats.not_found !== undefined
+                            "
+                            class="flex items-center gap-2"
+                        >
                             <XCircle class="size-4 text-red-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Not Found:</span>
-                            <Badge variant="destructive" class="text-base">{{ progress_stats.not_found }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Not Found:</span
+                            >
+                            <Badge variant="destructive" class="text-base">{{
+                                progress_stats.not_found
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <AlertTriangle class="size-4 text-yellow-600" />
-                            <span class="text-sm font-medium text-muted-foreground">Discrepant:</span>
-                            <Badge variant="warning" class="text-base">{{ progress_stats.discrepant }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Discrepant:</span
+                            >
+                            <Badge variant="warning" class="text-base">{{
+                                progress_stats.discrepant
+                            }}</Badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <HelpCircle class="size-4 text-gray-500" />
-                            <span class="text-sm font-medium text-muted-foreground">Pending:</span>
-                            <Badge variant="outline" class="text-base">{{ progress_stats.pending }}</Badge>
+                            <span
+                                class="text-sm font-medium text-muted-foreground"
+                                >Pending:</span
+                            >
+                            <Badge variant="outline" class="text-base">{{
+                                progress_stats.pending
+                            }}</Badge>
                         </div>
                     </div>
 
                     <!-- Progress bar -->
                     <div class="mt-4">
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-muted-foreground">Completion</span>
-                            <span class="font-medium">{{ progress_stats.progress_percentage.toFixed(1) }}%</span>
+                            <span class="text-muted-foreground"
+                                >Completion</span
+                            >
+                            <span class="font-medium"
+                                >{{
+                                    progress_stats.progress_percentage.toFixed(
+                                        1,
+                                    )
+                                }}%</span
+                            >
                         </div>
-                        <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+                        <div
+                            class="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary"
+                        >
                             <div
                                 class="h-full bg-green-600 transition-all duration-300"
-                                :style="{ width: `${progress_stats.progress_percentage}%` }"
+                                :style="{
+                                    width: `${progress_stats.progress_percentage}%`,
+                                }"
                             />
                         </div>
                     </div>
 
                     <!-- Empty racks info (inventory audits only) -->
                     <div
-                        v-if="isInventoryAudit && progress_stats.empty_racks_total && progress_stats.empty_racks_total > 0"
+                        v-if="
+                            isInventoryAudit &&
+                            progress_stats.empty_racks_total &&
+                            progress_stats.empty_racks_total > 0
+                        "
                         class="mt-3 text-sm text-muted-foreground"
                     >
-                        Empty racks verified: {{ progress_stats.empty_racks_verified }} / {{ progress_stats.empty_racks_total }}
+                        Empty racks verified:
+                        {{ progress_stats.empty_racks_verified }} /
+                        {{ progress_stats.empty_racks_total }}
                     </div>
 
                     <!-- Completion message -->
@@ -345,23 +434,43 @@ const completionMessage = computed(() => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Type</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Type
+                            </dt>
                             <dd class="text-sm">{{ audit.type_label }}</dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Scope</dt>
-                            <dd class="text-sm">{{ audit.scope_type_label }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Scope
+                            </dt>
+                            <dd class="text-sm">
+                                {{ audit.scope_type_label }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Status</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Status
+                            </dt>
                             <dd>
-                                <span :class="getStatusBadgeClass(audit.status)">
+                                <span
+                                    :class="getStatusBadgeClass(audit.status)"
+                                >
                                     {{ audit.status_label }}
                                 </span>
                             </dd>
                         </div>
                         <div v-if="audit.creator" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Created By</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Created By
+                            </dt>
                             <dd class="text-sm">{{ audit.creator.name }}</dd>
                         </div>
                     </CardContent>
@@ -377,24 +486,52 @@ const completionMessage = computed(() => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Datacenter</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Datacenter
+                            </dt>
                             <dd class="text-sm">
-                                <Link :href="DatacenterController.show.url(audit.datacenter.id)" class="text-primary hover:underline">
+                                <Link
+                                    :href="
+                                        DatacenterController.show.url(
+                                            audit.datacenter.id,
+                                        )
+                                    "
+                                    class="text-primary hover:underline"
+                                >
                                     {{ audit.datacenter.name }}
                                 </Link>
-                                <span class="block text-xs text-muted-foreground">{{ audit.datacenter.formatted_location }}</span>
+                                <span
+                                    class="block text-xs text-muted-foreground"
+                                    >{{
+                                        audit.datacenter.formatted_location
+                                    }}</span
+                                >
                             </dd>
                         </div>
                         <div v-if="audit.room" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Room</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Room
+                            </dt>
                             <dd class="text-sm">{{ audit.room.name }}</dd>
                         </div>
                         <div v-if="audit.racks_count > 0" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Racks Selected</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Racks Selected
+                            </dt>
                             <dd class="text-sm">{{ audit.racks_count }}</dd>
                         </div>
                         <div v-if="audit.devices_count > 0" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Devices Selected</dt>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Devices Selected
+                            </dt>
                             <dd class="text-sm">{{ audit.devices_count }}</dd>
                         </div>
                     </CardContent>
@@ -410,16 +547,34 @@ const completionMessage = computed(() => {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Due Date</dt>
-                            <dd class="text-sm">{{ formatDate(audit.due_date) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Due Date
+                            </dt>
+                            <dd class="text-sm">
+                                {{ formatDate(audit.due_date) }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Created</dt>
-                            <dd class="text-sm text-muted-foreground">{{ formatDateTime(audit.created_at) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Created
+                            </dt>
+                            <dd class="text-sm text-muted-foreground">
+                                {{ formatDateTime(audit.created_at) }}
+                            </dd>
                         </div>
                         <div class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">Last Updated</dt>
-                            <dd class="text-sm text-muted-foreground">{{ formatDateTime(audit.updated_at) }}</dd>
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                Last Updated
+                            </dt>
+                            <dd class="text-sm text-muted-foreground">
+                                {{ formatDateTime(audit.updated_at) }}
+                            </dd>
                         </div>
                     </CardContent>
                 </Card>
@@ -433,14 +588,21 @@ const completionMessage = computed(() => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div v-if="audit.assignees.length > 0" class="space-y-3">
+                        <div
+                            v-if="audit.assignees.length > 0"
+                            class="space-y-3"
+                        >
                             <div
                                 v-for="assignee in audit.assignees"
                                 :key="assignee.id"
                                 class="flex flex-col"
                             >
-                                <span class="text-sm font-medium">{{ assignee.name }}</span>
-                                <span class="text-xs text-muted-foreground">{{ assignee.email }}</span>
+                                <span class="text-sm font-medium">{{
+                                    assignee.name
+                                }}</span>
+                                <span class="text-xs text-muted-foreground">{{
+                                    assignee.email
+                                }}</span>
                             </div>
                         </div>
                         <p v-else class="text-sm text-muted-foreground">
@@ -458,12 +620,22 @@ const completionMessage = computed(() => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div v-if="audit.implementation_file" class="grid gap-2">
-                            <dt class="text-sm font-medium text-muted-foreground">File</dt>
+                        <div
+                            v-if="audit.implementation_file"
+                            class="grid gap-2"
+                        >
+                            <dt
+                                class="text-sm font-medium text-muted-foreground"
+                            >
+                                File
+                            </dt>
                             <dd class="text-sm">
                                 {{ audit.implementation_file.original_name }}
                                 <span class="text-xs text-muted-foreground">
-                                    (v{{ audit.implementation_file.version_number }})
+                                    (v{{
+                                        audit.implementation_file
+                                            .version_number
+                                    }})
                                 </span>
                             </dd>
                         </div>
@@ -491,14 +663,32 @@ const completionMessage = computed(() => {
                                 :key="report.id"
                                 class="rounded-lg border bg-card p-4 shadow-sm"
                             >
-                                <div class="mb-2 flex items-start justify-between gap-2">
+                                <div
+                                    class="mb-2 flex items-start justify-between gap-2"
+                                >
                                     <div class="flex-1">
-                                        <p class="text-sm font-medium">{{ report.generated_at }}</p>
-                                        <p class="text-xs text-muted-foreground">by {{ report.generator_name || 'Unknown' }}</p>
+                                        <p class="text-sm font-medium">
+                                            {{ report.generated_at }}
+                                        </p>
+                                        <p
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            by
+                                            {{
+                                                report.generator_name ||
+                                                'Unknown'
+                                            }}
+                                        </p>
                                     </div>
-                                    <span class="text-xs text-muted-foreground">{{ report.file_size_formatted }}</span>
+                                    <span
+                                        class="text-xs text-muted-foreground"
+                                        >{{ report.file_size_formatted }}</span
+                                    >
                                 </div>
-                                <a :href="report.download_url" class="inline-block">
+                                <a
+                                    :href="report.download_url"
+                                    class="inline-block"
+                                >
                                     <Button variant="outline" size="sm">
                                         <Download class="mr-1 size-3" />
                                         Download
@@ -508,14 +698,32 @@ const completionMessage = computed(() => {
                         </div>
 
                         <!-- Desktop table view -->
-                        <div class="hidden overflow-hidden rounded-md border md:block">
+                        <div
+                            class="hidden overflow-hidden rounded-md border md:block"
+                        >
                             <table class="w-full text-sm">
                                 <thead class="border-b bg-muted/50">
                                     <tr>
-                                        <th class="h-10 px-4 text-left font-medium text-muted-foreground">Generated Date</th>
-                                        <th class="h-10 px-4 text-left font-medium text-muted-foreground">Generated By</th>
-                                        <th class="h-10 px-4 text-left font-medium text-muted-foreground">File Size</th>
-                                        <th class="h-10 w-[100px] px-4 text-left font-medium text-muted-foreground">Actions</th>
+                                        <th
+                                            class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                        >
+                                            Generated Date
+                                        </th>
+                                        <th
+                                            class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                        >
+                                            Generated By
+                                        </th>
+                                        <th
+                                            class="h-10 px-4 text-left font-medium text-muted-foreground"
+                                        >
+                                            File Size
+                                        </th>
+                                        <th
+                                            class="h-10 w-[100px] px-4 text-left font-medium text-muted-foreground"
+                                        >
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -524,13 +732,27 @@ const completionMessage = computed(() => {
                                         :key="report.id"
                                         class="border-b transition-colors hover:bg-muted/50"
                                     >
-                                        <td class="p-4">{{ report.generated_at }}</td>
-                                        <td class="p-4">{{ report.generator_name || 'Unknown' }}</td>
-                                        <td class="p-4">{{ report.file_size_formatted }}</td>
+                                        <td class="p-4">
+                                            {{ report.generated_at }}
+                                        </td>
+                                        <td class="p-4">
+                                            {{
+                                                report.generator_name ||
+                                                'Unknown'
+                                            }}
+                                        </td>
+                                        <td class="p-4">
+                                            {{ report.file_size_formatted }}
+                                        </td>
                                         <td class="p-4">
                                             <a :href="report.download_url">
-                                                <Button variant="outline" size="sm">
-                                                    <Download class="mr-1 size-3" />
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
+                                                    <Download
+                                                        class="mr-1 size-3"
+                                                    />
                                                     Download
                                                 </Button>
                                             </a>
@@ -540,10 +762,20 @@ const completionMessage = computed(() => {
                             </table>
                         </div>
                     </div>
-                    <div v-else class="flex flex-col items-center justify-center py-8 text-center">
-                        <FileBarChart class="mb-2 size-8 text-muted-foreground/50" />
-                        <p class="text-sm text-muted-foreground">No reports have been generated yet.</p>
-                        <p v-if="can_generate_report" class="mt-1 text-xs text-muted-foreground">
+                    <div
+                        v-else
+                        class="flex flex-col items-center justify-center py-8 text-center"
+                    >
+                        <FileBarChart
+                            class="mb-2 size-8 text-muted-foreground/50"
+                        />
+                        <p class="text-sm text-muted-foreground">
+                            No reports have been generated yet.
+                        </p>
+                        <p
+                            v-if="can_generate_report"
+                            class="mt-1 text-xs text-muted-foreground"
+                        >
                             Click "Generate Report" to create your first report.
                         </p>
                     </div>

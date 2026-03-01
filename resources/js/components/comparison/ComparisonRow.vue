@@ -6,14 +6,14 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import type { ComparisonResultData } from '@/types/comparison';
 import {
+    AlertCircle,
     AlertTriangle,
+    ArrowRightLeft,
     CheckCircle,
     XCircle,
-    AlertCircle,
-    ArrowRightLeft,
 } from 'lucide-vue-next';
-import type { ComparisonResultData } from '@/types/comparison';
 
 interface Props {
     comparison: ComparisonResultData;
@@ -49,7 +49,12 @@ function getStatusBadgeClass(): string {
 /**
  * Get the icon component for the discrepancy type
  */
-function getStatusIcon(): typeof CheckCircle | typeof XCircle | typeof AlertTriangle | typeof AlertCircle | typeof ArrowRightLeft {
+function getStatusIcon():
+    | typeof CheckCircle
+    | typeof XCircle
+    | typeof AlertTriangle
+    | typeof AlertCircle
+    | typeof ArrowRightLeft {
     switch (props.comparison.discrepancy_type) {
         case 'matched':
             return CheckCircle;
@@ -89,7 +94,11 @@ function formatDestPortDisplay(): string {
     }
 
     // For mismatched, show expected with actual in parentheses
-    if (props.comparison.discrepancy_type === 'mismatched' && expected && actual) {
+    if (
+        props.comparison.discrepancy_type === 'mismatched' &&
+        expected &&
+        actual
+    ) {
         if (expected.id !== actual.id) {
             return `${expected.label}`;
         }
@@ -118,11 +127,16 @@ function showActualDifference(): boolean {
  * Get the cable type to display
  */
 function getCableTypeDisplay(): string {
-    const expectedCable = props.comparison.expected_connection?.cable_type_label;
+    const expectedCable =
+        props.comparison.expected_connection?.cable_type_label;
     const actualCable = props.comparison.actual_connection?.cable_type_label;
 
     // For matched or mismatched, show actual if available
-    if (actualCable && (props.comparison.discrepancy_type === 'matched' || props.comparison.discrepancy_type === 'mismatched')) {
+    if (
+        actualCable &&
+        (props.comparison.discrepancy_type === 'matched' ||
+            props.comparison.discrepancy_type === 'mismatched')
+    ) {
         return actualCable;
     }
 
@@ -149,23 +163,6 @@ function hasConflicts(): boolean {
     );
 }
 
-/**
- * Get the destination device display with actual in parentheses when different
- */
-function formatDestDeviceDisplay(): string {
-    const expected = props.comparison.dest_device;
-
-    if (!expected) {
-        // For unexpected, try to get device from actual connection
-        if (props.comparison.actual_dest_port?.type) {
-            return props.comparison.actual_dest_port?.label ?? '-';
-        }
-        return '-';
-    }
-
-    return expected.name;
-}
-
 const StatusIcon = getStatusIcon();
 </script>
 
@@ -187,13 +184,16 @@ const StatusIcon = getStatusIcon();
             <TooltipProvider v-if="hasConflicts()" :delay-duration="0">
                 <Tooltip>
                     <TooltipTrigger as-child>
-                        <AlertTriangle class="size-4 text-purple-600 dark:text-purple-400" />
+                        <AlertTriangle
+                            class="size-4 text-purple-600 dark:text-purple-400"
+                        />
                     </TooltipTrigger>
                     <TooltipContent class="max-w-xs">
                         <p class="font-medium">Conflicting Expectations</p>
                         <ul class="mt-1 text-xs">
                             <li
-                                v-for="file in comparison.conflict_info?.conflicting_files"
+                                v-for="file in comparison.conflict_info
+                                    ?.conflicting_files"
                                 :key="file.file_id"
                             >
                                 {{ file.file_name }}: {{ file.dest_port_label }}
@@ -218,7 +218,10 @@ const StatusIcon = getStatusIcon();
         <span v-if="comparison.dest_device?.name" class="font-medium">
             {{ comparison.dest_device.name }}
         </span>
-        <span v-else-if="comparison.discrepancy_type === 'unexpected'" class="font-medium">
+        <span
+            v-else-if="comparison.discrepancy_type === 'unexpected'"
+            class="font-medium"
+        >
             {{ comparison.actual_dest_port ? 'Unknown Device' : '-' }}
         </span>
         <span v-else class="text-muted-foreground">-</span>
@@ -230,7 +233,10 @@ const StatusIcon = getStatusIcon();
             <span>{{ formatDestPortDisplay() }}</span>
 
             <!-- Show actual value when different (for mismatched) -->
-            <span v-if="showActualDifference()" class="text-xs text-amber-600 dark:text-amber-400">
+            <span
+                v-if="showActualDifference()"
+                class="text-xs text-amber-600 dark:text-amber-400"
+            >
                 (Actual: {{ comparison.actual_dest_port?.label }})
             </span>
         </div>
@@ -265,11 +271,24 @@ const StatusIcon = getStatusIcon();
                         </TooltipTrigger>
                         <TooltipContent>
                             <p class="font-medium">Acknowledged</p>
-                            <p v-if="comparison.acknowledgment?.notes" class="mt-1 text-xs">
+                            <p
+                                v-if="comparison.acknowledgment?.notes"
+                                class="mt-1 text-xs"
+                            >
                                 {{ comparison.acknowledgment.notes }}
                             </p>
-                            <p v-if="comparison.acknowledgment?.acknowledged_by_name" class="mt-1 text-xs text-muted-foreground">
-                                By: {{ comparison.acknowledgment.acknowledged_by_name }}
+                            <p
+                                v-if="
+                                    comparison.acknowledgment
+                                        ?.acknowledged_by_name
+                                "
+                                class="mt-1 text-xs text-muted-foreground"
+                            >
+                                By:
+                                {{
+                                    comparison.acknowledgment
+                                        .acknowledged_by_name
+                                }}
                             </p>
                         </TooltipContent>
                     </Tooltip>

@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import axios from 'axios';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Server, MapPin, Layers, AlertTriangle, Search, CheckCircle } from 'lucide-vue-next';
 import { debounce } from '@/lib/utils';
 import type { DeviceData } from '@/types/rooms';
+import axios from 'axios';
+import {
+    AlertTriangle,
+    CheckCircle,
+    Layers,
+    MapPin,
+    Search,
+    Server,
+} from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface DeviceWithConnections extends DeviceData {
     connections?: ConnectionData[];
@@ -47,7 +54,9 @@ const hasSearched = ref(false);
 const searchError = ref<string | null>(null);
 
 // Currently selected device
-const currentDevice = ref<DeviceWithConnections | null>(props.selectedDevice || null);
+const currentDevice = ref<DeviceWithConnections | null>(
+    props.selectedDevice || null,
+);
 
 // Watch for prop changes
 watch(
@@ -86,8 +95,11 @@ async function searchDevices(query: string): Promise<void> {
 
         searchResults.value = response.data.data || [];
     } catch (err: unknown) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        searchError.value = axiosError.response?.data?.message || 'Failed to search devices';
+        const axiosError = err as {
+            response?: { data?: { message?: string } };
+        };
+        searchError.value =
+            axiosError.response?.data?.message || 'Failed to search devices';
         searchResults.value = [];
     } finally {
         isSearching.value = false;
@@ -131,7 +143,9 @@ function formatLocationPath(device: DeviceWithConnections): string {
         return device.location_path;
     }
     if (device.rack) {
-        return device.rack.name + (device.start_u ? ` (U${device.start_u})` : '');
+        return (
+            device.rack.name + (device.start_u ? ` (U${device.start_u})` : '')
+        );
     }
     return 'Not placed';
 }
@@ -139,7 +153,9 @@ function formatLocationPath(device: DeviceWithConnections): string {
 /**
  * Get status badge variant
  */
-function getStatusVariant(status: string | null): 'default' | 'secondary' | 'destructive' | 'outline' {
+function getStatusVariant(
+    status: string | null,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
     switch (status) {
         case 'deployed':
             return 'default';
@@ -168,7 +184,9 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
         <div class="space-y-2">
             <Label for="device-search">Search Device</Label>
             <div class="relative">
-                <Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Search
+                    class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
                 <Input
                     id="device-search"
                     v-model="searchQuery"
@@ -187,17 +205,25 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
             <Skeleton class="h-16 w-full" />
         </div>
 
-        <div v-else-if="searchError" class="rounded-lg border border-destructive p-4">
+        <div
+            v-else-if="searchError"
+            class="rounded-lg border border-destructive p-4"
+        >
             <p class="text-sm text-destructive">{{ searchError }}</p>
         </div>
 
-        <div v-else-if="searchResults.length > 0" class="max-h-60 space-y-2 overflow-y-auto">
+        <div
+            v-else-if="searchResults.length > 0"
+            class="max-h-60 space-y-2 overflow-y-auto"
+        >
             <button
                 v-for="device in searchResults"
                 :key="device.id"
                 type="button"
-                class="w-full rounded-lg border p-3 text-left transition-colors hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring"
-                :class="{ 'opacity-50 cursor-not-allowed': device.has_pending_move }"
+                class="w-full rounded-lg border p-3 text-left transition-colors hover:bg-muted/50 focus:ring-2 focus:ring-ring focus:outline-none"
+                :class="{
+                    'cursor-not-allowed opacity-50': device.has_pending_move,
+                }"
                 :disabled="device.has_pending_move"
                 @click="selectDevice(device)"
             >
@@ -205,13 +231,23 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2">
                             <span class="font-medium">{{ device.name }}</span>
-                            <Badge v-if="device.has_pending_move" variant="warning" class="shrink-0">
+                            <Badge
+                                v-if="device.has_pending_move"
+                                variant="warning"
+                                class="shrink-0"
+                            >
                                 Pending Move
                             </Badge>
                         </div>
-                        <div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                            <span class="font-mono">{{ device.asset_tag }}</span>
-                            <span v-if="device.device_type">{{ device.device_type.name }}</span>
+                        <div
+                            class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
+                        >
+                            <span class="font-mono">{{
+                                device.asset_tag
+                            }}</span>
+                            <span v-if="device.device_type">{{
+                                device.device_type.name
+                            }}</span>
                             <span>{{ formatLocationPath(device) }}</span>
                         </div>
                     </div>
@@ -222,8 +258,13 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
             </button>
         </div>
 
-        <div v-else-if="hasSearched && searchQuery.trim()" class="rounded-lg border border-dashed p-8 text-center">
-            <p class="text-sm text-muted-foreground">No devices found matching "{{ searchQuery }}"</p>
+        <div
+            v-else-if="hasSearched && searchQuery.trim()"
+            class="rounded-lg border border-dashed p-8 text-center"
+        >
+            <p class="text-sm text-muted-foreground">
+                No devices found matching "{{ searchQuery }}"
+            </p>
         </div>
 
         <!-- Selected Device Display -->
@@ -246,7 +287,9 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
             <CardContent class="space-y-4">
                 <!-- Device Info -->
                 <div class="flex items-start gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-lg bg-muted"
+                    >
                         <Server class="h-6 w-6 text-muted-foreground" />
                     </div>
                     <div class="min-w-0 flex-1">
@@ -258,7 +301,11 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
                             {{ currentDevice.asset_tag }}
                         </p>
                     </div>
-                    <Badge :variant="getStatusVariant(currentDevice.lifecycle_status)">
+                    <Badge
+                        :variant="
+                            getStatusVariant(currentDevice.lifecycle_status)
+                        "
+                    >
                         {{ currentDevice.lifecycle_status_label || 'Unknown' }}
                     </Badge>
                 </div>
@@ -266,7 +313,9 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
                 <!-- Location Info -->
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="flex items-start gap-3">
-                        <MapPin class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                        <MapPin
+                            class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
+                        />
                         <div>
                             <p class="text-sm font-medium">Current Location</p>
                             <p class="text-sm text-muted-foreground">
@@ -275,12 +324,19 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
-                        <Layers class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                        <Layers
+                            class="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
+                        />
                         <div>
-                            <p class="text-sm font-medium">Physical Attributes</p>
+                            <p class="text-sm font-medium">
+                                Physical Attributes
+                            </p>
                             <p class="text-sm text-muted-foreground">
                                 {{ currentDevice.u_height }}U,
-                                {{ currentDevice.width_type_label || 'Full Width' }},
+                                {{
+                                    currentDevice.width_type_label ||
+                                    'Full Width'
+                                }},
                                 {{ currentDevice.rack_face_label || 'Front' }}
                             </p>
                         </div>
@@ -288,19 +344,30 @@ function getStatusVariant(status: string | null): 'default' | 'secondary' | 'des
                 </div>
 
                 <!-- Pending Move Warning -->
-                <Alert v-if="currentDevice.has_pending_move" variant="destructive">
+                <Alert
+                    v-if="currentDevice.has_pending_move"
+                    variant="destructive"
+                >
                     <AlertTriangle class="h-4 w-4" />
                     <AlertDescription>
-                        This device already has a pending move request. You cannot create another move
-                        request until the existing one is completed or cancelled.
+                        This device already has a pending move request. You
+                        cannot create another move request until the existing
+                        one is completed or cancelled.
                     </AlertDescription>
                 </Alert>
 
                 <!-- Connection Count Info -->
-                <div v-if="currentDevice.connections?.length" class="rounded-lg bg-muted/50 p-3">
+                <div
+                    v-if="currentDevice.connections?.length"
+                    class="rounded-lg bg-muted/50 p-3"
+                >
                     <p class="text-sm">
-                        <span class="font-medium">{{ currentDevice.connections.length }}</span>
-                        active connection{{ currentDevice.connections.length !== 1 ? 's' : '' }}
+                        <span class="font-medium">{{
+                            currentDevice.connections.length
+                        }}</span>
+                        active connection{{
+                            currentDevice.connections.length !== 1 ? 's' : ''
+                        }}
                         will need to be reviewed in the next step.
                     </p>
                 </div>

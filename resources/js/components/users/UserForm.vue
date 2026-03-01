@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Form } from '@inertiajs/vue3';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Form } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 interface Datacenter {
     id: number;
@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
     }),
 });
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'success'): void;
 }>();
 
@@ -83,7 +83,12 @@ const isDatacenterSelected = (id: number) => {
         v-slot="{ errors, processing, recentlySuccessful }"
     >
         <!-- Hidden method field for PUT request in edit mode -->
-        <input v-if="mode === 'edit'" type="hidden" name="_method" value="PUT" />
+        <input
+            v-if="mode === 'edit'"
+            type="hidden"
+            name="_method"
+            value="PUT"
+        />
 
         <div class="grid gap-2">
             <Label for="name">Name</Label>
@@ -116,7 +121,10 @@ const isDatacenterSelected = (id: number) => {
         <div class="grid gap-2">
             <Label for="password">
                 Password
-                <span v-if="mode === 'edit'" class="text-muted-foreground font-normal">
+                <span
+                    v-if="mode === 'edit'"
+                    class="font-normal text-muted-foreground"
+                >
                     (leave blank to keep current)
                 </span>
             </Label>
@@ -126,7 +134,11 @@ const isDatacenterSelected = (id: number) => {
                 type="password"
                 :required="mode === 'create'"
                 autocomplete="new-password"
-                :placeholder="mode === 'edit' ? 'Leave blank to keep current password' : 'Password'"
+                :placeholder="
+                    mode === 'edit'
+                        ? 'Leave blank to keep current password'
+                        : 'Password'
+                "
             />
             <InputError :message="errors.password" />
         </div>
@@ -151,7 +163,7 @@ const isDatacenterSelected = (id: number) => {
                     id="role"
                     name="role"
                     :disabled="!canChangeRole"
-                    class="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    class="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <option
                         v-for="role in availableRoles"
@@ -176,11 +188,23 @@ const isDatacenterSelected = (id: number) => {
                     id="status"
                     name="status"
                     :disabled="!canChangeStatus"
-                    class="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    class="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    <option value="active" :selected="user.status === 'active'">Active</option>
-                    <option value="inactive" :selected="user.status === 'inactive'">Inactive</option>
-                    <option value="suspended" :selected="user.status === 'suspended'">Suspended</option>
+                    <option value="active" :selected="user.status === 'active'">
+                        Active
+                    </option>
+                    <option
+                        value="inactive"
+                        :selected="user.status === 'inactive'"
+                    >
+                        Inactive
+                    </option>
+                    <option
+                        value="suspended"
+                        :selected="user.status === 'suspended'"
+                    >
+                        Suspended
+                    </option>
                 </select>
             </div>
             <p v-if="isCurrentUser" class="text-sm text-muted-foreground">
@@ -205,7 +229,7 @@ const isDatacenterSelected = (id: number) => {
                             name="datacenter_ids[]"
                             :value="datacenter.id"
                             :checked="isDatacenterSelected(datacenter.id)"
-                            class="border-input text-primary focus:ring-primary size-4 rounded"
+                            class="size-4 rounded border-input text-primary focus:ring-primary"
                         />
                         <span class="text-sm">{{ datacenter.name }}</span>
                     </label>
@@ -216,7 +240,13 @@ const isDatacenterSelected = (id: number) => {
 
         <div class="flex items-center gap-4">
             <Button :disabled="processing" type="submit">
-                {{ processing ? 'Saving...' : (mode === 'create' ? 'Create User' : 'Save Changes') }}
+                {{
+                    processing
+                        ? 'Saving...'
+                        : mode === 'create'
+                          ? 'Create User'
+                          : 'Save Changes'
+                }}
             </Button>
 
             <Transition
@@ -225,7 +255,10 @@ const isDatacenterSelected = (id: number) => {
                 leave-active-class="transition ease-in-out"
                 leave-to-class="opacity-0"
             >
-                <p v-show="recentlySuccessful" class="text-sm text-neutral-600 dark:text-neutral-400">
+                <p
+                    v-show="recentlySuccessful"
+                    class="text-sm text-neutral-600 dark:text-neutral-400"
+                >
                     Saved.
                 </p>
             </Transition>

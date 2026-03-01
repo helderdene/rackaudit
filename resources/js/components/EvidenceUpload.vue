@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
 import FindingEvidenceController from '@/actions/App/Http/Controllers/FindingEvidenceController';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Dialog,
     DialogContent,
@@ -11,11 +8,19 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
-    DialogClose,
 } from '@/components/ui/dialog';
-import { Upload, FileText, Download, Trash2, Plus, AlertCircle } from 'lucide-vue-next';
+import { Textarea } from '@/components/ui/textarea';
 import type { FindingEvidenceData } from '@/types/finding';
+import { router } from '@inertiajs/vue3';
+import {
+    AlertCircle,
+    Download,
+    FileText,
+    Plus,
+    Trash2,
+    Upload,
+} from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Props {
     findingId: number;
@@ -72,7 +77,8 @@ const handleFileSelect = (event: Event) => {
     // Validate file type
     const extension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!acceptedFileTypes.includes(extension)) {
-        uploadError.value = 'Invalid file type. Accepted: images, PDFs, and Word documents.';
+        uploadError.value =
+            'Invalid file type. Accepted: images, PDFs, and Word documents.';
         selectedFile.value = null;
         return;
     }
@@ -92,28 +98,33 @@ const uploadFile = () => {
     formData.append('type', 'file');
     formData.append('file', selectedFile.value);
 
-    router.post(FindingEvidenceController.store.url(props.findingId), formData, {
-        forceFormData: true,
-        preserveScroll: true,
-        onProgress: (progress) => {
-            if (progress.percentage) {
-                uploadProgress.value = progress.percentage;
-            }
+    router.post(
+        FindingEvidenceController.store.url(props.findingId),
+        formData,
+        {
+            forceFormData: true,
+            preserveScroll: true,
+            onProgress: (progress) => {
+                if (progress.percentage) {
+                    uploadProgress.value = progress.percentage;
+                }
+            },
+            onSuccess: () => {
+                selectedFile.value = null;
+                uploadProgress.value = 0;
+                if (fileInput.value) {
+                    fileInput.value.value = '';
+                }
+            },
+            onError: (errors) => {
+                uploadError.value =
+                    errors.file || 'Upload failed. Please try again.';
+            },
+            onFinish: () => {
+                isUploading.value = false;
+            },
         },
-        onSuccess: () => {
-            selectedFile.value = null;
-            uploadProgress.value = 0;
-            if (fileInput.value) {
-                fileInput.value.value = '';
-            }
-        },
-        onError: (errors) => {
-            uploadError.value = errors.file || 'Upload failed. Please try again.';
-        },
-        onFinish: () => {
-            isUploading.value = false;
-        },
-    });
+    );
 };
 
 // Cancel file selection
@@ -153,7 +164,7 @@ const submitTextNote = () => {
             onFinish: () => {
                 isSubmittingNote.value = false;
             },
-        }
+        },
     );
 };
 
@@ -190,7 +201,7 @@ const deleteEvidence = () => {
             onFinish: () => {
                 isDeleting.value = false;
             },
-        }
+        },
     );
 };
 
@@ -203,15 +214,6 @@ const closeDeleteDialog = () => {
 // Get download URL for file evidence
 const getDownloadUrl = (evidence: FindingEvidenceData): string => {
     return `/storage/${evidence.file_path}`;
-};
-
-// Get file icon based on mime type
-const getFileIcon = (mimeType: string | null): string => {
-    if (!mimeType) return 'file';
-    if (mimeType.startsWith('image/')) return 'image';
-    if (mimeType === 'application/pdf') return 'pdf';
-    if (mimeType.includes('word') || mimeType.includes('document')) return 'doc';
-    return 'file';
 };
 
 // Format file size
@@ -235,8 +237,12 @@ const formatDate = (dateString: string | null): string => {
 };
 
 // Computed values
-const fileEvidence = computed(() => props.evidence.filter(e => e.type === 'file'));
-const textEvidence = computed(() => props.evidence.filter(e => e.type === 'text'));
+const fileEvidence = computed(() =>
+    props.evidence.filter((e) => e.type === 'file'),
+);
+const textEvidence = computed(() =>
+    props.evidence.filter((e) => e.type === 'text'),
+);
 const hasEvidence = computed(() => props.evidence.length > 0);
 </script>
 
@@ -252,12 +258,22 @@ const hasEvidence = computed(() => props.evidence.length > 0);
                 @change="handleFileSelect"
             />
 
-            <Button variant="outline" size="sm" @click="triggerFileSelect" :disabled="isUploading">
+            <Button
+                variant="outline"
+                size="sm"
+                @click="triggerFileSelect"
+                :disabled="isUploading"
+            >
                 <Upload class="mr-2 size-4" />
                 Upload File
             </Button>
 
-            <Button variant="outline" size="sm" @click="showTextNoteForm = true" :disabled="showTextNoteForm">
+            <Button
+                variant="outline"
+                size="sm"
+                @click="showTextNoteForm = true"
+                :disabled="showTextNoteForm"
+            >
                 <Plus class="mr-2 size-4" />
                 Add Note
             </Button>
@@ -265,7 +281,8 @@ const hasEvidence = computed(() => props.evidence.length > 0);
 
         <!-- File Type/Size Info -->
         <p v-if="canEdit" class="text-xs text-muted-foreground">
-            Accepted files: images (JPG, PNG, GIF), PDFs, Word documents. Max size: {{ maxFileSizeMB }}MB.
+            Accepted files: images (JPG, PNG, GIF), PDFs, Word documents. Max
+            size: {{ maxFileSizeMB }}MB.
         </p>
 
         <!-- Selected File Preview -->
@@ -274,33 +291,53 @@ const hasEvidence = computed(() => props.evidence.length > 0);
                 <div class="flex items-center gap-3">
                     <FileText class="size-8 text-muted-foreground" />
                     <div>
-                        <p class="text-sm font-medium">{{ selectedFile.name }}</p>
-                        <p class="text-xs text-muted-foreground">{{ formatFileSize(selectedFile.size) }}</p>
+                        <p class="text-sm font-medium">
+                            {{ selectedFile.name }}
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ formatFileSize(selectedFile.size) }}
+                        </p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Button size="sm" @click="uploadFile" :disabled="isUploading">
+                    <Button
+                        size="sm"
+                        @click="uploadFile"
+                        :disabled="isUploading"
+                    >
                         {{ isUploading ? 'Uploading...' : 'Upload' }}
                     </Button>
-                    <Button variant="ghost" size="sm" @click="cancelFileSelection" :disabled="isUploading">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        @click="cancelFileSelection"
+                        :disabled="isUploading"
+                    >
                         Cancel
                     </Button>
                 </div>
             </div>
             <!-- Upload progress bar -->
             <div v-if="isUploading" class="mt-3">
-                <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                <div
+                    class="h-2 w-full overflow-hidden rounded-full bg-secondary"
+                >
                     <div
                         class="h-full bg-primary transition-all duration-300"
                         :style="{ width: `${uploadProgress}%` }"
                     />
                 </div>
-                <p class="mt-1 text-xs text-muted-foreground">{{ uploadProgress }}% uploaded</p>
+                <p class="mt-1 text-xs text-muted-foreground">
+                    {{ uploadProgress }}% uploaded
+                </p>
             </div>
         </div>
 
         <!-- Upload Error -->
-        <div v-if="uploadError" class="flex items-center gap-2 text-sm text-destructive">
+        <div
+            v-if="uploadError"
+            class="flex items-center gap-2 text-sm text-destructive"
+        >
             <AlertCircle class="size-4" />
             {{ uploadError }}
         </div>
@@ -312,12 +349,23 @@ const hasEvidence = computed(() => props.evidence.length > 0);
                 placeholder="Enter your note..."
                 class="min-h-[100px]"
             />
-            <div v-if="noteError" class="text-xs text-destructive">{{ noteError }}</div>
+            <div v-if="noteError" class="text-xs text-destructive">
+                {{ noteError }}
+            </div>
             <div class="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" @click="cancelTextNote" :disabled="isSubmittingNote">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    @click="cancelTextNote"
+                    :disabled="isSubmittingNote"
+                >
                     Cancel
                 </Button>
-                <Button size="sm" @click="submitTextNote" :disabled="isSubmittingNote">
+                <Button
+                    size="sm"
+                    @click="submitTextNote"
+                    :disabled="isSubmittingNote"
+                >
                     {{ isSubmittingNote ? 'Saving...' : 'Save Note' }}
                 </Button>
             </div>
@@ -327,7 +375,9 @@ const hasEvidence = computed(() => props.evidence.length > 0);
         <div v-if="hasEvidence" class="space-y-4">
             <!-- File Evidence -->
             <div v-if="fileEvidence.length > 0">
-                <h4 class="mb-2 text-sm font-medium text-muted-foreground">Files ({{ fileEvidence.length }})</h4>
+                <h4 class="mb-2 text-sm font-medium text-muted-foreground">
+                    Files ({{ fileEvidence.length }})
+                </h4>
                 <div class="space-y-2">
                     <div
                         v-for="evidence in fileEvidence"
@@ -337,9 +387,12 @@ const hasEvidence = computed(() => props.evidence.length > 0);
                         <div class="flex items-center gap-3">
                             <FileText class="size-6 text-muted-foreground" />
                             <div>
-                                <p class="text-sm font-medium">{{ evidence.original_filename }}</p>
+                                <p class="text-sm font-medium">
+                                    {{ evidence.original_filename }}
+                                </p>
                                 <p class="text-xs text-muted-foreground">
-                                    {{ evidence.mime_type }} - {{ formatDate(evidence.created_at) }}
+                                    {{ evidence.mime_type }} -
+                                    {{ formatDate(evidence.created_at) }}
                                 </p>
                             </div>
                         </div>
@@ -368,7 +421,9 @@ const hasEvidence = computed(() => props.evidence.length > 0);
 
             <!-- Text Evidence -->
             <div v-if="textEvidence.length > 0">
-                <h4 class="mb-2 text-sm font-medium text-muted-foreground">Notes ({{ textEvidence.length }})</h4>
+                <h4 class="mb-2 text-sm font-medium text-muted-foreground">
+                    Notes ({{ textEvidence.length }})
+                </h4>
                 <div class="space-y-2">
                     <div
                         v-for="evidence in textEvidence"
@@ -377,7 +432,9 @@ const hasEvidence = computed(() => props.evidence.length > 0);
                     >
                         <div class="flex items-start justify-between gap-2">
                             <div class="flex-1">
-                                <p class="whitespace-pre-line text-sm">{{ evidence.content }}</p>
+                                <p class="text-sm whitespace-pre-line">
+                                    {{ evidence.content }}
+                                </p>
                                 <p class="mt-2 text-xs text-muted-foreground">
                                     {{ formatDate(evidence.created_at) }}
                                 </p>
@@ -400,8 +457,12 @@ const hasEvidence = computed(() => props.evidence.length > 0);
         <!-- Empty State -->
         <div v-else class="rounded-lg border border-dashed py-8 text-center">
             <FileText class="mx-auto size-12 text-muted-foreground/50" />
-            <p class="mt-2 text-sm text-muted-foreground">No evidence attached to this finding.</p>
-            <p v-if="canEdit" class="text-xs text-muted-foreground">Upload files or add notes to document evidence.</p>
+            <p class="mt-2 text-sm text-muted-foreground">
+                No evidence attached to this finding.
+            </p>
+            <p v-if="canEdit" class="text-xs text-muted-foreground">
+                Upload files or add notes to document evidence.
+            </p>
         </div>
 
         <!-- Delete Confirmation Dialog -->
@@ -411,15 +472,27 @@ const hasEvidence = computed(() => props.evidence.length > 0);
                     <DialogTitle>Delete Evidence</DialogTitle>
                     <DialogDescription>
                         Are you sure you want to delete this evidence?
-                        {{ evidenceToDelete?.type === 'file' ? 'The file will be permanently removed.' : 'This note will be permanently deleted.' }}
+                        {{
+                            evidenceToDelete?.type === 'file'
+                                ? 'The file will be permanently removed.'
+                                : 'This note will be permanently deleted.'
+                        }}
                         This action cannot be undone.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="outline" @click="closeDeleteDialog" :disabled="isDeleting">
+                    <Button
+                        variant="outline"
+                        @click="closeDeleteDialog"
+                        :disabled="isDeleting"
+                    >
                         Cancel
                     </Button>
-                    <Button variant="destructive" @click="deleteEvidence" :disabled="isDeleting">
+                    <Button
+                        variant="destructive"
+                        @click="deleteEvidence"
+                        :disabled="isDeleting"
+                    >
                         {{ isDeleting ? 'Deleting...' : 'Delete' }}
                     </Button>
                 </DialogFooter>

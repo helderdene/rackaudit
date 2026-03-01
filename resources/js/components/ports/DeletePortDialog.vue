@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,6 +10,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 interface Props {
     deviceId: number;
@@ -62,19 +62,22 @@ const handleDelete = () => {
                 <DialogTitle>Delete Port</DialogTitle>
                 <DialogDescription>
                     Are you sure you want to delete port
-                    <span class="font-semibold">{{ portLabel }}</span>?
-                    This action cannot be undone.
+                    <span class="font-semibold">{{ portLabel }}</span
+                    >? This action cannot be undone.
                 </DialogDescription>
             </DialogHeader>
 
             <div
                 class="rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
             >
-                <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+                <div
+                    class="relative space-y-0.5 text-red-600 dark:text-red-100"
+                >
                     <p class="font-medium">Warning</p>
                     <p class="text-sm">
                         The port will be permanently removed from this device.
-                        Any connection data associated with this port will be lost.
+                        Any connection data associated with this port will be
+                        lost.
                     </p>
                 </div>
             </div>

@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/InputError.vue';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Calendar, Clock, Globe } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface FrequencyOption {
     value: string;
@@ -70,10 +76,14 @@ const daysOfMonth = [
 function getOrdinalSuffix(n: number): string {
     if (n >= 11 && n <= 13) return 'th';
     switch (n % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
+        case 1:
+            return 'st';
+        case 2:
+            return 'nd';
+        case 3:
+            return 'rd';
+        default:
+            return 'th';
     }
 }
 
@@ -137,7 +147,8 @@ const handleTimezoneChange = (event: Event) => {
 /**
  * Select input class
  */
-const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
 <template>
@@ -154,17 +165,27 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
         <CardContent class="space-y-6">
             <!-- Frequency Selection -->
             <div class="space-y-3">
-                <Label for="frequency">Frequency <span class="text-destructive">*</span></Label>
+                <Label for="frequency"
+                    >Frequency <span class="text-destructive">*</span></Label
+                >
                 <div class="grid gap-3 sm:grid-cols-3">
                     <div
                         v-for="option in frequencies"
                         :key="option.value"
-                        class="flex items-start space-x-3 rounded-lg border p-4 transition-colors cursor-pointer"
+                        class="flex cursor-pointer items-start space-x-3 rounded-lg border p-4 transition-colors"
                         :class="{
-                            'border-primary bg-primary/5': frequency === option.value,
-                            'hover:border-muted-foreground/50': frequency !== option.value,
+                            'border-primary bg-primary/5':
+                                frequency === option.value,
+                            'hover:border-muted-foreground/50':
+                                frequency !== option.value,
                         }"
-                        @click="emit('update:frequency', option.value); if (option.value !== 'weekly') emit('update:dayOfWeek', null); if (option.value !== 'monthly') emit('update:dayOfMonth', null);"
+                        @click="
+                            emit('update:frequency', option.value);
+                            if (option.value !== 'weekly')
+                                emit('update:dayOfWeek', null);
+                            if (option.value !== 'monthly')
+                                emit('update:dayOfMonth', null);
+                        "
                     >
                         <input
                             type="radio"
@@ -176,7 +197,10 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
                             @change="handleFrequencyChange"
                         />
                         <div class="space-y-1">
-                            <label :for="`freq-${option.value}`" class="font-medium cursor-pointer text-sm">
+                            <label
+                                :for="`freq-${option.value}`"
+                                class="cursor-pointer text-sm font-medium"
+                            >
                                 {{ option.label }}
                             </label>
                             <p class="text-xs text-muted-foreground">
@@ -190,7 +214,9 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
 
             <!-- Day of Week (for Weekly) -->
             <div v-if="showDayOfWeek" class="space-y-2">
-                <Label for="day-of-week">Day of Week <span class="text-destructive">*</span></Label>
+                <Label for="day-of-week"
+                    >Day of Week <span class="text-destructive">*</span></Label
+                >
                 <select
                     id="day-of-week"
                     :value="dayOfWeek ?? ''"
@@ -211,7 +237,9 @@ const selectClass = 'flex h-9 w-full rounded-md border border-input bg-transpare
 
             <!-- Day of Month (for Monthly) -->
             <div v-if="showDayOfMonth" class="space-y-2">
-                <Label for="day-of-month">Day of Month <span class="text-destructive">*</span></Label>
+                <Label for="day-of-month"
+                    >Day of Month <span class="text-destructive">*</span></Label
+                >
                 <select
                     id="day-of-month"
                     :value="dayOfMonth ?? ''"

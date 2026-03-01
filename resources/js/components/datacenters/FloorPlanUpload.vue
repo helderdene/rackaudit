@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Upload, X, FileImage, File as FileIcon } from 'lucide-vue-next';
+import { File as FileIcon, FileImage, Upload, X } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     currentFloorPlanUrl?: string | null;
@@ -25,7 +25,12 @@ const isRemoving = ref(false);
 const validationError = ref<string | null>(null);
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+const ALLOWED_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'application/pdf',
+];
 const ALLOWED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.pdf'];
 
 // Determine if we have a current floor plan to display
@@ -159,7 +164,13 @@ watch(selectedFile, (newFile) => {
             class="relative rounded-lg border bg-muted/30 p-4"
         >
             <!-- Image preview -->
-            <div v-if="(hasCurrentFloorPlan && !isCurrentPdf) || (selectedFile && !isSelectedPdf)" class="space-y-3">
+            <div
+                v-if="
+                    (hasCurrentFloorPlan && !isCurrentPdf) ||
+                    (selectedFile && !isSelectedPdf)
+                "
+                class="space-y-3"
+            >
                 <img
                     :src="previewUrl || currentFloorPlanUrl"
                     :alt="selectedFile?.name || 'Floor plan'"
@@ -195,14 +206,25 @@ watch(selectedFile, (newFile) => {
             </div>
 
             <!-- PDF preview -->
-            <div v-else-if="(hasCurrentFloorPlan && isCurrentPdf) || (selectedFile && isSelectedPdf)" class="space-y-3">
+            <div
+                v-else-if="
+                    (hasCurrentFloorPlan && isCurrentPdf) ||
+                    (selectedFile && isSelectedPdf)
+                "
+                class="space-y-3"
+            >
                 <div class="flex items-center gap-3 rounded-md bg-muted p-4">
                     <FileIcon class="size-10 text-muted-foreground" />
                     <div class="flex-1">
                         <p class="font-medium">
-                            {{ selectedFile?.name || 'Current floor plan (PDF)' }}
+                            {{
+                                selectedFile?.name || 'Current floor plan (PDF)'
+                            }}
                         </p>
-                        <p v-if="selectedFile" class="text-sm text-muted-foreground">
+                        <p
+                            v-if="selectedFile"
+                            class="text-sm text-muted-foreground"
+                        >
                             {{ formatFileSize(selectedFile.size) }}
                         </p>
                     </div>
@@ -245,18 +267,17 @@ watch(selectedFile, (newFile) => {
                 </div>
                 <div class="space-y-1">
                     <p class="text-sm font-medium">
-                        {{ isRemoving ? 'Upload a new floor plan' : 'Click to upload a floor plan' }}
+                        {{
+                            isRemoving
+                                ? 'Upload a new floor plan'
+                                : 'Click to upload a floor plan'
+                        }}
                     </p>
                     <p class="text-xs text-muted-foreground">
                         PNG, JPG, JPEG, or PDF (max 10MB)
                     </p>
                 </div>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    class="mt-2"
-                >
+                <Button type="button" variant="outline" size="sm" class="mt-2">
                     <FileImage class="mr-2 size-4" />
                     Select File
                 </Button>
@@ -264,7 +285,10 @@ watch(selectedFile, (newFile) => {
         </div>
 
         <!-- Validation Error -->
-        <p v-if="validationError" class="text-sm text-red-600 dark:text-red-500">
+        <p
+            v-if="validationError"
+            class="text-sm text-red-600 dark:text-red-500"
+        >
             {{ validationError }}
         </p>
     </div>

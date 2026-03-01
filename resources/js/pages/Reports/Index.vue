@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
 import AuditController from '@/actions/App/Http/Controllers/AuditController';
 import AuditReportController from '@/actions/App/Http/Controllers/AuditReportController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -8,9 +7,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Download, FileBarChart, ExternalLink, Search, ChevronDown, ChevronUp, X } from 'lucide-vue-next';
-import { ref, watch, computed } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
+import {
+    ChevronDown,
+    ChevronUp,
+    Download,
+    ExternalLink,
+    FileBarChart,
+    Search,
+    X,
+} from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 
 interface ReportData {
     id: number;
@@ -80,14 +88,17 @@ const localFilters = ref({
 
 // Determine if filters are active
 const hasActiveFilters = computed(() => {
-    return localFilters.value.datacenter_id !== '' ||
+    return (
+        localFilters.value.datacenter_id !== '' ||
         localFilters.value.search !== '' ||
         localFilters.value.date_from !== '' ||
-        localFilters.value.date_to !== '';
+        localFilters.value.date_to !== ''
+    );
 });
 
 // Common select styling
-const selectClass = 'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+const selectClass =
+    'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 
 /**
  * Apply filters and navigate to the filtered URL
@@ -141,7 +152,8 @@ function clearFilters(): void {
 function sortBy(column: string): void {
     if (localFilters.value.sort === column) {
         // Toggle direction
-        localFilters.value.direction = localFilters.value.direction === 'asc' ? 'desc' : 'asc';
+        localFilters.value.direction =
+            localFilters.value.direction === 'asc' ? 'desc' : 'asc';
     } else {
         localFilters.value.sort = column;
         localFilters.value.direction = 'desc';
@@ -163,13 +175,18 @@ const debouncedSearch = debounce(() => {
 }, 300);
 
 // Watch search input
-watch(() => localFilters.value.search, () => {
-    debouncedSearch();
-});
+watch(
+    () => localFilters.value.search,
+    () => {
+        debouncedSearch();
+    },
+);
 
 // Handle datacenter select change
 function handleDatacenterChange(event: Event): void {
-    localFilters.value.datacenter_id = (event.target as HTMLSelectElement).value;
+    localFilters.value.datacenter_id = (
+        event.target as HTMLSelectElement
+    ).value;
     applyFilters();
 }
 
@@ -191,7 +208,9 @@ function handleDateToChange(event: Event): void {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <!-- Header -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            >
                 <HeadingSmall
                     title="Audit Reports"
                     description="View and download generated audit reports."
@@ -205,7 +224,9 @@ function handleDateToChange(event: Event): void {
                         <!-- Mobile stacked filters -->
                         <div class="flex flex-col gap-3 lg:hidden">
                             <div class="relative">
-                                <Search class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                <Search
+                                    class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                                />
                                 <Input
                                     v-model="localFilters.search"
                                     type="text"
@@ -250,7 +271,9 @@ function handleDateToChange(event: Event): void {
                         <!-- Desktop row filters -->
                         <div class="hidden gap-4 lg:flex">
                             <div class="relative flex-1">
-                                <Search class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                <Search
+                                    class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                                />
                                 <Input
                                     v-model="localFilters.search"
                                     type="text"
@@ -316,7 +339,9 @@ function handleDateToChange(event: Event): void {
             </Card>
 
             <!-- Reports Table (Desktop) -->
-            <div class="hidden overflow-hidden rounded-lg border bg-card md:block">
+            <div
+                class="hidden overflow-hidden rounded-lg border bg-card md:block"
+            >
                 <table class="w-full text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
@@ -326,11 +351,23 @@ function handleDateToChange(event: Event): void {
                             >
                                 <span class="flex items-center gap-1">
                                     Audit Name
-                                    <ChevronUp v-if="getSortIcon('audit_name') === 'asc'" class="size-4" />
-                                    <ChevronDown v-else-if="getSortIcon('audit_name') === 'desc'" class="size-4" />
+                                    <ChevronUp
+                                        v-if="
+                                            getSortIcon('audit_name') === 'asc'
+                                        "
+                                        class="size-4"
+                                    />
+                                    <ChevronDown
+                                        v-else-if="
+                                            getSortIcon('audit_name') === 'desc'
+                                        "
+                                        class="size-4"
+                                    />
                                 </span>
                             </th>
-                            <th class="h-11 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-11 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 Datacenter
                             </th>
                             <th
@@ -339,17 +376,35 @@ function handleDateToChange(event: Event): void {
                             >
                                 <span class="flex items-center gap-1">
                                     Generated Date
-                                    <ChevronUp v-if="getSortIcon('generated_at') === 'asc'" class="size-4" />
-                                    <ChevronDown v-else-if="getSortIcon('generated_at') === 'desc'" class="size-4" />
+                                    <ChevronUp
+                                        v-if="
+                                            getSortIcon('generated_at') ===
+                                            'asc'
+                                        "
+                                        class="size-4"
+                                    />
+                                    <ChevronDown
+                                        v-else-if="
+                                            getSortIcon('generated_at') ===
+                                            'desc'
+                                        "
+                                        class="size-4"
+                                    />
                                 </span>
                             </th>
-                            <th class="h-11 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-11 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 Generated By
                             </th>
-                            <th class="h-11 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-11 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 File Size
                             </th>
-                            <th class="h-11 w-[150px] px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-11 w-[150px] px-4 text-left font-medium text-muted-foreground"
+                            >
                                 Actions
                             </th>
                         </tr>
@@ -367,7 +422,11 @@ function handleDateToChange(event: Event): void {
                                 {{ report.datacenter_name || '-' }}
                             </td>
                             <td class="p-4">
-                                {{ report.generated_at_formatted || report.generated_at || '-' }}
+                                {{
+                                    report.generated_at_formatted ||
+                                    report.generated_at ||
+                                    '-'
+                                }}
                             </td>
                             <td class="p-4 text-muted-foreground">
                                 {{ report.generator_name || 'Unknown' }}
@@ -377,14 +436,30 @@ function handleDateToChange(event: Event): void {
                             </td>
                             <td class="p-4">
                                 <div class="flex gap-2">
-                                    <a :href="AuditReportController.download.url(report.id)">
+                                    <a
+                                        :href="
+                                            AuditReportController.download.url(
+                                                report.id,
+                                            )
+                                        "
+                                    >
                                         <Button variant="outline" size="sm">
                                             <Download class="mr-1 size-3" />
                                             Download
                                         </Button>
                                     </a>
-                                    <Link :href="AuditController.show.url(report.audit_id)">
-                                        <Button variant="ghost" size="sm" title="View Audit">
+                                    <Link
+                                        :href="
+                                            AuditController.show.url(
+                                                report.audit_id,
+                                            )
+                                        "
+                                    >
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            title="View Audit"
+                                        >
                                             <ExternalLink class="size-4" />
                                         </Button>
                                     </Link>
@@ -394,11 +469,16 @@ function handleDateToChange(event: Event): void {
                         <tr v-if="reports.data.length === 0">
                             <td colspan="6" class="p-8 text-center">
                                 <div class="flex flex-col items-center gap-2">
-                                    <FileBarChart class="size-8 text-muted-foreground/50" />
+                                    <FileBarChart
+                                        class="size-8 text-muted-foreground/50"
+                                    />
                                     <p class="text-sm text-muted-foreground">
                                         No reports found.
                                     </p>
-                                    <p v-if="hasActiveFilters" class="text-xs text-muted-foreground">
+                                    <p
+                                        v-if="hasActiveFilters"
+                                        class="text-xs text-muted-foreground"
+                                    >
                                         Try adjusting your filters.
                                     </p>
                                 </div>
@@ -416,27 +496,60 @@ function handleDateToChange(event: Event): void {
                     class="overflow-hidden"
                 >
                     <CardContent class="p-4">
-                        <div class="mb-3 flex items-start justify-between gap-2">
+                        <div
+                            class="mb-3 flex items-start justify-between gap-2"
+                        >
                             <div class="flex-1">
-                                <p class="font-medium">{{ report.audit_name || 'Unknown Audit' }}</p>
-                                <p class="text-sm text-muted-foreground">{{ report.datacenter_name || '-' }}</p>
+                                <p class="font-medium">
+                                    {{ report.audit_name || 'Unknown Audit' }}
+                                </p>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ report.datacenter_name || '-' }}
+                                </p>
                             </div>
-                            <span class="shrink-0 text-xs text-muted-foreground">{{ report.file_size_formatted }}</span>
+                            <span
+                                class="shrink-0 text-xs text-muted-foreground"
+                                >{{ report.file_size_formatted }}</span
+                            >
                         </div>
                         <div class="mb-3 text-sm">
                             <p class="text-muted-foreground">
-                                {{ report.generated_at_formatted || report.generated_at || '-' }} by {{ report.generator_name || 'Unknown' }}
+                                {{
+                                    report.generated_at_formatted ||
+                                    report.generated_at ||
+                                    '-'
+                                }}
+                                by {{ report.generator_name || 'Unknown' }}
                             </p>
                         </div>
                         <div class="flex gap-2">
-                            <a :href="AuditReportController.download.url(report.id)" class="flex-1">
-                                <Button variant="outline" size="sm" class="w-full">
+                            <a
+                                :href="
+                                    AuditReportController.download.url(
+                                        report.id,
+                                    )
+                                "
+                                class="flex-1"
+                            >
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    class="w-full"
+                                >
                                     <Download class="mr-1 size-3" />
                                     Download
                                 </Button>
                             </a>
-                            <Link :href="AuditController.show.url(report.audit_id)">
-                                <Button variant="ghost" size="sm" title="View Audit">
+                            <Link
+                                :href="
+                                    AuditController.show.url(report.audit_id)
+                                "
+                            >
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    title="View Audit"
+                                >
                                     <ExternalLink class="size-4" />
                                 </Button>
                             </Link>
@@ -445,20 +558,36 @@ function handleDateToChange(event: Event): void {
                 </Card>
 
                 <div v-if="reports.data.length === 0" class="py-8 text-center">
-                    <FileBarChart class="mx-auto mb-2 size-8 text-muted-foreground/50" />
-                    <p class="text-sm text-muted-foreground">No reports found.</p>
-                    <p v-if="hasActiveFilters" class="mt-1 text-xs text-muted-foreground">
+                    <FileBarChart
+                        class="mx-auto mb-2 size-8 text-muted-foreground/50"
+                    />
+                    <p class="text-sm text-muted-foreground">
+                        No reports found.
+                    </p>
+                    <p
+                        v-if="hasActiveFilters"
+                        class="mt-1 text-xs text-muted-foreground"
+                    >
                         Try adjusting your filters.
                     </p>
                 </div>
             </div>
 
             <!-- Pagination -->
-            <div v-if="reports.last_page > 1" class="flex items-center justify-between border-t pt-4">
+            <div
+                v-if="reports.last_page > 1"
+                class="flex items-center justify-between border-t pt-4"
+            >
                 <p class="text-sm text-muted-foreground">
-                    Showing {{ (reports.current_page - 1) * reports.per_page + 1 }} to
-                    {{ Math.min(reports.current_page * reports.per_page, reports.total) }} of
-                    {{ reports.total }} reports
+                    Showing
+                    {{ (reports.current_page - 1) * reports.per_page + 1 }} to
+                    {{
+                        Math.min(
+                            reports.current_page * reports.per_page,
+                            reports.total,
+                        )
+                    }}
+                    of {{ reports.total }} reports
                 </p>
                 <div class="flex gap-1">
                     <template v-for="link in reports.links" :key="link.label">
@@ -467,7 +596,8 @@ function handleDateToChange(event: Event): void {
                             :href="link.url"
                             class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm transition-colors hover:bg-accent"
                             :class="{
-                                'bg-primary text-primary-foreground hover:bg-primary/90': link.active,
+                                'bg-primary text-primary-foreground hover:bg-primary/90':
+                                    link.active,
                                 'border-transparent': !link.active,
                             }"
                             preserve-scroll

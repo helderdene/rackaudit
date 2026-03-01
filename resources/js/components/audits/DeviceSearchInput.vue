@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Search, X } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 interface Props {
     modelValue?: string;
@@ -32,7 +32,7 @@ watch(
     () => props.modelValue,
     (newValue) => {
         localValue.value = newValue;
-    }
+    },
 );
 
 /**
@@ -88,26 +88,33 @@ function handleKeydown(event: KeyboardEvent): void {
 <template>
     <div class="relative flex items-center gap-2">
         <div class="relative flex-1">
-            <Search class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search
+                class="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+            />
             <Input
                 :value="localValue"
                 type="text"
                 :placeholder="placeholder"
-                class="pl-9 pr-8"
+                class="pr-8 pl-9"
                 @input="handleInput"
                 @keydown="handleKeydown"
             />
             <button
                 v-if="localValue"
                 type="button"
-                class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                class="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 @click="handleClear"
             >
                 <X class="size-4" />
                 <span class="sr-only">Clear search</span>
             </button>
         </div>
-        <Button variant="outline" size="sm" class="hidden sm:flex" @click="handleSearch">
+        <Button
+            variant="outline"
+            size="sm"
+            class="hidden sm:flex"
+            @click="handleSearch"
+        >
             Search
         </Button>
     </div>

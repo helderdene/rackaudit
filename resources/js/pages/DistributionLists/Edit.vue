@@ -1,20 +1,28 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { Form } from '@inertiajs/vue3';
-import { index, update } from '@/actions/App/Http/Controllers/DistributionListController';
+import {
+    index,
+    update,
+} from '@/actions/App/Http/Controllers/DistributionListController';
+import DistributionListMemberInput from '@/components/DistributionLists/DistributionListMemberInput.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
-import DistributionListMemberInput from '@/components/DistributionLists/DistributionListMemberInput.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Mail, ArrowLeft } from 'lucide-vue-next';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { ArrowLeft, Mail } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
 
 interface Member {
     id?: number;
@@ -52,7 +60,9 @@ const members = ref<Member[]>([]);
 
 // Initialize members from props
 onMounted(() => {
-    members.value = props.distributionList.members.map(m => ({ email: m.email }));
+    members.value = props.distributionList.members.map((m) => ({
+        email: m.email,
+    }));
 });
 </script>
 
@@ -81,8 +91,15 @@ onMounted(() => {
                 #default="{ errors, processing }"
             >
                 <!-- Hidden fields for members array -->
-                <template v-for="(member, index) in members" :key="`member-hidden-${index}`">
-                    <input type="hidden" :name="`members[${index}][email]`" :value="member.email" />
+                <template
+                    v-for="(member, index) in members"
+                    :key="`member-hidden-${index}`"
+                >
+                    <input
+                        type="hidden"
+                        :name="`members[${index}][email]`"
+                        :value="member.email"
+                    />
                 </template>
 
                 <!-- Basic Information Card -->
@@ -93,12 +110,16 @@ onMounted(() => {
                             List Details
                         </CardTitle>
                         <CardDescription>
-                            Update the basic information for your distribution list.
+                            Update the basic information for your distribution
+                            list.
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="space-y-2">
-                            <Label for="name">Name <span class="text-destructive">*</span></Label>
+                            <Label for="name"
+                                >Name
+                                <span class="text-destructive">*</span></Label
+                            >
                             <Input
                                 id="name"
                                 name="name"
@@ -116,7 +137,9 @@ onMounted(() => {
                             <Textarea
                                 id="description"
                                 name="description"
-                                :default-value="distributionList.description || ''"
+                                :default-value="
+                                    distributionList.description || ''
+                                "
                                 placeholder="Optional description for this distribution list"
                                 :aria-invalid="!!errors.description"
                             />
@@ -130,7 +153,8 @@ onMounted(() => {
                     <CardHeader>
                         <CardTitle>Members</CardTitle>
                         <CardDescription>
-                            Manage email addresses of recipients who should receive reports sent to this list.
+                            Manage email addresses of recipients who should
+                            receive reports sent to this list.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

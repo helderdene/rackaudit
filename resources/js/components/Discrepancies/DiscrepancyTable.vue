@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { index as discrepanciesIndex } from '@/actions/App/Http/Controllers/DiscrepancyController';
-import { Button } from '@/components/ui/button';
 import { Badge, type BadgeVariants } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUpDown, ArrowUp, ArrowDown, ChevronRight } from 'lucide-vue-next';
+import { router } from '@inertiajs/vue3';
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from 'lucide-vue-next';
 
 interface PortData {
     id: number;
@@ -128,23 +127,32 @@ const formatPortInfo = (port: PortData | null): string => {
 
 // Handle sorting
 const handleSort = (column: string) => {
-    const newOrder = props.filters.sort_by === column && props.filters.sort_order === 'asc' ? 'desc' : 'asc';
+    const newOrder =
+        props.filters.sort_by === column && props.filters.sort_order === 'asc'
+            ? 'desc'
+            : 'asc';
 
-    router.get(discrepanciesIndex.url(), {
-        ...getCurrentParams(),
-        sort_by: column,
-        sort_order: newOrder,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        discrepanciesIndex.url(),
+        {
+            ...getCurrentParams(),
+            sort_by: column,
+            sort_order: newOrder,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 // Get current params
 const getCurrentParams = () => {
     const params: Record<string, string | undefined> = {};
-    if (props.filters.discrepancy_type) params.discrepancy_type = props.filters.discrepancy_type;
-    if (props.filters.datacenter_id) params.datacenter_id = props.filters.datacenter_id;
+    if (props.filters.discrepancy_type)
+        params.discrepancy_type = props.filters.discrepancy_type;
+    if (props.filters.datacenter_id)
+        params.datacenter_id = props.filters.datacenter_id;
     if (props.filters.room_id) params.room_id = props.filters.room_id;
     if (props.filters.status) params.status = props.filters.status;
     if (props.filters.date_from) params.date_from = props.filters.date_from;
@@ -195,7 +203,11 @@ const formatDate = (dateString: string | null): string => {
         >
             <div class="mb-3 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <Badge :variant="getTypeBadgeVariant(discrepancy.discrepancy_type)">
+                    <Badge
+                        :variant="
+                            getTypeBadgeVariant(discrepancy.discrepancy_type)
+                        "
+                    >
                         {{ discrepancy.discrepancy_type_label }}
                     </Badge>
                 </div>
@@ -206,21 +218,30 @@ const formatDate = (dateString: string | null): string => {
             <div class="mb-2 space-y-1 text-sm">
                 <div class="flex items-center gap-2">
                     <span class="text-muted-foreground">Source:</span>
-                    <span class="truncate">{{ formatPortInfo(discrepancy.source_port) }}</span>
+                    <span class="truncate">{{
+                        formatPortInfo(discrepancy.source_port)
+                    }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-muted-foreground">Dest:</span>
-                    <span class="truncate">{{ formatPortInfo(discrepancy.dest_port) }}</span>
+                    <span class="truncate">{{
+                        formatPortInfo(discrepancy.dest_port)
+                    }}</span>
                 </div>
             </div>
-            <div class="flex items-center justify-between text-sm text-muted-foreground">
+            <div
+                class="flex items-center justify-between text-sm text-muted-foreground"
+            >
                 <span>{{ discrepancy.datacenter?.name || '-' }}</span>
                 <span>{{ formatDate(discrepancy.detected_at) }}</span>
             </div>
         </div>
 
         <!-- Empty state -->
-        <div v-if="discrepancies.data.length === 0" class="rounded-lg border border-dashed py-12 text-center text-muted-foreground">
+        <div
+            v-if="discrepancies.data.length === 0"
+            class="rounded-lg border border-dashed py-12 text-center text-muted-foreground"
+        >
             No discrepancies found.
         </div>
     </div>
@@ -232,45 +253,75 @@ const formatDate = (dateString: string | null): string => {
                 <table class="w-full text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 <button
                                     class="flex items-center gap-1 hover:text-foreground"
                                     @click="handleSort('discrepancy_type')"
                                 >
                                     Type
-                                    <component :is="getSortIcon('discrepancy_type')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('discrepancy_type')"
+                                        class="size-4"
+                                    />
                                 </button>
                             </th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Source</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">Destination</th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Source
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Destination
+                            </th>
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 <button
                                     class="flex items-center gap-1 hover:text-foreground"
                                     @click="handleSort('datacenter_id')"
                                 >
                                     Datacenter
-                                    <component :is="getSortIcon('datacenter_id')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('datacenter_id')"
+                                        class="size-4"
+                                    />
                                 </button>
                             </th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 <button
                                     class="flex items-center gap-1 hover:text-foreground"
                                     @click="handleSort('detected_at')"
                                 >
                                     Detected
-                                    <component :is="getSortIcon('detected_at')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('detected_at')"
+                                        class="size-4"
+                                    />
                                 </button>
                             </th>
-                            <th class="h-12 px-4 text-left font-medium text-muted-foreground">
+                            <th
+                                class="h-12 px-4 text-left font-medium text-muted-foreground"
+                            >
                                 <button
                                     class="flex items-center gap-1 hover:text-foreground"
                                     @click="handleSort('status')"
                                 >
                                     Status
-                                    <component :is="getSortIcon('status')" class="size-4" />
+                                    <component
+                                        :is="getSortIcon('status')"
+                                        class="size-4"
+                                    />
                                 </button>
                             </th>
-                            <th class="h-12 w-[60px] px-4 text-left font-medium text-muted-foreground"></th>
+                            <th
+                                class="h-12 w-[60px] px-4 text-left font-medium text-muted-foreground"
+                            ></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -281,7 +332,13 @@ const formatDate = (dateString: string | null): string => {
                             @click="handleRowClick(discrepancy)"
                         >
                             <td class="p-4">
-                                <Badge :variant="getTypeBadgeVariant(discrepancy.discrepancy_type)">
+                                <Badge
+                                    :variant="
+                                        getTypeBadgeVariant(
+                                            discrepancy.discrepancy_type,
+                                        )
+                                    "
+                                >
                                     {{ discrepancy.discrepancy_type_label }}
                                 </Badge>
                             </td>
@@ -298,16 +355,27 @@ const formatDate = (dateString: string | null): string => {
                                 {{ formatDate(discrepancy.detected_at) }}
                             </td>
                             <td class="p-4">
-                                <Badge :variant="getStatusBadgeVariant(discrepancy.status)">
+                                <Badge
+                                    :variant="
+                                        getStatusBadgeVariant(
+                                            discrepancy.status,
+                                        )
+                                    "
+                                >
                                     {{ discrepancy.status_label }}
                                 </Badge>
                             </td>
                             <td class="p-4">
-                                <ChevronRight class="size-4 text-muted-foreground" />
+                                <ChevronRight
+                                    class="size-4 text-muted-foreground"
+                                />
                             </td>
                         </tr>
                         <tr v-if="discrepancies.data.length === 0">
-                            <td colspan="7" class="p-8 text-center text-muted-foreground">
+                            <td
+                                colspan="7"
+                                class="p-8 text-center text-muted-foreground"
+                            >
                                 No discrepancies found.
                             </td>
                         </tr>
@@ -318,11 +386,21 @@ const formatDate = (dateString: string | null): string => {
     </Card>
 
     <!-- Pagination - responsive layout -->
-    <div v-if="discrepancies.last_page > 1" class="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
+    <div
+        v-if="discrepancies.last_page > 1"
+        class="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row"
+    >
         <div class="text-sm text-muted-foreground">
-            Showing {{ (discrepancies.current_page - 1) * discrepancies.per_page + 1 }} to
-            {{ Math.min(discrepancies.current_page * discrepancies.per_page, discrepancies.total) }} of
-            {{ discrepancies.total }} discrepancies
+            Showing
+            {{ (discrepancies.current_page - 1) * discrepancies.per_page + 1 }}
+            to
+            {{
+                Math.min(
+                    discrepancies.current_page * discrepancies.per_page,
+                    discrepancies.total,
+                )
+            }}
+            of {{ discrepancies.total }} discrepancies
         </div>
         <div class="flex flex-wrap justify-center gap-1">
             <Button
@@ -332,8 +410,8 @@ const formatDate = (dateString: string | null): string => {
                 size="sm"
                 :disabled="!link.url || link.active"
                 @click="goToPage(link.url)"
-                v-html="link.label"
-            />
+                ><span v-html="link.label"
+            /></Button>
         </div>
     </div>
 </template>

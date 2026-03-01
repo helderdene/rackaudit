@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { CircleHelp } from 'lucide-vue-next';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
     Tooltip,
@@ -9,9 +6,12 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import HelpSidebar from './HelpSidebar.vue';
-import { useHelp, type HelpTour } from '@/composables/useHelp';
+import { type HelpTour } from '@/composables/useHelp';
 import { useHelpInteractions } from '@/composables/useHelpInteractions';
+import { cn } from '@/lib/utils';
+import { CircleHelp } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import HelpSidebar from './HelpSidebar.vue';
 
 interface Props {
     /** Current context key for filtering articles */
@@ -129,7 +129,11 @@ function handleReplayTour(tour: HelpTour) {
  */
 function handleGlobalKeydown(event: KeyboardEvent) {
     // Cmd/Ctrl + ? (Shift + /)
-    if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === '/') {
+    if (
+        (event.metaKey || event.ctrlKey) &&
+        event.shiftKey &&
+        event.key === '/'
+    ) {
         event.preventDefault();
         toggleSidebar();
         return;
@@ -163,12 +167,15 @@ onUnmounted(() => {
                     <Button
                         variant="ghost"
                         :size="'icon'"
-                        :class="cn(
-                            buttonSizeClasses,
-                            'relative rounded-full',
-                            position === 'fixed' && 'fixed bottom-6 right-6 shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 z-50',
-                            props.class,
-                        )"
+                        :class="
+                            cn(
+                                buttonSizeClasses,
+                                'relative rounded-full',
+                                position === 'fixed' &&
+                                    'fixed right-6 bottom-6 z-50 bg-primary text-primary-foreground shadow-lg hover:bg-primary/90',
+                                props.class,
+                            )
+                        "
                         :aria-label="'Open help center'"
                         @click="toggleSidebar"
                     >
@@ -177,12 +184,14 @@ onUnmounted(() => {
                         <!-- Notification badge -->
                         <span
                             v-if="showBadge && badgeCount > 0"
-                            :class="cn(
-                                'absolute -top-1 -right-1 flex items-center justify-center',
-                                'min-w-5 h-5 px-1.5 rounded-full',
-                                'bg-destructive text-destructive-foreground',
-                                'text-xs font-medium',
-                            )"
+                            :class="
+                                cn(
+                                    'absolute -top-1 -right-1 flex items-center justify-center',
+                                    'h-5 min-w-5 rounded-full px-1.5',
+                                    'bg-destructive text-destructive-foreground',
+                                    'text-xs font-medium',
+                                )
+                            "
                         >
                             {{ badgeCount > 99 ? '99+' : badgeCount }}
                         </span>
@@ -192,7 +201,7 @@ onUnmounted(() => {
                     <div class="flex items-center gap-2">
                         <span>Help</span>
                         <kbd
-                            class="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono"
+                            class="hidden items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] sm:inline-flex"
                         >
                             {{ isMac ? 'Cmd' : 'Ctrl' }}+?
                         </kbd>

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import RealtimeToastContainer from '@/components/notifications/RealtimeToastContainer.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Cable, Server, Plug } from 'lucide-vue-next';
 import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
+import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ArrowLeft, Cable, Plug, Server } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface PortData {
     id: number;
@@ -62,15 +62,13 @@ const breadcrumbs = computed<BreadcrumbItem[]>(() => [
 ]);
 
 // Get datacenter ID from the source device if available
-const datacenterId = computed(() => props.connection.source_device.datacenter_id ?? null);
+const datacenterId = computed(
+    () => props.connection.source_device.datacenter_id ?? null,
+);
 
 // Real-time updates integration
-const {
-    pendingUpdates,
-    dismissUpdate,
-    clearUpdates,
-    onDataChange,
-} = useRealtimeUpdates(datacenterId.value);
+const { pendingUpdates, dismissUpdate, clearUpdates, onDataChange } =
+    useRealtimeUpdates(datacenterId.value);
 
 // Register handler for connection changes
 onDataChange('connection', (data) => {
@@ -129,25 +127,45 @@ function formatDate(dateString: string): string {
                     <CardContent class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-sm text-muted-foreground">Cable Type</p>
-                                <p class="font-medium">{{ connection.cable_type_label }}</p>
+                                <p class="text-sm text-muted-foreground">
+                                    Cable Type
+                                </p>
+                                <p class="font-medium">
+                                    {{ connection.cable_type_label }}
+                                </p>
                             </div>
                             <div>
-                                <p class="text-sm text-muted-foreground">Cable Length</p>
-                                <p class="font-medium">{{ connection.cable_length }}m</p>
+                                <p class="text-sm text-muted-foreground">
+                                    Cable Length
+                                </p>
+                                <p class="font-medium">
+                                    {{ connection.cable_length }}m
+                                </p>
                             </div>
                             <div>
-                                <p class="text-sm text-muted-foreground">Cable Color</p>
-                                <p class="font-medium">{{ connection.cable_color || '-' }}</p>
+                                <p class="text-sm text-muted-foreground">
+                                    Cable Color
+                                </p>
+                                <p class="font-medium">
+                                    {{ connection.cable_color || '-' }}
+                                </p>
                             </div>
                             <div>
-                                <p class="text-sm text-muted-foreground">Created</p>
-                                <p class="font-medium">{{ formatDate(connection.created_at) }}</p>
+                                <p class="text-sm text-muted-foreground">
+                                    Created
+                                </p>
+                                <p class="font-medium">
+                                    {{ formatDate(connection.created_at) }}
+                                </p>
                             </div>
                         </div>
                         <div v-if="connection.path_notes">
-                            <p class="text-sm text-muted-foreground">Path Notes</p>
-                            <p class="font-medium">{{ connection.path_notes }}</p>
+                            <p class="text-sm text-muted-foreground">
+                                Path Notes
+                            </p>
+                            <p class="font-medium">
+                                {{ connection.path_notes }}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -169,7 +187,10 @@ function formatDate(dateString: string): string {
                             >
                                 {{ connection.source_device.name }}
                             </Link>
-                            <p v-if="connection.source_device.asset_tag" class="text-xs text-muted-foreground">
+                            <p
+                                v-if="connection.source_device.asset_tag"
+                                class="text-xs text-muted-foreground"
+                            >
                                 {{ connection.source_device.asset_tag }}
                             </p>
                         </div>
@@ -177,13 +198,19 @@ function formatDate(dateString: string): string {
                             <p class="text-sm text-muted-foreground">Port</p>
                             <div class="flex items-center gap-2">
                                 <Plug class="size-4 text-muted-foreground" />
-                                <span class="font-medium">{{ connection.source_port.label }}</span>
-                                <Badge variant="secondary">{{ connection.source_port.type_label }}</Badge>
+                                <span class="font-medium">{{
+                                    connection.source_port.label
+                                }}</span>
+                                <Badge variant="secondary">{{
+                                    connection.source_port.type_label
+                                }}</Badge>
                             </div>
                         </div>
                         <div v-if="connection.source_device.rack_name">
                             <p class="text-sm text-muted-foreground">Rack</p>
-                            <p class="font-medium">{{ connection.source_device.rack_name }}</p>
+                            <p class="font-medium">
+                                {{ connection.source_device.rack_name }}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -205,7 +232,10 @@ function formatDate(dateString: string): string {
                             >
                                 {{ connection.destination_device.name }}
                             </Link>
-                            <p v-if="connection.destination_device.asset_tag" class="text-xs text-muted-foreground">
+                            <p
+                                v-if="connection.destination_device.asset_tag"
+                                class="text-xs text-muted-foreground"
+                            >
                                 {{ connection.destination_device.asset_tag }}
                             </p>
                         </div>
@@ -213,13 +243,19 @@ function formatDate(dateString: string): string {
                             <p class="text-sm text-muted-foreground">Port</p>
                             <div class="flex items-center gap-2">
                                 <Plug class="size-4 text-muted-foreground" />
-                                <span class="font-medium">{{ connection.destination_port.label }}</span>
-                                <Badge variant="secondary">{{ connection.destination_port.type_label }}</Badge>
+                                <span class="font-medium">{{
+                                    connection.destination_port.label
+                                }}</span>
+                                <Badge variant="secondary">{{
+                                    connection.destination_port.type_label
+                                }}</Badge>
                             </div>
                         </div>
                         <div v-if="connection.destination_device.rack_name">
                             <p class="text-sm text-muted-foreground">Rack</p>
-                            <p class="font-medium">{{ connection.destination_device.rack_name }}</p>
+                            <p class="font-medium">
+                                {{ connection.destination_device.rack_name }}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>

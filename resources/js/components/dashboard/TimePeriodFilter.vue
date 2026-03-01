@@ -47,7 +47,11 @@ const selectClass =
         class="w-full sm:w-auto md:min-w-36"
         aria-label="Filter by time period"
     >
-        <option v-for="option in timePeriodOptions" :key="option.value" :value="option.value">
+        <option
+            v-for="option in timePeriodOptions"
+            :key="option.value"
+            :value="option.value"
+        >
             {{ option.label }}
         </option>
     </select>

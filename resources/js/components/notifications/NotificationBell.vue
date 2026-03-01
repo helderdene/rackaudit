@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import axios from 'axios';
-import { router, usePage } from '@inertiajs/vue3';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,24 +10,26 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
+import type { BroadcastNotification } from '@/composables/useUserNotifications';
+import { useUserNotifications } from '@/composables/useUserNotifications';
+import { router, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import {
+    AlertCircle,
     Bell,
     CheckCheck,
-    FileCheck,
-    FileClock,
-    ExternalLink,
-    Radio,
     ClipboardCheck,
     ClipboardX,
-    AlertCircle,
     Clock,
+    ExternalLink,
+    FileCheck,
+    FileClock,
+    Radio,
     UserCheck,
     UserMinus,
 } from 'lucide-vue-next';
-import { useRealtimeUpdates } from '@/composables/useRealtimeUpdates';
-import { useUserNotifications } from '@/composables/useUserNotifications';
-import type { BroadcastNotification } from '@/composables/useUserNotifications';
-import type { PendingUpdate } from '@/composables/useRealtimeUpdates';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 interface Props {
     datacenterId?: number | null;
@@ -73,7 +72,9 @@ interface Notification {
 
 // Get the current user ID from Inertia page props
 const page = usePage();
-const userId = computed(() => (page.props.auth as { user: { id: number } })?.user?.id ?? null);
+const userId = computed(
+    () => (page.props.auth as { user: { id: number } })?.user?.id ?? null,
+);
 
 const notifications = ref<Notification[]>([]);
 const unreadCount = ref(0);
@@ -86,7 +87,8 @@ const realtimeUpdatesCount = ref(0);
 let realtimeComposable: ReturnType<typeof useRealtimeUpdates> | null = null;
 
 // User-specific notification subscription
-let userNotificationComposable: ReturnType<typeof useUserNotifications> | null = null;
+let userNotificationComposable: ReturnType<typeof useUserNotifications> | null =
+    null;
 
 /**
  * Initialize real-time updates subscription if datacenter ID is provided.
@@ -106,7 +108,7 @@ function initializeRealtimeUpdates(): void {
                 realtimeUpdatesCount.value = newUpdates.length;
             }
         },
-        { immediate: true, deep: true }
+        { immediate: true, deep: true },
     );
 }
 
@@ -121,31 +123,33 @@ function initializeUserNotifications(): void {
     userNotificationComposable = useUserNotifications(userId.value);
 
     // Handle incoming real-time notifications
-    userNotificationComposable.onNotification((notification: BroadcastNotification) => {
-        // Increment unread badge count
-        unreadCount.value += 1;
+    userNotificationComposable.onNotification(
+        (notification: BroadcastNotification) => {
+            // Increment unread badge count
+            unreadCount.value += 1;
 
-        // If dropdown is open, prepend the new notification to the list
-        if (isOpen.value) {
-            const newNotification: Notification = {
-                id: notification.id,
-                type: (notification.type as NotificationType) || 'general',
-                message: notification.message,
-                link: null,
-                file_name: null,
-                datacenter_name: notification.datacenter_name ?? null,
-                audit_id: notification.audit_id,
-                audit_name: notification.audit_name,
-                read: false,
-                read_at: null,
-                created_at: notification.created_at,
-                relative_time: notification.relative_time || 'just now',
-            };
+            // If dropdown is open, prepend the new notification to the list
+            if (isOpen.value) {
+                const newNotification: Notification = {
+                    id: notification.id,
+                    type: (notification.type as NotificationType) || 'general',
+                    message: notification.message,
+                    link: null,
+                    file_name: null,
+                    datacenter_name: notification.datacenter_name ?? null,
+                    audit_id: notification.audit_id,
+                    audit_name: notification.audit_name,
+                    read: false,
+                    read_at: null,
+                    created_at: notification.created_at,
+                    relative_time: notification.relative_time || 'just now',
+                };
 
-            // Prepend to the list (most recent first)
-            notifications.value = [newNotification, ...notifications.value];
-        }
-    });
+                // Prepend to the list (most recent first)
+                notifications.value = [newNotification, ...notifications.value];
+            }
+        },
+    );
 }
 
 /**
@@ -196,7 +200,9 @@ const fetchNotifications = async () => {
  */
 const fetchUnreadCount = async () => {
     try {
-        const response = await axios.get<{ unread_count: number }>('/notifications/unread-count');
+        const response = await axios.get<{ unread_count: number }>(
+            '/notifications/unread-count',
+        );
         unreadCount.value = response.data.unread_count;
     } catch (error) {
         console.error('Failed to fetch unread count:', error);
@@ -367,27 +373,27 @@ onUnmounted(() => {
 <template>
     <DropdownMenu @update:open="handleOpenChange">
         <DropdownMenuTrigger as-child>
-            <Button
-                variant="ghost"
-                size="icon"
-                class="relative h-9 w-9"
-            >
+            <Button variant="ghost" size="icon" class="relative h-9 w-9">
                 <Bell class="size-5" />
                 <!-- Combined badge for unread + real-time updates -->
                 <Badge
                     v-if="totalBadgeCount > 0"
                     variant="destructive"
-                    class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center px-1 text-[10px]"
+                    class="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center px-1 text-[10px]"
                 >
                     {{ totalBadgeCount > 99 ? '99+' : totalBadgeCount }}
                 </Badge>
                 <!-- Real-time indicator dot (pulsing) -->
                 <span
                     v-if="hasRealtimeUpdates"
-                    class="absolute -right-0.5 -top-0.5 flex h-3 w-3"
+                    class="absolute -top-0.5 -right-0.5 flex h-3 w-3"
                 >
-                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
-                    <span class="relative inline-flex h-3 w-3 rounded-full bg-blue-500" />
+                    <span
+                        class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"
+                    />
+                    <span
+                        class="relative inline-flex h-3 w-3 rounded-full bg-blue-500"
+                    />
                 </span>
                 <span class="sr-only">Notifications</span>
             </Button>
@@ -406,7 +412,9 @@ onUnmounted(() => {
                         @click.stop="handleRefreshClick"
                     >
                         <Radio class="size-3" />
-                        {{ realtimeUpdatesCount }} update{{ realtimeUpdatesCount > 1 ? 's' : '' }}
+                        {{ realtimeUpdatesCount }} update{{
+                            realtimeUpdatesCount > 1 ? 's' : ''
+                        }}
                     </Button>
                     <Button
                         v-if="unreadCount > 0"
@@ -445,7 +453,10 @@ onUnmounted(() => {
             </div>
 
             <!-- Loading state -->
-            <div v-if="isLoading && notifications.length === 0" class="space-y-2 p-2">
+            <div
+                v-if="isLoading && notifications.length === 0"
+                class="space-y-2 p-2"
+            >
                 <div v-for="i in 3" :key="i" class="flex items-start gap-3">
                     <Skeleton class="h-8 w-8 shrink-0 rounded-full" />
                     <div class="flex-1 space-y-1.5">
@@ -461,7 +472,9 @@ onUnmounted(() => {
                 class="flex flex-col items-center justify-center py-8 text-center"
             >
                 <Bell class="mb-2 size-8 text-muted-foreground/50" />
-                <p class="text-sm text-muted-foreground">No notifications yet</p>
+                <p class="text-sm text-muted-foreground">
+                    No notifications yet
+                </p>
             </div>
 
             <!-- Notification list -->
@@ -479,7 +492,9 @@ onUnmounted(() => {
                         <!-- Icon -->
                         <div
                             class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
-                            :class="getNotificationIconClasses(notification.type)"
+                            :class="
+                                getNotificationIconClasses(notification.type)
+                            "
                         >
                             <component
                                 :is="getNotificationIcon(notification.type)"
@@ -489,7 +504,10 @@ onUnmounted(() => {
 
                         <!-- Content -->
                         <div class="min-w-0 flex-1">
-                            <p class="text-sm" :class="{ 'font-medium': !notification.read }">
+                            <p
+                                class="text-sm"
+                                :class="{ 'font-medium': !notification.read }"
+                            >
                                 {{ notification.message }}
                             </p>
                             <p class="mt-0.5 text-xs text-muted-foreground">

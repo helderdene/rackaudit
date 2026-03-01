@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,7 +7,15 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { CheckCircle2, XCircle, Clock, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import {
+    AlertCircle,
+    CheckCircle2,
+    ChevronLeft,
+    ChevronRight,
+    Clock,
+    XCircle,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Execution {
     id: number;
@@ -87,7 +94,9 @@ const formatFileSize = (bytes: number | null): string => {
 /**
  * Get status badge variant
  */
-const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
+const getStatusVariant = (
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'success':
             return 'default';
@@ -160,7 +169,10 @@ const canGoPrevious = computed(() => {
  * Check if we can go to next page
  */
 const canGoNext = computed(() => {
-    return props.pagination && props.pagination.current_page < props.pagination.last_page;
+    return (
+        props.pagination &&
+        props.pagination.current_page < props.pagination.last_page
+    );
 });
 
 /**
@@ -202,12 +214,36 @@ const goToNext = () => {
                 <table class="w-full text-sm">
                     <thead class="border-b bg-muted/50">
                         <tr>
-                            <th class="h-10 px-4 text-left font-medium text-muted-foreground">Date</th>
-                            <th class="h-10 px-4 text-left font-medium text-muted-foreground">Status</th>
-                            <th class="h-10 px-4 text-left font-medium text-muted-foreground">Duration</th>
-                            <th class="h-10 px-4 text-left font-medium text-muted-foreground">Recipients</th>
-                            <th class="h-10 px-4 text-left font-medium text-muted-foreground">File Size</th>
-                            <th class="h-10 px-4 text-left font-medium text-muted-foreground">Error</th>
+                            <th
+                                class="h-10 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Date
+                            </th>
+                            <th
+                                class="h-10 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Status
+                            </th>
+                            <th
+                                class="h-10 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Duration
+                            </th>
+                            <th
+                                class="h-10 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Recipients
+                            </th>
+                            <th
+                                class="h-10 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                File Size
+                            </th>
+                            <th
+                                class="h-10 px-4 text-left font-medium text-muted-foreground"
+                            >
+                                Error
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -221,10 +257,15 @@ const goToNext = () => {
                             </td>
                             <td class="p-4">
                                 <Badge
-                                    :variant="getStatusVariant(execution.status)"
+                                    :variant="
+                                        getStatusVariant(execution.status)
+                                    "
                                     :class="getStatusClass(execution.status)"
                                 >
-                                    <component :is="getStatusIcon(execution.status)" class="mr-1 h-3 w-3" />
+                                    <component
+                                        :is="getStatusIcon(execution.status)"
+                                        class="mr-1 h-3 w-3"
+                                    />
                                     {{ getStatusLabel(execution.status) }}
                                 </Badge>
                             </td>
@@ -241,16 +282,30 @@ const goToNext = () => {
                                 <TooltipProvider v-if="execution.error_message">
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <span class="inline-block max-w-[200px] cursor-help truncate text-sm text-destructive">
-                                                {{ execution.error_message.slice(0, 30) }}...
+                                            <span
+                                                class="inline-block max-w-[200px] cursor-help truncate text-sm text-destructive"
+                                            >
+                                                {{
+                                                    execution.error_message.slice(
+                                                        0,
+                                                        30,
+                                                    )
+                                                }}...
                                             </span>
                                         </TooltipTrigger>
-                                        <TooltipContent side="left" class="max-w-sm">
-                                            <p class="text-sm">{{ execution.error_message }}</p>
+                                        <TooltipContent
+                                            side="left"
+                                            class="max-w-sm"
+                                        >
+                                            <p class="text-sm">
+                                                {{ execution.error_message }}
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
-                                <span v-else class="text-muted-foreground">-</span>
+                                <span v-else class="text-muted-foreground"
+                                    >-</span
+                                >
                             </td>
                         </tr>
                     </tbody>
@@ -261,8 +316,8 @@ const goToNext = () => {
         <!-- Pagination -->
         <div v-if="hasPagination" class="flex items-center justify-between">
             <p class="text-sm text-muted-foreground">
-                Page {{ pagination?.current_page }} of {{ pagination?.last_page }}
-                ({{ pagination?.total }} total)
+                Page {{ pagination?.current_page }} of
+                {{ pagination?.last_page }} ({{ pagination?.total }} total)
             </p>
             <div class="flex items-center gap-2">
                 <Button

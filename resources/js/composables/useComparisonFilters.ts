@@ -1,5 +1,5 @@
-import { ref, computed, onMounted } from 'vue';
 import type { DiscrepancyTypeValue } from '@/types/comparison';
+import { computed, onMounted, ref } from 'vue';
 
 /**
  * Filter state for comparison view
@@ -28,7 +28,10 @@ const defaultFilters: ComparisonFiltersState = {
 /**
  * All available discrepancy types for the multi-select dropdown
  */
-export const allDiscrepancyTypes: { value: DiscrepancyTypeValue; label: string }[] = [
+export const allDiscrepancyTypes: {
+    value: DiscrepancyTypeValue;
+    label: string;
+}[] = [
     { value: 'matched', label: 'Matched' },
     { value: 'missing', label: 'Missing' },
     { value: 'unexpected', label: 'Unexpected' },
@@ -56,7 +59,10 @@ function parseQueryParams(): ComparisonFiltersState {
     });
     // Also check for non-bracketed format
     params.getAll('discrepancy_type').forEach((type) => {
-        if (allDiscrepancyTypes.some((t) => t.value === type) && !discrepancyTypes.includes(type as DiscrepancyTypeValue)) {
+        if (
+            allDiscrepancyTypes.some((t) => t.value === type) &&
+            !discrepancyTypes.includes(type as DiscrepancyTypeValue)
+        ) {
             discrepancyTypes.push(type as DiscrepancyTypeValue);
         }
     });
@@ -79,7 +85,8 @@ function parseQueryParams(): ComparisonFiltersState {
     // Parse show acknowledged - accept 'false', '0', 'true', '1'
     const showAcknowledged = params.get('show_acknowledged');
     if (showAcknowledged !== null) {
-        filters.showAcknowledged = showAcknowledged !== 'false' && showAcknowledged !== '0';
+        filters.showAcknowledged =
+            showAcknowledged !== 'false' && showAcknowledged !== '0';
     }
 
     return filters;
@@ -88,7 +95,9 @@ function parseQueryParams(): ComparisonFiltersState {
 /**
  * Build URL query parameters from filter state for API requests
  */
-function buildQueryParams(filters: ComparisonFiltersState): Record<string, string | string[]> {
+function buildQueryParams(
+    filters: ComparisonFiltersState,
+): Record<string, string | string[]> {
     const params: Record<string, string | string[]> = {};
 
     if (filters.discrepancyTypes.length > 0) {
@@ -149,14 +158,16 @@ function buildQueryString(filters: ComparisonFiltersState): string {
  * @param options Configuration options
  * @returns Filter state and methods
  */
-export function useComparisonFilters(options: {
-    /** Debounce delay in milliseconds (default: 300) */
-    debounceMs?: number;
-    /** Callback when filters change */
-    onFiltersChange?: (filters: ComparisonFiltersState) => void;
-    /** Whether to sync with URL (default: true) */
-    syncWithUrl?: boolean;
-} = {}) {
+export function useComparisonFilters(
+    options: {
+        /** Debounce delay in milliseconds (default: 300) */
+        debounceMs?: number;
+        /** Callback when filters change */
+        onFiltersChange?: (filters: ComparisonFiltersState) => void;
+        /** Whether to sync with URL (default: true) */
+        syncWithUrl?: boolean;
+    } = {},
+) {
     const { debounceMs = 300, onFiltersChange, syncWithUrl = true } = options;
 
     // Filter state
@@ -212,7 +223,9 @@ export function useComparisonFilters(options: {
 
         const baseUrl = window.location.pathname;
         const newQueryString = queryString.value;
-        const newUrl = newQueryString ? `${baseUrl}?${newQueryString}` : baseUrl;
+        const newUrl = newQueryString
+            ? `${baseUrl}?${newQueryString}`
+            : baseUrl;
 
         // Use replaceState to avoid adding to browser history on every filter change
         window.history.replaceState({}, '', newUrl);

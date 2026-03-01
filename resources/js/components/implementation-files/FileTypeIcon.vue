@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { FileText, FileSpreadsheet, FileType, File } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
+import { File, FileSpreadsheet, FileText, FileType } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 interface Props {
     mimeType: string;
@@ -25,7 +25,8 @@ const iconComponent = computed(() => {
 
     // Excel/Spreadsheet files
     if (
-        mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        mimeType ===
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         mimeType === 'application/vnd.ms-excel' ||
         mimeType === 'text/csv'
     ) {
@@ -33,7 +34,10 @@ const iconComponent = computed(() => {
     }
 
     // Word documents
-    if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+    if (
+        mimeType ===
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
         return FileType;
     }
 
@@ -59,7 +63,8 @@ const iconColorClass = computed(() => {
 
     // Excel/CSV files - green
     if (
-        mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        mimeType ===
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         mimeType === 'application/vnd.ms-excel' ||
         mimeType === 'text/csv'
     ) {
@@ -67,7 +72,10 @@ const iconColorClass = computed(() => {
     }
 
     // Word documents - blue
-    if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+    if (
+        mimeType ===
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
         return 'text-blue-600 dark:text-blue-400';
     }
 

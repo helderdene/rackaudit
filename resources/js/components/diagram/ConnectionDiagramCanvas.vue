@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, markRaw } from 'vue';
-import { VueFlow, useVueFlow, type Node, type Edge } from '@vue-flow/core';
 import { Controls } from '@vue-flow/controls';
-import { MiniMap } from '@vue-flow/minimap';
-import '@vue-flow/core/dist/style.css';
 import '@vue-flow/controls/dist/style.css';
+import { VueFlow, useVueFlow, type Node } from '@vue-flow/core';
+import '@vue-flow/core/dist/style.css';
+import { MiniMap } from '@vue-flow/minimap';
 import '@vue-flow/minimap/dist/style.css';
+import { markRaw, onMounted, ref, watch } from 'vue';
 
-import type {
-    DiagramData,
-    FlowNodeData,
-    FlowEdgeData,
-    DiagramFilters,
-} from '@/types/connections';
-import { useConnectionDiagram } from '@/composables/useConnectionDiagram';
-import DeviceNode from './DeviceNode.vue';
-import ConnectionEdge from './ConnectionEdge.vue';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Maximize2, ZoomIn, ZoomOut } from 'lucide-vue-next';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useConnectionDiagram } from '@/composables/useConnectionDiagram';
+import type {
+    DiagramFilters,
+    FlowEdgeData,
+    FlowNodeData,
+} from '@/types/connections';
+import { Maximize2, RefreshCw } from 'lucide-vue-next';
+import ConnectionEdge from './ConnectionEdge.vue';
+import DeviceNode from './DeviceNode.vue';
 
 interface Props {
     /** Initial filter values for the diagram */
@@ -54,7 +53,6 @@ const emit = defineEmits<{
 const {
     nodes,
     edges,
-    filters,
     selectedNode,
     selectedEdge,
     isLoading,
@@ -72,7 +70,7 @@ const {
 } = useConnectionDiagram(props.initialFilters);
 
 // Vue Flow instance
-const { fitView, zoomIn, zoomOut } = useVueFlow();
+const { fitView } = useVueFlow();
 
 // Register custom node and edge types
 const nodeTypes = {
@@ -187,7 +185,7 @@ watch(
         <!-- Loading state with dark mode support -->
         <div
             v-if="isLoading"
-            class="absolute inset-0 z-10 flex items-center justify-center bg-background/80 dark:bg-slate-900/80 backdrop-blur-sm"
+            class="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm dark:bg-slate-900/80"
         >
             <div class="space-y-4 text-center">
                 <div class="flex items-center justify-center gap-3">
@@ -195,7 +193,9 @@ watch(
                     <Skeleton class="h-16 w-24 rounded-lg dark:bg-slate-700" />
                     <Skeleton class="h-16 w-24 rounded-lg dark:bg-slate-700" />
                 </div>
-                <p class="text-sm text-muted-foreground dark:text-slate-400">Loading diagram...</p>
+                <p class="text-sm text-muted-foreground dark:text-slate-400">
+                    Loading diagram...
+                </p>
             </div>
         </div>
 
@@ -205,7 +205,9 @@ watch(
             class="absolute inset-0 flex items-center justify-center"
         >
             <div class="space-y-4 text-center">
-                <p class="text-sm text-destructive dark:text-red-400">{{ error }}</p>
+                <p class="text-sm text-destructive dark:text-red-400">
+                    {{ error }}
+                </p>
                 <Button
                     variant="outline"
                     size="sm"
@@ -224,7 +226,9 @@ watch(
             class="absolute inset-0 flex items-center justify-center"
         >
             <div class="space-y-2 text-center">
-                <p class="text-sm text-muted-foreground dark:text-slate-400">No connections found</p>
+                <p class="text-sm text-muted-foreground dark:text-slate-400">
+                    No connections found
+                </p>
                 <p class="text-xs text-muted-foreground/60 dark:text-slate-500">
                     Adjust filters or create connections to see the diagram
                 </p>
@@ -273,7 +277,7 @@ watch(
                 :show-fit-view="true"
                 :show-interactive="false"
                 position="bottom-right"
-                class="vue-flow-controls rounded-lg border bg-background shadow-lg dark:bg-slate-800 dark:border-slate-600"
+                class="vue-flow-controls rounded-lg border bg-background shadow-lg dark:border-slate-600 dark:bg-slate-800"
             />
 
             <!-- MiniMap with responsive visibility and dark mode -->
@@ -282,16 +286,18 @@ watch(
                 position="bottom-left"
                 :pannable="true"
                 :zoomable="true"
-                class="vue-flow-minimap rounded-lg border bg-background shadow-lg dark:bg-slate-800 dark:border-slate-600 hidden md:block"
+                class="vue-flow-minimap hidden rounded-lg border bg-background shadow-lg md:block dark:border-slate-600 dark:bg-slate-800"
             />
         </VueFlow>
 
         <!-- Custom control buttons with responsive sizing and dark mode -->
-        <div class="absolute right-2 top-2 flex gap-1.5 sm:right-4 sm:top-4 sm:gap-2">
+        <div
+            class="absolute top-2 right-2 flex gap-1.5 sm:top-4 sm:right-4 sm:gap-2"
+        >
             <Button
                 variant="outline"
                 size="icon"
-                class="size-7 sm:size-8 bg-background/80 backdrop-blur-sm dark:bg-slate-800/80 dark:border-slate-600 dark:hover:bg-slate-700"
+                class="size-7 bg-background/80 backdrop-blur-sm sm:size-8 dark:border-slate-600 dark:bg-slate-800/80 dark:hover:bg-slate-700"
                 title="Reset Layout"
                 @click="handleResetLayout"
             >
@@ -300,7 +306,7 @@ watch(
             <Button
                 variant="outline"
                 size="icon"
-                class="size-7 sm:size-8 bg-background/80 backdrop-blur-sm dark:bg-slate-800/80 dark:border-slate-600 dark:hover:bg-slate-700"
+                class="size-7 bg-background/80 backdrop-blur-sm sm:size-8 dark:border-slate-600 dark:bg-slate-800/80 dark:hover:bg-slate-700"
                 title="Fit View"
                 @click="handleFitView"
             >

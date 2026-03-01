@@ -1,6 +1,6 @@
-import { ref, computed, type Ref } from 'vue';
+import type { DeviceWidth, RackFace, UtilizationStats } from '@/types/rooms';
 import axios from 'axios';
-import type { DeviceWidth, RackFace, UtilizationStats, PlaceholderDevice } from '@/types/rooms';
+import { computed, ref, type Ref } from 'vue';
 
 /**
  * Interfaces for destination picker data
@@ -134,7 +134,9 @@ export function useDestinationPicker(
         if (!selection.value.datacenterId) {
             return [];
         }
-        return hierarchy.value.rooms.filter((r) => r.datacenter_id === selection.value.datacenterId);
+        return hierarchy.value.rooms.filter(
+            (r) => r.datacenter_id === selection.value.datacenterId,
+        );
     });
 
     /**
@@ -144,7 +146,9 @@ export function useDestinationPicker(
         if (!selection.value.roomId) {
             return [];
         }
-        return hierarchy.value.rows.filter((r) => r.room_id === selection.value.roomId);
+        return hierarchy.value.rows.filter(
+            (r) => r.room_id === selection.value.roomId,
+        );
     });
 
     /**
@@ -154,7 +158,9 @@ export function useDestinationPicker(
         if (!selection.value.rowId) {
             return [];
         }
-        return hierarchy.value.racks.filter((r) => r.row_id === selection.value.rowId);
+        return hierarchy.value.racks.filter(
+            (r) => r.row_id === selection.value.rowId,
+        );
     });
 
     /**
@@ -164,7 +170,10 @@ export function useDestinationPicker(
         face: RackFace,
         excludeDeviceId?: number,
     ): Map<number, { full: boolean; halfLeft: boolean; halfRight: boolean }> {
-        const map = new Map<number, { full: boolean; halfLeft: boolean; halfRight: boolean }>();
+        const map = new Map<
+            number,
+            { full: boolean; halfLeft: boolean; halfRight: boolean }
+        >();
 
         if (!selectedRack.value) {
             return map;
@@ -175,8 +184,16 @@ export function useDestinationPicker(
         );
 
         for (const device of devices) {
-            for (let u = device.start_u; u < device.start_u + device.u_height; u++) {
-                const current = map.get(u) || { full: false, halfLeft: false, halfRight: false };
+            for (
+                let u = device.start_u;
+                u < device.start_u + device.u_height;
+                u++
+            ) {
+                const current = map.get(u) || {
+                    full: false,
+                    halfLeft: false,
+                    halfRight: false,
+                };
 
                 const width = mapWidthFromBackend(device.width_type);
                 if (width === 'full') {
@@ -197,7 +214,12 @@ export function useDestinationPicker(
     /**
      * Check if a device can be placed at a specific position
      */
-    function canPlaceAt(startU: number, face: RackFace, width: DeviceWidth, uSize: number): boolean {
+    function canPlaceAt(
+        startU: number,
+        face: RackFace,
+        width: DeviceWidth,
+        uSize: number,
+    ): boolean {
         if (!selectedRack.value) {
             return false;
         }
@@ -244,7 +266,9 @@ export function useDestinationPicker(
     /**
      * Get valid drop positions for the current device
      */
-    function getValidDropPositions(uSize: number): { startU: number; isValid: boolean }[] {
+    function getValidDropPositions(
+        uSize: number,
+    ): { startU: number; isValid: boolean }[] {
         if (!selectedRack.value) {
             return [];
         }
@@ -255,7 +279,12 @@ export function useDestinationPicker(
         for (let u = 1; u <= rackHeight - uSize + 1; u++) {
             positions.push({
                 startU: u,
-                isValid: canPlaceAt(u, selection.value.rackFace, selection.value.widthType, uSize),
+                isValid: canPlaceAt(
+                    u,
+                    selection.value.rackFace,
+                    selection.value.widthType,
+                    uSize,
+                ),
             });
         }
 
@@ -275,8 +304,13 @@ export function useDestinationPicker(
         const rearUsedUs = new Set<number>();
 
         for (const device of selectedRack.value.devices) {
-            const usedSet = device.rack_face === 'front' ? frontUsedUs : rearUsedUs;
-            for (let u = device.start_u; u < device.start_u + device.u_height; u++) {
+            const usedSet =
+                device.rack_face === 'front' ? frontUsedUs : rearUsedUs;
+            for (
+                let u = device.start_u;
+                u < device.start_u + device.u_height;
+                u++
+            ) {
                 usedSet.add(u);
             }
         }
@@ -308,8 +342,12 @@ export function useDestinationPicker(
             const response = await axios.get('/api/locations/hierarchy');
             hierarchy.value = response.data;
         } catch (err: unknown) {
-            const axiosError = err as { response?: { data?: { message?: string } } };
-            error.value = axiosError.response?.data?.message || 'Failed to fetch locations';
+            const axiosError = err as {
+                response?: { data?: { message?: string } };
+            };
+            error.value =
+                axiosError.response?.data?.message ||
+                'Failed to fetch locations';
         } finally {
             isLoading.value = false;
         }
@@ -329,8 +367,12 @@ export function useDestinationPicker(
                 devices: response.data.devices || [],
             };
         } catch (err: unknown) {
-            const axiosError = err as { response?: { data?: { message?: string } } };
-            error.value = axiosError.response?.data?.message || 'Failed to fetch rack details';
+            const axiosError = err as {
+                response?: { data?: { message?: string } };
+            };
+            error.value =
+                axiosError.response?.data?.message ||
+                'Failed to fetch rack details';
         } finally {
             isLoading.value = false;
         }
@@ -448,7 +490,9 @@ export function useDestinationPicker(
             destination_rack_id: selection.value.rackId,
             destination_start_u: selection.value.startU,
             destination_rack_face: selection.value.rackFace,
-            destination_width_type: mapWidthToBackend(selection.value.widthType),
+            destination_width_type: mapWidthToBackend(
+                selection.value.widthType,
+            ),
         };
     });
 

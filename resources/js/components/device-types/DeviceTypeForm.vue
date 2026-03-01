@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Form, router } from '@inertiajs/vue3';
 import DeviceTypeController from '@/actions/App/Http/Controllers/DeviceTypeController';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
@@ -8,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Form, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 interface DeviceTypeData {
     id?: number;
@@ -63,7 +63,12 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
         v-slot="{ errors, processing, recentlySuccessful }"
     >
         <!-- Hidden method field for PUT request in edit mode -->
-        <input v-if="mode === 'edit'" type="hidden" name="_method" value="PUT" />
+        <input
+            v-if="mode === 'edit'"
+            type="hidden"
+            name="_method"
+            value="PUT"
+        />
 
         <!-- Device Type Details Section -->
         <div class="space-y-4">
@@ -74,7 +79,9 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
 
             <div class="grid gap-4">
                 <div class="grid gap-2">
-                    <Label for="name">Name <span class="text-red-500">*</span></Label>
+                    <Label for="name"
+                        >Name <span class="text-red-500">*</span></Label
+                    >
                     <Input
                         id="name"
                         name="name"
@@ -99,13 +106,16 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="default_u_size">Default U Size <span class="text-red-500">*</span></Label>
+                    <Label for="default_u_size"
+                        >Default U Size
+                        <span class="text-red-500">*</span></Label
+                    >
                     <select
                         id="default_u_size"
                         name="default_u_size"
                         :value="deviceType.default_u_size?.toString() ?? '1'"
                         required
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option
                             v-for="option in uSizeOptions"
@@ -126,7 +136,13 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
         <!-- Submit Buttons -->
         <div class="flex items-center gap-4">
             <Button :disabled="processing" type="submit">
-                {{ processing ? 'Saving...' : (mode === 'create' ? 'Create Device Type' : 'Save Changes') }}
+                {{
+                    processing
+                        ? 'Saving...'
+                        : mode === 'create'
+                          ? 'Create Device Type'
+                          : 'Save Changes'
+                }}
             </Button>
             <Button
                 type="button"
@@ -143,7 +159,10 @@ const uSizeOptions = Array.from({ length: 48 }, (_, i) => ({
                 leave-active-class="transition ease-in-out"
                 leave-to-class="opacity-0"
             >
-                <p v-show="recentlySuccessful" class="text-sm text-neutral-600 dark:text-neutral-400">
+                <p
+                    v-show="recentlySuccessful"
+                    class="text-sm text-neutral-600 dark:text-neutral-400"
+                >
                     Saved.
                 </p>
             </Transition>

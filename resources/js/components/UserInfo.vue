@@ -57,7 +57,7 @@ const roleBadgeClasses = computed(() => {
         }}</span>
         <span
             v-if="showRole && user.role"
-            class="inline-flex w-fit items-center rounded px-1.5 py-0.5 text-[10px] font-medium leading-none"
+            class="inline-flex w-fit items-center rounded px-1.5 py-0.5 text-[10px] leading-none font-medium"
             :class="roleBadgeClasses"
         >
             {{ user.role }}
