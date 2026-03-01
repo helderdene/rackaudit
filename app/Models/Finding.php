@@ -30,6 +30,7 @@ class Finding extends Model
      */
     protected $fillable = [
         'audit_id',
+        'datacenter_id',
         'audit_connection_verification_id',
         'audit_device_verification_id',
         'discrepancy_type',
@@ -67,6 +68,14 @@ class Finding extends Model
     public function audit(): BelongsTo
     {
         return $this->belongsTo(Audit::class);
+    }
+
+    /**
+     * Get the datacenter this finding belongs to (for audit-less findings).
+     */
+    public function datacenter(): BelongsTo
+    {
+        return $this->belongsTo(Datacenter::class);
     }
 
     /**

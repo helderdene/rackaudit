@@ -4,6 +4,7 @@ use App\Jobs\CaptureCapacitySnapshotJob;
 use App\Jobs\CaptureDashboardMetricsJob;
 use App\Jobs\CleanupOldSnapshotsJob;
 use App\Jobs\DetectDiscrepanciesJob;
+use App\Jobs\PromotePersistentDiscrepanciesJob;
 use App\Models\Datacenter;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -65,6 +66,28 @@ if (config('discrepancies.schedule.enabled', true)) {
         ->timezone($scheduleTimezone)
         ->name('discrepancy-detection')
         ->description('Detect discrepancies between expected and actual connections');
+}
+
+/*
+|--------------------------------------------------------------------------
+| Persistent Discrepancy Auto-Finding Schedule
+|--------------------------------------------------------------------------
+|
+| Promote persistent discrepancies into findings. Runs 1 hour after
+| detection (03:00 by default) so newly detected discrepancies are
+| not immediately promoted.
+|
+*/
+
+if (config('discrepancies.auto_findings.enabled', true)) {
+    Schedule::call(function () {
+        Datacenter::all()->each(function (Datacenter $datacenter) {
+            PromotePersistentDiscrepanciesJob::dispatch(datacenterId: $datacenter->id);
+        });
+    })
+        ->dailyAt('03:00')
+        ->name('persistent-discrepancy-auto-findings')
+        ->description('Promote persistent discrepancies into findings');
 }
 
 /*

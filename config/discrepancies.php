@@ -36,6 +36,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Auto-Finding Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure automatic promotion of persistent discrepancies into findings.
+    | Discrepancies that remain open beyond the threshold are auto-promoted
+    | to ensure they get tracked and assigned.
+    |
+    */
+    'auto_findings' => [
+        'enabled' => env('DISCREPANCY_AUTO_FINDINGS_ENABLED', true),
+        'persistence_threshold_days' => env('DISCREPANCY_AUTO_FINDINGS_THRESHOLD_DAYS', 3),
+        'due_date_days' => env('DISCREPANCY_AUTO_FINDINGS_DUE_DATE_DAYS', 7),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Detection Configuration
     |--------------------------------------------------------------------------
     |

@@ -7,6 +7,7 @@ use App\Enums\FindingSeverity;
 use App\Enums\FindingStatus;
 use App\Models\Audit;
 use App\Models\AuditConnectionVerification;
+use App\Models\Datacenter;
 use App\Models\Finding;
 use App\Models\FindingCategory;
 use App\Models\User;
@@ -306,6 +307,19 @@ class FindingFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'due_date' => $dueDate,
+        ]);
+    }
+
+    /**
+     * Create an auto-created finding (no audit, with datacenter).
+     */
+    public function autoCreated(?Datacenter $datacenter = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'audit_id' => null,
+            'audit_connection_verification_id' => null,
+            'audit_device_verification_id' => null,
+            'datacenter_id' => $datacenter?->id ?? Datacenter::factory(),
         ]);
     }
 }

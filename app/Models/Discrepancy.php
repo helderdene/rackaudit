@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\DiscrepancyStatus;
 use App\Enums\DiscrepancyType;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -222,5 +223,18 @@ class Discrepancy extends Model
     public function scopeDetectedBetween(Builder $query, $start, $end): Builder
     {
         return $query->whereBetween('detected_at', [$start, $end]);
+    }
+
+    /**
+     * Scope to filter discrepancies that have persisted beyond a cutoff date.
+     *
+     * Returns Open discrepancies with no linked finding that were detected
+     * at or before the given cutoff date.
+     */
+    public function scopePersistentBeyond(Builder $query, Carbon $cutoff): Builder
+    {
+        return $query->where('status', DiscrepancyStatus::Open)
+            ->whereNull('finding_id')
+            ->where('detected_at', '<=', $cutoff);
     }
 }

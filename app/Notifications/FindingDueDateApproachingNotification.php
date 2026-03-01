@@ -55,8 +55,10 @@ class FindingDueDateApproachingNotification extends Notification implements Shou
     public function toMail(object $notifiable): MailMessage
     {
         $finding = $this->finding;
-        $auditName = $finding->audit?->name ?? 'Unknown Audit';
-        $datacenterName = $finding->audit?->datacenter?->name ?? 'Unknown Datacenter';
+        $auditName = $finding->audit?->name ?? 'N/A';
+        $datacenterName = $finding->audit?->datacenter?->name
+            ?? $finding->datacenter?->name
+            ?? 'Unknown Datacenter';
         $viewUrl = url("/findings/{$finding->id}");
         $dueDate = $finding->due_date?->format('F j, Y') ?? 'Unknown';
 
@@ -65,7 +67,7 @@ class FindingDueDateApproachingNotification extends Notification implements Shou
             ->greeting('A finding is due soon!')
             ->line("The finding \"{$finding->title}\" is due on {$dueDate}.")
             ->line("**Title:** {$finding->title}")
-            ->line("**Audit:** {$auditName}")
+            ->when($finding->audit, fn ($message) => $message->line("**Audit:** {$auditName}"))
             ->line("**Datacenter:** {$datacenterName}")
             ->line("**Due Date:** {$dueDate}")
             ->action('View Finding', $viewUrl)
@@ -88,8 +90,8 @@ class FindingDueDateApproachingNotification extends Notification implements Shou
             'title' => $finding->title,
             'audit_id' => $finding->audit_id,
             'audit_name' => $finding->audit?->name,
-            'datacenter_id' => $finding->audit?->datacenter_id,
-            'datacenter_name' => $finding->audit?->datacenter?->name,
+            'datacenter_id' => $finding->audit?->datacenter_id ?? $finding->datacenter_id,
+            'datacenter_name' => $finding->audit?->datacenter?->name ?? $finding->datacenter?->name,
             'due_date' => $dueDate?->format('Y-m-d'),
             'message' => "Finding \"{$finding->title}\" due date is approaching ({$dueDate?->format('M j, Y')})",
         ];
