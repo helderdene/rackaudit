@@ -1,0 +1,11 @@
+task_groups:
+  - name: Connection Diagram API Endpoints
+    claude_code_subagent: implementer
+  - name: Connection Diagram Core Components
+    claude_code_subagent: implementer
+  - name: Connection Diagram Page with Filtering
+    claude_code_subagent: implementer
+  - name: Port-Level Drill-Down and View Integration
+    claude_code_subagent: implementer
+  - name: Test Review, Gap Analysis, and Polish
+    claude_code_subagent: implementer

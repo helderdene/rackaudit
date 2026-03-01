@@ -1,0 +1,9 @@
+task_groups:
+  - name: Database Layer (Task Group 1)
+    claude_code_subagent: implementer
+  - name: Backend Layer (Task Group 2)
+    claude_code_subagent: implementer
+  - name: Frontend Layer (Task Group 3)
+    claude_code_subagent: implementer
+  - name: Test Review & Gap Analysis (Task Group 4)
+    claude_code_subagent: implementer

@@ -1,0 +1,28 @@
+task_groups:
+  - name: Connection Calculation Service
+    claude_code_subagent: implementer
+    status: completed
+  - name: Connection Report Controller
+    claude_code_subagent: implementer
+    status: completed
+  - name: PDF Report Service
+    claude_code_subagent: implementer
+    status: completed
+  - name: CSV Export Class
+    claude_code_subagent: implementer
+    status: completed
+  - name: Connection Reports Page Structure
+    claude_code_subagent: implementer
+    status: completed
+  - name: Connection Metrics Components
+    claude_code_subagent: implementer
+    status: completed
+  - name: Connections Inventory Table
+    claude_code_subagent: implementer
+    status: completed
+  - name: Integration and Navigation
+    claude_code_subagent: implementer
+    status: completed
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer
+    status: completed

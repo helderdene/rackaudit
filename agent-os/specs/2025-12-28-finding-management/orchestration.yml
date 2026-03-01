@@ -1,0 +1,13 @@
+task_groups:
+  - name: Data Models and Migrations
+    claude_code_subagent: implementer
+  - name: Finding Controller and API Endpoints
+    claude_code_subagent: implementer
+  - name: Evidence Management API
+    claude_code_subagent: implementer
+  - name: Category Management API
+    claude_code_subagent: implementer
+  - name: Frontend UI Implementation
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

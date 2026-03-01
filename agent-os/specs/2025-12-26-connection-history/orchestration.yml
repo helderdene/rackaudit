@@ -1,0 +1,11 @@
+task_groups:
+  - name: Loggable Trait Extension and Full State Snapshots
+    claude_code_subagent: implementer
+  - name: Connection History Controller and API
+    claude_code_subagent: implementer
+  - name: Connection History UI Components
+    claude_code_subagent: implementer
+  - name: CSV and PDF Export Functionality
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

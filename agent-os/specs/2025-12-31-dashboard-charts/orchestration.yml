@@ -1,0 +1,11 @@
+task_groups:
+  - name: Data Snapshot Infrastructure
+    claude_code_subagent: implementer
+  - name: Scheduled Jobs and Data Capture
+    claude_code_subagent: implementer
+  - name: Chart Data API Endpoints
+    claude_code_subagent: implementer
+  - name: Chart Components and Dashboard Integration
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

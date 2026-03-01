@@ -1,0 +1,15 @@
+task_groups:
+  - name: Version Tracking Schema and Model Updates
+    claude_code_subagent: implementer
+  - name: Version Control API Endpoints
+    claude_code_subagent: implementer
+  - name: Version History Modal
+    claude_code_subagent: implementer
+  - name: Restore Confirmation Dialog
+    claude_code_subagent: implementer
+  - name: Side-by-Side Comparison View
+    claude_code_subagent: implementer
+  - name: File List UI Updates
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

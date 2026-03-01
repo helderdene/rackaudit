@@ -1,0 +1,17 @@
+task_groups:
+  - name: Database Layer (Enums and Data Models)
+    claude_code_subagent: implementer
+  - name: Authorization Layer (Policy and Form Requests)
+    claude_code_subagent: implementer
+  - name: Controller Layer (RackController Implementation)
+    claude_code_subagent: implementer
+  - name: Frontend Layer (TypeScript Types and Shared Components)
+    claude_code_subagent: implementer
+  - name: Frontend Layer (Rack Pages - Index, Show, Create, Edit)
+    claude_code_subagent: implementer
+  - name: Frontend Layer (Rack Elevation View)
+    claude_code_subagent: implementer
+  - name: Integration Layer (Navigation and Cross-References)
+    claude_code_subagent: implementer
+  - name: Testing (Test Review and Gap Analysis)
+    claude_code_subagent: implementation-verifier

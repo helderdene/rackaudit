@@ -1,0 +1,15 @@
+task_groups:
+  - name: Search Service Foundation
+    claude_code_subagent: implementer
+  - name: Search API Endpoints
+    claude_code_subagent: implementer
+  - name: Search Results Page Controller
+    claude_code_subagent: implementer
+  - name: Global Search Input Component
+    claude_code_subagent: implementer
+  - name: Search Results Page UI
+    claude_code_subagent: implementer
+  - name: Connection-Specific Search
+    claude_code_subagent: implementer
+  - name: Test Review & Gap Analysis
+    claude_code_subagent: implementer

@@ -1,0 +1,21 @@
+task_groups:
+  - name: Discrepancy Acknowledgment Data Model
+    claude_code_subagent: implementer
+  - name: Connection Comparison Service
+    claude_code_subagent: implementer
+  - name: Comparison API Endpoints
+    claude_code_subagent: implementer
+  - name: Comparison Export Functionality
+    claude_code_subagent: implementer
+  - name: Comparison Table Component
+    claude_code_subagent: implementer
+  - name: Comparison Filter Controls
+    claude_code_subagent: implementer
+  - name: Acknowledge Discrepancy Dialog
+    claude_code_subagent: implementer
+  - name: Implementation File Comparison Page
+    claude_code_subagent: implementer
+  - name: Datacenter Comparison Page
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

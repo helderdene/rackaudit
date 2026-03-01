@@ -1,0 +1,19 @@
+task_groups:
+  - name: Device Types Data Model
+    claude_code_subagent: implementer
+  - name: Device/Asset Data Model
+    claude_code_subagent: implementer
+  - name: Device Types API
+    claude_code_subagent: implementer
+  - name: Device/Asset API
+    claude_code_subagent: implementer
+  - name: Elevation System Integration
+    claude_code_subagent: implementer
+  - name: Device Types UI
+    claude_code_subagent: implementer
+  - name: Device Management UI
+    claude_code_subagent: implementer
+  - name: Elevation View Updates
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

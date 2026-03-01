@@ -1,0 +1,11 @@
+task_groups:
+  - name: Connection Types and Interfaces
+    claude_code_subagent: implementer
+  - name: HierarchicalPortSelector Component
+    claude_code_subagent: implementer
+  - name: Connection CRUD Dialog Components
+    claude_code_subagent: implementer
+  - name: PortsSection Integration and Final Testing
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

@@ -1,0 +1,17 @@
+task_groups:
+  - name: Laravel Reverb Installation and Configuration
+    claude_code_subagent: implementer
+  - name: Datacenter-Scoped Channel Authorization
+    claude_code_subagent: implementer
+  - name: Extend Existing Events for Broadcasting
+    claude_code_subagent: implementer
+  - name: Create New Broadcast Events
+    claude_code_subagent: implementer
+  - name: Laravel Echo Frontend Setup
+    claude_code_subagent: implementer
+  - name: Real-Time Toast and UI Components
+    claude_code_subagent: implementer
+  - name: Integrate Real-Time Updates into Key Pages
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

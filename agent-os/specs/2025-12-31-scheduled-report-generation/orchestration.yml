@@ -1,0 +1,21 @@
+task_groups:
+  - name: Distribution List Data Models
+    claude_code_subagent: implementer
+  - name: Report Schedule Data Models
+    claude_code_subagent: implementer
+  - name: Permissions Setup
+    claude_code_subagent: implementer
+  - name: Distribution List API
+    claude_code_subagent: implementer
+  - name: Report Schedule API
+    claude_code_subagent: implementer
+  - name: Report Generation Service & Job
+    claude_code_subagent: implementer
+  - name: Console Scheduler
+    claude_code_subagent: implementer
+  - name: Distribution List UI
+    claude_code_subagent: implementer
+  - name: Report Schedule UI
+    claude_code_subagent: implementer
+  - name: Test Review & Integration Testing
+    claude_code_subagent: implementer

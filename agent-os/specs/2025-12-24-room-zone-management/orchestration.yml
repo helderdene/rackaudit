@@ -1,0 +1,13 @@
+task_groups:
+  - name: Database Layer
+    claude_code_subagent: implementer
+  - name: Authorization Layer
+    claude_code_subagent: implementer
+  - name: API Layer
+    claude_code_subagent: implementer
+  - name: Room UI
+    claude_code_subagent: implementer
+  - name: Row/PDU UI
+    claude_code_subagent: implementer
+  - name: Test Review
+    claude_code_subagent: implementer

@@ -1,0 +1,19 @@
+task_groups:
+  - name: Dashboard Controller Method and Route
+    claude_code_subagent: implementer
+  - name: Dashboard Data Aggregation Queries
+    claude_code_subagent: implementer
+  - name: Filter Implementation
+    claude_code_subagent: implementer
+  - name: Dashboard Page Structure and Layout
+    claude_code_subagent: implementer
+  - name: Metric Cards and Summary Section
+    claude_code_subagent: implementer
+  - name: Charts and Visualizations
+    claude_code_subagent: implementer
+  - name: Per-Audit Breakdown Table
+    claude_code_subagent: implementer
+  - name: Active Audit Progress Bars
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

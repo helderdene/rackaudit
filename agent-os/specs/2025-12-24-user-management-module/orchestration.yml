@@ -1,0 +1,11 @@
+task_groups:
+  - name: User Model Extensions and Migrations
+    claude_code_subagent: implementer
+  - name: User Controller and Form Requests
+    claude_code_subagent: implementer
+  - name: Authentication Middleware and Events
+    claude_code_subagent: implementer
+  - name: User Management UI Components
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

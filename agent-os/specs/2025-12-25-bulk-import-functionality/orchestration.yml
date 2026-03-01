@@ -1,0 +1,17 @@
+task_groups:
+  - name: Database Layer - BulkImport Model and Migration
+    claude_code_subagent: implementer
+  - name: Package Installation - Laravel Excel Setup
+    claude_code_subagent: implementer
+  - name: Import Classes - Excel Import Classes and Validation
+    claude_code_subagent: implementer
+  - name: Template Generation - XLSX Templates with Enum Dropdowns
+    claude_code_subagent: implementer
+  - name: Queue Processing - Async Job Processing and Progress Tracking
+    claude_code_subagent: implementer
+  - name: API Layer - Endpoints and Controllers
+    claude_code_subagent: implementer
+  - name: Frontend Components - Vue Components for Import UI
+    claude_code_subagent: implementer
+  - name: Test Review - Gap Analysis and Strategic Tests
+    claude_code_subagent: implementer

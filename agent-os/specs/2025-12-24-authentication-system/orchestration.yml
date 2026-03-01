@@ -1,0 +1,17 @@
+task_groups:
+  - name: Fortify Configuration Updates
+    claude_code_subagent: implementer
+  - name: Authentication Backend Verification
+    claude_code_subagent: implementer
+  - name: Password Reset Backend Verification
+    claude_code_subagent: implementer
+  - name: Login Page Enhancement
+    claude_code_subagent: implementer
+  - name: Forgot Password Page Enhancement
+    claude_code_subagent: implementer
+  - name: Reset Password Page Enhancement
+    claude_code_subagent: implementer
+  - name: Logout Integration
+    claude_code_subagent: implementer
+  - name: Test Review & Gap Analysis
+    claude_code_subagent: implementer

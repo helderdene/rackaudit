@@ -1,0 +1,13 @@
+task_groups:
+  - name: Notification Preferences Data Model
+    claude_code_subagent: implementer
+  - name: Notification Preferences API
+    claude_code_subagent: implementer
+  - name: Audit Assignment Notifications
+    claude_code_subagent: implementer
+  - name: Notification Preferences UI
+    claude_code_subagent: implementer
+  - name: NotificationBell Enhancements
+    claude_code_subagent: implementer
+  - name: Test Review & Gap Analysis
+    claude_code_subagent: implementer

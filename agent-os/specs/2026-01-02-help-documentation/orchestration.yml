@@ -1,0 +1,17 @@
+task_groups:
+  - name: Data Models and Migrations
+    claude_code_subagent: implementer
+  - name: Public Help Content API
+    claude_code_subagent: implementer
+  - name: Admin Help Content API
+    claude_code_subagent: implementer
+  - name: Help UI Components
+    claude_code_subagent: implementer
+  - name: Feature Tour System
+    claude_code_subagent: implementer
+  - name: Help Center Page
+    claude_code_subagent: implementer
+  - name: Admin Help Management Pages
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

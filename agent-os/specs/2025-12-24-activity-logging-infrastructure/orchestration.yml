@@ -1,0 +1,17 @@
+task_groups:
+  - name: Database Layer - ActivityLog Model and Migration
+    claude_code_subagent: implementer
+  - name: Service Layer - Loggable Trait and ActivityLogService
+    claude_code_subagent: implementer
+  - name: API Layer - Controller and Form Request
+    claude_code_subagent: implementer
+  - name: Artisan Command Layer - Data Retention Command
+    claude_code_subagent: implementer
+  - name: Frontend Components - UI Components
+    claude_code_subagent: implementer
+  - name: Frontend Components - Activity Log Index Page
+    claude_code_subagent: implementer
+  - name: Integration - Apply Loggable Trait to Models
+    claude_code_subagent: implementer
+  - name: Testing - Test Review and Gap Analysis
+    claude_code_subagent: implementer

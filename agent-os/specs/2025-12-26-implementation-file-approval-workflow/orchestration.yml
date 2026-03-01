@@ -1,0 +1,9 @@
+task_groups:
+  - name: Database Layer
+    claude_code_subagent: implementer
+  - name: API Layer
+    claude_code_subagent: implementer
+  - name: Frontend Components
+    claude_code_subagent: implementer
+  - name: Integration & Audit Warning
+    claude_code_subagent: implementer

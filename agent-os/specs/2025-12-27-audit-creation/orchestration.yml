@@ -1,0 +1,25 @@
+task_groups:
+  - name: Enums and Core Data Models
+    claude_code_subagent: implementer
+  - name: Database Migrations and Pivot Tables
+    claude_code_subagent: implementer
+  - name: Form Request and Validation
+    claude_code_subagent: implementer
+  - name: Controller and API Endpoints
+    claude_code_subagent: implementer
+  - name: API Endpoints for Cascading Dropdowns
+    claude_code_subagent: implementer
+  - name: Audit Type Selection UI
+    claude_code_subagent: implementer
+  - name: Scope Selection UI
+    claude_code_subagent: implementer
+  - name: Audit Metadata Form
+    claude_code_subagent: implementer
+  - name: Implementation File Validation UI
+    claude_code_subagent: implementer
+  - name: Main Audit Form Page
+    claude_code_subagent: implementer
+  - name: Responsive Design and Polish
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

@@ -1,0 +1,9 @@
+task_groups:
+  - name: QR Code Dialog Component
+    claude_code_subagent: implementer
+  - name: Single Item QR Code Integration
+    claude_code_subagent: implementer
+  - name: Bulk QR Code Generation
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer

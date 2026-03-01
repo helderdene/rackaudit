@@ -1,0 +1,9 @@
+task_groups:
+  - name: Data Models, Enums, and Migrations
+    claude_code_subagent: implementer
+  - name: Connection CRUD API Endpoints
+    claude_code_subagent: implementer
+  - name: Port Pairing API Endpoints
+    claude_code_subagent: implementer
+  - name: Test Review & Gap Analysis
+    claude_code_subagent: implementer
