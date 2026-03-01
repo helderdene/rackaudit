@@ -49,8 +49,6 @@ abstract class AbstractDataExport extends AbstractTemplateExport implements From
      *
      * Subclasses should implement this to return a query builder
      * with appropriate eager loading and filters applied.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     abstract protected function query(): \Illuminate\Database\Eloquent\Builder;
 

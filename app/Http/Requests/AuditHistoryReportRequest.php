@@ -70,14 +70,14 @@ class AuditHistoryReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'time_range_preset.in' => 'The time range preset must be one of: ' . implode(', ', self::TIME_RANGE_PRESETS),
+            'time_range_preset.in' => 'The time range preset must be one of: '.implode(', ', self::TIME_RANGE_PRESETS),
             'start_date.date' => 'The start date must be a valid date.',
             'start_date.before_or_equal' => 'The start date must be before or equal to the end date.',
             'end_date.date' => 'The end date must be a valid date.',
             'end_date.after_or_equal' => 'The end date must be after or equal to the start date.',
             'datacenter_id.integer' => 'The datacenter ID must be a valid integer.',
             'datacenter_id.exists' => 'The selected datacenter does not exist.',
-            'audit_type.in' => 'The audit type must be one of: ' . implode(', ', self::AUDIT_TYPES),
+            'audit_type.in' => 'The audit type must be one of: '.implode(', ', self::AUDIT_TYPES),
             'sort_by.in' => 'The sort field must be one of: completion_date, total_findings, avg_resolution_time.',
             'sort_direction.in' => 'The sort direction must be either asc or desc.',
         ];

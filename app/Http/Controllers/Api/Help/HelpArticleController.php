@@ -95,12 +95,12 @@ class HelpArticleController extends Controller
 
         // Order by relevance: title matches first, then content matches
         // Use a CASE statement to prioritize title matches
-        $searchQuery->orderByRaw("
+        $searchQuery->orderByRaw('
             CASE
                 WHEN title LIKE ? THEN 0
                 ELSE 1
             END
-        ", ["%{$query}%"]);
+        ', ["%{$query}%"]);
 
         $results = $searchQuery->limit($limit)->get();
 

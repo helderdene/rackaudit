@@ -1,7 +1,5 @@
 <?php
 
-use App\Enums\BulkImportEntityType;
-use App\Enums\BulkImportStatus;
 use App\Models\BulkImport;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;

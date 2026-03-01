@@ -76,8 +76,7 @@ abstract class AbstractEntityImport implements ToCollection, WithHeadingRow
     /**
      * Create the entity from validated data.
      *
-     * @param array<string, mixed> $data
-     * @return mixed
+     * @param  array<string, mixed>  $data
      */
     abstract protected function createEntity(array $data, int $rowNumber): mixed;
 
@@ -96,7 +95,7 @@ abstract class AbstractEntityImport implements ToCollection, WithHeadingRow
     /**
      * Process a single row from the import.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array{success: bool, entity: mixed|null, errors: array<int, array{row_number: int, field_name: string, error_message: string}>}
      */
     public function processRow(array $row, int $rowNumber): array
@@ -170,7 +169,7 @@ abstract class AbstractEntityImport implements ToCollection, WithHeadingRow
      *
      * Override this method in subclasses to add entity-specific validation.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<int, array{row_number: int, field_name: string, error_message: string}>
      */
     protected function validateCustomRules(array $row, int $rowNumber): array
@@ -306,7 +305,8 @@ abstract class AbstractEntityImport implements ToCollection, WithHeadingRow
      * Parse an enum value from a label string.
      *
      * @template T of \BackedEnum
-     * @param class-string<T> $enumClass
+     *
+     * @param  class-string<T>  $enumClass
      * @return T|null
      */
     protected function parseEnumFromLabel(string $enumClass, ?string $label): mixed
@@ -464,7 +464,7 @@ abstract class AbstractEntityImport implements ToCollection, WithHeadingRow
     /**
      * Get a value from a row, returning null for empty strings.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     protected function getValue(array $row, string $key): mixed
     {
@@ -480,7 +480,7 @@ abstract class AbstractEntityImport implements ToCollection, WithHeadingRow
     /**
      * Parse a date value from a row.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     protected function parseDate(array $row, string $key): ?string
     {

@@ -153,7 +153,7 @@ class DiscrepancyController extends Controller
             'acknowledged_at' => now(),
             'acknowledged_by' => $request->user()->id,
             'description' => $request->filled('notes')
-                ? ($discrepancy->description ? $discrepancy->description . "\n\n" : '') . 'Acknowledgment note: ' . $request->input('notes')
+                ? ($discrepancy->description ? $discrepancy->description."\n\n" : '').'Acknowledgment note: '.$request->input('notes')
                 : $discrepancy->description,
         ]);
 
@@ -190,7 +190,7 @@ class DiscrepancyController extends Controller
             'resolved_at' => now(),
             'resolved_by' => $request->user()->id,
             'description' => $request->filled('notes')
-                ? ($discrepancy->description ? $discrepancy->description . "\n\n" : '') . 'Resolution note: ' . $request->input('notes')
+                ? ($discrepancy->description ? $discrepancy->description."\n\n" : '').'Resolution note: '.$request->input('notes')
                 : $discrepancy->description,
         ]);
 

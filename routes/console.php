@@ -78,17 +78,17 @@ if (config('discrepancies.schedule.enabled', true)) {
 |
 */
 
-Schedule::job(new CaptureCapacitySnapshotJob())
+Schedule::job(new CaptureCapacitySnapshotJob)
     ->dailyAt('00:00')
     ->name('capacity-snapshot-capture')
     ->description('Capture daily capacity snapshots for all datacenters');
 
-Schedule::job(new CaptureDashboardMetricsJob())
+Schedule::job(new CaptureDashboardMetricsJob)
     ->dailyAt('00:00')
     ->name('dashboard-metrics-capture')
     ->description('Capture daily dashboard metrics snapshots for all datacenters');
 
-Schedule::job(new CleanupOldSnapshotsJob())
+Schedule::job(new CleanupOldSnapshotsJob)
     ->dailyAt('00:30')
     ->name('capacity-snapshot-cleanup')
     ->description('Clean up capacity snapshots older than 52 weeks');

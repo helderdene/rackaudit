@@ -25,7 +25,7 @@ class PortExport extends AbstractDataExport
      */
     public function headings(): array
     {
-        return (new PortTemplateExport())->headings();
+        return (new PortTemplateExport)->headings();
     }
 
     /**

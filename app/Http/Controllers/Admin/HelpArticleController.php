@@ -59,7 +59,7 @@ class HelpArticleController extends Controller
 
         // Search by title
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->input('search') . '%');
+            $query->where('title', 'like', '%'.$request->input('search').'%');
         }
 
         // Pagination

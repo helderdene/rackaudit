@@ -10,9 +10,9 @@
  */
 
 use App\Models\Datacenter;
+use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;
-use App\Models\Rack;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;

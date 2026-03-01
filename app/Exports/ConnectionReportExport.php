@@ -89,7 +89,7 @@ class ConnectionReportExport extends AbstractDataExport
 
         // Format cable length with unit (meters as default)
         $cableLengthFormatted = $connection->cable_length !== null
-            ? number_format((float) $connection->cable_length, 2) . ' m'
+            ? number_format((float) $connection->cable_length, 2).' m'
             : 'N/A';
 
         return [

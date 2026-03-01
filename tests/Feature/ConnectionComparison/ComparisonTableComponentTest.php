@@ -1,8 +1,6 @@
 <?php
 
-use App\DTOs\ComparisonResult;
 use App\Enums\DiscrepancyType;
-use App\Http\Resources\ComparisonResultResource;
 use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;
@@ -14,7 +12,6 @@ use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;
 use App\Models\User;
-use App\Services\ConnectionComparisonService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

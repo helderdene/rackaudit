@@ -21,7 +21,7 @@ beforeEach(function () {
 });
 
 test('headings returns correct column names for connection report', function () {
-    $export = new ConnectionReportExport();
+    $export = new ConnectionReportExport;
 
     $headings = $export->headings();
 
@@ -175,7 +175,7 @@ test('transformRow formats connection data correctly', function () {
     ]);
 
     // Export the connection
-    $export = new ConnectionReportExport();
+    $export = new ConnectionReportExport;
     Excel::store($export, 'connection_data_export.xlsx', 'local');
 
     $filePath = Storage::disk('local')->path('connection_data_export.xlsx');

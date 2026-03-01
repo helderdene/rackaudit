@@ -7,8 +7,8 @@
  * focusing on end-to-end workflows and integration points.
  */
 
-use App\Enums\DeviceWidthType;
 use App\Enums\DeviceRackFace;
+use App\Enums\DeviceWidthType;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Models\Datacenter;

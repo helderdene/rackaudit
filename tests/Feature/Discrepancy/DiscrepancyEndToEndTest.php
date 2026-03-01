@@ -1,18 +1,15 @@
 <?php
 
-use App\Enums\AuditStatus;
 use App\Enums\DiscrepancyStatus;
 use App\Enums\DiscrepancyType;
 use App\Enums\ExpectedConnectionStatus;
 use App\Enums\FindingStatus;
-use App\Enums\VerificationStatus;
 use App\Events\ConnectionChanged;
 use App\Events\FindingResolved;
 use App\Jobs\DetectDiscrepanciesJob;
 use App\Jobs\NotifyUsersOfDiscrepancies;
 use App\Listeners\DetectDiscrepanciesForConnection;
 use App\Models\Audit;
-use App\Models\AuditConnectionVerification;
 use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;
@@ -42,7 +39,6 @@ uses(RefreshDatabase::class);
  * These tests cover complete user workflows across multiple services/components,
  * testing integration points that individual unit tests may miss.
  */
-
 beforeEach(function () {
     $this->seed(RolesAndPermissionsSeeder::class);
 });
@@ -106,8 +102,7 @@ it('detects discrepancy when connection changes and displays on dashboard', func
     expect($responseData)->not->toBeEmpty();
 
     // Check the discrepancy matches our expected source port
-    $found = collect($responseData)->contains(fn($d) =>
-        $d['source_port']['id'] === $sourcePort->id ||
+    $found = collect($responseData)->contains(fn ($d) => $d['source_port']['id'] === $sourcePort->id ||
         str_contains($d['title'] ?? '', 'Mismatch') ||
         str_contains($d['title'] ?? '', 'Missing')
     );
@@ -336,7 +331,7 @@ it('triggers real-time detection when connection is created', function () {
 
     // Create event and manually invoke listener (testing listener behavior)
     $event = new ConnectionChanged($connection, 'created');
-    $listener = new DetectDiscrepanciesForConnection();
+    $listener = new DetectDiscrepanciesForConnection;
     $listener->handle($event);
 
     // Verify the detection job was queued

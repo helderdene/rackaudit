@@ -64,7 +64,7 @@ test('sparkline data is populated from capacity snapshots', function () {
     }
 
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -102,7 +102,7 @@ test('week-over-week trend is calculated between current and previous week snaps
     ]);
 
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -126,7 +126,7 @@ test('week-over-week trend is calculated between current and previous week snaps
 test('empty snapshot handling returns empty array when no historical data exists', function () {
     // Don't create any snapshots
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -156,7 +156,7 @@ test('multiple weeks of trend data are ordered chronologically', function () {
     }
 
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

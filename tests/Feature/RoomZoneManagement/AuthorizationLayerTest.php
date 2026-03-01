@@ -1,10 +1,5 @@
 <?php
 
-use App\Enums\PduPhase;
-use App\Enums\PduStatus;
-use App\Enums\RoomType;
-use App\Enums\RowOrientation;
-use App\Enums\RowStatus;
 use App\Http\Requests\StorePduRequest;
 use App\Http\Requests\StoreRoomRequest;
 use App\Http\Requests\StoreRowRequest;
@@ -29,7 +24,7 @@ beforeEach(function () {
  * Test 1: RoomPolicy viewAny allows all authenticated users
  */
 test('RoomPolicy viewAny allows all authenticated users', function () {
-    $policy = new RoomPolicy();
+    $policy = new RoomPolicy;
 
     // Test with all role types
     $admin = User::factory()->create();
@@ -58,7 +53,7 @@ test('RoomPolicy viewAny allows all authenticated users', function () {
  * Test 2: RoomPolicy view checks parent Datacenter access for non-admin users
  */
 test('RoomPolicy view checks parent Datacenter access for non-admin users', function () {
-    $policy = new RoomPolicy();
+    $policy = new RoomPolicy;
 
     // Create datacenter and room
     $datacenter = Datacenter::factory()->create();
@@ -97,7 +92,7 @@ test('RoomPolicy view checks parent Datacenter access for non-admin users', func
  * Test 3: RoomPolicy create/update/delete restricted to Administrator and IT Manager
  */
 test('RoomPolicy create update delete restricted to Administrator and IT Manager', function () {
-    $policy = new RoomPolicy();
+    $policy = new RoomPolicy;
 
     $datacenter = Datacenter::factory()->create();
     $room = Room::factory()->create(['datacenter_id' => $datacenter->id]);
@@ -137,7 +132,7 @@ test('RoomPolicy create update delete restricted to Administrator and IT Manager
  * Test 4: RowPolicy inherits authorization from parent Room
  */
 test('RowPolicy inherits authorization from parent Room', function () {
-    $policy = new RowPolicy();
+    $policy = new RowPolicy;
 
     $datacenter = Datacenter::factory()->create();
     $room = Room::factory()->create(['datacenter_id' => $datacenter->id]);
@@ -172,7 +167,7 @@ test('RowPolicy inherits authorization from parent Room', function () {
  * Test 5: PduPolicy inherits authorization from parent Room
  */
 test('PduPolicy inherits authorization from parent Room', function () {
-    $policy = new PduPolicy();
+    $policy = new PduPolicy;
 
     $datacenter = Datacenter::factory()->create();
     $room = Room::factory()->create(['datacenter_id' => $datacenter->id]);
@@ -237,7 +232,7 @@ test('Form Request authorization rejects unauthorized users', function () {
     $operator->assignRole('Operator');
 
     // Test StoreRoomRequest authorization
-    $storeRoomRequest = new StoreRoomRequest();
+    $storeRoomRequest = new StoreRoomRequest;
     $storeRoomRequest->setUserResolver(fn () => $admin);
     expect($storeRoomRequest->authorize())->toBeTrue();
 
@@ -245,7 +240,7 @@ test('Form Request authorization rejects unauthorized users', function () {
     expect($storeRoomRequest->authorize())->toBeFalse();
 
     // Test StoreRowRequest authorization
-    $storeRowRequest = new StoreRowRequest();
+    $storeRowRequest = new StoreRowRequest;
     $storeRowRequest->setUserResolver(fn () => $admin);
     expect($storeRowRequest->authorize())->toBeTrue();
 
@@ -253,7 +248,7 @@ test('Form Request authorization rejects unauthorized users', function () {
     expect($storeRowRequest->authorize())->toBeFalse();
 
     // Test StorePduRequest authorization
-    $storePduRequest = new StorePduRequest();
+    $storePduRequest = new StorePduRequest;
     $storePduRequest->setUserResolver(fn () => $admin);
     expect($storePduRequest->authorize())->toBeTrue();
 

@@ -4,7 +4,6 @@ use App\Enums\PortDirection;
 use App\Enums\PortStatus;
 use App\Enums\PortSubtype;
 use App\Enums\PortType;
-use App\Enums\PortVisualFace;
 use App\Models\Device;
 use App\Models\Port;
 use Illuminate\Foundation\Testing\RefreshDatabase;

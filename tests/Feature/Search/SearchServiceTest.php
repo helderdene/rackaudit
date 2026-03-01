@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;
 use App\Models\Port;

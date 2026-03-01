@@ -2,7 +2,6 @@
 
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
-use App\Enums\ReportType;
 use App\Models\Datacenter;
 use App\Models\Rack;
 use App\Models\Room;
@@ -164,7 +163,7 @@ test('preview includes column headers with keys for responsive table display', f
         ->assertInertia(fn (Assert $page) => $page
             ->component('CustomReports/Builder')
             ->has('previewData.columns', count($manyColumns))
-            ->where('previewData.columns', function ($columns) use ($manyColumns) {
+            ->where('previewData.columns', function ($columns) {
                 // Each column should have key and label for table header rendering
                 foreach ($columns as $col) {
                     if (! isset($col['key'], $col['label'])) {

@@ -430,7 +430,7 @@ class DiscrepancyDetectionService
      *
      * Compares cable_type and cable_length between expected and actual.
      *
-     * @return array<string, mixed>|null  Mismatch details or null if no mismatch
+     * @return array<string, mixed>|null Mismatch details or null if no mismatch
      */
     protected function detectConfigurationMismatch(ComparisonResult $result): ?array
     {
@@ -470,7 +470,7 @@ class DiscrepancyDetectionService
      *
      * Compares source and destination port types.
      *
-     * @return array<string, mixed>|null  Mismatch details or null if no mismatch
+     * @return array<string, mixed>|null Mismatch details or null if no mismatch
      */
     protected function detectPortTypeMismatch(ComparisonResult $result): ?array
     {

@@ -124,7 +124,7 @@ class PortImport extends AbstractEntityImport
     /**
      * Run custom validation rules for port import.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<int, array{row_number: int, field_name: string, error_message: string}>
      */
     protected function validateCustomRules(array $row, int $rowNumber): array
@@ -234,7 +234,7 @@ class PortImport extends AbstractEntityImport
     /**
      * Validate device hierarchy for port placement.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<int, array{row_number: int, field_name: string, error_message: string}>
      */
     protected function validateDeviceHierarchy(array $row, int $rowNumber): array
@@ -315,7 +315,7 @@ class PortImport extends AbstractEntityImport
     /**
      * Create the port from validated data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function createEntity(array $data, int $rowNumber): Port
     {

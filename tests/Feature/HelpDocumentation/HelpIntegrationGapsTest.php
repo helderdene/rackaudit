@@ -12,8 +12,6 @@
  * - Cross-user isolation
  */
 
-use App\Enums\HelpArticleType;
-use App\Enums\HelpTourStepPosition;
 use App\Models\HelpArticle;
 use App\Models\HelpTour;
 use App\Models\HelpTourStep;

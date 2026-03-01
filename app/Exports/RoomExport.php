@@ -24,7 +24,7 @@ class RoomExport extends AbstractDataExport
      */
     public function headings(): array
     {
-        return (new RoomTemplateExport())->headings();
+        return (new RoomTemplateExport)->headings();
     }
 
     /**

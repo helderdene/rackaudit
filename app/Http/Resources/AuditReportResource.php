@@ -58,6 +58,6 @@ class AuditReportResource extends JsonResource
             $i++;
         }
 
-        return round($size, 1) . ' ' . $units[$i];
+        return round($size, 1).' '.$units[$i];
     }
 }

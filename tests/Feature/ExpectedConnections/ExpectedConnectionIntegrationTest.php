@@ -34,13 +34,6 @@ beforeEach(function () {
 /**
  * Helper function to create expected connections without triggering factory device creation.
  *
- * @param  ImplementationFile  $implementationFile
- * @param  Device  $sourceDevice
- * @param  Port  $sourcePort
- * @param  Device  $destDevice
- * @param  Port  $destPort
- * @param  ExpectedConnectionStatus  $status
- * @param  int  $count
  * @return \Illuminate\Support\Collection<int, ExpectedConnection>
  */
 function createExpectedConnections(

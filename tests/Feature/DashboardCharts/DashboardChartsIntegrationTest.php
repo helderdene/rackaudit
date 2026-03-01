@@ -12,6 +12,7 @@
  * - Activity by entity aggregation across multiple snapshots
  */
 
+use App\Enums\RackStatus;
 use App\Jobs\CaptureCapacitySnapshotJob;
 use App\Jobs\CaptureDashboardMetricsJob;
 use App\Models\CapacitySnapshot;
@@ -22,7 +23,6 @@ use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;
 use App\Models\User;
-use App\Enums\RackStatus;
 use App\Services\CapacityCalculationService;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -76,17 +76,17 @@ test('chart data aggregates multiple datacenters when no filter applied', functi
     $data = $response->json();
 
     // Device count should be sum: 100 + 150 = 250
-    if (!empty($data['deviceCountTrend']['data'])) {
+    if (! empty($data['deviceCountTrend']['data'])) {
         expect($data['deviceCountTrend']['data'][0])->toBe(250);
     }
 
     // Audit completions should be sum: 10 + 8 = 18
-    if (!empty($data['auditCompletionTrend']['data'])) {
+    if (! empty($data['auditCompletionTrend']['data'])) {
         expect($data['auditCompletionTrend']['data'][0])->toBe(18);
     }
 
     // Activity counts should aggregate: Device = 5+10 = 15, Rack = 3+2 = 5
-    if (!empty($data['activityByEntity']['labels'])) {
+    if (! empty($data['activityByEntity']['labels'])) {
         $deviceIndex = array_search('Devices', $data['activityByEntity']['labels']);
         if ($deviceIndex !== false) {
             expect($data['activityByEntity']['data'][$deviceIndex])->toBe(15);
@@ -127,7 +127,7 @@ test('capacity trend uses weighted average calculation by U-space', function () 
 
     // Weighted average should be 68 (not simple average of 70)
     // Use toEqual for loose comparison since API may return int or float
-    if (!empty($data['capacityTrend']['data'])) {
+    if (! empty($data['capacityTrend']['data'])) {
         expect((float) $data['capacityTrend']['data'][0])->toEqual(68.0);
     }
 });
@@ -196,7 +196,7 @@ test('IT Manager role has full datacenter access like Administrator', function (
     $data = $response->json();
 
     // Should see combined device count: 100 + 200 = 300
-    if (!empty($data['deviceCountTrend']['data'])) {
+    if (! empty($data['deviceCountTrend']['data'])) {
         expect($data['deviceCountTrend']['data'][0])->toBe(300);
     }
 });
@@ -268,11 +268,11 @@ test('full flow from job capture to API query returns consistent data', function
     ]);
 
     // Run the capacity snapshot job
-    $capacityJob = new CaptureCapacitySnapshotJob();
+    $capacityJob = new CaptureCapacitySnapshotJob;
     $capacityJob->handle(app(CapacityCalculationService::class));
 
     // Run the dashboard metrics job
-    $metricsJob = new CaptureDashboardMetricsJob();
+    $metricsJob = new CaptureDashboardMetricsJob;
     $metricsJob->handle();
 
     // Now query the API
@@ -287,7 +287,7 @@ test('full flow from job capture to API query returns consistent data', function
     expect($capturedSnapshot->device_count)->toBe(8);
 
     // API should return this same device count
-    if (!empty($data['deviceCountTrend']['data'])) {
+    if (! empty($data['deviceCountTrend']['data'])) {
         expect($data['deviceCountTrend']['data'][0])->toBe(8);
     }
 });

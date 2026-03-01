@@ -119,7 +119,7 @@ test('non-racked devices appear in inventory results', function () {
         );
 
     // Verify the non-racked device has null location values
-    $response->assertInertia(function (Assert $page) use ($nonRackedDevice) {
+    $response->assertInertia(function (Assert $page) {
         $devices = $page->toArray()['props']['metrics']['devices'];
         $nonRacked = collect($devices)->firstWhere('asset_tag', 'NR-001');
 
@@ -293,7 +293,7 @@ test('multiple filters applied simultaneously returns correct results', function
     ]);
 
     // Apply multiple filters simultaneously
-    $response = $this->actingAs($admin)->get('/reports/assets?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets?'.http_build_query([
         'datacenter_id' => $datacenter->id,
         'device_type_id' => $serverType->id,
         'lifecycle_status' => DeviceLifecycleStatus::Deployed->value,

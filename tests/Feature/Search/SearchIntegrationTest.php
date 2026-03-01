@@ -16,7 +16,6 @@
 use App\Enums\DeviceLifecycleStatus;
 use App\Enums\PortStatus;
 use App\Enums\PortType;
-use App\Enums\RackStatus;
 use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;

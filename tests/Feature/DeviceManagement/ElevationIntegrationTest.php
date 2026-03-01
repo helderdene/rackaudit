@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\DeviceDepth;
 use App\Enums\DeviceLifecycleStatus;
 use App\Enums\DeviceRackFace;
 use App\Enums\DeviceWidthType;

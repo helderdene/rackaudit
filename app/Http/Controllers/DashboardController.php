@@ -359,7 +359,7 @@ class DashboardController extends Controller
 
         foreach ($aggregated as $entityType => $count) {
             if ($count > 0) {
-                $labels[] = $entityType . 's'; // Pluralize for display
+                $labels[] = $entityType.'s'; // Pluralize for display
                 $data[] = $count;
             }
         }
@@ -649,7 +649,7 @@ class DashboardController extends Controller
 
             return [
                 'percentage' => '+100%',
-                'change' => '+' . $current . ($unit ? ' ' . $unit : ''),
+                'change' => '+'.$current.($unit ? ' '.$unit : ''),
             ];
         }
 
@@ -660,8 +660,8 @@ class DashboardController extends Controller
         $percentageSign = $percentageChange >= 0 ? '+' : '';
 
         return [
-            'percentage' => $percentageSign . $percentageChange . '%',
-            'change' => $sign . $change . ($unit ? ' ' . $unit : ''),
+            'percentage' => $percentageSign.$percentageChange.'%',
+            'change' => $sign.$change.($unit ? ' '.$unit : ''),
         ];
     }
 
@@ -715,17 +715,17 @@ class DashboardController extends Controller
         }
 
         if ($diffInMinutes < 60) {
-            return $diffInMinutes . ' minute' . ($diffInMinutes === 1 ? '' : 's') . ' ago';
+            return $diffInMinutes.' minute'.($diffInMinutes === 1 ? '' : 's').' ago';
         }
 
         $diffInHours = (int) floor($timestamp->diffInHours($now));
         if ($diffInHours < 24) {
-            return $diffInHours . ' hour' . ($diffInHours === 1 ? '' : 's') . ' ago';
+            return $diffInHours.' hour'.($diffInHours === 1 ? '' : 's').' ago';
         }
 
         $diffInDays = (int) floor($timestamp->diffInDays($now));
         if ($diffInDays < 7) {
-            return $diffInDays . ' day' . ($diffInDays === 1 ? '' : 's') . ' ago';
+            return $diffInDays.' day'.($diffInDays === 1 ? '' : 's').' ago';
         }
 
         return $timestamp->format('M d, Y');

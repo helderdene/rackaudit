@@ -65,7 +65,7 @@ class ActivityLogIndexRequest extends FormRequest
             'start_date.date' => 'The start date must be a valid date.',
             'end_date.date' => 'The end date must be a valid date.',
             'end_date.after_or_equal' => 'The end date must be after or equal to the start date.',
-            'action.in' => 'The action must be one of: ' . implode(', ', self::VALID_ACTIONS),
+            'action.in' => 'The action must be one of: '.implode(', ', self::VALID_ACTIONS),
             'user_id.integer' => 'The user ID must be a valid integer.',
             'user_id.exists' => 'The selected user does not exist.',
             'subject_type.in' => 'The selected entity type is invalid.',

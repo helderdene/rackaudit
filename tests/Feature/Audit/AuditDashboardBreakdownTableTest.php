@@ -8,7 +8,6 @@
  */
 
 use App\Enums\AuditStatus;
-use App\Enums\FindingSeverity;
 use App\Models\Audit;
 use App\Models\Datacenter;
 use App\Models\Finding;

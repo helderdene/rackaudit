@@ -63,7 +63,7 @@ class BulkExportFactory extends Factory
             'entity_type' => $entityType,
             'format' => $format,
             'file_name' => $fileName,
-            'file_path' => 'exports/' . fake()->uuid() . '_' . $fileName,
+            'file_path' => 'exports/'.fake()->uuid().'_'.$fileName,
             'status' => BulkExportStatus::Pending,
             'total_rows' => $totalRows,
             'processed_rows' => $processedRows,
@@ -115,14 +115,14 @@ class BulkExportFactory extends Factory
         return $this->state(function (array $attributes) {
             $totalRows = $attributes['total_rows'] ?? 100;
             $format = $attributes['format'] ?? 'xlsx';
-            $fileName = 'export_' . fake()->uuid() . '.' . $format;
+            $fileName = 'export_'.fake()->uuid().'.'.$format;
 
             return [
                 'status' => BulkExportStatus::Completed,
                 'total_rows' => $totalRows,
                 'processed_rows' => $totalRows,
                 'file_name' => $fileName,
-                'file_path' => 'exports/' . $fileName,
+                'file_path' => 'exports/'.$fileName,
                 'started_at' => now()->subMinutes(fake()->numberBetween(5, 30)),
                 'completed_at' => now()->subMinutes(fake()->numberBetween(1, 4)),
             ];

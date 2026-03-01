@@ -25,7 +25,7 @@ class DeviceExport extends AbstractDataExport
      */
     public function headings(): array
     {
-        return (new DeviceTemplateExport())->headings();
+        return (new DeviceTemplateExport)->headings();
     }
 
     /**

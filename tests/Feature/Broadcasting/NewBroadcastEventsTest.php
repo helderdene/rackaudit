@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\AuditStatus;
-use App\Enums\DeviceLifecycleStatus;
 use App\Events\AuditStatusChanged;
 use App\Events\DeviceChanged;
 use App\Events\FindingAssigned;

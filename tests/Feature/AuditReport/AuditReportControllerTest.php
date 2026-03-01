@@ -1,7 +1,5 @@
 <?php
 
-use App\Enums\AuditStatus;
-use App\Enums\AuditType;
 use App\Jobs\GenerateAuditReportJob;
 use App\Models\Audit;
 use App\Models\AuditReport;
@@ -179,7 +177,7 @@ test('index action returns paginated reports with filters', function () {
     AuditReport::factory()->forAudit($auditOther)->create();
 
     $response = $this->actingAs($this->admin)
-        ->get('/reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -197,7 +195,7 @@ test('download action returns PDF file', function () {
     $audit->assignees()->attach($this->itManager->id);
 
     // Create a report with a file
-    $filePath = 'reports/audits/audit-report-' . $audit->id . '-' . now()->format('YmdHis') . '.pdf';
+    $filePath = 'reports/audits/audit-report-'.$audit->id.'-'.now()->format('YmdHis').'.pdf';
     Storage::disk('local')->put($filePath, '%PDF-1.4 Test PDF Content');
 
     $report = AuditReport::factory()
@@ -210,7 +208,7 @@ test('download action returns PDF file', function () {
 
     $response->assertOk();
     $response->assertHeader('content-type', 'application/pdf');
-    $response->assertHeader('content-disposition', 'attachment; filename=' . basename($filePath));
+    $response->assertHeader('content-disposition', 'attachment; filename='.basename($filePath));
 });
 
 /**

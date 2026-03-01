@@ -1,7 +1,5 @@
 <?php
 
-use App\Enums\AuditStatus;
-use App\Enums\FindingSeverity;
 use App\Models\Audit;
 use App\Models\Datacenter;
 use App\Models\Finding;
@@ -51,7 +49,7 @@ test('datacenter filter restricts results to selected datacenter', function () {
 
     // Filter by datacenter1 only
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -69,7 +67,7 @@ test('datacenter filter restricts results to selected datacenter', function () {
 
     // Filter by datacenter2 only
     $response2 = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter2->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter2->id);
 
     $response2->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -115,7 +113,7 @@ test('time period filter with each preset returns correct date ranges', function
     ]);
 
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?time_period=' . $timePeriod);
+        ->get('/audits/dashboard?time_period='.$timePeriod);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -159,7 +157,7 @@ test('combined datacenter and time period filters work together', function () {
 
     // Filter by datacenter1 AND last 30 days - should return only 1
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id . '&time_period=30_days');
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id.'&time_period=30_days');
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -174,7 +172,7 @@ test('combined datacenter and time period filters work together', function () {
 
     // Filter by datacenter1 AND last 90 days - should return 2
     $response2 = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id . '&time_period=90_days');
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id.'&time_period=90_days');
 
     $response2->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -233,7 +231,7 @@ test('admin users see all datacenters in filter options', function () {
 test('filter values persist in URL query parameters', function () {
     // Test with various filter combinations
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id . '&time_period=quarter');
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id.'&time_period=quarter');
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

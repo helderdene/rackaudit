@@ -85,10 +85,9 @@ test('datacenter show page includes hasApprovedImplementationFiles flag', functi
         ->get("/datacenters/{$this->datacenter->id}");
 
     $response->assertOk();
-    $response->assertInertia(fn ($assert) =>
-        $assert->component('Datacenters/Show')
-            ->has('datacenter.has_approved_implementation_files')
-            ->where('datacenter.has_approved_implementation_files', true)
+    $response->assertInertia(fn ($assert) => $assert->component('Datacenters/Show')
+        ->has('datacenter.has_approved_implementation_files')
+        ->where('datacenter.has_approved_implementation_files', true)
     );
 });
 
@@ -107,9 +106,8 @@ test('datacenter show page shows hasApprovedImplementationFiles false when no ap
         ->get("/datacenters/{$this->datacenter->id}");
 
     $response->assertOk();
-    $response->assertInertia(fn ($assert) =>
-        $assert->component('Datacenters/Show')
-            ->has('datacenter.has_approved_implementation_files')
-            ->where('datacenter.has_approved_implementation_files', false)
+    $response->assertInertia(fn ($assert) => $assert->component('Datacenters/Show')
+        ->has('datacenter.has_approved_implementation_files')
+        ->where('datacenter.has_approved_implementation_files', false)
     );
 });

@@ -514,7 +514,7 @@ class RackController extends Controller
     private function getAvailablePdus(Room $room, Row $row): array
     {
         return Pdu::query()
-            ->where(function ($query) use ($room, $row) {
+            ->where(function ($query) use ($room) {
                 // Room-level PDUs from the same room
                 $query->where('room_id', $room->id)
                     ->whereNull('row_id');

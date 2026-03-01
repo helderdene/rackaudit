@@ -114,7 +114,7 @@ test('dashboard page provides data needed for breadcrumbs', function () {
  */
 test('filter changes are reflected in response data', function () {
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id . '&time_period=90_days');
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id.'&time_period=90_days');
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

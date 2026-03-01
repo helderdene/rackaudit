@@ -6,7 +6,7 @@ import DeleteDatacenterDialog from '@/components/datacenters/DeleteDatacenterDia
 import FloorPlanDisplay from '@/components/datacenters/FloorPlanDisplay.vue';
 import ImplementationFileCard from '@/components/implementation-files/ImplementationFileCard.vue';
 import ImplementationFilesWarning from '@/components/implementation-files/ImplementationFilesWarning.vue';
-import DiscrepancyWidget from '@/components/Datacenters/DiscrepancyWidget.vue';
+import DiscrepancyWidget from '@/components/datacenters/DiscrepancyWidget.vue';
 import { type ImplementationFile } from '@/components/implementation-files/ImplementationFileList.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

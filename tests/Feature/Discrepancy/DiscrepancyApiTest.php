@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\DiscrepancyStatus;
-use App\Enums\DiscrepancyType;
 use App\Jobs\DetectDiscrepanciesJob;
 use App\Models\Datacenter;
 use App\Models\Discrepancy;

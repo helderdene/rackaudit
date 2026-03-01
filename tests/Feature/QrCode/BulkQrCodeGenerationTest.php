@@ -65,6 +65,7 @@ test('bulk QR page includes rack entity type option', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->where('entityTypeOptions', function ($options) {
                 $values = collect($options)->pluck('value')->toArray();
+
                 return in_array('rack', $values) && in_array('device', $values);
             })
         );

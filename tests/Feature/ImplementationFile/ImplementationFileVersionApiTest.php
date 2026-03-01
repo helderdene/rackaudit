@@ -304,7 +304,7 @@ test('store endpoint creates version chain for same original_name', function () 
     expect($version1->version_group_id)->toBe($version1->id);
 
     // Upload second file with same name
-    $file2 = \Illuminate\Http\UploadedFile::fake()->createWithContent('implementation_spec.pdf', $pdfContent . ' v2');
+    $file2 = \Illuminate\Http\UploadedFile::fake()->createWithContent('implementation_spec.pdf', $pdfContent.' v2');
     $response = $this->actingAs($this->admin)
         ->postJson("/datacenters/{$this->datacenter->id}/implementation-files", [
             'file' => $file2,

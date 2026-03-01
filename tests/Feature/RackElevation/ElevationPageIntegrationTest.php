@@ -6,8 +6,8 @@
  * front/rear views, unplaced devices sidebar, utilization stats, and click-to-navigate.
  */
 
-use App\Enums\DeviceWidthType;
 use App\Enums\DeviceRackFace;
+use App\Enums\DeviceWidthType;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Models\Datacenter;

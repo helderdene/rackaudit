@@ -66,7 +66,7 @@ test('index action returns paginated findings with filters applied', function ()
     );
 
     // Test filter by category
-    $response = $this->actingAs($admin)->get('/findings?category=' . $category->id);
+    $response = $this->actingAs($admin)->get('/findings?category='.$category->id);
     $response->assertSuccessful();
     $response->assertInertia(fn (Assert $page) => $page
         ->has('findings.data', 1)

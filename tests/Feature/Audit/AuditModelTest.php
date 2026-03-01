@@ -5,10 +5,7 @@ use App\Enums\AuditStatus;
 use App\Enums\AuditType;
 use App\Models\Audit;
 use App\Models\Datacenter;
-use App\Models\Device;
-use App\Models\Rack;
 use App\Models\Room;
-use App\Models\Row;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

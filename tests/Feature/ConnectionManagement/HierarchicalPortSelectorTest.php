@@ -8,7 +8,6 @@
  */
 
 use App\Enums\PortStatus;
-use App\Enums\PortType;
 use App\Models\Datacenter;
 use App\Models\Device;
 use App\Models\Port;

@@ -218,7 +218,7 @@ test('reports index page filters by datacenter', function () {
 
     // Filter by first datacenter
     $response = $this->actingAs($this->admin)
-        ->get('/reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page

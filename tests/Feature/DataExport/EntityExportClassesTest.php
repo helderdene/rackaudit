@@ -37,13 +37,13 @@ test('datacenter export generates correct columns matching template headings', f
         'country' => 'USA',
     ]);
 
-    $export = new DatacenterExport();
+    $export = new DatacenterExport;
     Excel::store($export, 'datacenters_export.xlsx', 'local');
 
     Storage::disk('local')->assertExists('datacenters_export.xlsx');
 
     // Verify headings match template
-    $templateExport = new DatacenterTemplateExport();
+    $templateExport = new DatacenterTemplateExport;
     expect($export->headings())->toBe($templateExport->headings());
 
     // Verify data is exported
@@ -113,8 +113,8 @@ test('export headings match corresponding template export headings', function ()
     ];
 
     foreach ($exportClasses as $exportClass => $templateClass) {
-        $export = new $exportClass();
-        $template = new $templateClass();
+        $export = new $exportClass;
+        $template = new $templateClass;
 
         expect($export->headings())->toBe(
             $template->headings(),
@@ -126,7 +126,7 @@ test('export headings match corresponding template export headings', function ()
 test('xlsx export has header styling applied', function () {
     Datacenter::factory()->count(2)->create();
 
-    $export = new DatacenterExport();
+    $export = new DatacenterExport;
     Excel::store($export, 'styled_export.xlsx', 'local');
 
     $filePath = Storage::disk('local')->path('styled_export.xlsx');
@@ -163,7 +163,7 @@ test('data values are correctly formatted in export', function () {
         'name' => 'Server Room A',
     ]);
 
-    $export = new RoomExport();
+    $export = new RoomExport;
     Excel::store($export, 'rooms_export.xlsx', 'local');
 
     $filePath = Storage::disk('local')->path('rooms_export.xlsx');
@@ -200,7 +200,7 @@ test('port export includes device relationship data', function () {
         'label' => 'eth0',
     ]);
 
-    $export = new PortExport();
+    $export = new PortExport;
     Excel::store($export, 'ports_export.xlsx', 'local');
 
     $filePath = Storage::disk('local')->path('ports_export.xlsx');

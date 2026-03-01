@@ -94,14 +94,14 @@ test('index filters by date range, user, and action type', function () {
     ]);
 
     // Filter by date range
-    $response = $this->actingAs($admin)->get('/connections/history?start_date=' . now()->subDays(6)->toDateString());
+    $response = $this->actingAs($admin)->get('/connections/history?start_date='.now()->subDays(6)->toDateString());
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('activityLogs.data', 2)
         );
 
     // Filter by user_id
-    $response = $this->actingAs($admin)->get('/connections/history?user_id=' . $user1->id);
+    $response = $this->actingAs($admin)->get('/connections/history?user_id='.$user1->id);
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('activityLogs.data', 2)
@@ -227,7 +227,7 @@ test('timeline endpoint returns chronological entries for specific connection', 
         'subject_id' => $otherConnection->id,
     ]);
 
-    $response = $this->actingAs($admin)->getJson('/connections/' . $connection->id . '/timeline');
+    $response = $this->actingAs($admin)->getJson('/connections/'.$connection->id.'/timeline');
 
     $response->assertOk()
         ->assertJsonCount(3, 'data')
@@ -251,14 +251,14 @@ test('timeline endpoint supports load more pagination', function () {
     }
 
     // First request should return initial 10 entries
-    $response = $this->actingAs($admin)->getJson('/connections/' . $connection->id . '/timeline');
+    $response = $this->actingAs($admin)->getJson('/connections/'.$connection->id.'/timeline');
 
     $response->assertOk()
         ->assertJsonCount(10, 'data')
         ->assertJsonPath('meta.has_more', true);
 
     // Request with page 2 should return remaining 5 entries
-    $response = $this->actingAs($admin)->getJson('/connections/' . $connection->id . '/timeline?page=2');
+    $response = $this->actingAs($admin)->getJson('/connections/'.$connection->id.'/timeline?page=2');
 
     $response->assertOk()
         ->assertJsonCount(5, 'data')

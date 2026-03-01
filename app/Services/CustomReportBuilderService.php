@@ -196,7 +196,7 @@ class CustomReportBuilderService
      * @param  array<string, mixed>  $filters  Filter values
      * @param  array<array{column: string, direction: string}>  $sort  Sort configuration
      * @param  string|null  $groupBy  Group by field
-     * @return string  File path to the generated PDF
+     * @return string File path to the generated PDF
      */
     public function generatePdfReport(
         ReportType $type,
@@ -256,7 +256,7 @@ class CustomReportBuilderService
      * @param  array<string, mixed>  $filters  Filter values
      * @param  array<array{column: string, direction: string}>  $sort  Sort configuration
      * @param  string|null  $groupBy  Group by field (used for ordering, not grouping in CSV)
-     * @return string  File path to the generated CSV
+     * @return string File path to the generated CSV
      */
     public function generateCsvReport(
         ReportType $type,
@@ -742,7 +742,7 @@ class CustomReportBuilderService
      *
      * @param  object  $record  The model record
      * @param  array<string>  $calculatedFields  Keys of calculated fields to compute
-     * @return array<string, mixed>  Calculated field values keyed by field key
+     * @return array<string, mixed> Calculated field values keyed by field key
      */
     public function computeCalculatedFields(ReportType $type, object $record, array $calculatedFields): array
     {
@@ -1024,15 +1024,15 @@ class CustomReportBuilderService
         $parts = [];
 
         if (! empty($filters['datacenter_id'])) {
-            $parts[] = 'Datacenter: ' . $filters['datacenter_id'];
+            $parts[] = 'Datacenter: '.$filters['datacenter_id'];
         }
 
         if (! empty($filters['room_id'])) {
-            $parts[] = 'Room: ' . $filters['room_id'];
+            $parts[] = 'Room: '.$filters['room_id'];
         }
 
         if (! empty($filters['row_id'])) {
-            $parts[] = 'Row: ' . $filters['row_id'];
+            $parts[] = 'Row: '.$filters['row_id'];
         }
 
         return ! empty($parts) ? implode(', ', $parts) : 'No filters applied';

@@ -1,14 +1,10 @@
 <?php
 
-use App\Enums\AuditScopeType;
-use App\Enums\AuditStatus;
 use App\Enums\DiscrepancyStatus;
 use App\Enums\DiscrepancyType;
 use App\Enums\FindingStatus;
 use App\Events\FindingResolved;
-use App\Listeners\ResolveLinkedDiscrepancy;
 use App\Models\Audit;
-use App\Models\AuditConnectionVerification;
 use App\Models\Datacenter;
 use App\Models\Discrepancy;
 use App\Models\ExpectedConnection;

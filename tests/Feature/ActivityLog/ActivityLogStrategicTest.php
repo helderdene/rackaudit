@@ -68,8 +68,7 @@ describe('End-to-End Workflows', function () {
         // Find the log in the response data using subject_type + subject_id + action
         $responseData = $response->original->getData();
         $logs = collect($responseData['page']['props']['activityLogs']['data']);
-        $datacenterLog = $logs->first(fn ($log) =>
-            $log['subject_type'] === Datacenter::class &&
+        $datacenterLog = $logs->first(fn ($log) => $log['subject_type'] === Datacenter::class &&
             $log['subject_id'] === $datacenter->id &&
             $log['action'] === 'created'
         );

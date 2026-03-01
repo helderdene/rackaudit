@@ -22,7 +22,6 @@ beforeEach(function () {
 /**
  * Task 2.1: Tests for parsing functionality
  */
-
 test('Excel template generation creates correct columns and instructions sheet', function () {
     $export = new ConnectionTemplateExport;
 

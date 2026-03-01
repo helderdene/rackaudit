@@ -145,7 +145,7 @@ test('export buttons generate correct URLs with filter params', function () {
     ]);
 
     // Test CSV export with filter params
-    $response = $this->actingAs($admin)->get('/reports/assets/export/csv?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets/export/csv?'.http_build_query([
         'datacenter_id' => $datacenter->id,
         'device_type_id' => $deviceType->id,
         'manufacturer' => 'Dell',
@@ -211,7 +211,7 @@ test('filter changes return correctly filtered metrics for loading skeleton disp
         );
 
     // Test with device type filter - should only see servers
-    $response = $this->actingAs($admin)->get('/reports/assets?device_type_id=' . $serverType->id);
+    $response = $this->actingAs($admin)->get('/reports/assets?device_type_id='.$serverType->id);
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->where('metrics.pagination.total', 5)

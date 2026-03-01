@@ -214,7 +214,7 @@ class ConnectionComparisonService
      * Detect conflicts where same source port has different destinations across files.
      *
      * @param  EloquentCollection<int, ExpectedConnection>  $expectedConnections
-     * @return array<int, array<int, ExpectedConnection>>  Keyed by source_port_id
+     * @return array<int, array<int, ExpectedConnection>> Keyed by source_port_id
      */
     protected function detectConflicts(EloquentCollection $expectedConnections): array
     {

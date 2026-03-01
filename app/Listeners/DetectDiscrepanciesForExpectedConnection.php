@@ -19,8 +19,6 @@ class DetectDiscrepanciesForExpectedConnection implements ShouldQueue
 
     /**
      * The name of the queue the job should be sent to.
-     *
-     * @var string
      */
     public string $queue = 'discrepancies';
 

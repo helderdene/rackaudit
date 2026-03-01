@@ -23,7 +23,7 @@ class DatacenterExport extends AbstractDataExport
      */
     public function headings(): array
     {
-        return (new DatacenterTemplateExport())->headings();
+        return (new DatacenterTemplateExport)->headings();
     }
 
     /**

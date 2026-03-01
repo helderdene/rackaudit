@@ -7,8 +7,6 @@
  * severity distribution (donut/pie) and audit completion trend (line) charts.
  */
 
-use App\Enums\AuditStatus;
-use App\Enums\FindingSeverity;
 use App\Models\Audit;
 use App\Models\Datacenter;
 use App\Models\Finding;
@@ -215,7 +213,7 @@ test('chart data respects datacenter filter for both severity and trend', functi
     Finding::factory()->count(10)->high()->forAudit($audit2)->create();
 
     // Request with filter for main datacenter only
-    $response = $this->actingAs($this->admin)->get('/audits/dashboard?datacenter_id=' . $this->datacenter->id);
+    $response = $this->actingAs($this->admin)->get('/audits/dashboard?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk();
 

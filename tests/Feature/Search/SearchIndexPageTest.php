@@ -9,7 +9,6 @@
 
 use App\Models\Datacenter;
 use App\Models\Device;
-use App\Models\Port;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;
@@ -96,7 +95,7 @@ test('search index page cascades hierarchical filters correctly', function () {
 
     // Test that selecting a datacenter loads its rooms
     $response = $this->actingAs($admin)
-        ->get('/search?q=test&datacenter_id=' . $datacenter->id);
+        ->get('/search?q=test&datacenter_id='.$datacenter->id);
 
     $response->assertOk();
     $response->assertInertia(fn (Assert $page) => $page
@@ -110,7 +109,7 @@ test('search index page cascades hierarchical filters correctly', function () {
 
     // Test that selecting a room loads its rows
     $response = $this->actingAs($admin)
-        ->get('/search?q=test&datacenter_id=' . $datacenter->id . '&room_id=' . $room1->id);
+        ->get('/search?q=test&datacenter_id='.$datacenter->id.'&room_id='.$room1->id);
 
     $response->assertOk();
     $response->assertInertia(fn (Assert $page) => $page

@@ -1,13 +1,11 @@
 <?php
 
 use App\Enums\FindingStatus;
-use App\Models\Audit;
 use App\Models\Discrepancy;
 use App\Models\Finding;
 use App\Models\ImplementationFile;
 use App\Models\ReportSchedule;
 use App\Models\User;
-use App\Notifications\AuditAssignedNotification;
 use App\Notifications\DiscrepancyThresholdNotification;
 use App\Notifications\FindingAssignedNotification;
 use App\Notifications\FindingDueDateApproachingNotification;
@@ -17,7 +15,6 @@ use App\Notifications\FindingStatusChangedNotification;
 use App\Notifications\ImplementationFileApprovedNotification;
 use App\Notifications\ImplementationFileAwaitingApprovalNotification;
 use App\Notifications\NewDiscrepancyNotification;
-use App\Notifications\ScheduledReportDisabledNotification;
 use App\Notifications\ScheduledReportFailedNotification;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;

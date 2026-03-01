@@ -6,8 +6,8 @@
  * including placeholder devices for the rack elevation view feature.
  */
 
-use App\Enums\DeviceWidthType;
 use App\Enums\DeviceRackFace;
+use App\Enums\DeviceWidthType;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Models\Datacenter;

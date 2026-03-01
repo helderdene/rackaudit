@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\AuditScopeType;
-use App\Enums\AuditStatus;
 use App\Enums\AuditType;
 use App\Enums\DeviceVerificationStatus;
 use App\Models\Audit;

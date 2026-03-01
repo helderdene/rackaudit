@@ -331,7 +331,7 @@ class ConnectionHistoryExportJob implements ShouldQueue
 HTML;
 
         foreach ($rows as $row) {
-            $actionClass = 'action-' . strtolower($row[4]);
+            $actionClass = 'action-'.strtolower($row[4]);
             $html .= <<<HTML
             <tr>
                 <td>{$row[0]}</td>
@@ -374,28 +374,28 @@ HTML;
         $parts = [];
 
         if (! empty($filters['start_date'])) {
-            $parts[] = 'Start Date: ' . $filters['start_date'];
+            $parts[] = 'Start Date: '.$filters['start_date'];
         }
 
         if (! empty($filters['end_date'])) {
-            $parts[] = 'End Date: ' . $filters['end_date'];
+            $parts[] = 'End Date: '.$filters['end_date'];
         }
 
         if (! empty($filters['action'])) {
-            $parts[] = 'Action: ' . ucfirst($filters['action']);
+            $parts[] = 'Action: '.ucfirst($filters['action']);
         }
 
         if (! empty($filters['user_id'])) {
-            $parts[] = 'User ID: ' . $filters['user_id'];
+            $parts[] = 'User ID: '.$filters['user_id'];
         }
 
         if (! empty($filters['search'])) {
-            $parts[] = 'Search: "' . htmlspecialchars($filters['search']) . '"';
+            $parts[] = 'Search: "'.htmlspecialchars($filters['search']).'"';
         }
 
         $filterText = implode(' | ', $parts);
 
-        return '<div class="filters"><strong>Filters:</strong> ' . $filterText . '</div>';
+        return '<div class="filters"><strong>Filters:</strong> '.$filterText.'</div>';
     }
 
     /**
@@ -433,8 +433,8 @@ HTML;
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('old_values', 'like', '%' . $search . '%')
-                    ->orWhere('new_values', 'like', '%' . $search . '%');
+                $q->where('old_values', 'like', '%'.$search.'%')
+                    ->orWhere('new_values', 'like', '%'.$search.'%');
             });
         }
 
@@ -486,7 +486,7 @@ HTML;
                 $value = json_encode($value);
             }
 
-            $summary[] = $key . ': ' . $value;
+            $summary[] = $key.': '.$value;
         }
 
         return implode(', ', $summary);

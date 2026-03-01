@@ -13,7 +13,6 @@
  */
 
 use App\Enums\FindingStatus;
-use App\Models\Audit;
 use App\Models\Finding;
 use App\Models\FindingStatusTransition;
 use App\Models\User;

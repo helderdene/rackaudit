@@ -1,8 +1,5 @@
 <?php
 
-use App\Enums\AuditStatus;
-use App\Enums\AuditType;
-use App\Enums\FindingSeverity;
 use App\Models\Audit;
 use App\Models\Datacenter;
 use App\Models\Finding;
@@ -95,7 +92,7 @@ test('filters update URL parameters correctly', function () {
 
     // Test with datacenter filter
     $response = $this->actingAs($this->admin)
-        ->get('/reports/audit-history?datacenter_id=' . $this->datacenter->id);
+        ->get('/reports/audit-history?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -113,7 +110,7 @@ test('filters update URL parameters correctly', function () {
 
     // Test with multiple filters combined
     $response = $this->actingAs($this->admin)
-        ->get('/reports/audit-history?time_range_preset=6_months&datacenter_id=' . $this->datacenter->id . '&audit_type=inventory');
+        ->get('/reports/audit-history?time_range_preset=6_months&datacenter_id='.$this->datacenter->id.'&audit_type=inventory');
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -143,14 +140,14 @@ test('export buttons generate correct URLs with current filters', function () {
 
     // Test PDF export with filters
     $response = $this->actingAs($this->admin)
-        ->get('/reports/audit-history/export/pdf?time_range_preset=30_days&datacenter_id=' . $this->datacenter->id);
+        ->get('/reports/audit-history/export/pdf?time_range_preset=30_days&datacenter_id='.$this->datacenter->id);
 
     $response->assertOk();
     $response->assertHeader('content-type', 'application/pdf');
 
     // Test CSV export with filters
     $response = $this->actingAs($this->admin)
-        ->get('/reports/audit-history/export/csv?time_range_preset=30_days&datacenter_id=' . $this->datacenter->id);
+        ->get('/reports/audit-history/export/csv?time_range_preset=30_days&datacenter_id='.$this->datacenter->id);
 
     $response->assertOk();
     $contentDisposition = $response->headers->get('content-disposition');

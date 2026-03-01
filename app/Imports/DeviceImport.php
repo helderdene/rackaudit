@@ -6,7 +6,6 @@ use App\Enums\DeviceDepth;
 use App\Enums\DeviceLifecycleStatus;
 use App\Enums\DeviceRackFace;
 use App\Enums\DeviceWidthType;
-use App\Enums\RackUHeight;
 use App\Models\Datacenter;
 use App\Models\Device;
 use App\Models\DeviceType;
@@ -128,7 +127,7 @@ class DeviceImport extends AbstractEntityImport
     /**
      * Run custom validation rules for device import.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<int, array{row_number: int, field_name: string, error_message: string}>
      */
     protected function validateCustomRules(array $row, int $rowNumber): array
@@ -211,7 +210,7 @@ class DeviceImport extends AbstractEntityImport
     /**
      * Validate rack placement hierarchy and capacity.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      * @return array<int, array{row_number: int, field_name: string, error_message: string}>
      */
     protected function validateRackPlacement(array $row, int $rowNumber): array
@@ -301,7 +300,7 @@ class DeviceImport extends AbstractEntityImport
     /**
      * Create the device from validated data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function createEntity(array $data, int $rowNumber): Device
     {

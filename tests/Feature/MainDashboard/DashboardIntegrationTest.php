@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\AuditStatus;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Models\Audit;

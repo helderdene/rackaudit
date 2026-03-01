@@ -181,8 +181,8 @@ class ActivityLogController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('old_values', 'like', '%' . $search . '%')
-                    ->orWhere('new_values', 'like', '%' . $search . '%');
+                $q->where('old_values', 'like', '%'.$search.'%')
+                    ->orWhere('new_values', 'like', '%'.$search.'%');
             });
         }
 

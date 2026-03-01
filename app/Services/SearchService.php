@@ -121,19 +121,19 @@ class SearchService
                     $subQ->whereHas('sourcePort.device', function (Builder $devQ) use ($deviceName1) {
                         $devQ->where('name', 'LIKE', "%{$deviceName1}%");
                     })
-                    ->whereHas('destinationPort.device', function (Builder $devQ) use ($deviceName2) {
-                        $devQ->where('name', 'LIKE', "%{$deviceName2}%");
-                    });
+                        ->whereHas('destinationPort.device', function (Builder $devQ) use ($deviceName2) {
+                            $devQ->where('name', 'LIKE', "%{$deviceName2}%");
+                        });
                 })
                 // Or match connections where source is device2 and destination is device1 (reversed)
-                ->orWhere(function (Builder $subQ) use ($deviceName1, $deviceName2) {
-                    $subQ->whereHas('sourcePort.device', function (Builder $devQ) use ($deviceName2) {
-                        $devQ->where('name', 'LIKE', "%{$deviceName2}%");
-                    })
-                    ->whereHas('destinationPort.device', function (Builder $devQ) use ($deviceName1) {
-                        $devQ->where('name', 'LIKE', "%{$deviceName1}%");
+                    ->orWhere(function (Builder $subQ) use ($deviceName1, $deviceName2) {
+                        $subQ->whereHas('sourcePort.device', function (Builder $devQ) use ($deviceName2) {
+                            $devQ->where('name', 'LIKE', "%{$deviceName2}%");
+                        })
+                            ->whereHas('destinationPort.device', function (Builder $devQ) use ($deviceName1) {
+                                $devQ->where('name', 'LIKE', "%{$deviceName1}%");
+                            });
                     });
-                });
             });
 
         // Apply RBAC filtering - connection is visible if either endpoint is in accessible datacenter
@@ -142,16 +142,16 @@ class SearchService
                 $q->whereHas('sourcePort.device.rack.row.room.datacenter', function (Builder $subQ) use ($accessibleDatacenterIds) {
                     $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
                 })
-                ->orWhereHas('destinationPort.device.rack.row.room.datacenter', function (Builder $subQ) use ($accessibleDatacenterIds) {
-                    $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
-                })
+                    ->orWhereHas('destinationPort.device.rack.row.room.datacenter', function (Builder $subQ) use ($accessibleDatacenterIds) {
+                        $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
+                    })
                 // Include connections where devices are not in racks
-                ->orWhereHas('sourcePort.device', function (Builder $subQ) {
-                    $subQ->whereNull('rack_id');
-                })
-                ->orWhereHas('destinationPort.device', function (Builder $subQ) {
-                    $subQ->whereNull('rack_id');
-                });
+                    ->orWhereHas('sourcePort.device', function (Builder $subQ) {
+                        $subQ->whereNull('rack_id');
+                    })
+                    ->orWhereHas('destinationPort.device', function (Builder $subQ) {
+                        $subQ->whereNull('rack_id');
+                    });
             });
         }
 
@@ -168,7 +168,7 @@ class SearchService
     /**
      * Get the IDs of datacenters the user can access.
      *
-     * @return Collection<int, int>|null  Null means full access (all datacenters)
+     * @return Collection<int, int>|null Null means full access (all datacenters)
      */
     private function getAccessibleDatacenterIds(User $user): ?Collection
     {
@@ -309,7 +309,7 @@ class SearchService
                     $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
                 })
                 // Also include unracked devices (they have no RBAC restriction based on current policy)
-                ->orWhereNull('rack_id');
+                    ->orWhereNull('rack_id');
             });
         }
 
@@ -377,9 +377,9 @@ class SearchService
                     $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
                 })
                 // Include ports on devices not in racks
-                ->orWhereHas('device', function (Builder $subQ) {
-                    $subQ->whereNull('rack_id');
-                });
+                    ->orWhereHas('device', function (Builder $subQ) {
+                        $subQ->whereNull('rack_id');
+                    });
             });
         }
 
@@ -468,16 +468,16 @@ class SearchService
                 $q->whereHas('sourcePort.device.rack.row.room.datacenter', function (Builder $subQ) use ($accessibleDatacenterIds) {
                     $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
                 })
-                ->orWhereHas('destinationPort.device.rack.row.room.datacenter', function (Builder $subQ) use ($accessibleDatacenterIds) {
-                    $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
-                })
+                    ->orWhereHas('destinationPort.device.rack.row.room.datacenter', function (Builder $subQ) use ($accessibleDatacenterIds) {
+                        $subQ->whereIn('datacenters.id', $accessibleDatacenterIds);
+                    })
                 // Include connections where devices are not in racks
-                ->orWhereHas('sourcePort.device', function (Builder $subQ) {
-                    $subQ->whereNull('rack_id');
-                })
-                ->orWhereHas('destinationPort.device', function (Builder $subQ) {
-                    $subQ->whereNull('rack_id');
-                });
+                    ->orWhereHas('sourcePort.device', function (Builder $subQ) {
+                        $subQ->whereNull('rack_id');
+                    })
+                    ->orWhereHas('destinationPort.device', function (Builder $subQ) {
+                        $subQ->whereNull('rack_id');
+                    });
             });
         }
 

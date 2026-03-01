@@ -402,10 +402,10 @@ class CapacityReportController extends Controller
         }
 
         if ($rounded > 0) {
-            return '+' . number_format($rounded, 1) . '%';
+            return '+'.number_format($rounded, 1).'%';
         }
 
-        return number_format($rounded, 1) . '%';
+        return number_format($rounded, 1).'%';
     }
 
     /**
@@ -416,13 +416,13 @@ class CapacityReportController extends Controller
         $rounded = round($diff, 1);
 
         if ($rounded === 0.0) {
-            return 'No change in ' . $metric;
+            return 'No change in '.$metric;
         }
 
         if ($rounded > 0) {
-            return '+' . number_format($rounded, 1) . '% increase in ' . $metric . ' vs last week';
+            return '+'.number_format($rounded, 1).'% increase in '.$metric.' vs last week';
         }
 
-        return number_format(abs($rounded), 1) . '% decrease in ' . $metric . ' vs last week';
+        return number_format(abs($rounded), 1).'% decrease in '.$metric.' vs last week';
     }
 }

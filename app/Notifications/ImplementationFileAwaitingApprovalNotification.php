@@ -63,7 +63,7 @@ class ImplementationFileAwaitingApprovalNotification extends Notification implem
         return (new MailMessage)
             ->subject("Implementation File Awaiting Approval: {$fileName}")
             ->greeting('Hello!')
-            ->line("A new implementation file has been uploaded and requires your approval.")
+            ->line('A new implementation file has been uploaded and requires your approval.')
             ->line("**File:** {$fileName}")
             ->line("**Datacenter:** {$datacenterName}")
             ->line("**Uploaded by:** {$uploaderName}")

@@ -22,7 +22,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -89,7 +88,7 @@ class ProcessBulkExportJob implements ShouldQueue
         $headings = $this->getHeadings();
 
         // Build spreadsheet
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle($this->getSheetTitle());
 
@@ -108,7 +107,7 @@ class ProcessBulkExportJob implements ShouldQueue
         $processedRows = 0;
         $totalRows = $this->bulkExport->total_rows;
 
-        $query->chunk($this->chunkSize, function ($records) use ($sheet, $headings, &$currentRow, &$processedRows, $totalRows) {
+        $query->chunk($this->chunkSize, function ($records) use ($sheet, $headings, &$currentRow, &$processedRows) {
             foreach ($records as $record) {
                 $rowData = $this->transformRecordToRow($record, $headings);
                 $colIndex = 1;
@@ -146,12 +145,12 @@ class ProcessBulkExportJob implements ShouldQueue
     protected function getHeadings(): array
     {
         $templateExport = match ($this->bulkExport->entity_type) {
-            BulkImportEntityType::Datacenter => new DatacenterTemplateExport(),
-            BulkImportEntityType::Room => new RoomTemplateExport(),
-            BulkImportEntityType::Row => new RowTemplateExport(),
-            BulkImportEntityType::Rack => new RackTemplateExport(),
-            BulkImportEntityType::Device => new DeviceTemplateExport(),
-            BulkImportEntityType::Port => new PortTemplateExport(),
+            BulkImportEntityType::Datacenter => new DatacenterTemplateExport,
+            BulkImportEntityType::Room => new RoomTemplateExport,
+            BulkImportEntityType::Row => new RowTemplateExport,
+            BulkImportEntityType::Rack => new RackTemplateExport,
+            BulkImportEntityType::Device => new DeviceTemplateExport,
+            BulkImportEntityType::Port => new PortTemplateExport,
             BulkImportEntityType::Mixed => throw new \InvalidArgumentException('Mixed entity type is not supported for export.'),
         };
 

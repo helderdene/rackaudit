@@ -14,7 +14,6 @@
  */
 
 use App\Enums\AuditScopeType;
-use App\Enums\AuditStatus;
 use App\Enums\AuditType;
 use App\Enums\DeviceVerificationStatus;
 use App\Models\Audit;
@@ -246,7 +245,7 @@ test('dashboard datacenter filter provides complete metrics for tablet grid', fu
     // Access dashboard with datacenter filter
     $response = $this->actingAs($this->admin)
         ->withUnencryptedCookie('sidebar_state', 'false')
-        ->get('/dashboard?datacenter_id=' . $this->datacenter->id);
+        ->get('/dashboard?datacenter_id='.$this->datacenter->id);
 
     $response->assertSuccessful();
     $response->assertInertia(fn (Assert $page) => $page

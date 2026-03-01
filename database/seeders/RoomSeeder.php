@@ -170,7 +170,7 @@ class RoomSeeder extends Seeder
                     Pdu::create([
                         'room_id' => null,
                         'row_id' => $row->id,
-                        'name' => "RPP-{$row->name}-" . ($index + 1),
+                        'name' => "RPP-{$row->name}-".($index + 1),
                         'model' => 'Raritan PX3',
                         'manufacturer' => 'Raritan',
                         'total_capacity_kw' => rand(20, 40) * 1.0,

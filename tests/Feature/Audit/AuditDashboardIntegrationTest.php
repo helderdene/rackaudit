@@ -10,11 +10,8 @@
  * - Quarter time period filter
  */
 
-use App\Enums\AuditStatus;
-use App\Enums\FindingSeverity;
 use App\Models\Audit;
 use App\Models\AuditConnectionVerification;
-use App\Models\AuditDeviceVerification;
 use App\Models\Datacenter;
 use App\Models\Finding;
 use App\Models\User;
@@ -126,7 +123,7 @@ test('breakdown table data respects datacenter filter', function () {
 
     // Request with filter for datacenter1 only
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -164,7 +161,7 @@ test('active audit progress respects datacenter filter', function () {
 
     // Request with filter for datacenter1 only
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -272,7 +269,7 @@ test('all dashboard sections return consistent data with combined filters', func
 
     // Request with datacenter1 and 30 days filters
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id . '&time_period=30_days');
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id.'&time_period=30_days');
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -335,7 +332,7 @@ test('auditor datacenter filter dropdown is limited to accessible datacenters', 
 
     // When auditor applies their accessible datacenter filter, data is restricted
     $filteredResponse = $this->actingAs($auditor)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id);
 
     $filteredResponse->assertOk()
         ->assertInertia(fn ($page) => $page

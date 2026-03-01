@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * Provides common functionality for generating XLSX import templates
  * with enum dropdowns, header styling, and example data.
  */
-abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithStyles, WithEvents, ShouldAutoSize, WithTitle
+abstract class AbstractTemplateExport implements FromArray, ShouldAutoSize, WithEvents, WithHeadings, WithStyles, WithTitle
 {
     /**
      * Header row background color.
@@ -156,7 +156,7 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
             $dropdownValues = $this->getEnumLabels($enumClass);
 
             // Apply validation from row 2 to VALIDATION_ROW_COUNT
-            $range = $columnLetter . '2:' . $columnLetter . self::VALIDATION_ROW_COUNT;
+            $range = $columnLetter.'2:'.$columnLetter.self::VALIDATION_ROW_COUNT;
             $this->setDropdownValidation($sheet, $range, $dropdownValues);
         }
     }
@@ -176,10 +176,10 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
             }
 
             $columnLetter = Coordinate::stringFromColumnIndex($columnIndex + 1);
-            $cell = $sheet->getCell($columnLetter . '1');
+            $cell = $sheet->getCell($columnLetter.'1');
 
             // Add comment to header cell
-            $cellComment = $sheet->getComment($columnLetter . '1');
+            $cellComment = $sheet->getComment($columnLetter.'1');
             $cellComment->getText()->createTextRun($comment);
             $cellComment->setWidth('300pt');
             $cellComment->setHeight('100pt');
@@ -203,12 +203,12 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
             $columnLetter = Coordinate::stringFromColumnIndex($columnIndex + 1);
 
             // Highlight required columns with yellow background (don't modify header text)
-            $sheet->getStyle($columnLetter . '1')->getFill()
+            $sheet->getStyle($columnLetter.'1')->getFill()
                 ->setFillType(Fill::FILL_SOLID)
                 ->getStartColor()->setRGB(self::REQUIRED_BG_COLOR);
 
             // Set dark text color for better contrast on yellow background
-            $sheet->getStyle($columnLetter . '1')->getFont()
+            $sheet->getStyle($columnLetter.'1')->getFont()
                 ->getColor()->setRGB('000000');
         }
     }
@@ -216,7 +216,7 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
     /**
      * Get human-readable labels from an enum class.
      *
-     * @param class-string $enumClass
+     * @param  class-string  $enumClass
      * @return array<string>
      */
     protected function getEnumLabels(string $enumClass): array
@@ -237,7 +237,7 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
     /**
      * Set dropdown validation for a cell range.
      *
-     * @param array<string> $values
+     * @param  array<string>  $values
      */
     protected function setDropdownValidation(Worksheet $sheet, string $range, array $values): void
     {
@@ -248,7 +248,7 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
         $validation->setShowInputMessage(true);
         $validation->setShowErrorMessage(true);
         $validation->setShowDropDown(true);
-        $validation->setFormula1('"' . implode(',', $values) . '"');
+        $validation->setFormula1('"'.implode(',', $values).'"');
 
         // Apply the same validation to the entire range
         $sheet->setDataValidation($range, $validation);
@@ -257,12 +257,12 @@ abstract class AbstractTemplateExport implements FromArray, WithHeadings, WithSt
     /**
      * Get a formatted dropdown formula from enum values.
      *
-     * @param class-string $enumClass
+     * @param  class-string  $enumClass
      */
     protected function getDropdownFormula(string $enumClass): string
     {
         $labels = $this->getEnumLabels($enumClass);
 
-        return '"' . implode(',', $labels) . '"';
+        return '"'.implode(',', $labels).'"';
     }
 }

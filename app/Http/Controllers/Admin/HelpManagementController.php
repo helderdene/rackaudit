@@ -81,7 +81,7 @@ class HelpManagementController extends Controller
 
         // Search by title
         if ($request->filled('search')) {
-            $articlesQuery->where('title', 'like', '%' . $request->input('search') . '%');
+            $articlesQuery->where('title', 'like', '%'.$request->input('search').'%');
         }
 
         $articles = $articlesQuery->paginate(25);
@@ -101,7 +101,7 @@ class HelpManagementController extends Controller
 
         // Search tours by name
         if ($request->filled('tour_search')) {
-            $toursQuery->where('name', 'like', '%' . $request->input('tour_search') . '%');
+            $toursQuery->where('name', 'like', '%'.$request->input('tour_search').'%');
         }
 
         $tours = $toursQuery->paginate(25);

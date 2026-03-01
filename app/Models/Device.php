@@ -109,7 +109,7 @@ class Device extends Model
             $nextSequential = 1;
         }
 
-        return $prefix . str_pad((string) $nextSequential, 5, '0', STR_PAD_LEFT);
+        return $prefix.str_pad((string) $nextSequential, 5, '0', STR_PAD_LEFT);
     }
 
     /**

@@ -77,7 +77,7 @@ it('filters discrepancies by query parameters', function () {
     );
 
     // Filter by datacenter
-    $response = $this->get('/discrepancies?datacenter_id=' . $datacenter->id);
+    $response = $this->get('/discrepancies?datacenter_id='.$datacenter->id);
 
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
@@ -165,7 +165,7 @@ it('provides datacenter-filtered summary data', function () {
     ]);
 
     // Filter by datacenter
-    $response = $this->get('/discrepancies?datacenter_id=' . $datacenter1->id);
+    $response = $this->get('/discrepancies?datacenter_id='.$datacenter1->id);
 
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page

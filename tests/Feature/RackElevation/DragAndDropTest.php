@@ -6,8 +6,8 @@
  * and device placement validation in the rack elevation system.
  */
 
-use App\Enums\DeviceWidthType;
 use App\Enums\DeviceRackFace;
+use App\Enums\DeviceWidthType;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Models\Datacenter;
@@ -18,7 +18,6 @@ use App\Models\Room;
 use App\Models\Row;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
-use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
     $this->seed(RolesAndPermissionsSeeder::class);
@@ -178,15 +177,15 @@ test('sample placed devices do not overlap on same face and position', function 
     $frontOccupied = [];
     foreach ($frontDevices as $device) {
         for ($u = $device['start_u']; $u < $device['start_u'] + $device['u_size']; $u++) {
-            $position = $u . '-' . $device['width'];
+            $position = $u.'-'.$device['width'];
             // Full width conflicts with both halves, and vice versa
             if ($device['width'] === 'full') {
-                expect(in_array($u . '-full', $frontOccupied))->toBeFalse("Overlap detected at U{$u} full");
-                expect(in_array($u . '-half-left', $frontOccupied))->toBeFalse("Overlap detected at U{$u} with half-left");
-                expect(in_array($u . '-half-right', $frontOccupied))->toBeFalse("Overlap detected at U{$u} with half-right");
-                $frontOccupied[] = $u . '-full';
+                expect(in_array($u.'-full', $frontOccupied))->toBeFalse("Overlap detected at U{$u} full");
+                expect(in_array($u.'-half-left', $frontOccupied))->toBeFalse("Overlap detected at U{$u} with half-left");
+                expect(in_array($u.'-half-right', $frontOccupied))->toBeFalse("Overlap detected at U{$u} with half-right");
+                $frontOccupied[] = $u.'-full';
             } else {
-                expect(in_array($u . '-full', $frontOccupied))->toBeFalse("Half-width conflicts with full at U{$u}");
+                expect(in_array($u.'-full', $frontOccupied))->toBeFalse("Half-width conflicts with full at U{$u}");
                 expect(in_array($position, $frontOccupied))->toBeFalse("Overlap detected at {$position}");
                 $frontOccupied[] = $position;
             }
@@ -197,14 +196,14 @@ test('sample placed devices do not overlap on same face and position', function 
     $rearOccupied = [];
     foreach ($rearDevices as $device) {
         for ($u = $device['start_u']; $u < $device['start_u'] + $device['u_size']; $u++) {
-            $position = $u . '-' . $device['width'];
+            $position = $u.'-'.$device['width'];
             if ($device['width'] === 'full') {
-                expect(in_array($u . '-full', $rearOccupied))->toBeFalse("Rear overlap at U{$u} full");
-                expect(in_array($u . '-half-left', $rearOccupied))->toBeFalse("Rear overlap at U{$u} with half-left");
-                expect(in_array($u . '-half-right', $rearOccupied))->toBeFalse("Rear overlap at U{$u} with half-right");
-                $rearOccupied[] = $u . '-full';
+                expect(in_array($u.'-full', $rearOccupied))->toBeFalse("Rear overlap at U{$u} full");
+                expect(in_array($u.'-half-left', $rearOccupied))->toBeFalse("Rear overlap at U{$u} with half-left");
+                expect(in_array($u.'-half-right', $rearOccupied))->toBeFalse("Rear overlap at U{$u} with half-right");
+                $rearOccupied[] = $u.'-full';
             } else {
-                expect(in_array($u . '-full', $rearOccupied))->toBeFalse("Rear half-width conflicts with full at U{$u}");
+                expect(in_array($u.'-full', $rearOccupied))->toBeFalse("Rear half-width conflicts with full at U{$u}");
                 expect(in_array($position, $rearOccupied))->toBeFalse("Rear overlap at {$position}");
                 $rearOccupied[] = $position;
             }

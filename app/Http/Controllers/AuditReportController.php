@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AuditStatus;
-use App\Http\Resources\AuditReportResource;
 use App\Jobs\GenerateAuditReportJob;
 use App\Models\Audit;
 use App\Models\AuditReport;
@@ -76,7 +75,7 @@ class AuditReportController extends Controller
             $query->where('generated_at', '>=', $dateFrom);
         }
         if ($dateTo = $request->input('date_to')) {
-            $query->where('generated_at', '<=', $dateTo . ' 23:59:59');
+            $query->where('generated_at', '<=', $dateTo.' 23:59:59');
         }
 
         // Sorting
@@ -235,6 +234,6 @@ class AuditReportController extends Controller
             $i++;
         }
 
-        return round($size, 1) . ' ' . $units[$i];
+        return round($size, 1).' '.$units[$i];
     }
 }

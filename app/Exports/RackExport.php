@@ -24,7 +24,7 @@ class RackExport extends AbstractDataExport
      */
     public function headings(): array
     {
-        return (new RackTemplateExport())->headings();
+        return (new RackTemplateExport)->headings();
     }
 
     /**

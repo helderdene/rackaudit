@@ -226,7 +226,7 @@ test('export status endpoint returns correct status', function () {
     // Create the file
     Storage::disk('local')->put('exports/completed_export.csv', 'test content');
 
-    $response = $this->actingAs($admin)->getJson('/connections/history/export/' . $bulkExport->id . '/status');
+    $response = $this->actingAs($admin)->getJson('/connections/history/export/'.$bulkExport->id.'/status');
 
     $response->assertOk()
         ->assertJsonPath('data.status', 'completed')
@@ -257,7 +257,7 @@ test('export download works after completion', function () {
         'completed_at' => now(),
     ]);
 
-    $response = $this->actingAs($admin)->get('/connections/history/export/' . $bulkExport->id . '/download');
+    $response = $this->actingAs($admin)->get('/connections/history/export/'.$bulkExport->id.'/download');
 
     $response->assertOk()
         ->assertDownload('download_test.csv');

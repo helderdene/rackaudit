@@ -51,7 +51,7 @@ test('weekly snapshot job creates records for all datacenters', function () {
     ]);
 
     // Run the snapshot job
-    $job = new CaptureCapacitySnapshotJob();
+    $job = new CaptureCapacitySnapshotJob;
     $job->handle(app(\App\Services\CapacityCalculationService::class));
 
     // Verify snapshots were created for both datacenters
@@ -112,7 +112,7 @@ test('snapshot cleanup job removes records older than 52 weeks', function () {
     expect(CapacitySnapshot::count())->toBe(4);
 
     // Run the cleanup job
-    $job = new CleanupOldSnapshotsJob();
+    $job = new CleanupOldSnapshotsJob;
     $job->handle();
 
     // Verify only old snapshots were deleted

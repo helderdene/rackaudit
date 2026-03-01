@@ -29,10 +29,10 @@ class HelpTourFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->words(3, true) . ' Tour';
+        $name = fake()->words(3, true).' Tour';
 
         return [
-            'slug' => Str::slug($name) . '-' . fake()->unique()->randomNumber(5),
+            'slug' => Str::slug($name).'-'.fake()->unique()->randomNumber(5),
             'name' => ucwords($name),
             'context_key' => fake()->optional(0.7)->randomElement([
                 'audits.execute',

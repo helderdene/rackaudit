@@ -81,7 +81,7 @@ test('datacenter filtering applies correctly to metrics', function () {
 
     // Request dashboard with datacenter filter
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -122,7 +122,7 @@ test('time period filtering applies correctly to metrics', function () {
  */
 test('query parameters are persisted in response', function () {
     $response = $this->actingAs($this->itManager)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter1->id . '&time_period=90_days');
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter1->id.'&time_period=90_days');
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

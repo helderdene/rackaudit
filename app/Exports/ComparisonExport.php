@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * destination device/port, cable types, discrepancy type, acknowledgment
  * status, and notes. Works with ComparisonResultCollection DTOs.
  */
-class ComparisonExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithTitle
+class ComparisonExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStyles, WithTitle
 {
     /**
      * Header row background color.

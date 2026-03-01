@@ -11,7 +11,6 @@ uses(RefreshDatabase::class);
  * These tests verify the backend infrastructure that supports Laravel Echo frontend integration.
  * They test channel authorization logic and the datacenter channel configuration.
  */
-
 test('datacenter channel authorization returns true for users with datacenter access', function () {
     $user = User::factory()->create();
     $datacenter = Datacenter::factory()->create();

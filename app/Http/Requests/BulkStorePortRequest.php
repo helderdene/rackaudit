@@ -121,7 +121,7 @@ class BulkStorePortRequest extends FormRequest
         if ($portCount > self::MAX_PORTS_PER_BULK) {
             $validator->errors()->add(
                 'end_number',
-                "Cannot create more than " . self::MAX_PORTS_PER_BULK . " ports at once. You are trying to create {$portCount} ports."
+                'Cannot create more than '.self::MAX_PORTS_PER_BULK." ports at once. You are trying to create {$portCount} ports."
             );
         }
     }

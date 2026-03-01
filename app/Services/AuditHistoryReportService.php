@@ -225,13 +225,13 @@ class AuditHistoryReportService
         $parts = [];
 
         // Time range
-        $parts[] = 'Period: ' . $dateRange['start']->format('M d, Y') . ' - ' . $dateRange['end']->format('M d, Y');
+        $parts[] = 'Period: '.$dateRange['start']->format('M d, Y').' - '.$dateRange['end']->format('M d, Y');
 
         // Datacenter
         if (! empty($filters['datacenter_id'])) {
             $datacenter = Datacenter::find($filters['datacenter_id']);
             if ($datacenter) {
-                $parts[] = 'Datacenter: ' . $datacenter->name;
+                $parts[] = 'Datacenter: '.$datacenter->name;
             }
         } else {
             $parts[] = 'Datacenter: All';
@@ -241,7 +241,7 @@ class AuditHistoryReportService
         if (! empty($filters['audit_type'])) {
             $auditType = AuditType::tryFrom($filters['audit_type']);
             if ($auditType) {
-                $parts[] = 'Audit Type: ' . $auditType->label();
+                $parts[] = 'Audit Type: '.$auditType->label();
             }
         } else {
             $parts[] = 'Audit Type: All';
@@ -262,16 +262,16 @@ class AuditHistoryReportService
         $hours = $minutes / 60;
 
         if ($hours < 1) {
-            return round($minutes) . ' min';
+            return round($minutes).' min';
         }
 
         if ($hours < 24) {
-            return round($hours, 1) . ' hours';
+            return round($hours, 1).' hours';
         }
 
         $days = $hours / 24;
 
-        return round($days, 1) . ' days';
+        return round($days, 1).' days';
     }
 
     /**

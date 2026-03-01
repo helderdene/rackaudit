@@ -11,7 +11,6 @@
  * - Replay tour functionality
  */
 
-use App\Enums\HelpArticleType;
 use App\Enums\HelpTourStepPosition;
 use App\Models\HelpArticle;
 use App\Models\HelpTour;

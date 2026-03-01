@@ -24,7 +24,7 @@ class RowExport extends AbstractDataExport
      */
     public function headings(): array
     {
-        return (new RowTemplateExport())->headings();
+        return (new RowTemplateExport)->headings();
     }
 
     /**

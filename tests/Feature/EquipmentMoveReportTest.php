@@ -9,7 +9,6 @@ use App\Models\Port;
 use App\Models\Rack;
 use App\Models\User;
 use App\Services\EquipmentMoveReportService;
-use App\Services\EquipmentMoveService;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;

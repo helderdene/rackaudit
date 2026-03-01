@@ -64,7 +64,7 @@ test('capacity filters show cascading behavior - roomOptions provided when datac
 
     // With datacenter filter - roomOptions should be populated
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -133,14 +133,14 @@ test('racks approaching capacity data has correct structure', function () {
 test('export endpoints return correct content types', function () {
     // Test PDF export with filters
     $pdfResponse = $this->actingAs($this->admin)
-        ->get('/capacity-reports/export/pdf?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports/export/pdf?datacenter_id='.$this->datacenter->id);
 
     $pdfResponse->assertOk()
         ->assertHeader('content-type', 'application/pdf');
 
     // Test CSV export
     $csvResponse = $this->actingAs($this->admin)
-        ->get('/capacity-reports/export/csv?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports/export/csv?datacenter_id='.$this->datacenter->id);
 
     $csvResponse->assertOk();
     $contentDisposition = $csvResponse->headers->get('content-disposition');

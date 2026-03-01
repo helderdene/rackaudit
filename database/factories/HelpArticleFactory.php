@@ -33,7 +33,7 @@ class HelpArticleFactory extends Factory
         $title = fake()->sentence(4);
 
         return [
-            'slug' => Str::slug($title) . '-' . fake()->unique()->randomNumber(5),
+            'slug' => Str::slug($title).'-'.fake()->unique()->randomNumber(5),
             'title' => $title,
             'content' => $this->generateMarkdownContent(),
             'context_key' => fake()->optional(0.7)->randomElement([
@@ -70,14 +70,14 @@ class HelpArticleFactory extends Factory
     {
         $paragraphs = fake()->paragraphs(fake()->numberBetween(2, 4));
         $content = "## Overview\n\n";
-        $content .= $paragraphs[0] . "\n\n";
+        $content .= $paragraphs[0]."\n\n";
 
         if (count($paragraphs) > 1) {
             $content .= "### Key Points\n\n";
-            $content .= "- " . fake()->sentence() . "\n";
-            $content .= "- " . fake()->sentence() . "\n";
-            $content .= "- " . fake()->sentence() . "\n\n";
-            $content .= $paragraphs[1] . "\n";
+            $content .= '- '.fake()->sentence()."\n";
+            $content .= '- '.fake()->sentence()."\n";
+            $content .= '- '.fake()->sentence()."\n\n";
+            $content .= $paragraphs[1]."\n";
         }
 
         return $content;
@@ -101,7 +101,7 @@ class HelpArticleFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'article_type' => HelpArticleType::TourStep,
-            'content' => "**Step Instructions**\n\n" . fake()->paragraph(),
+            'content' => "**Step Instructions**\n\n".fake()->paragraph(),
         ]);
     }
 

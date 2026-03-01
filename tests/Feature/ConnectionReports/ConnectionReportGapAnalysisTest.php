@@ -16,7 +16,6 @@
 
 use App\Enums\CableType;
 use App\Enums\PortStatus;
-use App\Enums\PortType;
 use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;

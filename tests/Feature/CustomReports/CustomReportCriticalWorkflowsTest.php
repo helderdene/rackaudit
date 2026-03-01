@@ -7,12 +7,10 @@
  * focusing on end-to-end workflows, edge cases, and untested scenarios.
  */
 
-use App\Enums\AuditStatus;
 use App\Enums\CableType;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Enums\ReportType;
-use App\Exports\CustomReportExport;
 use App\Models\Audit;
 use App\Models\Connection;
 use App\Models\Datacenter;
@@ -28,8 +26,6 @@ use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
-use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 
 uses(RefreshDatabase::class);
 

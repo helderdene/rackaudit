@@ -646,15 +646,15 @@ class AuditHistoryReportController extends Controller
         $hours = $minutes / 60;
 
         if ($hours < 1) {
-            return round($minutes) . ' min';
+            return round($minutes).' min';
         }
 
         if ($hours < 24) {
-            return round($hours, 1) . ' hours';
+            return round($hours, 1).' hours';
         }
 
         $days = $hours / 24;
 
-        return round($days, 1) . ' days';
+        return round($days, 1).' days';
     }
 }

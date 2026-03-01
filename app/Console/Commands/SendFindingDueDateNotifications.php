@@ -7,7 +7,6 @@ use App\Models\Finding;
 use App\Notifications\FindingDueDateApproachingNotification;
 use App\Notifications\FindingOverdueNotification;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\DatabaseNotification;
 
 /**

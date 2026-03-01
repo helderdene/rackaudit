@@ -71,7 +71,7 @@ class DiscrepancyThresholdNotification extends Notification implements ShouldQue
         // Add breakdown by type
         if (isset($this->summary['by_type']) && is_array($this->summary['by_type'])) {
             foreach ($this->summary['by_type'] as $type => $count) {
-                $mailMessage->line("- ".ucfirst($type).": {$count}");
+                $mailMessage->line('- '.ucfirst($type).": {$count}");
             }
         }
 

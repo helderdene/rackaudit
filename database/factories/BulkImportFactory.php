@@ -56,7 +56,7 @@ class BulkImportFactory extends Factory
             'user_id' => User::factory(),
             'entity_type' => $entityType,
             'file_name' => $fileName,
-            'file_path' => 'imports/' . fake()->uuid() . '_' . $fileName,
+            'file_path' => 'imports/'.fake()->uuid().'_'.$fileName,
             'status' => BulkImportStatus::Pending,
             'total_rows' => $totalRows,
             'processed_rows' => $processedRows,
@@ -123,7 +123,7 @@ class BulkImportFactory extends Factory
                 'success_count' => $successCount,
                 'failure_count' => $failureCount,
                 'error_report_path' => $failureCount > 0
-                    ? 'import-errors/bulk_import_' . fake()->uuid() . '_errors.csv'
+                    ? 'import-errors/bulk_import_'.fake()->uuid().'_errors.csv'
                     : null,
                 'started_at' => now()->subMinutes(fake()->numberBetween(5, 30)),
                 'completed_at' => now()->subMinutes(fake()->numberBetween(1, 4)),
@@ -148,7 +148,7 @@ class BulkImportFactory extends Factory
                 'processed_rows' => $processedRows,
                 'success_count' => $successCount,
                 'failure_count' => $failureCount,
-                'error_report_path' => 'import-errors/bulk_import_' . fake()->uuid() . '_errors.csv',
+                'error_report_path' => 'import-errors/bulk_import_'.fake()->uuid().'_errors.csv',
                 'started_at' => now()->subMinutes(fake()->numberBetween(5, 30)),
                 'completed_at' => now()->subMinutes(fake()->numberBetween(1, 4)),
             ];

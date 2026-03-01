@@ -33,22 +33,16 @@ class DetectDiscrepanciesJob implements ShouldQueue
 
     /**
      * The number of times the job may be attempted.
-     *
-     * @var int
      */
     public int $tries = 3;
 
     /**
      * The number of seconds the job can run before timing out.
-     *
-     * @var int
      */
     public int $timeout = 300;
 
     /**
      * Whether to dispatch notifications after detection.
-     *
-     * @var bool
      */
     public bool $shouldNotify;
 

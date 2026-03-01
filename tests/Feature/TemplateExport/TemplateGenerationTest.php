@@ -1,25 +1,14 @@
 <?php
 
-use App\Enums\DeviceDepth;
 use App\Enums\DeviceLifecycleStatus;
-use App\Enums\DeviceRackFace;
-use App\Enums\DeviceWidthType;
-use App\Enums\PortDirection;
-use App\Enums\PortStatus;
 use App\Enums\PortSubtype;
 use App\Enums\PortType;
-use App\Enums\RackStatus;
-use App\Enums\RackUHeight;
 use App\Enums\RoomType;
-use App\Enums\RowOrientation;
-use App\Enums\RowStatus;
 use App\Exports\Templates\CombinedTemplateExport;
 use App\Exports\Templates\DatacenterTemplateExport;
 use App\Exports\Templates\DeviceTemplateExport;
 use App\Exports\Templates\PortTemplateExport;
-use App\Exports\Templates\RackTemplateExport;
 use App\Exports\Templates\RoomTemplateExport;
-use App\Exports\Templates\RowTemplateExport;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -120,7 +109,7 @@ it('generates device template with all required enum dropdowns', function () {
 
     // Verify lifecycle_status dropdown
     $lifecycleCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['lifecycle_status']);
-    $dataValidation = $sheet->getDataValidation($lifecycleCol . '2');
+    $dataValidation = $sheet->getDataValidation($lifecycleCol.'2');
     expect($dataValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
     $dropdownFormula = $dataValidation->getFormula1();
     foreach (DeviceLifecycleStatus::cases() as $case) {
@@ -129,17 +118,17 @@ it('generates device template with all required enum dropdowns', function () {
 
     // Verify depth dropdown
     $depthCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['depth']);
-    $dataValidation = $sheet->getDataValidation($depthCol . '2');
+    $dataValidation = $sheet->getDataValidation($depthCol.'2');
     expect($dataValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
 
     // Verify width_type dropdown
     $widthCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['width_type']);
-    $dataValidation = $sheet->getDataValidation($widthCol . '2');
+    $dataValidation = $sheet->getDataValidation($widthCol.'2');
     expect($dataValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
 
     // Verify rack_face dropdown
     $faceCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['rack_face']);
-    $dataValidation = $sheet->getDataValidation($faceCol . '2');
+    $dataValidation = $sheet->getDataValidation($faceCol.'2');
     expect($dataValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
 });
 
@@ -204,7 +193,7 @@ it('generates port template with type-specific subtypes and directions', functio
 
     // Verify type dropdown contains all PortType values
     $typeCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['type']);
-    $dataValidation = $sheet->getDataValidation($typeCol . '2');
+    $dataValidation = $sheet->getDataValidation($typeCol.'2');
     expect($dataValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
     $typeFormula = $dataValidation->getFormula1();
     foreach (PortType::cases() as $case) {
@@ -213,11 +202,11 @@ it('generates port template with type-specific subtypes and directions', functio
 
     // Verify subtype dropdown contains all PortSubtype values (note about type compatibility)
     $subtypeCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['subtype']);
-    $subtypeValidation = $sheet->getDataValidation($subtypeCol . '2');
+    $subtypeValidation = $sheet->getDataValidation($subtypeCol.'2');
     expect($subtypeValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
 
     // Verify status dropdown
     $statusCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headers['status']);
-    $statusValidation = $sheet->getDataValidation($statusCol . '2');
+    $statusValidation = $sheet->getDataValidation($statusCol.'2');
     expect($statusValidation->getType())->toBe(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
 });

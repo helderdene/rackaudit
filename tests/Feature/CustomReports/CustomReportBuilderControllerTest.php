@@ -2,9 +2,7 @@
 
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
-use App\Enums\ReportType;
 use App\Models\Datacenter;
-use App\Models\Device;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;

@@ -88,10 +88,10 @@ class HelpSearchResultResource extends JsonResource
 
         // Add ellipsis if needed
         if ($start > 0) {
-            $snippet = '...' . ltrim($snippet);
+            $snippet = '...'.ltrim($snippet);
         }
         if (strlen($plainContent) > $start + self::MAX_SNIPPET_LENGTH) {
-            $snippet = rtrim($snippet) . '...';
+            $snippet = rtrim($snippet).'...';
         }
 
         return $this->highlightText($snippet, $query);
@@ -110,7 +110,7 @@ class HelpSearchResultResource extends JsonResource
         $escapedQuery = preg_quote($query, '/');
 
         return preg_replace(
-            '/(' . $escapedQuery . ')/i',
+            '/('.$escapedQuery.')/i',
             '<mark>$1</mark>',
             $text
         );

@@ -51,7 +51,7 @@ class TemplateDownloadController extends Controller
     {
         $this->authorizeDownload();
 
-        if (!array_key_exists($entityType, self::ENTITY_EXPORTS)) {
+        if (! array_key_exists($entityType, self::ENTITY_EXPORTS)) {
             abort(404, "Unknown entity type: {$entityType}");
         }
 
@@ -81,7 +81,7 @@ class TemplateDownloadController extends Controller
     {
         $user = request()->user();
 
-        if (!$user || !$user->hasAnyRole(self::ALLOWED_ROLES)) {
+        if (! $user || ! $user->hasAnyRole(self::ALLOWED_ROLES)) {
             abort(403, 'You do not have permission to download import templates.');
         }
     }

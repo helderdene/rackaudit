@@ -348,8 +348,8 @@ class ConnectionHistoryController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('old_values', 'like', '%' . $search . '%')
-                    ->orWhere('new_values', 'like', '%' . $search . '%');
+                $q->where('old_values', 'like', '%'.$search.'%')
+                    ->orWhere('new_values', 'like', '%'.$search.'%');
             });
         }
 
@@ -390,8 +390,8 @@ class ConnectionHistoryController extends Controller
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('old_values', 'like', '%' . $search . '%')
-                    ->orWhere('new_values', 'like', '%' . $search . '%');
+                $q->where('old_values', 'like', '%'.$search.'%')
+                    ->orWhere('new_values', 'like', '%'.$search.'%');
             });
         }
 

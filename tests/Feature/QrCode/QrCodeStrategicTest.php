@@ -83,7 +83,7 @@ test('after login user is redirected to originally requested device page', funct
     $this->get("/devices/{$device->id}");
 
     // Now login - should redirect to the intended device page
-    $response = $this->actingAs($this->admin)->get(session('url.intended', '/devices/' . $device->id));
+    $response = $this->actingAs($this->admin)->get(session('url.intended', '/devices/'.$device->id));
 
     $response->assertOk();
 });

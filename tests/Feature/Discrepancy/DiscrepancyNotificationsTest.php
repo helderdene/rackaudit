@@ -84,7 +84,7 @@ test('DiscrepancyThresholdNotification sends when threshold exceeded', function 
     $notification = new DiscrepancyThresholdNotification($discrepancies, $summary);
     $auditor->notify($notification);
 
-    Notification::assertSentTo($auditor, DiscrepancyThresholdNotification::class, function ($notification) use ($summary) {
+    Notification::assertSentTo($auditor, DiscrepancyThresholdNotification::class, function ($notification) {
         return $notification->summary['total_count'] === 12;
     });
 });

@@ -168,7 +168,7 @@ test('activity log service creates log entry with all required fields', function
     $causer = User::factory()->create();
     $subject = User::factory()->create();
 
-    $service = new ActivityLogService();
+    $service = new ActivityLogService;
 
     $activityLog = $service->log(
         subject: $subject,
@@ -200,7 +200,7 @@ test('activity log service filters sensitive fields from subject model', functio
         ]);
     });
 
-    $service = new ActivityLogService();
+    $service = new ActivityLogService;
 
     $activityLog = $service->log(
         subject: $subject,

@@ -1,7 +1,5 @@
 <?php
 
-use App\Enums\AuditStatus;
-use App\Enums\FindingSeverity;
 use App\Enums\FindingStatus;
 use App\Models\Audit;
 use App\Models\Datacenter;
@@ -272,7 +270,7 @@ test('dashboard metrics respect datacenter filter', function () {
 
     // Filter by datacenter1 only
     $response = $this->actingAs($this->admin)
-        ->get('/audits/dashboard?datacenter_id=' . $this->datacenter->id);
+        ->get('/audits/dashboard?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

@@ -63,7 +63,7 @@ class ImplementationFileApprovedNotification extends Notification implements Sho
         return (new MailMessage)
             ->subject("Implementation File Approved: {$fileName}")
             ->greeting('Good news!')
-            ->line("Your implementation file has been approved and is now ready for use in audits.")
+            ->line('Your implementation file has been approved and is now ready for use in audits.')
             ->line("**File:** {$fileName}")
             ->line("**Datacenter:** {$datacenterName}")
             ->line("**Approved by:** {$approverName}")

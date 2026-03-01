@@ -1,9 +1,5 @@
 <?php
 
-use App\Enums\AuditStatus;
-use App\Enums\FindingSeverity;
-use App\Enums\FindingStatus;
-use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Models\Audit;
 use App\Models\Datacenter;

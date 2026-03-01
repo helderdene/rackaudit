@@ -1,13 +1,8 @@
 <?php
 
-use App\Enums\AuditStatus;
-use App\Enums\AuditType;
-use App\Enums\FindingSeverity;
-use App\Enums\FindingStatus;
 use App\Models\Audit;
 use App\Models\Datacenter;
 use App\Models\Finding;
-use App\Models\FindingStatusTransition;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -175,7 +170,7 @@ test('datacenter filter restricts data to accessible datacenters', function () {
 
     // Operator cannot filter by unassigned datacenter
     $response = $this->actingAs($this->operator)
-        ->get('/reports/audit-history?datacenter_id=' . $this->secondDatacenter->id);
+        ->get('/reports/audit-history?datacenter_id='.$this->secondDatacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -184,7 +179,7 @@ test('datacenter filter restricts data to accessible datacenters', function () {
 
     // Admin can filter by specific datacenter
     $response = $this->actingAs($this->admin)
-        ->get('/reports/audit-history?datacenter_id=' . $this->datacenter->id);
+        ->get('/reports/audit-history?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

@@ -61,7 +61,7 @@ class AuditReassignedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("Audit Assignment Removed: {$audit->name}")
             ->greeting('You have been removed from an audit assignment.')
-            ->line("You are no longer assigned to the following audit:")
+            ->line('You are no longer assigned to the following audit:')
             ->line("**Audit Name:** {$audit->name}")
             ->line("**Audit Type:** {$audit->type->label()}")
             ->line("**Datacenter:** {$datacenterName}")

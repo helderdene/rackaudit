@@ -41,7 +41,7 @@ class PortFactory extends Factory
 
         return [
             'device_id' => Device::factory(),
-            'label' => 'eth' . fake()->unique()->numberBetween(0, 9999),
+            'label' => 'eth'.fake()->unique()->numberBetween(0, 9999),
             'type' => $type,
             'subtype' => $subtype,
             'status' => PortStatus::Available,
@@ -67,7 +67,7 @@ class PortFactory extends Factory
                 'type' => PortType::Ethernet,
                 'subtype' => fake()->randomElement($subtypes),
                 'direction' => PortDirection::defaultForType(PortType::Ethernet),
-                'label' => 'eth' . fake()->unique()->numberBetween(0, 9999),
+                'label' => 'eth'.fake()->unique()->numberBetween(0, 9999),
             ];
         });
     }
@@ -84,7 +84,7 @@ class PortFactory extends Factory
                 'type' => PortType::Fiber,
                 'subtype' => fake()->randomElement($subtypes),
                 'direction' => PortDirection::defaultForType(PortType::Fiber),
-                'label' => 'fiber' . fake()->unique()->numberBetween(0, 9999),
+                'label' => 'fiber'.fake()->unique()->numberBetween(0, 9999),
             ];
         });
     }
@@ -101,7 +101,7 @@ class PortFactory extends Factory
                 'type' => PortType::Power,
                 'subtype' => fake()->randomElement($subtypes),
                 'direction' => PortDirection::defaultForType(PortType::Power),
-                'label' => 'psu' . fake()->unique()->numberBetween(0, 9999),
+                'label' => 'psu'.fake()->unique()->numberBetween(0, 9999),
             ];
         });
     }

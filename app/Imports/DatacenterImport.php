@@ -90,7 +90,7 @@ class DatacenterImport extends AbstractEntityImport
     /**
      * Create the datacenter from validated data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function createEntity(array $data, int $rowNumber): Datacenter
     {

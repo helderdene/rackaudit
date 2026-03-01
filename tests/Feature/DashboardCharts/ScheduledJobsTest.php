@@ -39,7 +39,7 @@ test('CaptureCapacitySnapshotJob captures device_count per datacenter', function
     ]);
 
     // Dispatch the job
-    $job = new CaptureCapacitySnapshotJob();
+    $job = new CaptureCapacitySnapshotJob;
     $job->handle(app(\App\Services\CapacityCalculationService::class));
 
     // Verify snapshot was created with device_count
@@ -112,7 +112,7 @@ test('CaptureDashboardMetricsJob captures all required metrics', function () {
     ]);
 
     // Dispatch the job
-    $job = new CaptureDashboardMetricsJob();
+    $job = new CaptureDashboardMetricsJob;
     $job->handle();
 
     // Verify snapshot was created
@@ -135,7 +135,7 @@ test('CaptureDashboardMetricsJob handles empty datacenters gracefully', function
     $datacenter = Datacenter::factory()->create();
 
     // Dispatch the job
-    $job = new CaptureDashboardMetricsJob();
+    $job = new CaptureDashboardMetricsJob;
     $job->handle();
 
     // Verify snapshot was created with zero counts
@@ -158,7 +158,7 @@ test('CaptureCapacitySnapshotJob handles empty datacenters gracefully', function
     $datacenter = Datacenter::factory()->create();
 
     // Dispatch the job
-    $job = new CaptureCapacitySnapshotJob();
+    $job = new CaptureCapacitySnapshotJob;
     $job->handle(app(\App\Services\CapacityCalculationService::class));
 
     // Verify snapshot was created with zero/null values
@@ -174,7 +174,7 @@ test('CaptureDashboardMetricsJob uses updateOrCreate for idempotency', function 
     $datacenter = Datacenter::factory()->create();
 
     // Run the job once
-    $job = new CaptureDashboardMetricsJob();
+    $job = new CaptureDashboardMetricsJob;
     $job->handle();
 
     // Count all snapshots for this datacenter (should be 1)
@@ -205,7 +205,7 @@ test('job error handling logs errors and continues processing other datacenters'
     Log::spy();
 
     // Run the job - should complete without throwing
-    $job = new CaptureDashboardMetricsJob();
+    $job = new CaptureDashboardMetricsJob;
     $job->handle();
 
     // Both datacenters should have snapshots

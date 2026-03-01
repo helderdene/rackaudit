@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\DTOs\ComparisonResult;
 use App\Enums\AuditScopeType;
 use App\Enums\AuditStatus;
-use App\Enums\AuditType;
 use App\Enums\DeviceVerificationStatus;
 use App\Enums\DiscrepancyStatus;
 use App\Enums\DiscrepancyType;

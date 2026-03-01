@@ -74,7 +74,7 @@ test('Device asset_tag format matches ASSET-{YYYYMMDD}-{sequential} pattern', fu
     ]);
 
     $today = now()->format('Ymd');
-    $pattern = '/^ASSET-' . $today . '-\d{5}$/';
+    $pattern = '/^ASSET-'.$today.'-\d{5}$/';
 
     expect($device1->asset_tag)->toMatch($pattern);
     expect($device2->asset_tag)->toMatch($pattern);

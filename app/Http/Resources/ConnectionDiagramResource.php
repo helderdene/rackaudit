@@ -175,11 +175,11 @@ class ConnectionDiagramResource
             }
 
             // Create a consistent edge key (smaller ID first)
-            $edgeKey = min($sourceRack->id, $destRack->id) . '-' . max($sourceRack->id, $destRack->id);
+            $edgeKey = min($sourceRack->id, $destRack->id).'-'.max($sourceRack->id, $destRack->id);
 
             if (! isset($edgeMap[$edgeKey])) {
                 $edgeMap[$edgeKey] = [
-                    'id' => 'rack-' . $edgeKey,
+                    'id' => 'rack-'.$edgeKey,
                     'source_device_id' => min($sourceRack->id, $destRack->id),
                     'destination_device_id' => max($sourceRack->id, $destRack->id),
                     'connections' => [],
@@ -310,7 +310,7 @@ class ConnectionDiagramResource
             $destDeviceId = $destPort->device->id;
 
             // Create a consistent edge key (smaller ID first)
-            $edgeKey = min($sourceDeviceId, $destDeviceId) . '-' . max($sourceDeviceId, $destDeviceId);
+            $edgeKey = min($sourceDeviceId, $destDeviceId).'-'.max($sourceDeviceId, $destDeviceId);
 
             if (! isset($edgeMap[$edgeKey])) {
                 $edgeMap[$edgeKey] = [

@@ -56,12 +56,12 @@ class CombinedImport implements ToCollection, WithHeadingRow
     public function __construct()
     {
         $this->importers = [
-            BulkImportEntityType::Datacenter->value => new DatacenterImport(),
-            BulkImportEntityType::Room->value => new RoomImport(),
-            BulkImportEntityType::Row->value => new RowImport(),
-            BulkImportEntityType::Rack->value => new RackImport(),
-            BulkImportEntityType::Device->value => new DeviceImport(),
-            BulkImportEntityType::Port->value => new PortImport(),
+            BulkImportEntityType::Datacenter->value => new DatacenterImport,
+            BulkImportEntityType::Room->value => new RoomImport,
+            BulkImportEntityType::Row->value => new RowImport,
+            BulkImportEntityType::Rack->value => new RackImport,
+            BulkImportEntityType::Device->value => new DeviceImport,
+            BulkImportEntityType::Port->value => new PortImport,
         ];
 
         foreach (array_keys($this->importers) as $type) {
@@ -112,7 +112,7 @@ class CombinedImport implements ToCollection, WithHeadingRow
      *
      * Priority is from most specific (Port) to least specific (Datacenter).
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     protected function detectEntityType(array $row): ?string
     {
@@ -152,7 +152,7 @@ class CombinedImport implements ToCollection, WithHeadingRow
     /**
      * Check if a column has a non-empty value.
      *
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      */
     protected function hasValue(array $row, string $key): bool
     {

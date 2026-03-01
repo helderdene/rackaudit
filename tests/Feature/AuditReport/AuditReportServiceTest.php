@@ -1,9 +1,7 @@
 <?php
 
 use App\Enums\AuditType;
-use App\Enums\DiscrepancyType;
 use App\Enums\FindingSeverity;
-use App\Enums\FindingStatus;
 use App\Models\Audit;
 use App\Models\AuditConnectionVerification;
 use App\Models\AuditReport;
@@ -33,7 +31,7 @@ test('generates report for connection audit with findings', function () {
     AuditConnectionVerification::factory()->forAudit($audit)->missing()->verified()->count(2)->create();
     AuditConnectionVerification::factory()->forAudit($audit)->unexpected()->verified()->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $report = $service->generateReport($audit, $generator);
 
     expect($report)->toBeInstanceOf(AuditReport::class);
@@ -53,7 +51,7 @@ test('generates report for inventory audit and skips connection comparison', fun
 
     Finding::factory()->forAudit($audit)->high()->count(2)->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $report = $service->generateReport($audit, $generator);
 
     expect($report)->toBeInstanceOf(AuditReport::class);
@@ -71,7 +69,7 @@ test('calculates executive summary metrics correctly', function () {
     Finding::factory()->forAudit($audit)->medium()->inProgress()->create();
     Finding::factory()->forAudit($audit)->low()->resolved()->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $summary = $service->calculateExecutiveSummary($audit);
 
     expect($summary['total_findings'])->toBe(5);
@@ -89,7 +87,7 @@ test('groups findings by severity in correct order', function () {
     Finding::factory()->forAudit($audit)->medium()->create(['title' => 'Medium Issue']);
     Finding::factory()->forAudit($audit)->high()->create(['title' => 'High Issue']);
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $groupedFindings = $service->groupFindingsBySeverity($audit);
 
     $severityOrder = array_keys($groupedFindings);
@@ -110,7 +108,7 @@ test('stores PDF file and creates AuditReport record', function () {
 
     expect(AuditReport::count())->toBe(0);
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $report = $service->generateReport($audit, $generator);
 
     expect(AuditReport::count())->toBe(1);
@@ -130,7 +128,7 @@ test('omits empty severity sections from grouped findings', function () {
     Finding::factory()->forAudit($audit)->critical()->create();
     Finding::factory()->forAudit($audit)->low()->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $groupedFindings = $service->groupFindingsBySeverity($audit);
 
     expect($groupedFindings)->toHaveKey(FindingSeverity::Critical->value);
@@ -147,7 +145,7 @@ test('builds connection comparison summary for connection audits', function () {
     AuditConnectionVerification::factory()->forAudit($audit)->missing()->count(3)->create();
     AuditConnectionVerification::factory()->forAudit($audit)->unexpected()->count(2)->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $summary = $service->buildConnectionComparisonSummary($audit);
 
     expect($summary['matched_count'])->toBe(10);
@@ -159,7 +157,7 @@ test('builds connection comparison summary for connection audits', function () {
 test('returns null connection comparison for inventory audits', function () {
     $audit = Audit::factory()->inventoryType()->inProgress()->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $summary = $service->buildConnectionComparisonSummary($audit);
 
     expect($summary)->toBeNull();

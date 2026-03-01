@@ -74,7 +74,7 @@ class PortSeeder extends Seeder
         for ($i = 1; $i <= 48; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'Gi1/0/' . $i,
+                'label' => 'Gi1/0/'.$i,
                 'type' => PortType::Ethernet,
                 'subtype' => PortSubtype::Gbe1,
                 'status' => $i <= 24 ? PortStatus::Connected : PortStatus::Available,
@@ -89,7 +89,7 @@ class PortSeeder extends Seeder
         for ($i = 1; $i <= 4; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'Te1/0/' . $i,
+                'label' => 'Te1/0/'.$i,
                 'type' => PortType::Ethernet,
                 'subtype' => PortSubtype::Gbe10,
                 'status' => $i <= 2 ? PortStatus::Connected : PortStatus::Available,
@@ -113,7 +113,7 @@ class PortSeeder extends Seeder
         for ($i = 0; $i <= 3; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'TenGigabitEthernet0/' . $i,
+                'label' => 'TenGigabitEthernet0/'.$i,
                 'type' => PortType::Ethernet,
                 'subtype' => PortSubtype::Gbe10,
                 'status' => $i < 2 ? PortStatus::Connected : PortStatus::Available,
@@ -126,7 +126,7 @@ class PortSeeder extends Seeder
         for ($i = 0; $i <= 1; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'Fiber0/' . $i,
+                'label' => 'Fiber0/'.$i,
                 'type' => PortType::Fiber,
                 'subtype' => PortSubtype::Lc,
                 'status' => PortStatus::Available,
@@ -148,7 +148,7 @@ class PortSeeder extends Seeder
         for ($i = 0; $i <= 3; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'eth' . $i,
+                'label' => 'eth'.$i,
                 'type' => PortType::Ethernet,
                 'subtype' => PortSubtype::Gbe1,
                 'status' => $i < 2 ? PortStatus::Connected : PortStatus::Available,
@@ -182,7 +182,7 @@ class PortSeeder extends Seeder
             // Front port
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'Port ' . $i . ' (Front)',
+                'label' => 'Port '.$i.' (Front)',
                 'type' => PortType::Fiber,
                 'subtype' => PortSubtype::Lc,
                 'status' => $i <= 12 ? PortStatus::Connected : PortStatus::Available,
@@ -195,7 +195,7 @@ class PortSeeder extends Seeder
             // Rear port
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'Port ' . $i . ' (Rear)',
+                'label' => 'Port '.$i.' (Rear)',
                 'type' => PortType::Fiber,
                 'subtype' => PortSubtype::Lc,
                 'status' => $i <= 12 ? PortStatus::Connected : PortStatus::Available,
@@ -227,7 +227,7 @@ class PortSeeder extends Seeder
         for ($i = 1; $i <= 12; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'Outlet ' . $i,
+                'label' => 'Outlet '.$i,
                 'type' => PortType::Power,
                 'subtype' => PortSubtype::C13,
                 'status' => $i <= 8 ? PortStatus::Connected : PortStatus::Available,
@@ -248,7 +248,7 @@ class PortSeeder extends Seeder
         for ($i = 0; $i <= 1; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'eth' . $i,
+                'label' => 'eth'.$i,
                 'type' => PortType::Ethernet,
                 'subtype' => PortSubtype::Gbe1,
                 'status' => $i === 0 ? PortStatus::Connected : PortStatus::Available,
@@ -269,7 +269,7 @@ class PortSeeder extends Seeder
         for ($i = 1; $i <= $count; $i++) {
             Port::create([
                 'device_id' => $device->id,
-                'label' => 'PSU-' . chr(64 + $i), // PSU-A, PSU-B, etc.
+                'label' => 'PSU-'.chr(64 + $i), // PSU-A, PSU-B, etc.
                 'type' => PortType::Power,
                 'subtype' => PortSubtype::C14,
                 'status' => $i === 1 ? PortStatus::Connected : PortStatus::Available,

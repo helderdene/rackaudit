@@ -129,7 +129,7 @@ test('cascading filter validation validates room belongs to selected datacenter'
     $room2 = Room::factory()->create(['datacenter_id' => $dc2->id, 'name' => 'Room 2']);
 
     // Valid combination: DC1 + Room1
-    $response = $this->actingAs($admin)->get('/reports/assets?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets?'.http_build_query([
         'datacenter_id' => $dc1->id,
         'room_id' => $room1->id,
     ]));
@@ -142,7 +142,7 @@ test('cascading filter validation validates room belongs to selected datacenter'
 
     // Invalid combination: DC1 + Room2 (room2 belongs to DC2)
     // Room should be reset to null
-    $response = $this->actingAs($admin)->get('/reports/assets?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets?'.http_build_query([
         'datacenter_id' => $dc1->id,
         'room_id' => $room2->id,
     ]));
@@ -227,7 +227,7 @@ test('filter parameter validation and sanitization works correctly', function ()
     ]);
 
     // Test with valid filters
-    $response = $this->actingAs($admin)->get('/reports/assets?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets?'.http_build_query([
         'datacenter_id' => $datacenter->id,
         'device_type_id' => $deviceType->id,
         'lifecycle_status' => DeviceLifecycleStatus::Deployed->value,
@@ -247,7 +247,7 @@ test('filter parameter validation and sanitization works correctly', function ()
         );
 
     // Test with invalid datacenter_id (non-existent) - should be sanitized to null
-    $response = $this->actingAs($admin)->get('/reports/assets?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets?'.http_build_query([
         'datacenter_id' => 99999,
     ]));
 
@@ -257,7 +257,7 @@ test('filter parameter validation and sanitization works correctly', function ()
         );
 
     // Test with empty string values - should be sanitized
-    $response = $this->actingAs($admin)->get('/reports/assets?' . http_build_query([
+    $response = $this->actingAs($admin)->get('/reports/assets?'.http_build_query([
         'datacenter_id' => '',
         'room_id' => '',
     ]));

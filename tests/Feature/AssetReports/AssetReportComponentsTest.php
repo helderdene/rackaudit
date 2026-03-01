@@ -98,7 +98,7 @@ test('cascading filter behavior loads rooms when datacenter is selected', functi
         );
 
     // Test with datacenter filter - should load rooms for that datacenter
-    $response = $this->actingAs($admin)->get('/reports/assets?datacenter_id=' . $datacenter->id);
+    $response = $this->actingAs($admin)->get('/reports/assets?datacenter_id='.$datacenter->id);
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('roomOptions', 2)
@@ -144,7 +144,7 @@ test('filter application returns correctly filtered metrics', function () {
         );
 
     // Test with device type filter - should see only 3 servers
-    $response = $this->actingAs($admin)->get('/reports/assets?device_type_id=' . $serverType->id);
+    $response = $this->actingAs($admin)->get('/reports/assets?device_type_id='.$serverType->id);
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->where('metrics.pagination.total', 3)

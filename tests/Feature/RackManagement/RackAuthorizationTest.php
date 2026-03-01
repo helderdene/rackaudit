@@ -16,7 +16,7 @@ beforeEach(function () {
 });
 
 test('viewAny allows all authenticated users', function () {
-    $policy = new RackPolicy();
+    $policy = new RackPolicy;
 
     // Test all roles can view rack list
     $roles = ['Administrator', 'IT Manager', 'Operator', 'Auditor', 'Viewer'];
@@ -30,7 +30,7 @@ test('viewAny allows all authenticated users', function () {
 });
 
 test('view allows Admins and IT Managers always', function () {
-    $policy = new RackPolicy();
+    $policy = new RackPolicy;
 
     $datacenter = Datacenter::factory()->create();
     $room = Room::factory()->create(['datacenter_id' => $datacenter->id]);
@@ -49,7 +49,7 @@ test('view allows Admins and IT Managers always', function () {
 });
 
 test('view checks datacenter access for non-admin roles', function () {
-    $policy = new RackPolicy();
+    $policy = new RackPolicy;
 
     $datacenter = Datacenter::factory()->create();
     $room = Room::factory()->create(['datacenter_id' => $datacenter->id]);
@@ -80,7 +80,7 @@ test('view checks datacenter access for non-admin roles', function () {
 });
 
 test('create update delete restricted to Admin and IT Manager', function () {
-    $policy = new RackPolicy();
+    $policy = new RackPolicy;
 
     $datacenter = Datacenter::factory()->create();
     $room = Room::factory()->create(['datacenter_id' => $datacenter->id]);

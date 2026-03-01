@@ -49,7 +49,7 @@ test('connection created event triggers limited detection', function () {
     // Manually dispatch the event as we're testing the listener behavior
     $event = new ConnectionChanged($connection, 'created');
 
-    $listener = new DetectDiscrepanciesForConnection();
+    $listener = new DetectDiscrepanciesForConnection;
     $listener->handle($event);
 
     // The listener should queue a detection job
@@ -79,7 +79,7 @@ test('connection updated event triggers detection for affected ports', function 
     // Dispatch update event
     $event = new ConnectionChanged($connection, 'updated');
 
-    $listener = new DetectDiscrepanciesForConnection();
+    $listener = new DetectDiscrepanciesForConnection;
     $listener->handle($event);
 
     // Should queue detection job for the affected connection
@@ -100,7 +100,7 @@ test('implementation file approved event triggers full file detection', function
     // Dispatch the approved event
     $event = new ImplementationFileApproved($implementationFile);
 
-    $listener = new DetectDiscrepanciesForImplementationFile();
+    $listener = new DetectDiscrepanciesForImplementationFile;
     $listener->handle($event);
 
     // Should queue detection job for the implementation file
@@ -136,7 +136,7 @@ test('expected connection confirmed event triggers detection', function () {
     // Dispatch the confirmed event
     $event = new ExpectedConnectionConfirmed($expectedConnection);
 
-    $listener = new DetectDiscrepanciesForExpectedConnection();
+    $listener = new DetectDiscrepanciesForExpectedConnection;
     $listener->handle($event);
 
     // Should queue detection job for the expected connection

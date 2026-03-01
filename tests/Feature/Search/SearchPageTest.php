@@ -1,9 +1,5 @@
 <?php
 
-use App\Enums\DeviceLifecycleStatus;
-use App\Enums\PortStatus;
-use App\Enums\PortType;
-use App\Enums\RackStatus;
 use App\Models\Datacenter;
 use App\Models\Device;
 use App\Models\Rack;
@@ -93,7 +89,7 @@ test('search results page persists query parameters in filters', function () {
     Rack::factory()->create(['row_id' => $row->id]);
 
     $response = $this->actingAs($admin)
-        ->get('/search?q=server&datacenter_id=' . $datacenter->id . '&lifecycle_status=deployed');
+        ->get('/search?q=server&datacenter_id='.$datacenter->id.'&lifecycle_status=deployed');
 
     $response->assertOk();
     $response->assertInertia(fn (Assert $page) => $page
@@ -119,7 +115,7 @@ test('search results page loads room options when datacenter is selected', funct
     Room::factory()->create(['datacenter_id' => $otherDc->id, 'name' => 'Other Room']);
 
     $response = $this->actingAs($admin)
-        ->get('/search?q=test&datacenter_id=' . $datacenter->id);
+        ->get('/search?q=test&datacenter_id='.$datacenter->id);
 
     $response->assertOk();
     $response->assertInertia(fn (Assert $page) => $page

@@ -2,7 +2,6 @@
 
 use App\Enums\PduPhase;
 use App\Enums\PduStatus;
-use App\Enums\RoomType;
 use App\Enums\RowOrientation;
 use App\Enums\RowStatus;
 use App\Models\Datacenter;

@@ -8,7 +8,6 @@
  * empty states when no in-progress audits exist.
  */
 
-use App\Enums\AuditType;
 use App\Models\Audit;
 use App\Models\AuditConnectionVerification;
 use App\Models\AuditDeviceVerification;

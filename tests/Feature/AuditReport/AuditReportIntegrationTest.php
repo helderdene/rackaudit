@@ -51,7 +51,7 @@ test('generates report for audit with zero findings', function () {
 
     // No findings created for this audit
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $report = $service->generateReport($audit, $this->admin);
 
     expect($report)->toBeInstanceOf(AuditReport::class);
@@ -261,7 +261,7 @@ test('full workflow generates report and enables download', function () {
     });
 
     // Step 2: Manually run the service to create the report (simulating job execution)
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $report = $service->generateReport($audit, $this->admin);
 
     expect(AuditReport::count())->toBe(1);
@@ -296,7 +296,7 @@ test('report includes findings across all severity levels', function () {
     Finding::factory()->forAudit($audit)->medium()->create(['title' => 'Medium Finding']);
     Finding::factory()->forAudit($audit)->low()->create(['title' => 'Low Finding']);
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $groupedFindings = $service->groupFindingsBySeverity($audit);
 
     // All four severity levels should be present
@@ -333,7 +333,7 @@ test('inventory audit report skips connection comparison section', function () {
 
     Finding::factory()->forAudit($audit)->medium()->count(3)->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
 
     // Connection comparison should be null for inventory audits
     $connectionComparison = $service->buildConnectionComparisonSummary($audit);
@@ -473,7 +473,7 @@ test('resolution rate correctly calculates with mixed statuses', function () {
     // 1 deferred
     Finding::factory()->forAudit($audit)->deferred()->create();
 
-    $service = new AuditReportService();
+    $service = new AuditReportService;
     $summary = $service->calculateExecutiveSummary($audit);
 
     // 10 total findings, 3 resolved = 30% resolution rate

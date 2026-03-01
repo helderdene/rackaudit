@@ -1,19 +1,12 @@
 <?php
 
 use App\DTOs\ReportFieldConfiguration;
-use App\Enums\AuditStatus;
-use App\Enums\AuditType;
-use App\Enums\CableType;
-use App\Enums\DeviceLifecycleStatus;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
 use App\Enums\ReportType;
 use App\Models\Audit;
-use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;
-use App\Models\Finding;
-use App\Models\Port;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;

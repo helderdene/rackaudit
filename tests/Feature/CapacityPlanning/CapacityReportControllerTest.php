@@ -92,7 +92,7 @@ test('index page returns correct Inertia props with capacity metrics', function 
 test('filter validation enforces cascading filter hierarchy', function () {
     // Test valid datacenter filter
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -101,7 +101,7 @@ test('filter validation enforces cascading filter hierarchy', function () {
 
     // Test valid room filter (with datacenter)
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id . '&room_id=' . $this->room->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id.'&room_id='.$this->room->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -111,7 +111,7 @@ test('filter validation enforces cascading filter hierarchy', function () {
 
     // Test valid row filter (with room and datacenter)
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id . '&room_id=' . $this->room->id . '&row_id=' . $this->row->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id.'&room_id='.$this->room->id.'&row_id='.$this->row->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -163,7 +163,7 @@ test('user access control restricts datacenters based on role and assignments', 
 
     // Operator cannot filter by unassigned datacenter
     $response = $this->actingAs($this->operator)
-        ->get('/capacity-reports?datacenter_id=' . $this->secondDatacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->secondDatacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -231,7 +231,7 @@ test('historical snapshots are included for sparkline visualization', function (
     }
 
     $response = $this->actingAs($this->admin)
-        ->get('/capacity-reports?datacenter_id=' . $this->datacenter->id);
+        ->get('/capacity-reports?datacenter_id='.$this->datacenter->id);
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

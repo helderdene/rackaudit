@@ -7,9 +7,7 @@
  * correct badge colors, and responsive layout for mobile/tablet views.
  */
 
-use App\Enums\AuditStatus;
 use App\Enums\FindingSeverity;
-use App\Enums\FindingStatus;
 use App\Models\Audit;
 use App\Models\Datacenter;
 use App\Models\Finding;

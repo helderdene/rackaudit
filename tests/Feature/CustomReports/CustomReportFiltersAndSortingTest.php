@@ -3,7 +3,6 @@
 use App\Enums\DeviceLifecycleStatus;
 use App\Enums\RackStatus;
 use App\Enums\RackUHeight;
-use App\Enums\ReportType;
 use App\Models\Datacenter;
 use App\Models\Device;
 use App\Models\DeviceType;

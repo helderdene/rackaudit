@@ -7,11 +7,9 @@
  * during the test review and gap analysis (Task Group 10).
  */
 
-use App\Enums\DiscrepancyType;
 use App\Models\Connection;
 use App\Models\Datacenter;
 use App\Models\Device;
-use App\Models\DiscrepancyAcknowledgment;
 use App\Models\ExpectedConnection;
 use App\Models\ImplementationFile;
 use App\Models\Port;

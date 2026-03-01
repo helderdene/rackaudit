@@ -241,8 +241,8 @@ it('persists filter state in URL query parameters', function () {
 
     // Test filtering by matched type and rack1 - should return the matched connection
     $url = "/api/implementation-files/{$this->file->id}/comparison?"
-        . 'discrepancy_type[]=matched'
-        . "&rack_id={$this->rack1->id}";
+        .'discrepancy_type[]=matched'
+        ."&rack_id={$this->rack1->id}";
 
     $response = $this->actingAs($this->user)->getJson($url);
 
@@ -253,8 +253,8 @@ it('persists filter state in URL query parameters', function () {
 
     // Test filtering by missing type and rack2 - should return the missing connection
     $url = "/api/implementation-files/{$this->file->id}/comparison?"
-        . 'discrepancy_type[]=missing'
-        . "&rack_id={$this->rack2->id}";
+        .'discrepancy_type[]=missing'
+        ."&rack_id={$this->rack2->id}";
 
     $response = $this->actingAs($this->user)->getJson($url);
 
@@ -266,8 +266,8 @@ it('persists filter state in URL query parameters', function () {
     // Test filtering by missing type and rack1 - should return no results
     // (the matched connection is in rack1, but we're filtering for missing)
     $url = "/api/implementation-files/{$this->file->id}/comparison?"
-        . 'discrepancy_type[]=missing'
-        . "&rack_id={$this->rack1->id}";
+        .'discrepancy_type[]=missing'
+        ."&rack_id={$this->rack1->id}";
 
     $response = $this->actingAs($this->user)->getJson($url);
 
@@ -278,7 +278,7 @@ it('persists filter state in URL query parameters', function () {
     // Test that combinations of filters work correctly
     // Filtering for both matched and missing in all racks should return both
     $url = "/api/implementation-files/{$this->file->id}/comparison?"
-        . 'discrepancy_type[]=matched&discrepancy_type[]=missing';
+        .'discrepancy_type[]=matched&discrepancy_type[]=missing';
 
     $response = $this->actingAs($this->user)->getJson($url);
 

@@ -1,12 +1,8 @@
 <?php
 
 use App\Enums\DeviceLifecycleStatus;
-use App\Enums\PortStatus;
-use App\Enums\PortType;
-use App\Enums\RackStatus;
 use App\Models\Datacenter;
 use App\Models\Device;
-use App\Models\Port;
 use App\Models\Rack;
 use App\Models\Room;
 use App\Models\Row;
@@ -126,7 +122,7 @@ test('search with hierarchical filters returns filtered results', function () {
 
     // Search with datacenter filter
     $response = $this->actingAs($admin)
-        ->getJson('/api/search?q=Web&datacenter_id=' . $datacenter1->id);
+        ->getJson('/api/search?q=Web&datacenter_id='.$datacenter1->id);
 
     $response->assertOk();
 

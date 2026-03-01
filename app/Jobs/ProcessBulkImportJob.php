@@ -241,13 +241,13 @@ class ProcessBulkImportJob implements ShouldQueue
     protected function getImporter(): DatacenterImport|RoomImport|RowImport|RackImport|DeviceImport|PortImport|CombinedImport
     {
         return match ($this->bulkImport->entity_type) {
-            BulkImportEntityType::Datacenter => new DatacenterImport(),
-            BulkImportEntityType::Room => new RoomImport(),
-            BulkImportEntityType::Row => new RowImport(),
-            BulkImportEntityType::Rack => new RackImport(),
-            BulkImportEntityType::Device => new DeviceImport(),
-            BulkImportEntityType::Port => new PortImport(),
-            BulkImportEntityType::Mixed => new CombinedImport(),
+            BulkImportEntityType::Datacenter => new DatacenterImport,
+            BulkImportEntityType::Room => new RoomImport,
+            BulkImportEntityType::Row => new RowImport,
+            BulkImportEntityType::Rack => new RackImport,
+            BulkImportEntityType::Device => new DeviceImport,
+            BulkImportEntityType::Port => new PortImport,
+            BulkImportEntityType::Mixed => new CombinedImport,
         };
     }
 

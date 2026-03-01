@@ -78,7 +78,7 @@ test('full workflow: create connection, update it, and view history timeline', f
         ->and($updatedLog->new_values)->toHaveKey('destination_port_id');
 
     // Step 3: View the timeline API
-    $response = $this->actingAs($admin)->getJson('/connections/' . $connection->id . '/timeline');
+    $response = $this->actingAs($admin)->getJson('/connections/'.$connection->id.'/timeline');
 
     $response->assertOk();
 
@@ -144,7 +144,7 @@ test('restored action appears correctly in timeline after soft-delete recovery',
         ->and($restoredLog->new_values['cable_color'])->toBe('green');
 
     // View the timeline API - should show both deleted and restored actions
-    $response = $this->actingAs($admin)->getJson('/connections/' . $connection->id . '/timeline');
+    $response = $this->actingAs($admin)->getJson('/connections/'.$connection->id.'/timeline');
 
     $response->assertOk();
 
@@ -213,8 +213,8 @@ test('connection history filters work with multiple criteria combined', function
 
     // Filter by: last 5 days + operator user + updated action
     $response = $this->actingAs($admin)->get(
-        '/connections/history?start_date=' . now()->subDays(5)->toDateString() .
-        '&user_id=' . $operator->id .
+        '/connections/history?start_date='.now()->subDays(5)->toDateString().
+        '&user_id='.$operator->id.
         '&action=updated'
     );
 
@@ -257,7 +257,7 @@ test('enriched attributes are present in timeline for historical context', funct
     ]);
 
     // View timeline and verify enriched attributes are present
-    $response = $this->actingAs($admin)->getJson('/connections/' . $connection->id . '/timeline');
+    $response = $this->actingAs($admin)->getJson('/connections/'.$connection->id.'/timeline');
 
     $response->assertOk();
 

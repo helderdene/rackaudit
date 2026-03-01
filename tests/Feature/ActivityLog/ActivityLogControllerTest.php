@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\ActivityLog;
-use App\Models\Datacenter;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -69,21 +68,21 @@ test('index filters by date range correctly', function () {
     ActivityLog::factory()->create(['created_at' => now()]);
 
     // Filter by start_date
-    $response = $this->actingAs($admin)->get('/activity-logs?start_date=' . now()->subDays(6)->toDateString());
+    $response = $this->actingAs($admin)->get('/activity-logs?start_date='.now()->subDays(6)->toDateString());
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('activityLogs.data', 3)
         );
 
     // Filter by end_date
-    $response = $this->actingAs($admin)->get('/activity-logs?end_date=' . now()->subDays(3)->toDateString());
+    $response = $this->actingAs($admin)->get('/activity-logs?end_date='.now()->subDays(3)->toDateString());
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('activityLogs.data', 2)
         );
 
     // Filter by both start_date and end_date
-    $response = $this->actingAs($admin)->get('/activity-logs?start_date=' . now()->subDays(7)->toDateString() . '&end_date=' . now()->subDays(1)->toDateString());
+    $response = $this->actingAs($admin)->get('/activity-logs?start_date='.now()->subDays(7)->toDateString().'&end_date='.now()->subDays(1)->toDateString());
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('activityLogs.data', 2)
@@ -133,7 +132,7 @@ test('index filters by user_id correctly', function () {
     ActivityLog::factory()->count(2)->create(['causer_id' => $user2->id]);
 
     // Filter by user_id
-    $response = $this->actingAs($admin)->get('/activity-logs?user_id=' . $user1->id);
+    $response = $this->actingAs($admin)->get('/activity-logs?user_id='.$user1->id);
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->has('activityLogs.data', 3)

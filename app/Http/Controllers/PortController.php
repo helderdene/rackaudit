@@ -253,7 +253,7 @@ class PortController extends Controller
 
             for ($i = $startNumber; $i <= $endNumber; $i++) {
                 $port = $device->ports()->create([
-                    'label' => $prefix . $i,
+                    'label' => $prefix.$i,
                     'type' => $type,
                     'subtype' => $subtype,
                     'status' => PortStatus::Available,
@@ -266,7 +266,7 @@ class PortController extends Controller
 
         return response()->json([
             'data' => PortResource::collection($ports),
-            'message' => count($ports) . ' ports created successfully.',
+            'message' => count($ports).' ports created successfully.',
         ], 201);
     }
 
